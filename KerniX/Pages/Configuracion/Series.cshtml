@@ -1,0 +1,835 @@
+﻿@page
+@model KerniX.Pages.Configuracion.SeriesModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Series y Numeración";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/configuracion.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/general.css"
+          asp-append-version="true" />
+
+</head>
+
+<body class="kx-body">
+
+    <div class="kx-app">
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-logo">
+
+                <div class="kx-logo-icon">
+                    KX
+                </div>
+
+                <div>
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <small>
+                        Sistema Inteligente
+                    </small>
+
+                </div>
+
+            </div>
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+                    <span uk-icon="icon: home"></span>
+                    <span>Inicio</span>
+                </a>
+
+                <a href="/Ventas/Index">
+                    <span uk-icon="icon: cart"></span>
+                    <span>Ventas</span>
+                </a>
+
+                <a href="/Inventario/Index">
+                    <span uk-icon="icon: database"></span>
+                    <span>Inventario</span>
+                </a>
+
+                <a href="/Productos/Index">
+                    <span uk-icon="icon: thumbnails"></span>
+                    <span>Productos</span>
+                </a>
+
+                <a href="/Clientes/Index">
+                    <span uk-icon="icon: users"></span>
+                    <span>Clientes</span>
+                </a>
+
+                <a href="/IA/Index">
+                    <span uk-icon="icon: bolt"></span>
+                    <span>KerniX IA</span>
+                </a>
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="kx-content">
+
+            <header class="kx-topbar">
+
+                <div>
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-back">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver a configuración
+
+                    </a>
+
+                    <h1>
+                        Series y Numeración
+                    </h1>
+
+                    <p>
+                        Administra series y correlativos
+                        de comprobantes.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeExito))
+            {
+                <div class="kx-alert-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    @Model.MensajeExito
+
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeError))
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    @Model.MensajeError
+
+                </div>
+            }
+
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="kx-alert-error">
+
+                    <div asp-validation-summary="All">
+                    </div>
+
+                </div>
+            }
+
+
+            <!-- ================================================= -->
+            <!-- RESUMEN -->
+            <!-- ================================================= -->
+
+            <div class="kx-settings-layout">
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+                            <span uk-icon="icon: file-text"></span>
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Numeración
+                            </h2>
+
+                            <p>
+                                Estado general de comprobantes.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Empresa
+                        </span>
+
+                        <strong>
+                            #@Model.IdEmpresa
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Sucursal
+                        </span>
+
+                        <strong>
+                            #@Model.IdSucursal
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Series registradas
+                        </span>
+
+                        <strong>
+                            @Model.Series.Count
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Series activas
+                        </span>
+
+                        <strong>
+                            @Model.Series.Count(x => x.Estado)
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- NUEVA SERIE -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+                            <span uk-icon="icon: plus"></span>
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Nueva serie
+                            </h2>
+
+                            <p>
+                                Registra una nueva numeración.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="post"
+                          action="/Configuracion/Series?handler=Crear">
+
+                        @Html.AntiForgeryToken()
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Tipo de comprobante
+                            </label>
+
+                            <select name="NuevoTipoComprobante"
+                                    class="kx-input"
+                                    required>
+
+                                <option value="">
+                                    Seleccione...
+                                </option>
+
+                                <option value="BOLETA">
+                                    Boleta
+                                </option>
+
+                                <option value="FACTURA">
+                                    Factura
+                                </option>
+
+                                <option value="NOTA_CREDITO_BOLETA">
+                                    Nota de crédito - Boleta
+                                </option>
+
+                                <option value="NOTA_CREDITO_FACTURA">
+                                    Nota de crédito - Factura
+                                </option>
+
+                                <option value="NOTA_DEBITO_BOLETA">
+                                    Nota de débito - Boleta
+                                </option>
+
+                                <option value="NOTA_DEBITO_FACTURA">
+                                    Nota de débito - Factura
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Serie
+                            </label>
+
+                            <input type="text"
+                                   name="NuevaSerie"
+                                   maxlength="20"
+                                   placeholder="Ej. B001"
+                                   class="kx-input"
+                                   required />
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Correlativo actual
+                            </label>
+
+                            <input type="number"
+                                   name="NuevoCorrelativo"
+                                   min="0"
+                                   step="1"
+                                   value="0"
+                                   class="kx-input"
+                                   required />
+
+                            <small class="kx-help">
+                                Si coloca 0, el primer número generado será 00000001.
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Serie activa
+                                </strong>
+
+                                <small>
+                                    Disponible para emitir comprobantes.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="NuevaSerieEstado"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="NuevaSerieEstado"
+                                       value="true"
+                                       checked />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="kx-form-actions">
+
+                            <button type="submit"
+                                    class="kx-btn-primary">
+
+                                <span uk-icon="icon: plus"></span>
+
+                                Crear serie
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- LISTADO -->
+            <!-- ================================================= -->
+
+            <section class="kx-card"
+                     style="margin-top:22px;">
+
+                <div class="kx-card-header">
+
+                    <div class="kx-card-icon">
+                        <span uk-icon="icon: list"></span>
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Series registradas
+                        </h2>
+
+                        <p>
+                            Correlativos actuales y siguientes.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kx-table-wrap">
+
+                    <table class="kx-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Tipo
+                                </th>
+
+                                <th>
+                                    Serie
+                                </th>
+
+                                <th>
+                                    Actual
+                                </th>
+
+                                <th>
+                                    Siguiente
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Acciones
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @if (Model.Series.Count == 0)
+                            {
+                                <tr>
+
+                                    <td colspan="6"
+                                        class="kx-empty">
+
+                                        No existen series configuradas.
+
+                                    </td>
+
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var serie in Model.Series)
+                                {
+                                    long siguiente =
+                                        serie.CorrelativoActual + 1;
+
+                                    string modalEditar =
+                                        $"modal-editar-{serie.IdSerieComprobante}";
+
+                                    string modalCorrelativo =
+                                        $"modal-correlativo-{serie.IdSerieComprobante}";
+
+                                    <tr>
+
+                                        <td>
+                                            @serie.TipoComprobante
+                                        </td>
+
+                                        <td>
+                                            <strong>
+                                                @serie.Serie
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            @serie.CorrelativoActual.ToString("D8")
+                                        </td>
+
+                                        <td>
+                                            @siguiente.ToString("D8")
+                                        </td>
+
+                                        <td>
+
+                                            @if (serie.Estado)
+                                            {
+                                                <span class="kx-status active">
+                                                    Activa
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="kx-status inactive">
+                                                    Inactiva
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="kx-card-actions">
+
+                                                <button type="button"
+                                                        class="kx-btn-secondary"
+                                                        uk-toggle="target: #@modalEditar">
+
+                                                    Editar
+
+                                                </button>
+
+
+                                                <button type="button"
+                                                        class="kx-btn-secondary"
+                                                        uk-toggle="target: #@modalCorrelativo">
+
+                                                    Correlativo
+
+                                                </button>
+
+
+                                                <form method="post"
+                                                      action="/Configuracion/Series?handler=CambiarEstado">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <input type="hidden"
+                                                           name="IdSerieEstado"
+                                                           value="@serie.IdSerieComprobante" />
+
+                                                    <input type="hidden"
+                                                           name="NuevoEstado"
+                                                           value="@(!serie.Estado)" />
+
+                                                    <button type="submit"
+                                                            class="@(serie.Estado
+                                                                                                                ? "kx-btn-secondary"
+                                                                                                                : "kx-btn-primary")">
+
+                                                        @(serie.Estado
+                                                            ? "Desactivar"
+                                                            : "Activar")
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <!-- ===================================== -->
+                                    <!-- MODAL EDITAR -->
+                                    <!-- ===================================== -->
+
+                                    <div id="@modalEditar"
+                                         uk-modal>
+
+                                        <div class="uk-modal-dialog kx-modal">
+
+                                            <button type="button"
+                                                    class="uk-modal-close-default"
+                                                    uk-close>
+                                            </button>
+
+
+                                            <div class="kx-modal-title">
+
+                                                <span>
+                                                    SERIE
+                                                </span>
+
+                                                <h2>
+                                                    Editar @serie.Serie
+                                                </h2>
+
+                                            </div>
+
+
+                                            <form method="post"
+                                                  action="/Configuracion/Series?handler=Editar">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="IdSerieEditar"
+                                                       value="@serie.IdSerieComprobante" />
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Tipo
+                                                    </label>
+
+                                                    <input type="text"
+                                                           name="TipoComprobanteEditar"
+                                                           value="@serie.TipoComprobante"
+                                                           class="kx-input" />
+
+                                                </div>
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Serie
+                                                    </label>
+
+                                                    <input type="text"
+                                                           name="SerieEditar"
+                                                           value="@serie.Serie"
+                                                           maxlength="20"
+                                                           class="kx-input" />
+
+                                                </div>
+
+
+                                                <input type="hidden"
+                                                       name="EstadoEditar"
+                                                       value="@serie.Estado.ToString().ToLowerInvariant()" />
+
+
+                                                <div class="kx-form-actions">
+
+                                                    <a asp-page="/Configuracion/Index1"
+                                                       class="kx-btn-secondary">
+
+                                                        Cancelar
+
+                                                    </a>
+
+                                                    <button type="submit"
+                                                            class="kx-btn-primary">
+
+                                                        Guardar cambios
+
+                                                    </button>
+
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- ===================================== -->
+                                    <!-- MODAL CORRELATIVO -->
+                                    <!-- ===================================== -->
+
+                                    <div id="@modalCorrelativo"
+                                         uk-modal>
+
+                                        <div class="uk-modal-dialog kx-modal">
+
+                                            <button type="button"
+                                                    class="uk-modal-close-default"
+                                                    uk-close>
+                                            </button>
+
+
+                                            <div class="kx-modal-title">
+
+                                                <span>
+                                                    NUMERACIÓN
+                                                </span>
+
+                                                <h2>
+                                                    Actualizar correlativo
+                                                </h2>
+
+                                                <p>
+                                                    Serie @serie.Serie
+                                                </p>
+
+                                            </div>
+
+
+                                            <form method="post"
+                                                  action="/Configuracion/Series?handler=ActualizarCorrelativo">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="IdSerieCorrelativo"
+                                                       value="@serie.IdSerieComprobante" />
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Correlativo actual
+                                                    </label>
+
+                                                    <input type="number"
+                                                           value="@serie.CorrelativoActual"
+                                                           class="kx-input"
+                                                           readonly />
+
+                                                </div>
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Nuevo correlativo
+                                                    </label>
+
+                                                    <input type="number"
+                                                           name="CorrelativoEditar"
+                                                           value="@serie.CorrelativoActual"
+                                                           min="0"
+                                                           step="1"
+                                                           class="kx-input"
+                                                           required />
+
+                                                </div>
+
+
+                                                <div class="kx-alert-error"
+                                                     style="margin-top:16px;">
+
+                                                    Cambiar el correlativo afecta la próxima numeración emitida.
+
+                                                </div>
+
+
+                                                <div class="kx-form-actions">
+
+                                                    <button type="button"
+                                                            class="kx-btn-secondary uk-modal-close">
+
+                                                        Cancelar
+
+                                                    </button>
+
+                                                    <button type="submit"
+                                                            class="kx-btn-primary">
+
+                                                        Actualizar correlativo
+
+                                                    </button>
+
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+</body>
+
+</html>

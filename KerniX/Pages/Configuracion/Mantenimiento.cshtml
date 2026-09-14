@@ -1,0 +1,766 @@
+﻿@page
+@model KerniX.Pages.Configuracion.MantenimientoModel
+
+@{
+    Layout = null;
+
+    ViewData["Title"] =
+        "Mantenimiento de Base de Datos";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/configuracion.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/general.css"
+          asp-append-version="true" />
+
+</head>
+
+
+<body class="kx-body">
+
+    <div class="kx-app">
+
+
+        <!-- ===================================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================================== -->
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-logo">
+
+                <div class="kx-logo-icon">
+                    KX
+                </div>
+
+                <div>
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <small>
+                        Sistema Inteligente
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+
+                    <span uk-icon="icon: home"></span>
+
+                    <span>
+                        Inicio
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Index">
+
+                    <span uk-icon="icon: cart"></span>
+
+                    <span>
+                        Ventas
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Index">
+
+                    <span uk-icon="icon: database"></span>
+
+                    <span>
+                        Inventario
+                    </span>
+
+                </a>
+
+
+                <a href="/Productos/Index">
+
+                    <span uk-icon="icon: thumbnails"></span>
+
+                    <span>
+                        Productos
+                    </span>
+
+                </a>
+
+
+                <a href="/Clientes/Index">
+
+                    <span uk-icon="icon: users"></span>
+
+                    <span>
+                        Clientes
+                    </span>
+
+                </a>
+
+
+                <a href="/IA/Index">
+
+                    <span uk-icon="icon: bolt"></span>
+
+                    <span>
+                        KerniX IA
+                    </span>
+
+                </a>
+
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- ===================================================== -->
+        <!-- CONTENIDO -->
+        <!-- ===================================================== -->
+
+        <main class="kx-content">
+
+
+            <!-- ================================================= -->
+            <!-- CABECERA -->
+            <!-- ================================================= -->
+
+            <header class="kx-topbar">
+
+                <div>
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-back">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver a configuración
+
+                    </a>
+
+
+                    <h1>
+                        Mantenimiento de Base de Datos
+                    </h1>
+
+
+                    <p>
+                        Herramientas técnicas para conservar
+                        la integridad y rendimiento de KerniX.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <!-- ================================================= -->
+            <!-- MENSAJES -->
+            <!-- ================================================= -->
+            @if (!string.IsNullOrWhiteSpace(
+                        Model.MensajeExito))
+            {
+                <div class="kx-alert-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    <span>
+                        @Model.MensajeExito
+                    </span>
+
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeError))
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.MensajeError
+                    </span>
+
+                </div>
+            }
+
+
+            <!-- ================================================= -->
+            <!-- GRID -->
+            <!-- ================================================= -->
+
+            <div class="kx-settings-layout">
+
+
+                <!-- ============================================= -->
+                <!-- INFORMACIÓN -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: database">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Estado de Base de Datos
+                            </h2>
+
+                            <p>
+                                Información del contexto actual.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Base de datos
+                        </span>
+
+                        <strong>
+                            @Model.BaseDatos
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Empresa
+                        </span>
+
+                        <strong>
+                            #@Model.IdEmpresa
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Motor
+                        </span>
+
+                        <strong>
+                            SQL Server
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Conexión
+                        </span>
+
+                        <strong>
+                            Activa
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- ÚLTIMA EJECUCIÓN -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: history">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Última operación
+                            </h2>
+
+                            <p>
+                                Resultado de la última tarea ejecutada.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Operación
+                        </span>
+
+                        <strong>
+
+                            @(string.IsNullOrWhiteSpace(
+                                Model.UltimaOperacion)
+                                ? "Sin ejecución reciente"
+                                : Model.UltimaOperacion)
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Duración
+                        </span>
+
+                        <strong>
+
+                            @(string.IsNullOrWhiteSpace(
+                                Model.UltimaDuracion)
+                                ? "-"
+                                : Model.UltimaDuracion)
+
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- INTEGRIDAD -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: shield">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Verificar integridad
+                            </h2>
+
+                            <p>
+                                Detecta inconsistencias en la base de datos.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-option">
+
+                        <div>
+
+                            <strong>
+                                DBCC CHECKDB
+                            </strong>
+
+                            <small>
+                                Comprueba tablas, índices,
+                                páginas y estructuras internas.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="post"
+                          action="/Configuracion/Mantenimiento?handler=VerificarIntegridad">
+
+                        @Html.AntiForgeryToken()
+
+
+                        <button type="submit"
+                                class="kx-btn-primary"
+                                onclick="return confirm('¿Desea verificar la integridad de la base de datos?');">
+
+                            <span uk-icon="icon: check"></span>
+
+                            Verificar integridad
+
+                        </button>
+
+                    </form>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- ESTADÍSTICAS -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: database">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Actualizar estadísticas
+                            </h2>
+
+                            <p>
+                                Optimiza las decisiones del motor SQL.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-option">
+
+                        <div>
+
+                            <strong>
+                                Estadísticas del optimizador
+                            </strong>
+
+                            <small>
+                                SQL Server utiliza estas estadísticas
+                                para elegir mejores planes de ejecución.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="post"
+                          action="/Configuracion/Mantenimiento?handler=ActualizarEstadisticas">
+
+                        @Html.AntiForgeryToken()
+
+
+                        <button type="submit"
+                                class="kx-btn-primary"
+                                onclick="return confirm('¿Desea actualizar las estadísticas ahora?');">
+
+                            <span uk-icon="icon: refresh"></span>
+
+                            Actualizar estadísticas
+
+                        </button>
+
+                    </form>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- ÍNDICES -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: list">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Mantenimiento de índices
+                            </h2>
+
+                            <p>
+                                Corrige fragmentación de índices.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Fragmentación 10% - 30%
+                        </span>
+
+                        <strong>
+                            REORGANIZE
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Fragmentación ≥ 30%
+                        </span>
+
+                        <strong>
+                            REBUILD
+                        </strong>
+
+                    </div>
+
+
+                    <form method="post"
+                          action="/Configuracion/Mantenimiento?handler=MantenerIndices">
+
+                        @Html.AntiForgeryToken()
+
+
+                        <button type="submit"
+                                class="kx-btn-primary"
+                                onclick="return confirm('¿Desea ejecutar el mantenimiento de índices? Puede tardar algunos minutos.');">
+
+                            <span uk-icon="icon: settings"></span>
+
+                            Mantener índices
+
+                        </button>
+
+                    </form>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- BACKUP -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: cloud-upload">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Copias de seguridad
+                            </h2>
+
+                            <p>
+                                El respaldo se administra
+                                desde su módulo independiente.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Ubicación
+                        </span>
+
+                        <strong>
+                            C:\Backup
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-form-actions">
+
+                        <a href="/Configuracion/Backups"
+                           class="kx-btn-primary">
+
+                            <span uk-icon="icon: cloud-upload"></span>
+
+                            Ir a Backups
+
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- SEGURIDAD -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: warning">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Recomendaciones
+                            </h2>
+
+                            <p>
+                                Precauciones para mantenimiento técnico.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Backup previo
+                        </span>
+
+                        <strong>
+                            Recomendado
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Horario
+                        </span>
+
+                        <strong>
+                            Baja actividad
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Uso
+                        </span>
+
+                        <strong>
+                            Administrador
+                        </strong>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- VOLVER -->
+            <!-- ================================================= -->
+
+            <div class="kx-form-actions">
+
+                <a href="/Configuracion/Index1"
+                   class="kx-btn-secondary">
+
+                    <span uk-icon="icon: arrow-left"></span>
+
+                    Volver
+
+                </a>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+</body>
+
+</html>

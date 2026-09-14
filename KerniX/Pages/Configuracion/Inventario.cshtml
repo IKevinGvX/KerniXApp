@@ -1,0 +1,695 @@
+﻿@page
+@model KerniX.Pages.Configuracion.InventarioModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Configuración de Inventario";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/configuracion.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/general.css"
+          asp-append-version="true" />
+
+</head>
+
+<body class="kx-body">
+
+    <div class="kx-app">
+
+        <!-- ===================================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================================== -->
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-logo">
+
+                <div class="kx-logo-icon">
+                    KX
+                </div>
+
+                <div>
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <small>
+                        Sistema Inteligente
+                    </small>
+
+                </div>
+
+            </div>
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+
+                    <span uk-icon="icon: home"></span>
+
+                    <span>Inicio</span>
+
+                </a>
+
+                <a href="/Ventas/Index">
+
+                    <span uk-icon="icon: cart"></span>
+
+                    <span>Ventas</span>
+
+                </a>
+
+                <a href="/Inventario/Index">
+
+                    <span uk-icon="icon: database"></span>
+
+                    <span>Inventario</span>
+
+                </a>
+
+                <a href="/Productos/Index">
+
+                    <span uk-icon="icon: thumbnails"></span>
+
+                    <span>Productos</span>
+
+                </a>
+
+                <a href="/Clientes/Index">
+
+                    <span uk-icon="icon: users"></span>
+
+                    <span>Clientes</span>
+
+                </a>
+
+                <a href="/IA/Index">
+
+                    <span uk-icon="icon: bolt"></span>
+
+                    <span>KerniX IA</span>
+
+                </a>
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>Configuración</span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+        <!-- ===================================================== -->
+        <!-- CONTENIDO -->
+        <!-- ===================================================== -->
+
+        <main class="kx-content">
+
+            <header class="kx-topbar">
+
+                <div>
+                    <a href="/Configuracion/Index1"
+                       class="kx-back">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver a configuración
+
+                    </a>
+
+                    <h1>
+                        Configuración de Inventario
+                    </h1>
+
+                    <p>
+                        Define las reglas generales para el control de existencias.
+                    </p>
+
+                </div>
+
+            </header>
+
+            <!-- ================================================= -->
+            <!-- MENSAJES -->
+            <!-- ================================================= -->
+            @if (!string.IsNullOrWhiteSpace(
+                        Model.MensajeExito))
+            {
+                <div class="kx-alert-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    <span>
+                        @Model.MensajeExito
+                    </span>
+
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeError))
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.MensajeError
+                    </span>
+
+                </div>
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <div asp-validation-summary="All">
+                    </div>
+
+                </div>
+            }
+
+            <!-- ================================================= -->
+            <!-- FORMULARIO -->
+            <!-- ================================================= -->
+
+            <form method="post"
+                  action="/Configuracion/Inventario?handler=Guardar">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="IdEmpresa"
+                       value="@Model.IdEmpresa" />
+
+                <div class="kx-settings-layout">
+
+                    <!-- ========================================= -->
+                    <!-- STOCK -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+                                <span uk-icon="icon: database"></span>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Control de stock
+                                </h2>
+
+                                <p>
+                                    Reglas principales de existencias.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Stock mínimo predeterminado
+                            </label>
+
+                            <input type="number"
+                                   name="StockMinimoDefault"
+                                   value="@(Model.StockMinimoDefault ?? 10)"
+                                   min="0"
+                                   max="999999"
+                                   step="1"
+                                   class="kx-input" />
+
+                            <small class="kx-help">
+                                Se utilizará como referencia para nuevos productos.
+                            </small>
+
+                        </div>
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Permitir stock negativo
+                                </strong>
+
+                                <small>
+                                    Permite movimientos que dejen una existencia menor a cero.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="PermitirStockNegativo"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="PermitirStockNegativo"
+                                       value="true"
+                                       checked="@Model.PermitirStockNegativo" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Permitir ajustes manuales
+                                </strong>
+
+                                <small>
+                                    Autoriza correcciones manuales del inventario.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="PermitirAjustesManuales"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="PermitirAjustesManuales"
+                                       value="true"
+                                       checked="@Model.PermitirAjustesManuales" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ========================================= -->
+                    <!-- ALERTAS -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+                                <span uk-icon="icon: warning"></span>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Alertas de inventario
+                                </h2>
+
+                                <p>
+                                    Avisos automáticos de existencias.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Alerta de stock bajo
+                                </strong>
+
+                                <small>
+                                    Notifica cuando un producto alcanza su mínimo.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="AlertaStockBajo"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="AlertaStockBajo"
+                                       value="true"
+                                       checked="@Model.AlertaStockBajo" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Alerta de stock agotado
+                                </strong>
+
+                                <small>
+                                    Notifica cuando la existencia llega a cero.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="AlertaStockAgotado"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="AlertaStockAgotado"
+                                       value="true"
+                                       checked="@Model.AlertaStockAgotado" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ========================================= -->
+                    <!-- TRAZABILIDAD -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+                                <span uk-icon="icon: history"></span>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Trazabilidad
+                                </h2>
+
+                                <p>
+                                    Control avanzado de productos.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Controlar lotes
+                                </strong>
+
+                                <small>
+                                    Registra productos mediante números de lote.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="ControlarLotes"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="ControlarLotes"
+                                       value="true"
+                                       checked="@Model.ControlarLotes" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Controlar series
+                                </strong>
+
+                                <small>
+                                    Identifica individualmente productos serializados.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="ControlarSeries"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="ControlarSeries"
+                                       value="true"
+                                       checked="@Model.ControlarSeries" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Controlar vencimiento
+                                </strong>
+
+                                <small>
+                                    Habilita fechas de vencimiento.
+                                </small>
+
+                            </div>
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="ControlarVencimiento"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="ControlarVencimiento"
+                                       value="true"
+                                       checked="@Model.ControlarVencimiento" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ========================================= -->
+                    <!-- VALORIZACIÓN -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+                                <span uk-icon="icon: credit-card"></span>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Valorización
+                                </h2>
+
+                                <p>
+                                    Método de valorización del inventario.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Método de valorización
+                            </label>
+
+                            <select name="MetodoValorizacion"
+                                    class="kx-input">
+
+                                @if (Model.MetodoValorizacion == "PROMEDIO")
+                                {
+                                    <option value="PROMEDIO" selected>
+                                        Promedio ponderado
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="PROMEDIO">
+                                        Promedio ponderado
+                                    </option>
+                                }
+
+                                @if (Model.MetodoValorizacion == "FIFO")
+                                {
+                                    <option value="FIFO" selected>
+                                        FIFO / PEPS
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="FIFO">
+                                        FIFO / PEPS
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Empresa
+                            </span>
+
+                            <strong>
+                                #@Model.IdEmpresa
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Stock mínimo
+                            </span>
+
+
+                            <strong>
+                                @(Model.StockMinimoDefault ?? 10)
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Stock negativo
+                            </span>
+
+                            <strong>
+                                @(Model.PermitirStockNegativo ? "Permitido" : "Bloqueado")
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Valorización
+                            </span>
+
+                            <strong>
+                                @(Model.MetodoValorizacion ?? "PROMEDIO")
+                            </strong>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- ================================================= -->
+                <!-- ACCIONES -->
+                <!-- ================================================= -->
+
+                <div class="kx-form-actions">
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-btn-secondary">
+
+                        Cancelar
+
+                    </a>
+
+                    <button type="submit"
+                            class="kx-btn-primary">
+
+                        <span uk-icon="icon: check"></span>
+
+                        Guardar configuración
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+</body>
+
+</html>

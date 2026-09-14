@@ -1,0 +1,905 @@
+﻿@page
+@model KerniX.Pages.Configuracion.ImpuestosModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Impuestos";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/configuracion.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/general.css"
+          asp-append-version="true" />
+
+</head>
+
+<body class="kx-body">
+
+    <div class="kx-app">
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-logo">
+
+                <div class="kx-logo-icon">
+                    KX
+                </div>
+
+                <div>
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <small>
+                        Sistema Inteligente
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+                    <span uk-icon="icon: home"></span>
+                    <span>Inicio</span>
+                </a>
+
+                <a href="/Ventas/Index">
+                    <span uk-icon="icon: cart"></span>
+                    <span>Ventas</span>
+                </a>
+
+                <a href="/Inventario/Index">
+                    <span uk-icon="icon: database"></span>
+                    <span>Inventario</span>
+                </a>
+
+                <a href="/Productos/Index">
+                    <span uk-icon="icon: thumbnails"></span>
+                    <span>Productos</span>
+                </a>
+
+                <a href="/Clientes/Index">
+                    <span uk-icon="icon: users"></span>
+                    <span>Clientes</span>
+                </a>
+
+                <a href="/IA/Index">
+                    <span uk-icon="icon: bolt"></span>
+                    <span>KerniX IA</span>
+                </a>
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="kx-content">
+
+            <header class="kx-topbar">
+
+                <div>
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-back">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver a configuración
+
+                    </a>
+
+
+                    <h1>
+                        Impuestos
+                    </h1>
+
+
+                    <p>
+                        Administra porcentajes,
+                        vigencias y estados tributarios.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeExito))
+            {
+                <div class="kx-alert-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    @Model.MensajeExito
+
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeError))
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    @Model.MensajeError
+
+                </div>
+            }
+
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="kx-alert-error">
+
+                    <div asp-validation-summary="All">
+                    </div>
+
+                </div>
+            }
+
+
+            <div class="kx-settings-layout">
+
+                <!-- ============================================= -->
+                <!-- RESUMEN -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: info">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Resumen
+                            </h2>
+
+                            <p>
+                                Estado tributario de la empresa.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Empresa
+                        </span>
+
+                        <strong>
+                            #@Model.IdEmpresa
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Registrados
+                        </span>
+
+                        <strong>
+                            @Model.Impuestos.Count
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Activos
+                        </span>
+
+                        <strong>
+                            @Model.Impuestos.Count(x => x.Estado)
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Vigentes hoy
+                        </span>
+
+                        <strong>
+                            @Model.Impuestos.Count(
+                                x =>
+                                    x.Estado &&
+                                    x.FechaInicio.Date <= DateTime.Today &&
+                                    (!x.FechaFin.HasValue ||
+                                     x.FechaFin.Value.Date >= DateTime.Today))
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- CREAR -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: plus">
+                            </span>
+
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Nuevo impuesto
+                            </h2>
+
+                            <p>
+                                Registra una nueva configuración tributaria.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="post"
+                          action="/Configuracion/Impuestos?handler=Crear">
+
+                        @Html.AntiForgeryToken()
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Código
+                            </label>
+
+                            <input type="text"
+                                   name="NuevoCodigo"
+                                   maxlength="50"
+                                   placeholder="Ej. IGV"
+                                   class="kx-input"
+                                   required />
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Nombre
+                            </label>
+
+                            <input type="text"
+                                   name="NuevoNombre"
+                                   maxlength="200"
+                                   placeholder="Impuesto General a las Ventas"
+                                   class="kx-input"
+                                   required />
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Porcentaje
+                            </label>
+
+                            <input type="number"
+                                   name="NuevoPorcentaje"
+                                   min="0"
+                                   max="100"
+                                   step="0.01"
+                                   value="18"
+                                   class="kx-input"
+                                   required />
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Fecha inicio
+                            </label>
+
+                            <input type="date"
+                                   name="NuevaFechaInicio"
+                                   value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                   class="kx-input"
+                                   required />
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Fecha fin
+                            </label>
+
+                            <input type="date"
+                                   name="NuevaFechaFin"
+                                   class="kx-input" />
+
+                            <small class="kx-help">
+                                Déjalo vacío si no tiene fecha de finalización.
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Estado activo
+                                </strong>
+
+                                <small>
+                                    El impuesto estará disponible para utilizarse.
+                                </small>
+
+                            </div>
+
+
+                            <label class="kx-switch">
+
+                                <input type="checkbox"
+                                       name="NuevoEstado"
+                                       value="true"
+                                       checked />
+
+                                <input type="hidden"
+                                       name="NuevoEstado"
+                                       value="false" />
+
+                                <span class="kx-slider"></span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="kx-form-actions">
+
+                            <button type="submit"
+                                    class="kx-btn-primary">
+
+                                <span uk-icon="icon: plus"></span>
+
+                                Crear impuesto
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TABLA -->
+            <!-- ================================================= -->
+
+            <section class="kx-card"
+                     style="margin-top:22px;">
+
+                <div class="kx-card-header">
+
+                    <div class="kx-card-icon">
+
+                        <span uk-icon="icon: list">
+                        </span>
+
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Impuestos configurados
+                        </h2>
+
+                        <p>
+                            Vigencias y porcentajes registrados.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kx-table-wrap">
+
+                    <table class="kx-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Código
+                                </th>
+
+                                <th>
+                                    Nombre
+                                </th>
+
+                                <th>
+                                    %
+                                </th>
+
+                                <th>
+                                    Inicio
+                                </th>
+
+                                <th>
+                                    Fin
+                                </th>
+
+                                <th>
+                                    Estado
+                                </th>
+
+                                <th>
+                                    Acciones
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @if (Model.Impuestos.Count == 0)
+                            {
+                                <tr>
+
+                                    <td colspan="7"
+                                        class="kx-empty">
+
+                                        No existen impuestos configurados.
+
+                                    </td>
+
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var impuesto in Model.Impuestos)
+                                {
+                                    string modalEditar =
+                                        $"modal-impuesto-{impuesto.IdImpuesto}";
+
+                                    string modalCerrar =
+                                        $"modal-cerrar-{impuesto.IdImpuesto}";
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                @impuesto.Codigo
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            @impuesto.Nombre
+                                        </td>
+
+                                        <td>
+                                            @impuesto.Porcentaje.ToString("0.##") %
+                                        </td>
+
+                                        <td>
+                                            @impuesto.FechaInicio.ToString("dd/MM/yyyy")
+                                        </td>
+
+                                        <td>
+
+                                            @(impuesto.FechaFin.HasValue
+                                                ? impuesto.FechaFin.Value.ToString("dd/MM/yyyy")
+                                                : "Sin fecha")
+
+                                        </td>
+
+                                        <td>
+
+                                            @if (impuesto.Estado)
+                                            {
+                                                <span class="kx-status active">
+                                                    Activo
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="kx-status inactive">
+                                                    Inactivo
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            <div class="kx-card-actions">
+
+                                                <button type="button"
+                                                        class="kx-btn-secondary"
+                                                        uk-toggle="target: #@modalEditar">
+
+                                                    Editar
+
+                                                </button>
+
+
+                                                @if (!impuesto.FechaFin.HasValue)
+                                                {
+                                                    <button type="button"
+                                                            class="kx-btn-secondary"
+                                                            uk-toggle="target: #@modalCerrar">
+
+                                                        Cerrar vigencia
+
+                                                    </button>
+                                                }
+
+
+                                                <form method="post"
+                                                      action="/Configuracion/Impuestos?handler=CambiarEstado">
+
+                                                    @Html.AntiForgeryToken()
+
+                                                    <input type="hidden"
+                                                           name="IdImpuestoEstado"
+                                                           value="@impuesto.IdImpuesto" />
+
+                                                    <input type="hidden"
+                                                           name="EstadoNuevo"
+                                                           value="@(!impuesto.Estado)" />
+
+                                                    <button type="submit"
+                                                            class="@(impuesto.Estado
+                                                                                                                ? "kx-btn-secondary"
+                                                                                                                : "kx-btn-primary")">
+
+                                                        @(impuesto.Estado
+                                                            ? "Desactivar"
+                                                            : "Activar")
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+
+                                    <!-- ================================= -->
+                                    <!-- EDITAR -->
+                                    <!-- ================================= -->
+
+                                    <div id="@modalEditar"
+                                         uk-modal>
+
+                                        <div class="uk-modal-dialog kx-modal">
+
+                                            <button type="button"
+                                                    class="uk-modal-close-default"
+                                                    uk-close>
+                                            </button>
+
+
+                                            <div class="kx-modal-title">
+
+                                                <span>
+                                                    IMPUESTO
+                                                </span>
+
+                                                <h2>
+                                                    Editar @impuesto.Codigo
+                                                </h2>
+
+                                            </div>
+
+
+                                            <form method="post"
+                                                  action="/Configuracion/Impuestos?handler=Editar">
+
+                                                @Html.AntiForgeryToken()
+
+
+                                                <input type="hidden"
+                                                       name="IdImpuestoEditar"
+                                                       value="@impuesto.IdImpuesto" />
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Código
+                                                    </label>
+
+                                                    <input type="text"
+                                                           value="@impuesto.Codigo"
+                                                           class="kx-input"
+                                                           readonly />
+
+                                                </div>
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Nombre
+                                                    </label>
+
+                                                    <input type="text"
+                                                           name="NombreEditar"
+                                                           value="@impuesto.Nombre"
+                                                           class="kx-input"
+                                                           required />
+
+                                                </div>
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Porcentaje
+                                                    </label>
+
+                                                    <input type="number"
+                                                           name="PorcentajeEditar"
+                                                           value="@impuesto.Porcentaje"
+                                                           min="0"
+                                                           max="100"
+                                                           step="0.01"
+                                                           class="kx-input"
+                                                           required />
+
+                                                </div>
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Fecha inicio
+                                                    </label>
+
+                                                    <input type="date"
+                                                           name="FechaInicioEditar"
+                                                           value="@impuesto.FechaInicio.ToString("yyyy-MM-dd")"
+                                                           class="kx-input"
+                                                           required />
+
+                                                </div>
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Fecha fin
+                                                    </label>
+
+                                                    <input type="date"
+                                                           name="FechaFinEditar"
+                                                           value="@(impuesto.FechaFin.HasValue
+                                                                                                            ? impuesto.FechaFin.Value.ToString("yyyy-MM-dd")
+                                                                                                        : string.Empty)"
+                                                           class="kx-input" />
+
+                                                </div>
+
+
+                                                <input type="hidden"
+                                                       name="EstadoEditar"
+                                                       value="@impuesto.Estado.ToString().ToLowerInvariant()" />
+
+
+                                                <div class="kx-form-actions">
+                                                    <a asp-page="/Configuracion/Index1"
+                                                       class="kx-btn-secondary">
+
+                                                        Cancelar
+
+                                                    </a>
+
+                                                    <button type="submit"
+                                                            class="kx-btn-primary">
+
+                                                        Guardar cambios
+
+                                                    </button>
+
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- ================================= -->
+                                    <!-- CERRAR VIGENCIA -->
+                                    <!-- ================================= -->
+
+                                    <div id="@modalCerrar"
+                                         uk-modal>
+
+                                        <div class="uk-modal-dialog kx-modal">
+
+                                            <button type="button"
+                                                    class="uk-modal-close-default"
+                                                    uk-close>
+                                            </button>
+
+
+                                            <div class="kx-modal-title">
+
+                                                <span>
+                                                    VIGENCIA
+                                                </span>
+
+                                                <h2>
+                                                    Cerrar @impuesto.Codigo
+                                                </h2>
+
+                                                <p>
+                                                    Define la fecha final de vigencia.
+                                                </p>
+
+                                            </div>
+
+
+                                            <form method="post"
+                                                  action="/Configuracion/Impuestos?handler=CerrarVigencia">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="IdImpuestoCerrar"
+                                                       value="@impuesto.IdImpuesto" />
+
+
+                                                <div class="kx-form-group">
+
+                                                    <label>
+                                                        Fecha fin
+                                                    </label>
+
+                                                    <input type="date"
+                                                           name="FechaFinCerrar"
+                                                           value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                                           class="kx-input"
+                                                           required />
+
+                                                </div>
+
+
+                                                <div class="kx-form-actions">
+
+                                                    <button type="button"
+                                                            class="kx-btn-secondary uk-modal-close">
+
+                                                        Cancelar
+
+                                                    </button>
+
+
+                                                    <button type="submit"
+                                                            class="kx-btn-primary">
+
+                                                        Cerrar vigencia
+
+                                                    </button>
+
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <div class="kx-form-actions">
+
+                <a href="/Configuracion/Index1"
+                   class="kx-btn-secondary">
+
+                    Volver
+
+                </a>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+</body>
+
+</html>

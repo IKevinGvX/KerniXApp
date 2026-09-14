@@ -1,0 +1,923 @@
+﻿@page
+@model KerniX.Pages.Perfil.IndexModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Mi perfil | KerniX";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/perfil.css"
+          asp-append-version="true" />
+
+</head>
+
+<body>
+
+    <div class="kx-page">
+
+        <!-- =========================================================
+             HEADER
+        ========================================================== -->
+
+        <header class="kx-header">
+
+            <a href="/Inicio/Index1"
+               class="kx-brand">
+
+                <img src="~/images/login/kernix-logo.png"
+                     asp-append-version="true"
+                     alt="KerniX" />
+
+                <div>
+
+                    <strong>
+                        Kerni<span>X</span>
+                    </strong>
+
+                    <small>
+                        Gestión inteligente de ventas e inventario
+                    </small>
+
+                </div>
+
+            </a>
+
+
+            <div class="kx-header-user">
+
+                <div class="kx-user-avatar">
+
+                    <span uk-icon="icon: user"></span>
+
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.Perfil.Empleado)
+                            ? "Usuario KerniX"
+                            : Model.Perfil.Empleado)
+                    </strong>
+
+                    <span>
+                        @(string.IsNullOrWhiteSpace(Model.Perfil.RolesTexto)
+                            ? "Usuario"
+                            : Model.Perfil.RolesTexto)
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================================================
+             MAIN
+        ========================================================== -->
+
+        <main class="kx-main">
+
+
+            <!-- =====================================================
+                 BREADCRUMB
+            ====================================================== -->
+
+            <div class="kx-breadcrumb">
+
+                <a href="/Inicio/Index">
+                    Inicio
+                </a>
+
+                <span uk-icon="icon: chevron-right"></span>
+
+                <strong>
+                    Mi perfil
+                </strong>
+
+            </div>
+
+
+            <!-- =====================================================
+                 TÍTULO
+            ====================================================== -->
+
+            <section class="kx-title">
+
+                <span>
+                    CUENTA DE USUARIO
+                </span>
+
+                <h1>
+                    Mi perfil
+                </h1>
+
+                <p>
+                    Consulta y administra la información asociada a tu cuenta.
+                </p>
+
+            </section>
+
+
+            <!-- =====================================================
+                 MENSAJES
+            ====================================================== -->
+            @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+            {
+                <div class="kx-message success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    <span>
+                        @Model.Mensaje
+                    </span>
+
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(Model.Error))
+            {
+                <div class="kx-message error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.Error
+                    </span>
+
+                </div>
+            }
+
+
+            <!-- =====================================================
+                 CONTENIDO
+            ====================================================== -->
+
+            <section class="profile-layout">
+
+
+                <!-- =================================================
+                     PERFIL
+                ================================================== -->
+
+                <article class="profile-card">
+
+
+                    <!-- CABECERA -->
+
+                    <div class="profile-top">
+
+                        <div class="profile-avatar">
+
+                            <span uk-icon="icon: user; ratio: 2.8"></span>
+
+                        </div>
+
+
+                        <div class="profile-main-info">
+
+                            @if (Model.Perfil.Estado)
+                            {
+                                <span class="profile-status active">
+                                    ● Activo
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="profile-status inactive">
+                                    ● Inactivo
+                                </span>
+                            }
+
+
+                            <h2>
+                                @(string.IsNullOrWhiteSpace(Model.Perfil.Empleado)
+                                    ? "Usuario KerniX"
+                                    : Model.Perfil.Empleado)
+                            </h2>
+
+
+                            <p>
+                                @(string.IsNullOrWhiteSpace(Model.Perfil.RolesTexto)
+                                    ? "Sin rol asignado"
+                                    : Model.Perfil.RolesTexto)
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-divider"></div>
+
+
+                    <!-- =================================================
+                         DATOS
+                    ================================================== -->
+
+                    <div class="profile-grid">
+
+
+                        <!-- USUARIO -->
+
+                        <div class="profile-field">
+
+                            <span>
+                                Nombre de usuario
+                            </span>
+
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(Model.Perfil.NombreUsuario)
+                                    ? "No registrado"
+                                    : Model.Perfil.NombreUsuario)
+                            </strong>
+
+                        </div>
+
+
+                        <!-- CORREO -->
+
+                        <div class="profile-field">
+
+                            <span>
+                                Correo electrónico
+                            </span>
+
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(Model.Perfil.Correo)
+                                    ? "No registrado"
+                                    : Model.Perfil.Correo)
+                            </strong>
+
+                        </div>
+
+
+                        <!-- EMPRESA -->
+
+                        <div class="profile-field">
+
+                            <span>
+                                Empresa
+                            </span>
+
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(Model.Perfil.Empresa)
+                                    ? "No disponible"
+                                    : Model.Perfil.Empresa)
+                            </strong>
+
+                        </div>
+
+
+                        <!-- SUCURSAL -->
+
+                        <div class="profile-field">
+
+                            <span>
+                                Sucursal
+                            </span>
+
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(Model.Perfil.Sucursal)
+                                    ? "No disponible"
+                                    : Model.Perfil.Sucursal)
+                            </strong>
+
+                        </div>
+
+
+                        <!-- ROL -->
+
+                        <div class="profile-field">
+
+                            <span>
+                                Rol
+                            </span>
+
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(Model.Perfil.RolesTexto)
+                                    ? "Sin rol asignado"
+                                    : Model.Perfil.RolesTexto)
+                            </strong>
+
+                        </div>
+
+
+                        <!-- ÚLTIMO ACCESO -->
+
+                        <div class="profile-field">
+
+                            <span>
+                                Último acceso
+                            </span>
+
+                            <strong>
+                                @(
+                                    Model.Perfil.UltimoAcceso.HasValue
+                                        ? Model.Perfil.UltimoAcceso.Value.ToString(
+                                            "dd/MM/yyyy HH:mm")
+                                        : "No disponible"
+                                )
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ACCIONES
+                    ================================================== -->
+
+                    <div class="profile-divider"></div>
+
+
+                    <div class="profile-actions">
+
+                        <button type="button"
+                                class="kx-btn kx-btn-primary"
+                                uk-toggle="target: #modalEditarPerfil">
+
+                            <span uk-icon="icon: pencil"></span>
+
+                            Editar perfil
+
+                        </button>
+
+
+                        <button type="button"
+                                class="kx-btn kx-btn-secondary"
+                                uk-toggle="target: #modalPassword">
+
+                            <span uk-icon="icon: lock"></span>
+
+                            Cambiar contraseña
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+                <!-- =================================================
+                     SIDEBAR
+                ================================================== -->
+
+                <aside class="profile-side">
+
+
+                    <a href="/Configuracion/Index1"
+                       class="side-card">
+
+                        <div class="side-icon">
+
+                            <span uk-icon="icon: cog; ratio: 1.3"></span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Configuración
+                            </strong>
+
+                            <span>
+                                Gestionar preferencias
+                            </span>
+
+                        </div>
+
+
+                        <span uk-icon="icon: chevron-right"></span>
+
+                    </a>
+
+
+                    <div class="side-card static">
+
+                        <div class="side-icon">
+
+                            <span uk-icon="icon: lock; ratio: 1.3"></span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Sesión protegida
+                            </strong>
+
+                            <span>
+                                Autenticación mediante JWT
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="side-card static">
+
+                        <div class="side-icon">
+
+                            <span uk-icon="icon: check; ratio: 1.3"></span>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>
+                                Estado de cuenta
+                            </strong>
+
+                            <span>
+                                @(Model.Perfil.Estado
+                                    ? "Cuenta activa"
+                                    : "Cuenta inactiva")
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <a href="/Inicio/Index"
+                       class="back-button">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver al inicio
+
+                    </a>
+
+                </aside>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+         MODAL EDITAR PERFIL
+    ========================================================== -->
+
+    <div id="modalEditarPerfil"
+         uk-modal>
+
+        <div class="uk-modal-dialog kx-modal">
+
+
+            <button class="uk-modal-close-default"
+                    type="button"
+                    uk-close>
+            </button>
+
+
+            <div class="kx-modal-title">
+
+                <span>
+                    PERFIL
+                </span>
+
+                <h2>
+                    Editar perfil
+                </h2>
+
+                <p>
+                    Modifica los datos permitidos de tu cuenta.
+                </p>
+
+            </div>
+
+
+            <form id="formEditarPerfil"
+                  method="post"
+                  action="/Perfil/Index?handler=ActualizarPerfil">
+
+                @Html.AntiForgeryToken()
+
+
+                <!-- =============================================
+                     NOMBRE DE USUARIO
+                ============================================== -->
+
+                <div class="kx-form-group">
+
+                    <label for="Editar_NombreUsuario">
+                        Nombre de usuario
+                    </label>
+
+                    <input id="Editar_NombreUsuario"
+                           name="Editar.NombreUsuario"
+                           type="text"
+                           class="kx-input"
+                           value="@Model.Editar.NombreUsuario"
+                           autocomplete="username"
+                           required />
+
+                    <span class="kx-validation">
+                        @Html.ValidationMessage(
+                            "Editar.NombreUsuario")
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     CORREO
+                ============================================== -->
+
+                <div class="kx-form-group">
+
+                    <label for="Editar_Correo">
+                        Correo electrónico
+                    </label>
+
+                    <input id="Editar_Correo"
+                           name="Editar.Correo"
+                           type="email"
+                           class="kx-input"
+                           value="@Model.Editar.Correo"
+                           autocomplete="email"
+                           required />
+
+                    <span class="kx-validation">
+                        @Html.ValidationMessage(
+                            "Editar.Correo")
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     DATOS SOLO LECTURA
+                ============================================== -->
+
+                <div class="kx-modal-info">
+
+                    <div>
+
+                        <span>
+                            Empleado
+                        </span>
+
+                        <strong>
+                            @(string.IsNullOrWhiteSpace(Model.Perfil.Empleado)
+                                ? "No disponible"
+                                : Model.Perfil.Empleado)
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Rol
+                        </span>
+
+                        <strong>
+                            @(string.IsNullOrWhiteSpace(Model.Perfil.RolesTexto)
+                                ? "Sin rol asignado"
+                                : Model.Perfil.RolesTexto)
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =============================================
+                     ACCIONES
+                ============================================== -->
+
+                <div class="kx-modal-actions">
+
+                    <button type="button"
+                            class="kx-btn kx-btn-secondary uk-modal-close">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="kx-btn kx-btn-primary">
+
+                        <span uk-icon="icon: check"></span>
+
+                        Guardar cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         MODAL CAMBIAR CONTRASEÑA
+    ========================================================== -->
+
+    <div id="modalPassword"
+         uk-modal>
+
+        <div class="uk-modal-dialog kx-modal">
+
+
+            <button class="uk-modal-close-default"
+                    type="button"
+                    uk-close>
+            </button>
+
+
+            <div class="kx-modal-title">
+
+                <span>
+                    SEGURIDAD
+                </span>
+
+                <h2>
+                    Cambiar contraseña
+                </h2>
+
+                <p>
+                    Ingresa tu contraseña actual y establece una nueva.
+                </p>
+
+            </div>
+
+
+            <form id="formCambiarPassword"
+                  method="post"
+                  action="/Perfil/Index?handler=CambiarPassword">
+
+                @Html.AntiForgeryToken()
+
+
+                <!-- =============================================
+                     PASSWORD ACTUAL
+                ============================================== -->
+
+                <div class="kx-form-group">
+
+                    <label for="Password_PasswordActual">
+                        Contraseña actual
+                    </label>
+
+                    <input id="Password_PasswordActual"
+                           name="Password.PasswordActual"
+                           type="password"
+                           class="kx-input"
+                           autocomplete="current-password"
+                           required />
+
+                    <span class="kx-validation">
+                        @Html.ValidationMessage(
+                            "Password.PasswordActual")
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     PASSWORD NUEVA
+                ============================================== -->
+
+                <div class="kx-form-group">
+
+                    <label for="Password_PasswordNueva">
+                        Nueva contraseña
+                    </label>
+
+                    <input id="Password_PasswordNueva"
+                           name="Password.PasswordNueva"
+                           type="password"
+                           class="kx-input"
+                           autocomplete="new-password"
+                           minlength="8"
+                           required />
+
+                    <span class="kx-validation">
+                        @Html.ValidationMessage(
+                            "Password.PasswordNueva")
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     CONFIRMAR PASSWORD
+                ============================================== -->
+
+                <div class="kx-form-group">
+
+                    <label for="Password_ConfirmarPassword">
+                        Confirmar contraseña
+                    </label>
+
+                    <input id="Password_ConfirmarPassword"
+                           name="Password.ConfirmarPassword"
+                           type="password"
+                           class="kx-input"
+                           autocomplete="new-password"
+                           minlength="8"
+                           required />
+
+                    <span class="kx-validation">
+                        @Html.ValidationMessage(
+                            "Password.ConfirmarPassword")
+                    </span>
+
+                </div>
+
+
+                <!-- =============================================
+                     ACCIONES
+                ============================================== -->
+
+                <div class="kx-modal-actions">
+
+                    <button type="button"
+                            class="kx-btn kx-btn-secondary uk-modal-close">
+
+                        Cancelar
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="kx-btn kx-btn-primary">
+
+                        <span uk-icon="icon: lock"></span>
+
+                        Cambiar contraseña
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SCRIPTS
+    ========================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
+
+
+    <!-- =========================================================
+         REABRIR MODAL EDITAR SI HAY ERROR
+    ========================================================== -->
+    @if (Model.AbrirModalEditar)
+    {
+        <script>
+                document.addEventListener(
+                    "DOMContentLoaded",
+                    function () {
+
+                        UIkit.modal(
+                            "#modalEditarPerfil"
+                        ).show();
+
+                    });
+        </script>
+    }
+
+
+    <!-- =========================================================
+         REABRIR MODAL PASSWORD SI HAY ERROR
+    ========================================================== -->
+    @if (Model.AbrirModalPassword)
+    {
+        <script>
+                document.addEventListener(
+                    "DOMContentLoaded",
+                    function () {
+
+                        UIkit.modal(
+                            "#modalPassword"
+                        ).show();
+
+                    });
+        </script>
+    }
+
+
+    <!-- =========================================================
+         DEBUG TEMPORAL DEL FORMULARIO EDITAR
+         Después de que funcione lo podemos quitar.
+    ========================================================== -->
+
+    <script>
+
+            const formEditar =
+                document.getElementById(
+                    "formEditarPerfil"
+                );
+
+
+            if (formEditar) {
+
+                formEditar.addEventListener(
+                    "submit",
+                    function () {
+
+                        const usuario =
+                            document.getElementById(
+                                "Editar_NombreUsuario"
+                            );
+
+
+                        const correo =
+                            document.getElementById(
+                                "Editar_Correo"
+                            );
+
+
+                        console.log(
+                            "POST EDITAR -> Usuario:",
+                            usuario?.value
+                        );
+
+
+                        console.log(
+                            "POST EDITAR -> Correo:",
+                            correo?.value
+                        );
+
+                    }
+                );
+
+            }
+
+    </script>
+
+
+    <!-- =========================================================
+         DEBUG TEMPORAL PASSWORD
+    ========================================================== -->
+
+    <script>
+
+            const formPassword =
+                document.getElementById(
+                    "formCambiarPassword"
+                );
+
+
+            if (formPassword) {
+
+                formPassword.addEventListener(
+                    "submit",
+                    function () {
+
+                        console.log(
+                            "POST CAMBIAR PASSWORD enviado."
+                        );
+
+                    }
+                );
+
+            }
+
+    </script>
+
+</body>
+
+</html>

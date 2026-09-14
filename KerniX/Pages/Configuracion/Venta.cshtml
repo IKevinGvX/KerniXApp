@@ -1,0 +1,843 @@
+﻿@page "/Configuracion/Venta"
+@model KerniX.Pages.Configuracion.VentaModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Configuración de Ventas | KerniX";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="/css/configuracion-ventas.css" />
+</head>
+
+<body>
+
+    <div class="kx-page">
+
+        <header class="kx-header">
+
+            <div class="kx-brand">
+
+                <img src="/images/login/kernix-logo.png"
+                     class="kx-brand-logo"
+                     alt="KerniX" />
+
+                <div class="kx-brand-info">
+
+                    <strong>
+                        KerniX
+                        <span>ERP</span>
+                    </strong>
+
+                    <small>
+                        Configuración de Ventas
+                    </small>
+
+                </div>
+
+            </div>
+
+            <div class="kx-header-actions">
+
+                <a asp-page="/Inicio/Index"
+                   class="kx-back">
+
+                    <span uk-icon="icon: arrow-left"></span>
+
+                    <span>Volver</span>
+
+                </a>
+
+                <div class="kx-user">
+
+                    <span uk-icon="icon: user"></span>
+
+                    <span>
+                        @Model.Usuario
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================================================
+         CONTENIDO
+    ========================================================== -->
+
+        <main class="kx-container">
+
+
+            <!-- =====================================================
+             TÍTULO
+        ====================================================== -->
+
+            <section class="kx-title">
+
+                <div class="kx-title-content">
+
+                    <span class="kx-section-label">
+                        CONFIGURACIÓN
+                    </span>
+
+                    <h1>
+                        Parámetros de
+                        <span>Ventas</span>
+                    </h1>
+
+                    <p>
+                        Define el comportamiento comercial de KerniX
+                        para ventas, pedidos, cotizaciones y comprobantes.
+                    </p>
+
+                </div>
+
+
+                <div class="kx-title-icon">
+
+                    <span uk-icon="icon: settings; ratio: 1.6"></span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================================================
+             MENSAJES
+        ====================================================== -->
+            @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+            {
+                <div class="kx-message kx-message-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    <span>
+                        @Model.Mensaje
+                    </span>
+
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="kx-message kx-message-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.ErrorMessage
+                    </span>
+
+                </div>
+            }
+
+
+            <!-- =====================================================
+             FORMULARIO
+        ====================================================== -->
+
+            <form method="post"
+                  id="configVentasForm">
+
+                @Html.AntiForgeryToken()
+
+
+                <div class="kx-grid">
+
+
+                    <!-- =================================================
+                     CONFIGURACIÓN GENERAL
+                ================================================== -->
+
+                    <section class="kx-card">
+
+                        <header class="kx-card-header">
+
+                            <div class="kx-card-icon gold">
+
+                                <span uk-icon="icon: cog"></span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Configuración general
+                                </h2>
+
+                                <p>
+                                    Valores predeterminados para nuevas ventas.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="kx-fields">
+
+
+                            <!-- MONEDA -->
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.Moneda">
+                                    Moneda predeterminada
+                                </label>
+
+                                <select asp-for="Input.Moneda"
+                                        class="kx-control">
+
+                                    <option value="PEN">
+                                        Sol peruano (PEN)
+                                    </option>
+
+                                    <option value="USD">
+                                        Dólar estadounidense (USD)
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- IGV -->
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.PorcentajeIgv">
+                                    IGV (%)
+                                </label>
+
+                                <div class="kx-number">
+
+                                    <input asp-for="Input.PorcentajeIgv"
+                                           class="kx-control"
+                                           type="number"
+                                           min="0"
+                                           max="100"
+                                           step="0.01" />
+
+                                    <span>%</span>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- DECIMALES -->
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.DecimalesPrecio">
+                                    Decimales en precios
+                                </label>
+
+                                <select asp-for="Input.DecimalesPrecio"
+                                        class="kx-control">
+
+                                    <option value="2">
+                                        2 decimales
+                                    </option>
+
+                                    <option value="3">
+                                        3 decimales
+                                    </option>
+
+                                    <option value="4">
+                                        4 decimales
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                     STOCK
+                ================================================== -->
+
+                    <section class="kx-card">
+
+                        <header class="kx-card-header">
+
+                            <div class="kx-card-icon blue">
+
+                                <span uk-icon="icon: database"></span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Control de stock
+                                </h2>
+
+                                <p>
+                                    Reglas utilizadas al registrar una venta.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="kx-switch-list">
+
+
+                            <label class="kx-switch-row">
+
+                                <div>
+
+                                    <strong>
+                                        Validar stock disponible
+                                    </strong>
+
+                                    <span>
+                                        Impide vender cantidades mayores al stock.
+                                    </span>
+
+                                </div>
+
+
+                                <span class="kx-switch">
+
+                                    <input asp-for="Input.ValidarStock" />
+
+                                    <span class="kx-slider"></span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="kx-switch-row">
+
+                                <div>
+
+                                    <strong>
+                                        Permitir stock negativo
+                                    </strong>
+
+                                    <span>
+                                        Permite realizar ventas aunque no exista
+                                        disponibilidad suficiente.
+                                    </span>
+
+                                </div>
+
+
+                                <span class="kx-switch">
+
+                                    <input asp-for="Input.PermitirStockNegativo" />
+
+                                    <span class="kx-slider"></span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="kx-switch-row">
+
+                                <div>
+
+                                    <strong>
+                                        Actualizar Kardex automáticamente
+                                    </strong>
+
+                                    <span>
+                                        Registra el movimiento de salida
+                                        al confirmar la venta.
+                                    </span>
+
+                                </div>
+
+
+                                <span class="kx-switch">
+
+                                    <input asp-for="Input.ActualizarKardex" />
+
+                                    <span class="kx-slider"></span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                     DESCUENTOS
+                ================================================== -->
+
+                    <section class="kx-card">
+
+                        <header class="kx-card-header">
+
+                            <div class="kx-card-icon purple">
+
+                                <span uk-icon="icon: tag"></span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Descuentos
+                                </h2>
+
+                                <p>
+                                    Reglas para descuentos comerciales.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="kx-fields">
+
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.DescuentoMaximo">
+                                    Descuento máximo permitido
+                                </label>
+
+                                <div class="kx-number">
+
+                                    <input asp-for="Input.DescuentoMaximo"
+                                           class="kx-control"
+                                           type="number"
+                                           min="0"
+                                           max="100"
+                                           step="0.01" />
+
+                                    <span>%</span>
+
+                                </div>
+
+                            </div>
+
+
+                            <label class="kx-switch-row">
+
+                                <div>
+
+                                    <strong>
+                                        Autorizar descuentos especiales
+                                    </strong>
+
+                                    <span>
+                                        Solicita autorización cuando se supera
+                                        el descuento máximo.
+                                    </span>
+
+                                </div>
+
+
+                                <span class="kx-switch">
+
+                                    <input asp-for="Input.RequiereAutorizacionDescuento" />
+
+                                    <span class="kx-slider"></span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                     COTIZACIONES Y PEDIDOS
+                ================================================== -->
+
+                    <section class="kx-card">
+
+                        <header class="kx-card-header">
+
+                            <div class="kx-card-icon cyan">
+
+                                <span uk-icon="icon: file-edit"></span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Cotizaciones y pedidos
+                                </h2>
+
+                                <p>
+                                    Valores predeterminados del proceso comercial.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="kx-fields">
+
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.DiasValidezCotizacion">
+                                    Vigencia de cotización
+                                </label>
+
+                                <div class="kx-number">
+
+                                    <input asp-for="Input.DiasValidezCotizacion"
+                                           class="kx-control"
+                                           type="number"
+                                           min="1"
+                                           max="365" />
+
+                                    <span>
+                                        días
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <label class="kx-switch-row">
+
+                                <div>
+
+                                    <strong>
+                                        Reservar stock en pedidos
+                                    </strong>
+
+                                    <span>
+                                        Reserva cantidades mientras el pedido
+                                        permanezca pendiente.
+                                    </span>
+
+                                </div>
+
+
+                                <span class="kx-switch">
+
+                                    <input asp-for="Input.ReservarStockPedido" />
+
+                                    <span class="kx-slider"></span>
+
+                                </span>
+
+                            </label>
+
+
+                            <label class="kx-switch-row">
+
+                                <div>
+
+                                    <strong>
+                                        Permitir venta directa
+                                    </strong>
+
+                                    <span>
+                                        Permite generar una venta sin
+                                        cotización o pedido previo.
+                                    </span>
+
+                                </div>
+
+
+                                <span class="kx-switch">
+
+                                    <input asp-for="Input.PermitirVentaDirecta" />
+
+                                    <span class="kx-slider"></span>
+
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- =================================================
+                     COMPROBANTES
+                ================================================== -->
+
+                    <section class="kx-card kx-card-wide">
+
+                        <header class="kx-card-header">
+
+                            <div class="kx-card-icon gold">
+
+                                <span uk-icon="icon: file-text"></span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Comprobantes
+                                </h2>
+
+                                <p>
+                                    Configuración predeterminada de documentos
+                                    comerciales.
+                                </p>
+
+                            </div>
+
+                        </header>
+
+
+                        <div class="kx-document-grid">
+
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.TipoComprobantePredeterminado">
+                                    Comprobante predeterminado
+                                </label>
+
+                                <select asp-for="Input.TipoComprobantePredeterminado"
+                                        class="kx-control">
+
+                                    <option value="BOLETA">
+                                        Boleta
+                                    </option>
+
+                                    <option value="FACTURA">
+                                        Factura
+                                    </option>
+
+                                    <option value="NOTA_VENTA">
+                                        Nota de venta
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.SerieBoleta">
+                                    Serie Boleta
+                                </label>
+
+                                <input asp-for="Input.SerieBoleta"
+                                       class="kx-control"
+                                       maxlength="10"
+                                       placeholder="B001" />
+
+                            </div>
+
+
+                            <div class="kx-field">
+
+                                <label asp-for="Input.SerieFactura">
+                                    Serie Factura
+                                </label>
+
+                                <input asp-for="Input.SerieFactura"
+                                       class="kx-control"
+                                       maxlength="10"
+                                       placeholder="F001" />
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- =====================================================
+                 BOTONES
+            ====================================================== -->
+
+                <div class="kx-actions">
+
+                    <button type="button"
+                            id="restaurarButton"
+                            class="kx-button kx-button-secondary">
+
+                        <span uk-icon="icon: refresh"></span>
+
+                        Restaurar valores
+
+                    </button>
+
+
+                    <button type="submit"
+                            id="guardarButton"
+                            class="kx-button kx-button-primary">
+
+                        <span uk-icon="icon: check"></span>
+
+                        Guardar configuración
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+
+
+    <!-- =========================================================
+     UIKIT JS
+========================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
+
+
+    <!-- =========================================================
+     RESTAURAR
+========================================================== -->
+
+    <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+
+                const restaurarButton =
+                    document.getElementById("restaurarButton");
+
+                if (!restaurarButton) {
+                    return;
+                }
+
+                restaurarButton.addEventListener("click", function () {
+
+                    const moneda =
+                        document.getElementById("Input_Moneda");
+
+                    const igv =
+                        document.getElementById("Input_PorcentajeIgv");
+
+                    const decimales =
+                        document.getElementById("Input_DecimalesPrecio");
+
+                    const validarStock =
+                        document.getElementById("Input_ValidarStock");
+
+                    const stockNegativo =
+                        document.getElementById("Input_PermitirStockNegativo");
+
+                    const kardex =
+                        document.getElementById("Input_ActualizarKardex");
+
+                    const descuento =
+                        document.getElementById("Input_DescuentoMaximo");
+
+                    const autorizacion =
+                        document.getElementById("Input_RequiereAutorizacionDescuento");
+
+                    const vigencia =
+                        document.getElementById("Input_DiasValidezCotizacion");
+
+                    const reservarStock =
+                        document.getElementById("Input_ReservarStockPedido");
+
+                    const ventaDirecta =
+                        document.getElementById("Input_PermitirVentaDirecta");
+
+                    const comprobante =
+                        document.getElementById("Input_TipoComprobantePredeterminado");
+
+                    const serieBoleta =
+                        document.getElementById("Input_SerieBoleta");
+
+                    const serieFactura =
+                        document.getElementById("Input_SerieFactura");
+
+
+                    if (moneda)
+                        moneda.value = "PEN";
+
+                    if (igv)
+                        igv.value = "18";
+
+                    if (decimales)
+                        decimales.value = "2";
+
+                    if (validarStock)
+                        validarStock.checked = true;
+
+                    if (stockNegativo)
+                        stockNegativo.checked = false;
+
+                    if (kardex)
+                        kardex.checked = true;
+
+                    if (descuento)
+                        descuento.value = "10";
+
+                    if (autorizacion)
+                        autorizacion.checked = true;
+
+                    if (vigencia)
+                        vigencia.value = "15";
+
+                    if (reservarStock)
+                        reservarStock.checked = true;
+
+                    if (ventaDirecta)
+                        ventaDirecta.checked = true;
+
+                    if (comprobante)
+                        comprobante.value = "BOLETA";
+
+                    if (serieBoleta)
+                        serieBoleta.value = "B001";
+
+                    if (serieFactura)
+                        serieFactura.value = "F001";
+
+                });
+
+            });
+
+    </script>
+
+</body>
+</html>

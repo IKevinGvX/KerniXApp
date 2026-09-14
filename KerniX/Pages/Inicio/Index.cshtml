@@ -1,0 +1,707 @@
+﻿@page
+@model KerniX.Pages.Inicio.IndexModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Inicio | KerniX";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"]</title>
+
+    <!-- UIKIT -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <!-- KERNIX -->
+    <link rel="stylesheet"
+          href="~/css/inicio.css"
+          asp-append-version="true" />
+
+</head>
+
+<body>
+
+<div class="kernix-page">
+
+    <!-- =========================================================
+         HEADER
+    ========================================================== -->
+
+    <header class="kernix-header">
+
+        <a asp-page="/Inicio/Index"
+           class="kernix-brand">
+
+            <img src="~/images/login/kernix-logo.png"
+                 asp-append-version="true"
+                 alt="KerniX"
+                 class="kernix-logo" />
+
+            <div>
+                <div class="kernix-name">
+                    Kerni<span>X</span>
+                </div>
+
+                <small>
+                    Gestión inteligente de ventas e inventario
+                </small>
+            </div>
+
+        </a>
+
+
+        <div class="kernix-header-actions">
+
+            <button class="header-button"
+                    type="button"
+                    aria-label="Cambiar tema"
+                    uk-icon="icon: sun">
+            </button>
+
+
+            <button class="header-button notification"
+                    type="button"
+                    aria-label="Notificaciones">
+
+                <span uk-icon="icon: bell"></span>
+
+                <span class="notification-badge">
+                    5
+                </span>
+
+            </button>
+
+
+            <button class="header-button notification"
+                    type="button"
+                    aria-label="Mensajes">
+
+                <span uk-icon="icon: mail"></span>
+
+                <span class="notification-badge">
+                    2
+                </span>
+
+            </button>
+
+
+            <!-- USUARIO -->
+
+            <div class="user-menu">
+
+                <button class="user-trigger"
+                        type="button">
+
+                    <div class="user-avatar">
+                        <span uk-icon="icon: user; ratio: 1.25"></span>
+                    </div>
+
+                    <div class="user-data">
+
+                        <strong>
+                            @Model.NombreCompleto
+                        </strong>
+
+                        <small>
+                            @Model.Cargo
+                        </small>
+
+                    </div>
+
+                    <span uk-icon="icon: chevron-down"></span>
+
+                </button>
+
+
+                <div uk-dropdown="mode: click; pos: bottom-right"
+                     class="kernix-dropdown">
+
+                    <div class="dropdown-user">
+
+                        <div class="dropdown-avatar">
+                            <span uk-icon="icon: user; ratio: 1.4"></span>
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                @Model.NombreCompleto
+                            </strong>
+
+                            <span>
+                                @Model.Cargo
+                            </span>
+
+                            @if (!string.IsNullOrWhiteSpace(Model.Correo))
+                            {
+                                <small>
+                                    @Model.Correo
+                                </small>
+                            }
+
+                        </div>
+
+                    </div>
+
+<a href="/Perfil/Index"
+   class="dropdown-option">
+
+    <span uk-icon="icon: user"></span>
+
+    <div>
+        <strong>Mi perfil</strong>
+        <small>Información de tu cuenta</small>
+    </div>
+
+</a>
+
+<a href="/Configuracion/Index1"
+   class="dropdown-option">
+
+    <span uk-icon="icon: cog"></span>
+
+    <div>
+        <strong>Configuración</strong>
+        <small>Preferencias del sistema</small>
+    </div>
+
+</a>
+
+
+                <form method="post"
+      action="/Account/Logout"
+      class="logout-form">
+
+    @Html.AntiForgeryToken()
+
+    <button type="submit"
+            class="logout-button">
+
+        <span uk-icon="icon: sign-out"></span>
+
+        <div>
+            <strong>Cerrar sesión</strong>
+            <small>Salir de KerniX</small>
+        </div>
+
+    </button>
+
+</form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =========================================================
+         HERO
+    ========================================================== -->
+
+    <main class="kernix-main">
+
+        <section class="hero">
+
+            <!-- IZQUIERDA -->
+
+            <div class="hero-content">
+
+                <span class="hero-label">
+                    ¡Bienvenido de nuevo!
+                </span>
+
+
+                <h1>
+                    Hola,
+                    <span>
+                        @Model.NombreCompleto
+                    </span>
+                </h1>
+
+
+                <p class="hero-main-text">
+                    KerniX está cargando tu espacio de trabajo...
+                </p>
+
+
+                <p class="hero-secondary">
+                    Preparamos todo para que gestiones tus ventas,
+                    inventario y operaciones de forma inteligente.
+                </p>
+
+
+                <div class="progress-container">
+
+                    <div class="progress-row">
+
+                        <div class="progress-track">
+
+                            <div id="welcomeProgress"
+                                 class="progress-value">
+                            </div>
+
+                        </div>
+
+                        <strong id="welcomePercentage">
+                            0%
+                        </strong>
+
+                    </div>
+
+
+                    <span id="welcomeStatus">
+                        Cargando módulos y datos...
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- DERECHA -->
+
+            <div class="hero-image-container">
+
+                <div class="hero-light"></div>
+
+                <img src="~/images/inicio/bienvenida.png"
+                     asp-append-version="true"
+                     alt="KerniX"
+                     class="hero-image" />
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================
+             TITULO
+        ========================================================== -->
+
+        <div class="section-heading">
+
+            <span></span>
+
+            <h2>
+                Módulos del sistema
+            </h2>
+
+            <span></span>
+
+        </div>
+
+
+        <!-- =========================================================
+             MODULOS
+        ========================================================== -->
+
+       <section class="modules-grid">
+
+    <!-- ===================================================== -->
+    <!-- VENTAS -->
+    <!-- ===================================================== -->
+
+    <a href="/Ventas/PrincipalVentas"
+       class="module-card sales">
+
+        <div class="module-icon">
+            <span uk-icon="icon: cart; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Ventas
+            </h3>
+
+            <p>
+                Registra y administra
+                operaciones de venta.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- PEDIDOS -->
+    <!-- ===================================================== -->
+
+    <a href="/Ventas/Pedidos"
+       class="module-card orders">
+
+        <div class="module-icon">
+            <span uk-icon="icon: list; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Pedidos
+            </h3>
+
+            <p>
+                Gestiona pedidos,
+                estados y seguimiento.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- CLIENTES -->
+    <!-- ===================================================== -->
+
+    <a href="/Ventas/Clientes"
+       class="module-card clients">
+
+        <div class="module-icon">
+            <span uk-icon="icon: users; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Clientes
+            </h3>
+
+            <p>
+                Información,
+                historial y actividad.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- PRODUCTOS -->
+    <!-- ===================================================== -->
+
+    <a href="/Inventario/Productos"
+       class="module-card products">
+
+        <div class="module-icon">
+            <span uk-icon="icon: thumbnails; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Productos
+            </h3>
+
+            <p>
+                Catálogo, categorías,
+                precios y productos.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- INVENTARIO -->
+    <!-- ===================================================== -->
+
+    <a href="/Inventario/Stock"
+       class="module-card stock">
+
+        <div class="module-icon">
+            <span uk-icon="icon: database; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Inventario
+            </h3>
+
+            <p>
+                Control de stock,
+                disponibilidad y mínimos.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- MOVIMIENTOS -->
+    <!-- ===================================================== -->
+
+    <a href="/Inventario/Movimientos"
+       class="module-card movements">
+
+        <div class="module-icon">
+            <span uk-icon="icon: refresh; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Movimientos
+            </h3>
+
+            <p>
+                Entradas, salidas,
+                ajustes y transferencias.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- KARDEX -->
+    <!-- ===================================================== -->
+
+    <a href="/Inventario/Kardex"
+       class="module-card kardex">
+
+        <div class="module-icon">
+            <span uk-icon="icon: table; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Kardex
+            </h3>
+
+            <p>
+                Historial y movimientos
+                por producto.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- COTIZACIONES -->
+    <!-- ===================================================== -->
+
+    <a href="/Ventas/Cotizaciones"
+       class="module-card quotes">
+
+        <div class="module-icon">
+            <span uk-icon="icon: file-text; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Cotizaciones
+            </h3>
+
+            <p>
+                Crea y convierte
+                cotizaciones en ventas.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- IA -->
+    <!-- ===================================================== -->
+
+    <a href="/Configuracion/IA"
+       class="module-card ai">
+
+        <div class="module-icon ai-icon">
+            AI
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                KerniX AI
+            </h3>
+
+            <p>
+                Consulta, reposición
+                y pronóstico de ventas.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+
+    <!-- ===================================================== -->
+    <!-- CONFIGURACION -->
+    <!-- ===================================================== -->
+
+    <a href="/Configuracion/Index1"
+       class="module-card config">
+
+        <div class="module-icon">
+            <span uk-icon="icon: cog; ratio: 1.65"></span>
+        </div>
+
+        <div class="module-content">
+
+            <h3>
+                Configuración
+            </h3>
+
+            <p>
+                Parámetros,
+                usuarios y seguridad.
+            </p>
+
+        </div>
+
+        <span class="module-arrow"
+              uk-icon="icon: chevron-right">
+        </span>
+
+    </a>
+
+</section>
+
+
+        <!-- =========================================================
+             BARRA INFERIOR
+        ========================================================== -->
+
+        <section class="feature-bar">
+
+            <div class="feature-item">
+
+                <div class="feature-icon">
+                    <span uk-icon="icon: lock; ratio: 1.55"></span>
+                </div>
+
+                <div>
+                    <strong>Seguro</strong>
+                    <span>Protección de tus datos.</span>
+                </div>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <div class="feature-icon">
+                    <span uk-icon="icon: cloud-upload; ratio: 1.55"></span>
+                </div>
+
+                <div>
+                    <strong>Disponible 24/7</strong>
+                    <span>Accede desde cualquier dispositivo.</span>
+                </div>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <div class="feature-icon">
+                    <span uk-icon="icon: bolt; ratio: 1.55"></span>
+                </div>
+
+                <div>
+                    <strong>Inteligente</strong>
+                    <span>Decisiones basadas en datos.</span>
+                </div>
+
+            </div>
+
+
+            <div class="feature-item">
+
+                <div class="feature-icon">
+                    <span uk-icon="icon: future; ratio: 1.55"></span>
+                </div>
+
+                <div>
+                    <strong>Tiempo real</strong>
+                    <span>Información siempre actualizada.</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="kernix-footer">
+            KerniX © @DateTime.Now.Year · Todos los derechos reservados
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
+
+<script src="~/js/inicio.js"
+        asp-append-version="true"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,631 @@
+﻿/* =========================================================
+   KERNIX ERP
+   CONFIGURACIÓN DE VENTAS
+========================================================= */
+
+:root {
+    --kx-bg: #020711;
+    --kx-bg-soft: #06101c;
+    --kx-panel: #07111e;
+    --kx-panel-2: #091625;
+    --kx-gold: #f6b817;
+    --kx-gold-light: #ffd865;
+    --kx-blue: #2d9cff;
+    --kx-purple: #a855f7;
+    --kx-cyan: #22d3ee;
+    --kx-green: #22c55e;
+    --kx-red: #ef4444;
+    --kx-text: #f8fafc;
+    --kx-muted: #94a3b8;
+    --kx-border: rgba(246, 184, 23, .24);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    background: radial-gradient( circle at 85% 5%, rgba(34, 92, 180, .12), transparent 25% ), radial-gradient( circle at 15% 80%, rgba(102, 47, 190, .08), transparent 25% ), #020711;
+    color: var(--kx-text);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.kx-page {
+    width: 100%;
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.kx-header {
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 38px;
+    border-bottom: 1px solid rgba(246, 184, 23, .20);
+    background: rgba(2, 8, 18, .96);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(14px);
+}
+
+
+/* BRAND */
+
+.kx-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.kx-brand-logo {
+    width: 58px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 0 18px rgba(246, 184, 23, .18);
+}
+
+.kx-brand-info strong {
+    display: block;
+    color: #fff;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+    .kx-brand-info strong span {
+        color: var(--kx-gold);
+    }
+
+.kx-brand-info small {
+    display: block;
+    margin-top: 4px;
+    color: var(--kx-muted);
+    font-size: 11px;
+}
+
+
+/* HEADER ACTIONS */
+
+.kx-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.kx-back {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 15px;
+    border: 1px solid rgba(246, 184, 23, .32);
+    border-radius: 9px;
+    color: #f8fafc;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .025);
+    transition: .2s ease;
+}
+
+    .kx-back:hover {
+        color: var(--kx-gold);
+        border-color: rgba(246, 184, 23, .7);
+        text-decoration: none;
+    }
+
+.kx-user {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    border-radius: 9px;
+    background: #081321;
+    color: #dce5f2;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.kx-container {
+    width: min(1320px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 34px 0 55px;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.kx-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 26px;
+    padding: 25px 27px;
+    border: 1px solid var(--kx-border);
+    border-radius: 15px;
+    background: linear-gradient( 135deg, rgba(8, 18, 32, .98), rgba(4, 10, 20, .98) );
+    box-shadow: 0 18px 55px rgba(0, 0, 0, .20);
+}
+
+.kx-section-label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--kx-gold);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.kx-title h1 {
+    margin: 0;
+    color: #fff;
+    font-size: 35px;
+    font-weight: 800;
+    letter-spacing: -.5px;
+}
+
+    .kx-title h1 span {
+        color: var(--kx-gold);
+    }
+
+.kx-title p {
+    max-width: 750px;
+    margin: 8px 0 0;
+    color: var(--kx-muted);
+    line-height: 1.6;
+    font-size: 13px;
+}
+
+.kx-title-icon {
+    width: 65px;
+    height: 65px;
+    flex: 0 0 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(246, 184, 23, .42);
+    border-radius: 16px;
+    color: var(--kx-gold);
+    background: rgba(246, 184, 23, .07);
+    box-shadow: 0 0 22px rgba(246, 184, 23, .08);
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.kx-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 13px 16px;
+    border-radius: 9px;
+    font-size: 13px;
+}
+
+.kx-message-success {
+    border: 1px solid rgba(34, 197, 94, .4);
+    background: rgba(34, 197, 94, .08);
+    color: #86efac;
+}
+
+.kx-message-error {
+    border: 1px solid rgba(239, 68, 68, .45);
+    background: rgba(239, 68, 68, .09);
+    color: #fca5a5;
+}
+
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.kx-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.kx-card {
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid rgba(148, 163, 184, .16);
+    border-radius: 14px;
+    background: linear-gradient( 145deg, rgba(7, 17, 30, .98), rgba(5, 12, 22, .98) );
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .18);
+}
+
+.kx-card-wide {
+    grid-column: 1 / -1;
+}
+
+
+/* CARD HEADER */
+
+.kx-card-header {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(148, 163, 184, .12);
+}
+
+    .kx-card-header h2 {
+        margin: 0;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 750;
+    }
+
+    .kx-card-header p {
+        margin: 4px 0 0;
+        color: var(--kx-muted);
+        font-size: 11px;
+    }
+
+
+/* ICON */
+
+.kx-card-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    border-radius: 11px;
+}
+
+    .kx-card-icon.gold {
+        color: var(--kx-gold);
+        border: 1px solid rgba(246, 184, 23, .4);
+        background: rgba(246, 184, 23, .07);
+    }
+
+    .kx-card-icon.blue {
+        color: var(--kx-blue);
+        border: 1px solid rgba(45, 156, 255, .4);
+        background: rgba(45, 156, 255, .07);
+    }
+
+    .kx-card-icon.purple {
+        color: var(--kx-purple);
+        border: 1px solid rgba(168, 85, 247, .4);
+        background: rgba(168, 85, 247, .07);
+    }
+
+    .kx-card-icon.cyan {
+        color: var(--kx-cyan);
+        border: 1px solid rgba(34, 211, 238, .4);
+        background: rgba(34, 211, 238, .07);
+    }
+
+
+/* =========================================================
+   FIELDS
+========================================================= */
+
+.kx-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.kx-field {
+    min-width: 0;
+}
+
+    .kx-field label {
+        display: block;
+        margin-bottom: 7px;
+        color: #cbd5e1;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+.kx-control {
+    width: 100%;
+    height: 45px;
+    padding: 0 12px;
+    border: 1px solid rgba(148, 163, 184, .22);
+    border-radius: 8px;
+    outline: none;
+    color: #f8fafc;
+    background: #040c17;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+    .kx-control:focus {
+        border-color: rgba(246, 184, 23, .75);
+        box-shadow: 0 0 0 3px rgba(246, 184, 23, .06);
+    }
+
+select.kx-control option {
+    background: #07111e;
+    color: #fff;
+}
+
+
+/* NUMBER */
+
+.kx-number {
+    position: relative;
+}
+
+    .kx-number .kx-control {
+        padding-right: 48px;
+    }
+
+    .kx-number > span {
+        position: absolute;
+        top: 50%;
+        right: 14px;
+        transform: translateY(-50%);
+        color: var(--kx-gold);
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+
+/* =========================================================
+   SWITCHES
+========================================================= */
+
+.kx-switch-list {
+    display: grid;
+    gap: 10px;
+}
+
+.kx-switch-row {
+    min-height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 11px 13px;
+    border: 1px solid rgba(148, 163, 184, .11);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .015);
+    cursor: pointer;
+}
+
+    .kx-switch-row strong {
+        display: block;
+        color: #edf2f7;
+        font-size: 12px;
+    }
+
+    .kx-switch-row > div > span {
+        display: block;
+        margin-top: 4px;
+        color: var(--kx-muted);
+        font-size: 10px;
+        line-height: 1.45;
+    }
+
+
+/* SWITCH */
+
+.kx-switch {
+    width: 45px;
+    height: 24px;
+    flex: 0 0 45px;
+    position: relative;
+    display: inline-block;
+}
+
+    .kx-switch input {
+        width: 0;
+        height: 0;
+        opacity: 0;
+    }
+
+.kx-slider {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(148, 163, 184, .28);
+    border-radius: 999px;
+    background: #111d2c;
+    transition: .2s ease;
+}
+
+    .kx-slider::before {
+        content: "";
+        width: 17px;
+        height: 17px;
+        position: absolute;
+        left: 3px;
+        top: 2px;
+        border-radius: 50%;
+        background: #8190a5;
+        transition: .2s ease;
+    }
+
+.kx-switch input:checked + .kx-slider {
+    border-color: rgba(246, 184, 23, .75);
+    background: rgba(246, 184, 23, .18);
+}
+
+    .kx-switch input:checked + .kx-slider::before {
+        transform: translateX(20px);
+        background: var(--kx-gold);
+        box-shadow: 0 0 10px rgba(246, 184, 23, .35);
+    }
+
+
+/* =========================================================
+   DOCUMENT GRID
+========================================================= */
+
+.kx-document-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.kx-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(148, 163, 184, .13);
+}
+
+.kx-button {
+    min-height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 19px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: transform .15s ease, filter .15s ease;
+}
+
+    .kx-button:hover {
+        transform: translateY(-1px);
+    }
+
+.kx-button-primary {
+    border: 1px solid #ffd35d;
+    color: #171000;
+    background: linear-gradient( 180deg, #ffd75f, #eda20b );
+    box-shadow: 0 7px 22px rgba(246, 184, 23, .13);
+}
+
+.kx-button-secondary {
+    border: 1px solid rgba(148, 163, 184, .28);
+    color: #e2e8f0;
+    background: #091421;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .kx-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kx-card-wide {
+        grid-column: auto;
+    }
+
+    .kx-document-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .kx-header {
+        padding: 12px 18px;
+    }
+
+    .kx-header-actions {
+        gap: 8px;
+    }
+
+    .kx-user {
+        display: none;
+    }
+
+    .kx-brand-logo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .kx-brand-info strong {
+        font-size: 18px;
+    }
+
+    .kx-container {
+        width: min(100% - 24px, 1320px);
+        padding-top: 20px;
+    }
+
+    .kx-title {
+        padding: 20px;
+        align-items: flex-start;
+    }
+
+        .kx-title h1 {
+            font-size: 27px;
+        }
+
+    .kx-title-icon {
+        width: 50px;
+        height: 50px;
+        flex-basis: 50px;
+    }
+
+    .kx-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .kx-card {
+        padding: 17px;
+    }
+
+    .kx-switch-row {
+        gap: 10px;
+    }
+
+    .kx-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .kx-button {
+        width: 100%;
+    }
+}

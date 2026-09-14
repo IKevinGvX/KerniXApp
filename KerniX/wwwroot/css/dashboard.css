@@ -1,0 +1,302 @@
+﻿/* =========================================================
+   USER MENU
+========================================================= */
+
+.kx-user-menu {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   USER TRIGGER
+========================================================= */
+
+.kx-user-trigger {
+    min-width: 235px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 7px 12px;
+    border: 1px solid rgba(255, 189, 29, .22);
+    border-radius: 12px;
+    outline: none;
+    color: var(--kx-white);
+    background: linear-gradient( 145deg, rgba(8, 18, 32, .97), rgba(3, 9, 18, .98) );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .025);
+    cursor: pointer;
+    transition: border-color .22s ease, box-shadow .22s ease, background .22s ease, transform .22s ease;
+}
+
+
+    .kx-user-trigger:hover,
+    .kx-user-trigger:focus {
+        border-color: rgba(255, 189, 29, .58);
+        background: linear-gradient( 145deg, rgba(12, 25, 43, .98), rgba(5, 12, 23, .98) );
+        box-shadow: 0 0 22px rgba(255, 189, 29, .10);
+        transform: translateY(-1px);
+    }
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.kx-user-avatar {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 189, 29, .74);
+    border-radius: 50%;
+    color: var(--kx-gold);
+    background: radial-gradient( circle, rgba(255, 189, 29, .13), rgba(4, 10, 18, .98) );
+    box-shadow: 0 0 16px rgba(255, 189, 29, .12);
+}
+
+
+/* =========================================================
+   USER DATA
+========================================================= */
+
+.kx-user-data {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+
+    .kx-user-data strong {
+        display: block;
+        overflow: hidden;
+        color: #ffffff !important;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+
+    .kx-user-data > span {
+        display: block;
+        margin-top: 3px;
+        overflow: hidden;
+        color: #8e9aaf !important;
+        font-size: 9px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+
+.kx-user-trigger > span[uk-icon] {
+    flex: 0 0 auto;
+    color: #8692a4;
+    transition: color .2s ease, transform .2s ease;
+}
+
+
+.kx-user-trigger:hover > span[uk-icon] {
+    color: var(--kx-gold);
+}
+
+
+/* =========================================================
+   DROPDOWN USUARIO
+========================================================= */
+
+body .kx-user-dropdown.uk-dropdown,
+body .uk-dropdown.kx-user-dropdown {
+    width: 260px !important;
+    padding: 10px !important;
+    border: 1px solid rgba(255, 189, 29, .35) !important;
+    border-radius: 14px !important;
+    background: #030914 !important;
+    background-image: linear-gradient( 145deg, #091725 0%, #050d18 55%, #02060c 100% ) !important;
+    color: #ffffff !important;
+    box-shadow: 0 26px 65px rgba(0, 0, 0, .76), 0 0 24px rgba(255, 189, 29, .08) !important;
+    backdrop-filter: blur(18px);
+    z-index: 999999 !important;
+}
+
+
+/* =========================================================
+   UIKIT NAV RESET
+========================================================= */
+
+body .kx-user-dropdown .uk-nav,
+body .kx-user-dropdown .uk-dropdown-nav {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+
+    body .kx-user-dropdown .uk-nav > li {
+        margin: 2px 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+
+        /* =========================================================
+   PERFIL / CONFIGURACIÓN
+========================================================= */
+
+        body .kx-user-dropdown
+        .uk-nav > li > a {
+            width: 100%;
+            min-height: 44px;
+            display: flex !important;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 12px !important;
+            border-radius: 9px;
+            color: #d2d9e4 !important;
+            background: transparent !important;
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none !important;
+            transition: color .18s ease, background .18s ease, transform .18s ease;
+        }
+
+
+            body .kx-user-dropdown
+            .uk-nav > li > a:hover {
+                color: #ffd45c !important;
+                background: rgba( 255, 189, 29, .09 ) !important;
+                transform: translateX(2px);
+            }
+
+
+            body .kx-user-dropdown
+            .uk-nav > li > a
+            span[uk-icon] {
+                color: #ffbd1d !important;
+            }
+
+
+/* =========================================================
+   DIVISOR
+========================================================= */
+
+body .kx-user-dropdown
+.uk-nav-divider {
+    margin: 8px 5px !important;
+    border-top: 1px solid rgba( 255, 189, 29, .17 ) !important;
+}
+
+
+/* =========================================================
+   FORM LOGOUT
+========================================================= */
+
+body .kx-user-dropdown form {
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+
+/* =========================================================
+   LOGOUT BUTTON
+========================================================= */
+
+body .kx-user-dropdown
+.kx-logout-button {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 9px;
+    outline: none;
+    color: #ff6976 !important;
+    background: transparent !important;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: color .18s ease, background .18s ease, transform .18s ease;
+}
+
+
+    body .kx-user-dropdown
+    .kx-logout-button:hover {
+        color: #ff9ca4 !important;
+        background: rgba( 255, 82, 96, .11 ) !important;
+        transform: translateX(2px);
+    }
+
+
+    body .kx-user-dropdown
+    .kx-logout-button
+    span[uk-icon] {
+        color: #ff5260 !important;
+    }
+
+
+/* =========================================================
+   FORZAR FONDO OSCURO UIKIT
+========================================================= */
+
+body .kx-user-dropdown *,
+body .kx-user-dropdown li,
+body .kx-user-dropdown ul {
+    box-shadow: none;
+}
+
+
+body .kx-user-dropdown li {
+    background: transparent !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .kx-user-trigger {
+        min-width: 190px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .kx-user-trigger {
+        width: 44px;
+        min-width: 44px;
+        height: 44px;
+        padding: 4px;
+        justify-content: center;
+    }
+
+
+        .kx-user-data,
+        .kx-user-trigger > span[uk-icon] {
+            display: none;
+        }
+
+
+    .kx-user-avatar {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+
+
+    body .kx-user-dropdown.uk-dropdown,
+    body .uk-dropdown.kx-user-dropdown {
+        width: min( 245px, calc(100vw - 24px) ) !important;
+    }
+}

@@ -1,0 +1,422 @@
+﻿:root {
+    --kx-bg: #f4f6f8;
+    --kx-surface: #ffffff;
+    --kx-border: #e2e8f0;
+    --kx-primary: #13294b;
+    --kx-primary-hover: #0b1f3a;
+    --kx-accent: #c9a227;
+    --kx-accent-soft: #f5edcf;
+    --kx-text: #172033;
+    --kx-text-soft: #64748b;
+    --kx-success: #15803d;
+    --kx-danger: #b91c1c;
+    --kx-radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+    body.kx-body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: var(--kx-bg);
+        color: var(--kx-text);
+    }
+
+/* ============================
+   ESTRUCTURA
+   ============================ */
+
+.kx-app {
+    min-height: 100vh;
+    display: flex;
+}
+
+/* ============================
+   SIDEBAR
+   ============================ */
+
+.kx-sidebar {
+    width: 245px;
+    min-height: 100vh;
+    padding: 24px 18px;
+    background: var(--kx-primary);
+    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.kx-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px 25px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.kx-logo-icon {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--kx-accent);
+    color: #13294b;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.kx-logo strong {
+    display: block;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.kx-logo small {
+    display: block;
+    margin-top: 2px;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 11px;
+}
+
+.kx-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .kx-nav a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 14px;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.74);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+        .kx-nav a:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+        }
+
+        .kx-nav a.active {
+            background: var(--kx-accent);
+            color: var(--kx-primary);
+            font-weight: 700;
+        }
+
+/* ============================
+   CONTENIDO
+   ============================ */
+
+.kx-content {
+    width: 100%;
+    padding: 35px 40px 45px;
+    overflow-x: hidden;
+}
+
+.kx-topbar {
+    margin-bottom: 26px;
+}
+
+.kx-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    color: var(--kx-primary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+    .kx-back:hover {
+        color: var(--kx-accent);
+    }
+
+.kx-topbar h1 {
+    margin: 0;
+    color: var(--kx-text);
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.kx-topbar p {
+    margin: 8px 0 0;
+    color: var(--kx-text-soft);
+    font-size: 14px;
+}
+
+/* ============================
+   GRID DE CONFIGURACIÓN
+   ============================ */
+
+.kx-settings-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+/* ============================
+   CARDS
+   ============================ */
+
+.kx-card {
+    padding: 24px;
+    background: var(--kx-surface);
+    border: 1px solid var(--kx-border);
+    border-radius: var(--kx-radius);
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.kx-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 17px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--kx-border);
+}
+
+.kx-card-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: var(--kx-accent-soft);
+    color: #8a6c0b;
+}
+
+.kx-card-header h2 {
+    margin: 0;
+    color: var(--kx-text);
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.kx-card-header p {
+    margin: 4px 0 0;
+    color: var(--kx-text-soft);
+    font-size: 12px;
+}
+
+/* ============================
+   FORMULARIOS
+   ============================ */
+
+.kx-form-group {
+    margin-bottom: 18px;
+}
+
+    .kx-form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .kx-form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+.kx-input {
+    width: 100%;
+    height: 43px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    outline: none;
+    background: #ffffff;
+    color: var(--kx-text);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+    .kx-input:hover {
+        border-color: #94a3b8;
+    }
+
+    .kx-input:focus {
+        border-color: var(--kx-primary);
+        box-shadow: 0 0 0 3px rgba(19, 41, 75, 0.08);
+    }
+
+/* ============================
+   RESUMEN
+   ============================ */
+
+.kx-summary-row {
+    min-height: 42px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 9px 0;
+    border-bottom: 1px solid #edf0f3;
+}
+
+    .kx-summary-row:last-child {
+        border-bottom: 0;
+    }
+
+    .kx-summary-row span {
+        color: var(--kx-text-soft);
+        font-size: 13px;
+    }
+
+    .kx-summary-row strong {
+        color: var(--kx-text);
+        font-size: 13px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+/* ============================
+   ALERTAS
+   ============================ */
+
+.kx-alert-success,
+.kx-alert-error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.kx-alert-success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: var(--kx-success);
+}
+
+.kx-alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: var(--kx-danger);
+}
+
+/* ============================
+   BOTONES
+   ============================ */
+
+.kx-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.kx-btn-primary,
+.kx-btn-secondary {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 18px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.kx-btn-primary {
+    border: 1px solid var(--kx-primary);
+    background: var(--kx-primary);
+    color: #ffffff;
+}
+
+    .kx-btn-primary:hover {
+        background: var(--kx-primary-hover);
+        color: #ffffff;
+    }
+
+.kx-btn-secondary {
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475569;
+}
+
+    .kx-btn-secondary:hover {
+        border-color: #94a3b8;
+        background: #f8fafc;
+        color: #1e293b;
+    }
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 1000px) {
+
+    .kx-settings-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+
+    .kx-app {
+        display: block;
+    }
+
+    .kx-sidebar {
+        width: 100%;
+        min-height: auto;
+        padding: 16px;
+    }
+
+    .kx-nav {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+        .kx-nav a {
+            flex-shrink: 0;
+        }
+
+    .kx-content {
+        padding: 24px 16px 35px;
+    }
+
+    .kx-topbar h1 {
+        font-size: 25px;
+    }
+
+    .kx-card {
+        padding: 19px;
+    }
+
+    .kx-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .kx-btn-primary,
+    .kx-btn-secondary {
+        width: 100%;
+    }
+}

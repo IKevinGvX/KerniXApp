@@ -1,0 +1,2847 @@
+﻿@page
+@model KerniX.Pages.Ventas.PrincipalVentasModel
+@using System.Text.Json
+@using KerniX.Models.Ventas.Dashboard
+
+@{
+    Layout = null;
+
+    ViewData["Title"] = "Gestión de Ventas";
+
+    // =========================================================
+    // DATOS PARA 8/10, 9/10 Y 10/10
+    // =========================================================
+    // Si el backend todavía no devuelve información para estos
+    // bloques, se muestran datos de prueba para terminar de validar
+    // el diseño. En cuanto el servicio devuelva registros reales,
+    // estos se usan automáticamente.
+
+    var usandoClientesDemo =
+        Model.Dashboard.TopClientes == null ||
+        Model.Dashboard.TopClientes.Count == 0;
+
+    var clientesDestacados =
+        usandoClientesDemo
+            ? new List<ClienteDestacadoResponse>
+            {
+                new()
+                {
+                    Posicion = 1,
+                    Cliente = "Comercial Andina S.A.C.",
+                    Documento = "RUC 20601234567",
+                    TotalComprado = 12480.50m,
+                    CantidadCompras = 18,
+                    TicketPromedio = 693.36m,
+                    PorcentajeParticipacion = 26.4m,
+                    UltimaCompra = DateTime.Today.AddDays(-1)
+                },
+                new()
+                {
+                    Posicion = 2,
+                    Cliente = "Distribuidora Lima Norte",
+                    Documento = "RUC 20598765432",
+                    TotalComprado = 9875.20m,
+                    CantidadCompras = 14,
+                    TicketPromedio = 705.37m,
+                    PorcentajeParticipacion = 20.9m,
+                    UltimaCompra = DateTime.Today.AddDays(-2)
+                },
+                new()
+                {
+                    Posicion = 3,
+                    Cliente = "María Torres",
+                    Documento = "DNI 74215698",
+                    TotalComprado = 6840.00m,
+                    CantidadCompras = 11,
+                    TicketPromedio = 621.82m,
+                    PorcentajeParticipacion = 14.5m,
+                    UltimaCompra = DateTime.Today.AddDays(-3)
+                },
+                new()
+                {
+                    Posicion = 4,
+                    Cliente = "Servicios del Pacífico E.I.R.L.",
+                    Documento = "RUC 20607654321",
+                    TotalComprado = 5320.75m,
+                    CantidadCompras = 9,
+                    TicketPromedio = 591.19m,
+                    PorcentajeParticipacion = 11.3m,
+                    UltimaCompra = DateTime.Today.AddDays(-5)
+                }
+            }
+            : Model.Dashboard.TopClientes.ToList();
+
+
+    var usandoAlertasDemo =
+        Model.Dashboard.AlertasComerciales == null ||
+        Model.Dashboard.AlertasComerciales.Count == 0;
+
+    var alertasComerciales =
+        usandoAlertasDemo
+            ? new List<AlertaComercialResponse>
+            {
+                new()
+                {
+                    Id = 1,
+                    Tipo = "Inventario",
+                    Nivel = "Alta",
+                    Titulo = "Producto con alta rotación",
+                    Descripcion = "La demanda reciente podría agotar el stock disponible.",
+                    Entidad = "Laptop empresarial 15\"",
+                    Accion = "Revisar reposición y stock de seguridad.",
+                    Valor = 7850.00m,
+                    Fecha = DateTime.Now.AddMinutes(-35)
+                },
+                new()
+                {
+                    Id = 2,
+                    Tipo = "Ventas",
+                    Nivel = "Media",
+                    Titulo = "Caída de ventas detectada",
+                    Descripcion = "Las ventas de la categoría Accesorios están por debajo del promedio.",
+                    Entidad = "Accesorios",
+                    Accion = "Revisar promociones, precio y disponibilidad.",
+                    Valor = 2140.50m,
+                    Fecha = DateTime.Now.AddHours(-2)
+                },
+                new()
+                {
+                    Id = 3,
+                    Tipo = "Clientes",
+                    Nivel = "Baja",
+                    Titulo = "Cliente frecuente sin compra reciente",
+                    Descripcion = "Un cliente de alto valor no registra compras en los últimos días.",
+                    Entidad = "Comercial Andina S.A.C.",
+                    Accion = "Realizar seguimiento comercial.",
+                    Valor = null,
+                    Fecha = DateTime.Now.AddHours(-5)
+                }
+            }
+            : Model.Dashboard.AlertasComerciales.ToList();
+
+
+    var usandoProyeccionDemo =
+        Model.Dashboard.ProyeccionVentas == null ||
+        Model.Dashboard.ProyeccionVentas.Count == 0;
+
+    var proyeccionVentas =
+        usandoProyeccionDemo
+            ? new List<ProyeccionVentaResponse>
+            {
+                new()
+                {
+                    Fecha = DateTime.Today.AddDays(1),
+                    Etiqueta = DateTime.Today.AddDays(1).ToString("ddd dd"),
+                    VentaEstimada = 1850m,
+                    LimiteInferior = 1580m,
+                    LimiteSuperior = 2120m,
+                    Confianza = 86m
+                },
+                new()
+                {
+                    Fecha = DateTime.Today.AddDays(2),
+                    Etiqueta = DateTime.Today.AddDays(2).ToString("ddd dd"),
+                    VentaEstimada = 2120m,
+                    LimiteInferior = 1810m,
+                    LimiteSuperior = 2430m,
+                    Confianza = 84m
+                },
+                new()
+                {
+                    Fecha = DateTime.Today.AddDays(3),
+                    Etiqueta = DateTime.Today.AddDays(3).ToString("ddd dd"),
+                    VentaEstimada = 1980m,
+                    LimiteInferior = 1690m,
+                    LimiteSuperior = 2270m,
+                    Confianza = 83m
+                },
+                new()
+                {
+                    Fecha = DateTime.Today.AddDays(4),
+                    Etiqueta = DateTime.Today.AddDays(4).ToString("ddd dd"),
+                    VentaEstimada = 2460m,
+                    LimiteInferior = 2090m,
+                    LimiteSuperior = 2830m,
+                    Confianza = 81m
+                },
+                new()
+                {
+                    Fecha = DateTime.Today.AddDays(5),
+                    Etiqueta = DateTime.Today.AddDays(5).ToString("ddd dd"),
+                    VentaEstimada = 2750m,
+                    LimiteInferior = 2320m,
+                    LimiteSuperior = 3180m,
+                    Confianza = 79m
+                },
+                new()
+                {
+                    Fecha = DateTime.Today.AddDays(6),
+                    Etiqueta = DateTime.Today.AddDays(6).ToString("ddd dd"),
+                    VentaEstimada = 2310m,
+                    LimiteInferior = 1940m,
+                    LimiteSuperior = 2680m,
+                    Confianza = 78m
+                },
+                new()
+                {
+                    Fecha = DateTime.Today.AddDays(7),
+                    Etiqueta = DateTime.Today.AddDays(7).ToString("ddd dd"),
+                    VentaEstimada = 2920m,
+                    LimiteInferior = 2440m,
+                    LimiteSuperior = 3400m,
+                    Confianza = 76m
+                }
+            }
+            : Model.Dashboard.ProyeccionVentas.ToList();
+
+
+    var dashboardJson = JsonSerializer.Serialize(new
+    {
+        ventasPeriodo = Model.Dashboard.VentasPeriodo.Select(x => new
+        {
+            etiqueta = x.Etiqueta,
+            total = x.Total,
+            cantidad = x.CantidadVentas
+        }),
+
+        categorias = Model.Dashboard.Categorias.Select(x => new
+        {
+            categoria = x.Categoria,
+            total = x.TotalVenta,
+            porcentaje = x.Porcentaje
+        }),
+
+        metodosPago = Model.Dashboard.MetodosPago.Select(x => new
+        {
+            metodo = x.Etiqueta,
+            total = x.Total,
+            cantidad = x.CantidadVentas
+        }),
+
+        proyeccionVentas = proyeccionVentas.Select(x => new
+        {
+            fecha = x.Fecha.ToString("yyyy-MM-dd"),
+            etiqueta = x.Etiqueta,
+            estimado = x.VentaEstimada,
+            minimo = x.LimiteInferior,
+            maximo = x.LimiteSuperior,
+            confianza = x.Confianza
+        })
+    });
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] | KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/ventas/principalventas.css"
+          asp-append-version="true" />
+
+</head>
+
+<body>
+
+    <div class="kxprincipal">
+
+        <!-- ================================================= -->
+        <!-- SIDEBAR -->
+        <!-- ================================================= -->
+
+        <aside class="kxsidebar">
+
+            <div class="kxmarca">
+
+                <div class="kxlogo">
+                    K
+                </div>
+
+                <div class="kxmarcatexto">
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <span>
+                        Ventas Inteligentes
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="kxmenu">
+
+                <a href="/Ventas/PrincipalVentas"
+                   class="kxmenuitem activo">
+
+                    <span uk-icon="icon: grid"></span>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Nueva"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: cart"></span>
+
+                    <span>
+                        Nueva Venta
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Cotizaciones"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: file-text"></span>
+
+                    <span>
+                        Cotizaciones
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Pedidos"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: list"></span>
+
+                    <span>
+                        Pedidos
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Pagos"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: credit-card"></span>
+
+                    <span>
+                        Pagos
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Comprobantes"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: print"></span>
+
+                    <span>
+                        Comprobantes
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Devoluciones"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: history"></span>
+
+                    <span>
+                        Devoluciones
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Reclamos"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        Reclamos
+                    </span>
+
+                </a>
+
+            </nav>
+
+
+            <div class="kxsidebarpie">
+
+                <div class="kxestado">
+
+                    <span class="kxpunto"></span>
+
+                    <div>
+
+                        <strong>
+                            Sistema operativo
+                        </strong>
+
+                        <small>
+                            Ventas conectado
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ================================================= -->
+        <!-- CONTENIDO -->
+        <!-- ================================================= -->
+
+        <main class="kxcontenido">
+
+
+            <!-- ================================================= -->
+            <!-- CABECERA -->
+            <!-- ================================================= -->
+
+            <header class="kxcabecera">
+
+                <div>
+
+                    <p class="kxseccion">
+                        Gestión Comercial
+                    </p>
+
+                    <h1>
+                        Dashboard de Ventas
+                    </h1>
+
+                    <p class="kxdescripcion">
+                        Monitoreo comercial y análisis inteligente
+                        en tiempo real.
+                    </p>
+
+                </div>
+
+
+                <div class="kxacciones">
+
+                    <a href="/Ventas/Nueva"
+                       class="kxbotonprincipal">
+
+                        <span uk-icon="icon: plus"></span>
+
+                        Nueva venta
+
+                    </a>
+
+
+                    <a href="/Configuracion/Index1"
+                       class="kxbotonicono"
+                       uk-tooltip="Configuración">
+
+                        <span uk-icon="icon: settings"></span>
+
+                    </a>
+
+                </div>
+
+            </header>
+
+
+            <!-- ================================================= -->
+            <!-- ERROR -->
+            <!-- ================================================= -->
+            @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+            {
+                <div class="kxalerta">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.MensajeError
+                    </span>
+
+                </div>
+            }
+
+
+            <!-- ================================================= -->
+            <!-- FILTROS -->
+            <!-- ================================================= -->
+
+            <section class="kxfiltros">
+
+                <form method="get"
+                      class="kxformfiltros">
+
+                    <div class="kxcampofiltro">
+
+                        <label for="FechaDesde">
+                            Desde
+                        </label>
+
+                        <input type="date"
+                               id="FechaDesde"
+                               name="FechaDesde"
+                               value="@Model.FechaDesde?.ToString("yyyy-MM-dd")" />
+
+                    </div>
+
+
+                    <div class="kxcampofiltro">
+
+                        <label for="FechaHasta">
+                            Hasta
+                        </label>
+
+                        <input type="date"
+                               id="FechaHasta"
+                               name="FechaHasta"
+                               value="@Model.FechaHasta?.ToString("yyyy-MM-dd")" />
+
+                    </div>
+
+
+                    <input type="hidden"
+                           name="IdSucursal"
+                           value="@Model.IdSucursal" />
+
+
+                    <button type="submit"
+                            class="kxbotonfiltro">
+
+                        <span uk-icon="icon: search"></span>
+
+                        Actualizar
+
+                    </button>
+
+                </form>
+
+
+                <div class="kxperiodo">
+
+                    <span uk-icon="icon: calendar"></span>
+
+                    <span>
+
+                        @Model.FechaDesde?.ToString("dd/MM/yyyy")
+
+                        al
+
+                        @Model.FechaHasta?.ToString("dd/MM/yyyy")
+
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- KPI -->
+            <!-- ================================================= -->
+
+            <section class="kxkpis">
+
+
+                <!-- VENTAS MES -->
+
+                <article class="kxkpi">
+
+                    <div class="kxkpicabecera">
+
+                        <span class="kxkpiicono dorado"
+                              uk-icon="icon: cart">
+                        </span>
+
+                        <span class="kxkpietiqueta">
+                            Ventas del mes
+                        </span>
+
+                    </div>
+
+
+                    <strong class="kxkpivalor">
+
+                        S/
+                        @Model.Dashboard.Kpis.VentasMes.ToString("N2")
+
+                    </strong>
+
+
+                    <div class="kxkpiextra">
+
+                        <span class="@(Model.Dashboard.Kpis.VariacionMes >= 0 ? "kxpositivo" : "kxnegativo")">
+
+                            @(Model.Dashboard.Kpis.VariacionMes >= 0 ? "▲" : "▼")
+
+                            @Math.Abs(
+                                Model.Dashboard.Kpis.VariacionMes
+                            ).ToString("N1")%
+
+                        </span>
+
+                        <span>
+                            mes anterior
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- VENTAS HOY -->
+
+                <article class="kxkpi">
+
+                    <div class="kxkpicabecera">
+
+                        <span class="kxkpiicono azul"
+                              uk-icon="icon: bolt">
+                        </span>
+
+                        <span class="kxkpietiqueta">
+                            Ventas hoy
+                        </span>
+
+                    </div>
+
+
+                    <strong class="kxkpivalor">
+
+                        S/
+                        @Model.Dashboard.Kpis.VentasHoy.ToString("N2")
+
+                    </strong>
+
+
+                    <div class="kxkpiextra">
+
+                        <span>
+
+                            @Model.Dashboard.Kpis.TotalVentasHoy
+                            operaciones
+
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- TICKET -->
+
+                <article class="kxkpi">
+
+                    <div class="kxkpicabecera">
+
+                        <span class="kxkpiicono morado"
+                              uk-icon="icon: future">
+                        </span>
+
+                        <span class="kxkpietiqueta">
+                            Ticket promedio
+                        </span>
+
+                    </div>
+
+
+                    <strong class="kxkpivalor">
+
+                        S/
+                        @Model.Dashboard.Kpis.TicketPromedio.ToString("N2")
+
+                    </strong>
+
+
+                    <div class="kxkpiextra">
+
+                        <span class="@(Model.Dashboard.Kpis.VariacionTicket >= 0 ? "kxpositivo" : "kxnegativo")">
+
+                            @(Model.Dashboard.Kpis.VariacionTicket >= 0 ? "▲" : "▼")
+
+                            @Math.Abs(
+                                Model.Dashboard.Kpis.VariacionTicket
+                            ).ToString("N1")%
+
+                        </span>
+
+                        <span>
+                            variación
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- CLIENTES -->
+
+                <article class="kxkpi">
+
+                    <div class="kxkpicabecera">
+
+                        <span class="kxkpiicono verde"
+                              uk-icon="icon: users">
+                        </span>
+
+                        <span class="kxkpietiqueta">
+                            Clientes activos
+                        </span>
+
+                    </div>
+
+
+                    <strong class="kxkpivalor">
+
+                        @Model.Dashboard.Kpis.ClientesActivos
+
+                    </strong>
+
+
+                    <div class="kxkpiextra">
+
+                        <span>
+                            últimos 90 días
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+                <!-- VENTAS AÑO -->
+
+                <article class="kxkpi">
+
+                    <div class="kxkpicabecera">
+
+                        <span class="kxkpiicono celeste"
+                              uk-icon="icon: world">
+                        </span>
+
+                        <span class="kxkpietiqueta">
+                            Ventas del año
+                        </span>
+
+                    </div>
+
+
+                    <strong class="kxkpivalor">
+
+                        S/
+                        @Model.Dashboard.Kpis.VentasAnuales.ToString("N2")
+
+                    </strong>
+
+
+                    <div class="kxkpiextra">
+
+                        <span>
+                            @DateTime.Now.Year
+                        </span>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+            <!-- ================================================= -->
+            <!-- 1/10 - EVOLUCIÓN DE VENTAS -->
+            <!-- ================================================= -->
+
+            <section class="kxgraficosprincipal">
+
+                <article class="kxpanel kxpanel3d">
+
+                    <div class="kxpanelcabecera">
+
+                        <div class="kxpaneltitulo">
+
+                            <span class="kxnumeral">
+                                1/10
+                            </span>
+
+                            <div>
+                                <span class="kxpanelmini">
+                                    Rendimiento
+                                </span>
+
+                                <h2>
+                                    Evolución de ventas
+                                </h2>
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxpanelacciones">
+
+                            <span class="kxdatosreales">
+                                <i></i>
+                                Datos reales
+                            </span>
+
+                            <button type="button"
+                                    class="kxconfiggrafico"
+                                    data-config="ventas"
+                                    title="Personalizar gráfico">
+
+                                <span uk-icon="icon: settings"></span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxgrafico kxgraficoventas kxgrafico3d">
+
+                        <div class="kxsuelo3d"></div>
+
+                        <canvas id="ventasChart"></canvas>
+
+                    </div>
+
+
+                    <div id="configVentas"
+                         class="kxconfigpanel"
+                         hidden>
+
+                        <div class="kxconfigtitulo">
+
+                            <div>
+                                <strong>
+                                    Personalizar evolución
+                                </strong>
+
+                                <span>
+                                    Apariencia y escala del gráfico
+                                </span>
+                            </div>
+
+                            <span uk-icon="icon: settings"></span>
+
+                        </div>
+
+
+                        <div class="kxconfiggrid">
+
+                            <div class="kxconfigcampo">
+
+                                <label>
+                                    Color de línea
+                                </label>
+
+                                <input type="color"
+                                       id="ventasColor"
+                                       value="#f8c95c" />
+
+                            </div>
+
+
+                            <div class="kxconfigcampo">
+
+                                <label>
+                                    Color del área
+                                </label>
+
+                                <input type="color"
+                                       id="ventasAreaColor"
+                                       value="#32a7ff" />
+
+                            </div>
+
+
+                            <div class="kxconfigcampo">
+
+                                <label>
+                                    Mínimo eje Y
+                                </label>
+
+                                <input type="number"
+                                       id="ventasMin"
+                                       value="0" />
+
+                            </div>
+
+
+                            <div class="kxconfigcampo">
+
+                                <label>
+                                    Máximo eje Y
+                                </label>
+
+                                <input type="number"
+                                       id="ventasMax"
+                                       placeholder="Automático" />
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxconfigacciones">
+
+                            <button type="button"
+                                    id="restablecerConfigVentas"
+                                    class="kxconfigreset">
+
+                                Restablecer
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================================================= -->
+                <!-- 2/10 - CATEGORÍAS -->
+                <!-- ================================================= -->
+
+                <article class="kxpanel kxpanel3d">
+
+                    <div class="kxpanelcabecera">
+
+                        <div class="kxpaneltitulo">
+
+                            <span class="kxnumeral">
+                                2/10
+                            </span>
+
+                            <div>
+
+                                <span class="kxpanelmini">
+                                    Distribución
+                                </span>
+
+                                <h2>
+                                    Categorías
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <button type="button"
+                                class="kxconfiggrafico"
+                                data-config="categorias"
+                                title="Personalizar gráfico">
+
+                            <span uk-icon="icon: settings"></span>
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="kxgrafico kxgrafico3d kxdona3d">
+
+                        <div class="kxsuelo3d"></div>
+
+                        <canvas id="categoriasChart"></canvas>
+
+                    </div>
+
+
+                    <div id="configCategorias"
+                         class="kxconfigpanel"
+                         hidden>
+
+                        <div class="kxconfigtitulo">
+
+                            <div>
+
+                                <strong>
+                                    Personalizar categorías
+                                </strong>
+
+                                <span>
+                                    Grosor y profundidad
+                                </span>
+
+                            </div>
+
+                            <span uk-icon="icon: settings"></span>
+
+                        </div>
+
+
+                        <div class="kxconfiggrid">
+
+                            <div class="kxconfigcampo">
+
+                                <label>
+                                    Grosor de dona
+                                </label>
+
+                                <div class="kxrangofila">
+
+                                    <input type="range"
+                                           id="categoriasGrosor"
+                                           min="45"
+                                           max="80"
+                                           value="62" />
+
+                                    <strong id="categoriasGrosorValor">
+                                        62%
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kxconfigcampo">
+
+                                <label>
+                                    Profundidad 3D
+                                </label>
+
+                                <div class="kxrangofila">
+
+                                    <input type="range"
+                                           id="categoriasProfundidad"
+                                           min="4"
+                                           max="25"
+                                           value="13" />
+
+                                    <strong id="categoriasProfundidadValor">
+                                        13
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxconfigacciones">
+
+                            <button type="button"
+                                    id="restablecerConfigCategorias"
+                                    class="kxconfigreset">
+
+                                Restablecer
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+            <!-- ================================================= -->
+            <!-- 3/10 + 4/10 -->
+            <!-- ================================================= -->
+
+            <section class="kxgraficossecundarios">
+
+                <!-- ================================================= -->
+                <!-- 3/10 - TOP PRODUCTOS -->
+                <!-- ================================================= -->
+
+                <article class="kxpanel">
+
+                    <div class="kxpanelcabecera">
+
+                        <div class="kxpaneltitulo">
+
+                            <span class="kxnumeral">
+                                3/10
+                            </span>
+
+                            <div>
+                                <span class="kxpanelmini">
+                                    Ranking
+                                </span>
+
+                                <h2>
+                                    Top productos
+                                </h2>
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxpanelacciones">
+
+                            <div class="kxbuscadorseccion">
+
+                                <span uk-icon="icon: search"></span>
+
+                                <input type="text"
+                                       id="buscarTopProductos"
+                                       placeholder="Buscar producto..." />
+
+                                <button type="button"
+                                        class="kxlimpiarbusqueda"
+                                        data-target="buscarTopProductos"
+                                        title="Limpiar búsqueda">
+                                    ×
+                                </button>
+
+                            </div>
+
+
+                            <span uk-icon="icon: star"
+                                  class="kxiconoseccion">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxranking"
+                         id="listaTopProductos">
+
+                        @if (Model.Dashboard.TopProductos.Count == 0)
+                        {
+                            <div class="kxvacio">
+                                No existen productos vendidos
+                                en el período seleccionado.
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var producto in Model.Dashboard.TopProductos)
+                            {
+                                <div class="kxrankingfila kxitembuscable"
+                                     data-search="@($"{producto.Producto} {producto.Codigo}".ToLowerInvariant())">
+
+                                    <div class="kxposicion">
+                                        @producto.Posicion
+                                    </div>
+
+
+                                    <div class="kxproductoinfo">
+
+                                        <strong>
+                                            @producto.Producto
+                                        </strong>
+
+                                        <span>
+                                            @producto.Codigo
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="kxunidades">
+                                        @producto.CantidadVendida.ToString("N2")
+                                        uds.
+                                    </div>
+
+
+                                    <strong class="kxtotalproducto">
+                                        S/
+                                        @producto.TotalVenta.ToString("N2")
+                                    </strong>
+
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+                    <div id="sinResultadosTopProductos"
+                         class="kxsinresultados"
+                         hidden>
+
+                        <span uk-icon="icon: search"></span>
+
+                        <strong>
+                            Sin resultados
+                        </strong>
+
+                        <span>
+                            No encontramos productos con ese criterio.
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================================================= -->
+                <!-- 4/10 - MÉTODOS DE PAGO -->
+                <!-- ================================================= -->
+
+                <article class="kxpanel kxpanel3d kxpanelpagos">
+
+                    <div class="kxpanelcabecera">
+
+                        <div class="kxpaneltitulo">
+
+                            <span class="kxnumeral">
+                                4/10
+                            </span>
+
+                            <div>
+
+                                <span class="kxpanelmini">
+                                    Cobros
+                                </span>
+
+                                <h2>
+                                    Métodos de pago
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxpanelacciones">
+
+                            <button type="button"
+                                    id="abrirConfigPagos"
+                                    class="kxconfiggrafico"
+                                    title="Personalizar gráfico">
+
+                                <span uk-icon="icon: settings"></span>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- GRÁFICO -->
+
+                    <div class="kxgrafico kxgrafico3d kxbarras3d">
+
+                        <div class="kxsuelo3d"></div>
+
+                        <canvas id="pagosChart"></canvas>
+
+                    </div>
+
+
+                    <!-- LEYENDA -->
+
+                    <div id="pagosLegend"
+                         class="kxpagoslegend">
+                    </div>
+
+
+                    <!-- OVERLAY -->
+
+                    <div id="configPagosOverlay"
+                         class="kxconfigoverlay"
+                         hidden>
+                    </div>
+
+
+                    <!-- PANEL CONFIGURACIÓN -->
+
+                    <aside id="configPagos"
+                           class="kxconfigpanel kxconfigpanel-flotante"
+                           hidden>
+
+                        <div class="kxconfigcabecera">
+
+                            <div class="kxconfigcabeceraicono">
+                                <span uk-icon="icon: settings"></span>
+                            </div>
+
+
+                            <div class="kxconfigcabeceratexto">
+
+                                <strong>
+                                    Personalizar gráfico
+                                </strong>
+
+                                <span>
+                                    Métodos de pago
+                                </span>
+
+                            </div>
+
+
+                            <button type="button"
+                                    id="cerrarConfigPagos"
+                                    class="kxcerrarconfig"
+                                    title="Cerrar">
+                                ×
+                            </button>
+
+                        </div>
+
+
+                        <!-- COLORES -->
+
+                        <section class="kxconfigseccion">
+
+                            <div class="kxconfigsecciontitulo">
+
+                                <span>
+                                    Colores
+                                </span>
+
+                                <small>
+                                    Cada método tendrá su propio estilo
+                                </small>
+
+                            </div>
+
+
+                            <div class="kxconfigcolores">
+
+                                <!-- YAPE -->
+
+                                <div class="kxconfigmetodo">
+
+                                    <div class="kxconfigmetodoinfo">
+
+                                        <span class="kxmetodologo yape">
+                                            Y
+                                        </span>
+
+                                        <div>
+                                            <strong>Yape</strong>
+                                            <small>Billetera digital</small>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="color"
+                                           id="colorYape"
+                                           value="#8e35ff" />
+
+                                </div>
+
+
+                                <!-- PLIN -->
+
+                                <div class="kxconfigmetodo">
+
+                                    <div class="kxconfigmetodoinfo">
+
+                                        <span class="kxmetodologo plin">
+                                            P
+                                        </span>
+
+                                        <div>
+                                            <strong>Plin</strong>
+                                            <small>Billetera digital</small>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="color"
+                                           id="colorPlin"
+                                           value="#00d9a5" />
+
+                                </div>
+
+
+                                <!-- EFECTIVO -->
+
+                                <div class="kxconfigmetodo">
+
+                                    <div class="kxconfigmetodoinfo">
+
+                                        <span class="kxmetodologo efectivo">
+                                            S/
+                                        </span>
+
+                                        <div>
+                                            <strong>Efectivo</strong>
+                                            <small>Pago físico</small>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="color"
+                                           id="colorEfectivo"
+                                           value="#f8c23d" />
+
+                                </div>
+
+
+                                <!-- TARJETA -->
+
+                                <div class="kxconfigmetodo">
+
+                                    <div class="kxconfigmetodoinfo">
+
+                                        <span class="kxmetodologo tarjeta">
+                                            ▣
+                                        </span>
+
+                                        <div>
+                                            <strong>Tarjeta</strong>
+                                            <small>Débito / crédito</small>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="color"
+                                           id="colorTarjeta"
+                                           value="#1398ff" />
+
+                                </div>
+
+
+                                <!-- TRANSFERENCIA -->
+
+                                <div class="kxconfigmetodo">
+
+                                    <div class="kxconfigmetodoinfo">
+
+                                        <span class="kxmetodologo transferencia">
+                                            ⇄
+                                        </span>
+
+                                        <div>
+                                            <strong>Transferencia</strong>
+                                            <small>Transferencia bancaria</small>
+                                        </div>
+
+                                    </div>
+
+                                    <input type="color"
+                                           id="colorTransferencia"
+                                           value="#15d8ef" />
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ESCALA -->
+
+                        <section class="kxconfigseccion">
+
+                            <div class="kxconfigsecciontitulo">
+
+                                <span>
+                                    Escala del gráfico
+                                </span>
+
+                                <small>
+                                    Controla el rango del eje vertical
+                                </small>
+
+                            </div>
+
+
+                            <div class="kxconfignumeros">
+
+                                <div class="kxconfiginputgrupo">
+
+                                    <label for="pagosMin">
+                                        Valor mínimo
+                                    </label>
+
+                                    <div class="kxinputmoneda">
+
+                                        <span>
+                                            S/
+                                        </span>
+
+                                        <input type="number"
+                                               id="pagosMin"
+                                               value="0"
+                                               min="0"
+                                               step="100" />
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="kxconfiginputgrupo">
+
+                                    <label for="pagosMax">
+                                        Valor máximo
+                                    </label>
+
+                                    <div class="kxinputmoneda">
+
+                                        <span>
+                                            S/
+                                        </span>
+
+                                        <input type="number"
+                                               id="pagosMax"
+                                               placeholder="Automático"
+                                               min="0"
+                                               step="100" />
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- PROFUNDIDAD -->
+
+                        <section class="kxconfigseccion">
+
+                            <div class="kxconfigsecciontitulo">
+
+                                <span>
+                                    Profundidad 3D
+                                </span>
+
+                                <small>
+                                    Ajusta el volumen visual de las barras
+                                </small>
+
+                            </div>
+
+
+                            <div class="kxsliderconfig">
+
+                                <input type="range"
+                                       id="pagosProfundidad"
+                                       min="4"
+                                       max="22"
+                                       value="11" />
+
+                                <div class="kxsliderdatos">
+
+                                    <span>
+                                        Suave
+                                    </span>
+
+                                    <strong id="pagosProfundidadValor">
+                                        11
+                                    </strong>
+
+                                    <span>
+                                        Profundo
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ACCIONES -->
+
+                        <div class="kxconfigacciones kxconfigacciones-flotante">
+
+                            <button type="button"
+                                    id="restablecerConfigPagos"
+                                    class="kxconfigreset">
+
+                                <span uk-icon="icon: refresh"></span>
+
+                                Restablecer
+
+                            </button>
+
+
+                            <button type="button"
+                                    id="guardarConfigPagos"
+                                    class="kxconfigguardar">
+
+                                <span uk-icon="icon: check"></span>
+
+                                Guardar cambios
+
+                            </button>
+
+                        </div>
+
+                    </aside>
+
+                </article>
+
+            </section>
+
+
+
+            <!-- ================================================= -->
+            <!-- 5/10 - ÚLTIMAS VENTAS -->
+            <!-- ================================================= -->
+
+            <section class="kxpanel kxtablapanel">
+
+                <div class="kxpanelcabecera">
+
+                    <div class="kxpaneltitulo">
+
+                        <span class="kxnumeral">
+                            5/10
+                        </span>
+
+                        <div>
+
+                            <span class="kxpanelmini">
+                                Operaciones
+                            </span>
+
+                            <h2>
+                                Últimas ventas
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxpanelacciones">
+
+                        <div class="kxbuscadorseccion kxbuscadorventas">
+
+                            <span uk-icon="icon: search"></span>
+
+                            <input type="text"
+                                   id="buscarUltimasVentas"
+                                   placeholder="Venta, cliente, vendedor..." />
+
+                            <button type="button"
+                                    class="kxlimpiarbusqueda"
+                                    data-target="buscarUltimasVentas"
+                                    title="Limpiar búsqueda">
+                                ×
+                            </button>
+
+                        </div>
+
+
+                        <a href="/Ventas/Nueva"
+                           class="kxenlace">
+
+                            Registrar venta
+
+                            <span uk-icon="icon: arrow-right"></span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kxtablacontenedor">
+
+                    <table class="kxtabla">
+
+                        <thead>
+
+                            <tr>
+                                <th>Venta</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Vendedor</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @if (Model.Dashboard.UltimasVentas.Count == 0)
+                            {
+                                <tr>
+
+                                    <td colspan="7"
+                                        class="kxvaciotabla">
+
+                                        No existen ventas registradas.
+
+                                    </td>
+
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var venta in Model.Dashboard.UltimasVentas)
+                                {
+                                    <tr class="kxventabuscable"
+                                        data-search="@($"{venta.NumeroVenta} {venta.Cliente} {venta.Vendedor} {venta.Estado}".ToLowerInvariant())">
+
+                                        <td>
+
+                                            <strong>
+                                                @venta.NumeroVenta
+                                            </strong>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            @venta.FechaVenta.ToString(
+                                                "dd/MM/yyyy HH:mm"
+                                            )
+
+                                        </td>
+
+
+                                        <td>
+                                            @venta.Cliente
+                                        </td>
+
+
+                                        <td>
+                                            @venta.Vendedor
+                                        </td>
+
+
+                                        <td class="kxmoneda">
+
+                                            S/
+                                            @venta.Total.ToString("N2")
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <span class="kxestadoVenta @venta.Estado.ToLowerInvariant()">
+
+                                                @venta.Estado
+
+                                            </span>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <a href="/Ventas/Detalle?idVenta=@venta.IdVenta"
+                                               class="kxverventa"
+                                               title="Ver venta">
+
+                                                <span uk-icon="icon: chevron-right"></span>
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+
+                    </table>
+
+
+                    <div id="sinResultadosUltimasVentas"
+                         class="kxsinresultados"
+                         hidden>
+
+                        <span uk-icon="icon: search"></span>
+
+                        <strong>
+                            Sin resultados
+                        </strong>
+
+                        <span>
+                            No encontramos ventas con ese criterio.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================= -->
+            <!-- 6/10 + 7/10 -->
+            <!-- ================================================= -->
+
+            <section class="kxpartefinal">
+
+
+                <!-- ================================================= -->
+                <!-- 6/10 - ACTIVIDAD RECIENTE -->
+                <!-- ================================================= -->
+
+                <article class="kxpanel">
+
+                    <div class="kxpanelcabecera">
+
+                        <div class="kxpaneltitulo">
+
+                            <span class="kxnumeral">
+                                6/10
+                            </span>
+
+                            <div>
+
+                                <span class="kxpanelmini">
+                                    Seguimiento
+                                </span>
+
+                                <h2>
+                                    Actividad reciente
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxbuscadorseccion">
+
+                            <span uk-icon="icon: search"></span>
+
+                            <input type="text"
+                                   id="buscarActividad"
+                                   placeholder="Buscar actividad..." />
+
+                            <button type="button"
+                                    class="kxlimpiarbusqueda"
+                                    data-target="buscarActividad"
+                                    title="Limpiar búsqueda">
+                                ×
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxactividadlista">
+
+                        @if (Model.Dashboard.ActividadReciente.Count == 0)
+                        {
+                            <div class="kxvacio">
+                                Sin actividad reciente.
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var actividad in Model.Dashboard.ActividadReciente)
+                            {
+                                <div class="kxactividad kxactividadbuscable"
+                                     data-search="@($"{actividad.Titulo} {actividad.Descripcion}".ToLowerInvariant())">
+
+                                    <div class="kxactividadicono">
+
+                                        <span uk-icon="icon: cart"></span>
+
+                                    </div>
+
+
+                                    <div class="kxactividadinfo">
+
+                                        <strong>
+                                            @actividad.Titulo
+                                        </strong>
+
+                                        <p>
+                                            @actividad.Descripcion
+                                        </p>
+
+                                        <small>
+
+                                            @actividad.Fecha.ToString(
+                                                "dd/MM/yyyy HH:mm"
+                                            )
+
+                                        </small>
+
+                                    </div>
+
+
+                                    @if (actividad.Monto.HasValue)
+                                    {
+                                        <strong class="kxactividadmonto">
+
+                                            S/
+                                            @actividad.Monto.Value.ToString("N2")
+
+                                        </strong>
+                                    }
+
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+
+                    <div id="sinResultadosActividad"
+                         class="kxsinresultados"
+                         hidden>
+
+                        <span uk-icon="icon: search"></span>
+
+                        <strong>
+                            Sin resultados
+                        </strong>
+
+                        <span>
+                            No encontramos actividad relacionada.
+                        </span>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================================================= -->
+                <!-- 7/10 - KERNIX IA -->
+                <!-- ================================================= -->
+
+                <article class="kxpanel kxia">
+
+                    <div class="kxiacabecera">
+
+                        <div class="kxiasimbolo">
+                            AI
+                        </div>
+
+
+                        <div class="kxpaneltitulo">
+
+                            <span class="kxnumeral">
+                                7/10
+                            </span>
+
+                            <div>
+
+                                <span class="kxpanelmini">
+                                    Inteligencia comercial
+                                </span>
+
+                                <h2>
+                                    KerniX IA
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxpanelacciones">
+
+                            <div class="kxbuscadorseccion kxbuscadoria">
+
+                                <span uk-icon="icon: search"></span>
+
+                                <input type="text"
+                                       id="buscarIa"
+                                       placeholder="Buscar insight..." />
+
+                                <button type="button"
+                                        class="kxlimpiarbusqueda"
+                                        data-target="buscarIa"
+                                        title="Limpiar búsqueda">
+                                    ×
+                                </button>
+
+                            </div>
+
+
+                            <span class="kxiaestado">
+                                Activa
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxialistado">
+
+                        @if (Model.Dashboard.InsightsIa.Count == 0)
+                        {
+                            <div class="kxvacio">
+
+                                Aún no existen suficientes datos
+                                para generar recomendaciones.
+
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var insight in Model.Dashboard.InsightsIa)
+                            {
+                                <article class="kxinsight kxiabuscable @insight.Nivel.ToLowerInvariant()"
+                                         data-search="@($"{insight.Tipo} {insight.Nivel} {insight.Titulo} {insight.Mensaje} {insight.Accion}".ToLowerInvariant())">
+
+                                    <div class="kxinsightcabecera">
+
+                                        <span>
+                                            @insight.Tipo
+                                        </span>
+
+                                        <span>
+                                            @insight.Nivel
+                                        </span>
+
+                                    </div>
+
+
+                                    <h3>
+                                        @insight.Titulo
+                                    </h3>
+
+
+                                    <p>
+                                        @insight.Mensaje
+                                    </p>
+
+
+                                    @if (!string.IsNullOrWhiteSpace(insight.Accion))
+                                    {
+                                        <div class="kxinsightaccion">
+
+                                            <span uk-icon="icon: bolt"></span>
+
+                                            <span>
+                                                @insight.Accion
+                                            </span>
+
+                                        </div>
+                                    }
+
+                                </article>
+                            }
+                        }
+
+                    </div>
+
+
+                    <div id="sinResultadosIa"
+                         class="kxsinresultados"
+                         hidden>
+
+                        <span uk-icon="icon: search"></span>
+
+                        <strong>
+                            Sin resultados
+                        </strong>
+
+                        <span>
+                            No encontramos recomendaciones con ese criterio.
+                        </span>
+
+                    </div>
+
+                </article>
+
+            </section>
+            <!-- ================================================= -->
+            <!-- 8/10 - CLIENTES DESTACADOS -->
+            <!-- ================================================= -->
+
+            <section class="kxpanel kxclientespanel">
+
+                <div class="kxpanelcabecera">
+
+                    <div class="kxpaneltitulo">
+
+                        <span class="kxnumeral">
+                            8/10
+                        </span>
+
+                        <div>
+
+                            <span class="kxpanelmini">
+                                Clientes
+                            </span>
+
+                            <h2>
+                                Clientes destacados
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxpanelacciones">
+
+                        <div class="kxbuscadorseccion">
+
+                            <span uk-icon="icon: search"></span>
+
+                            <input type="text"
+                                   id="buscarClientesDestacados"
+                                   placeholder="Buscar cliente..." />
+
+                            <button type="button"
+                                    class="kxlimpiarbusqueda"
+                                    data-target="buscarClientesDestacados"
+                                    title="Limpiar búsqueda">
+                                ×
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kxclientesgrid">
+
+                    @if (clientesDestacados.Count == 0)
+                    {
+                        <div class="kxvacio">
+
+                            No existen clientes destacados
+                            en el período seleccionado.
+
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var cliente in clientesDestacados)
+                        {
+                            <article class="kxclientecard kxclientebuscable"
+                                     data-search="@($"{cliente.Cliente} {cliente.Documento}".ToLowerInvariant())">
+
+                                <div class="kxclientetop">
+
+                                    <div class="kxclienteavatar">
+
+                                        @(
+                                            string.IsNullOrWhiteSpace(cliente.Cliente)
+                                            ? "C"
+                                            : cliente.Cliente.Substring(0, 1).ToUpper()
+                                        )
+
+                                    </div>
+
+
+                                    <div class="kxclienteidentidad">
+
+                                        <strong>
+                                            @cliente.Cliente
+                                        </strong>
+
+                                        <span>
+                                            @cliente.Documento
+                                        </span>
+
+                                    </div>
+
+
+                                    <span class="kxclienteranking">
+                                        #@cliente.Posicion
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kxclientemetricas">
+
+                                    <div>
+
+                                        <span>
+                                            Total comprado
+                                        </span>
+
+                                        <strong class="kxclientemonto">
+
+                                            S/
+                                            @cliente.TotalComprado.ToString("N2")
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            Compras
+                                        </span>
+
+                                        <strong>
+                                            @cliente.CantidadCompras
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div>
+
+                                        <span>
+                                            Ticket promedio
+                                        </span>
+
+                                        <strong>
+
+                                            S/
+                                            @cliente.TicketPromedio.ToString("N2")
+
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="kxclientebarra">
+
+                                    <span style="width:@Math.Min(cliente.PorcentajeParticipacion, 100)%">
+                                    </span>
+
+                                </div>
+
+
+                                <div class="kxclientepie">
+
+                                    <span>
+                                        @cliente.PorcentajeParticipacion.ToString("N1")%
+                                        de participación
+                                    </span>
+
+
+                                    @if (cliente.UltimaCompra.HasValue)
+                                    {
+                                        <span>
+
+                                            Última compra:
+                                            @cliente.UltimaCompra.Value.ToString("dd/MM/yyyy")
+
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </article>
+                        }
+                    }
+
+                </div>
+
+
+                <div id="sinResultadosClientes"
+                     class="kxsinresultados"
+                     hidden>
+
+                    <span uk-icon="icon: search"></span>
+
+                    <strong>
+                        Sin resultados
+                    </strong>
+
+                    <span>
+                        No encontramos clientes con ese criterio.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- 9/10 - ALERTAS COMERCIALES -->
+            <!-- ================================================= -->
+
+            <section class="kxpanel kxalertaspanel">
+
+                <div class="kxpanelcabecera">
+
+                    <div class="kxpaneltitulo">
+
+                        <span class="kxnumeral">
+                            9/10
+                        </span>
+
+                        <div>
+                            <span class="kxpanelmini">
+                                Supervisión
+                            </span>
+
+                            <h2>
+                                Alertas comerciales
+                            </h2>
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxpanelacciones">
+
+                        <div class="kxbuscadorseccion">
+
+                            <span uk-icon="icon: search"></span>
+
+                            <input type="text"
+                                   id="buscarAlertas"
+                                   placeholder="Buscar alerta..." />
+
+                            <button type="button"
+                                    class="kxlimpiarbusqueda"
+                                    data-target="buscarAlertas"
+                                    title="Limpiar búsqueda">
+                                ×
+                            </button>
+
+                        </div>
+
+                        <span class="kxalertacontador">
+                            @alertasComerciales.Count alertas
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kxalertasgrid">
+
+                    @if (alertasComerciales.Count == 0)
+                    {
+                        <div class="kxalertavacia">
+
+                            <span uk-icon="icon: check"></span>
+
+                            <strong>
+                                Sin alertas críticas
+                            </strong>
+
+                            <p>
+                                Los indicadores comerciales se encuentran
+                                dentro de los parámetros esperados.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var alerta in alertasComerciales)
+                        {
+                            var nivelClase = alerta.Nivel
+                                .Trim()
+                                .ToLowerInvariant();
+
+                            <article class="kxalertacard kxalertabuscable @nivelClase"
+                                     data-search="@($"{alerta.Tipo} {alerta.Nivel} {alerta.Titulo} {alerta.Descripcion} {alerta.Entidad}".ToLowerInvariant())">
+
+                                <div class="kxalertacabecera">
+
+                                    <div class="kxalertaicono @nivelClase">
+
+                                        @if (nivelClase == "critica" ||
+                                             nivelClase == "crítica")
+                                        {
+                                            <span uk-icon="icon: warning"></span>
+                                        }
+                                        else if (nivelClase == "alta")
+                                        {
+                                            <span uk-icon="icon: bolt"></span>
+                                        }
+                                        else if (nivelClase == "media")
+                                        {
+                                            <span uk-icon="icon: info"></span>
+                                        }
+                                        else
+                                        {
+                                            <span uk-icon="icon: bell"></span>
+                                        }
+
+                                    </div>
+
+
+                                    <div class="kxalertatitulo">
+
+                                        <span>
+                                            @alerta.Tipo
+                                        </span>
+
+                                        <strong>
+                                            @alerta.Titulo
+                                        </strong>
+
+                                    </div>
+
+
+                                    <span class="kxalertanivel @nivelClase">
+                                        @alerta.Nivel
+                                    </span>
+
+                                </div>
+
+
+                                <p class="kxalertadescripcion">
+                                    @alerta.Descripcion
+                                </p>
+
+
+                                @if (!string.IsNullOrWhiteSpace(alerta.Entidad))
+                                {
+                                    <div class="kxalertaentidad">
+
+                                        <span>
+                                            Elemento:
+                                        </span>
+
+                                        <strong>
+                                            @alerta.Entidad
+                                        </strong>
+
+                                    </div>
+                                }
+
+
+                                @if (alerta.Valor.HasValue)
+                                {
+                                    <div class="kxalertavalor">
+
+                                        <span>
+                                            Valor detectado
+                                        </span>
+
+                                        <strong>
+                                            S/
+                                            @alerta.Valor.Value.ToString("N2")
+                                        </strong>
+
+                                    </div>
+                                }
+
+
+                                @if (!string.IsNullOrWhiteSpace(alerta.Accion))
+                                {
+                                    <div class="kxalertaaccion">
+
+                                        <span uk-icon="icon: bolt"></span>
+
+                                        <span>
+                                            @alerta.Accion
+                                        </span>
+
+                                    </div>
+                                }
+
+
+                                <div class="kxalertapie">
+                                    @alerta.Fecha.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+
+                            </article>
+                        }
+                    }
+
+                </div>
+
+
+                <div id="sinResultadosAlertas"
+                     class="kxsinresultados"
+                     hidden>
+
+                    <span uk-icon="icon: search"></span>
+
+                    <strong>
+                        Sin resultados
+                    </strong>
+
+                    <span>
+                        No encontramos alertas con ese criterio.
+                    </span>
+
+                </div>
+
+            </section>
+
+            <!-- ================================================= -->
+            <!-- 10/10 - PROYECCIÓN DE VENTAS -->
+            <!-- ================================================= -->
+
+            <section class="kxpanel kxproyeccionpanel">
+
+                <div class="kxpanelcabecera">
+
+                    <div class="kxpaneltitulo">
+
+                        <span class="kxnumeral">
+                            10/10
+                        </span>
+
+                        <div>
+
+                            <span class="kxpanelmini">
+                                Predicción
+                            </span>
+
+                            <h2>
+                                Proyección de ventas
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kxpanelacciones">
+
+                        <span class="kxiamodeloestado">
+
+                            <i></i>
+
+                            Modelo predictivo activo
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                @if (proyeccionVentas.Count == 0)
+                {
+                    <div class="kxproyeccionvacia">
+
+                        <div class="kxproyeccionvaciaicono">
+                            AI
+                        </div>
+
+                        <strong>
+                            Aún no existe una proyección
+                        </strong>
+
+                        <p>
+                            Se necesitan más datos históricos
+                            para generar un pronóstico confiable.
+                        </p>
+
+                    </div>
+                }
+                else
+                {
+                    var totalEstimado =
+                        proyeccionVentas
+                            .Sum(x => x.VentaEstimada);
+
+                    var promedioConfianza =
+                        proyeccionVentas
+                            .Average(x => x.Confianza);
+
+                    var mejorDia =
+                        proyeccionVentas
+                            .OrderByDescending(x => x.VentaEstimada)
+                            .First();
+
+                    var fechaInicio =
+                        proyeccionVentas
+                            .Min(x => x.Fecha);
+
+                    var fechaFin =
+                        proyeccionVentas
+                            .Max(x => x.Fecha);
+
+
+                    <!-- ================================================= -->
+                    <!-- PERIODO PROYECTADO -->
+                    <!-- ================================================= -->
+
+                    <div class="kxperiodoproyeccion">
+
+                        <div class="kxperiodoproyeccionicono">
+
+                            <span uk-icon="icon: calendar"></span>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Periodo proyectado
+                            </span>
+
+                            <strong>
+
+                                @fechaInicio.ToString("dd/MM/yyyy")
+
+                                —
+
+                                @fechaFin.ToString("dd/MM/yyyy")
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- KPI DE PROYECCIÓN -->
+                    <!-- ================================================= -->
+
+                    <div class="kxproyeccionresumen">
+
+                        <div class="kxproyeccionkpi">
+
+                            <span>
+                                Venta proyectada
+                            </span>
+
+                            <strong>
+                                S/
+                                @totalEstimado.ToString("N2")
+                            </strong>
+
+                            <small>
+                                Total estimado del periodo
+                            </small>
+
+                        </div>
+
+
+                        <div class="kxproyeccionkpi">
+
+                            <span>
+                                Confianza promedio
+                            </span>
+
+                            <strong class="verde">
+                                @promedioConfianza.ToString("N1")%
+                            </strong>
+
+                            <small>
+                                Precisión estimada del modelo
+                            </small>
+
+                        </div>
+
+
+                        <div class="kxproyeccionkpi">
+
+                            <span>
+                                Mejor día esperado
+                            </span>
+
+                            <strong>
+
+                                @mejorDia.Fecha.ToString(
+                                    "dddd dd MMM",
+                                    new System.Globalization.CultureInfo("es-PE")
+                                )
+
+                            </strong>
+
+                            <small>
+                                Día con mayor venta estimada
+                            </small>
+
+                        </div>
+
+
+                        <div class="kxproyeccionkpi">
+
+                            <span>
+                                Máximo esperado
+                            </span>
+
+                            <strong>
+                                S/
+                                @mejorDia.LimiteSuperior.ToString("N2")
+                            </strong>
+
+                            <small>
+                                Escenario superior estimado
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================================= -->
+                    <!-- GRÁFICO + DETALLE -->
+                    <!-- ================================================= -->
+
+                    <div class="kxproyeccioncontenido">
+
+                        <!-- GRÁFICO -->
+
+                        <div class="kxproyecciongrafico">
+
+                            <div class="kxproyecciongraficocabecera">
+
+                                <div>
+
+                                    <strong>
+                                        Pronóstico diario
+                                    </strong>
+
+                                    <span>
+                                        Venta estimada y rango esperado
+                                    </span>
+
+                                </div>
+
+                                <span class="kxproyecciondias">
+                                    @proyeccionVentas.Count días
+                                </span>
+
+                            </div>
+
+
+                            <div class="kxproyeccioncanvas">
+
+                                <canvas id="proyeccionChart">
+                                </canvas>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DETALLE DIARIO -->
+
+                        <div class="kxproyecciondetalle">
+
+                            <div class="kxproyecciondetalletitulo">
+
+                                <strong>
+                                    Detalle diario
+                                </strong>
+
+                                <span>
+                                    Proyección y confianza
+                                </span>
+
+                            </div>
+
+
+                            @foreach (var item in proyeccionVentas)
+                            {
+                                <div class="kxproyeccionfila">
+
+                                    <div class="kxproyeccionfecha">
+
+                                        <strong>
+
+                                            @item.Fecha.ToString(
+                                                "dddd dd MMM",
+                                                new System.Globalization.CultureInfo("es-PE")
+                                            )
+
+                                        </strong>
+
+                                        <span>
+                                            @item.Fecha.ToString("dd/MM/yyyy")
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="kxproyeccionvalores">
+
+                                        <strong class="kxproyeccionmonto">
+
+                                            S/
+                                            @item.VentaEstimada.ToString("N2")
+
+                                        </strong>
+
+                                        <small>
+
+                                            Rango:
+                                            S/
+                                            @item.LimiteInferior.ToString("N0")
+
+                                            -
+
+                                            S/
+                                            @item.LimiteSuperior.ToString("N0")
+
+                                        </small>
+
+                                    </div>
+
+
+                                    <span class="kxconfianza">
+
+                                        @item.Confianza.ToString("N0")%
+
+                                    </span>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+            </section>
+
+
+    <!-- ===================================================== -->
+    <!-- DATOS PARA JAVASCRIPT -->
+    <!-- ===================================================== -->
+
+    <script>
+
+            window.kernixVentasData =
+                                                @Html.Raw(dashboardJson);
+
+    </script>
+
+
+    <!-- ===================================================== -->
+    <!-- LIBRERIAS -->
+    <!-- ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+
+
+    <!-- ===================================================== -->
+    <!-- SCRIPT VENTAS -->
+    <!-- ===================================================== -->
+
+    <script src="~/js/ventas/principalventas.js"
+            asp-append-version="true">
+    </script>
+
+</body>
+
+</html>

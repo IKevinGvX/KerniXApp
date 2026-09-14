@@ -1,0 +1,1910 @@
+﻿@page
+@model KerniX.Pages.Ventas.NuevaModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Nueva Venta";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] | KerniX
+    </title>
+
+    <!-- UIKIT -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <!-- CSS NUEVA VENTA -->
+    <link rel="stylesheet"
+          href="/css/ventas/nueva.css" />
+
+  <style>    /* =========================================================
+       MODAL NUEVO CLIENTE - AISLADO Y FORZADO
+       ========================================================= */
+
+    #modalNuevoCliente[hidden] {
+        display: none !important;
+    }
+
+    #modalNuevoCliente {
+        box-sizing: border-box !important;
+
+        position: fixed !important;
+        inset: 0 !important;
+
+        z-index: 999999999 !important;
+
+        width: 100% !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+
+        margin: 0 !important;
+        padding: 20px !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        overflow: hidden !important;
+    }
+
+    #modalNuevoCliente *,
+    #modalNuevoCliente *::before,
+    #modalNuevoCliente *::after {
+        box-sizing: border-box !important;
+    }
+
+
+    /* =========================================================
+       OVERLAY
+       ========================================================= */
+
+    #modalNuevoCliente > .kxcliente-modal-fondo {
+        position: absolute !important;
+        inset: 0 !important;
+
+        z-index: 0 !important;
+
+        width: 100% !important;
+        height: 100% !important;
+
+        margin: 0 !important;
+
+        background:
+            rgba(2, 8, 17, .94) !important;
+
+        backdrop-filter: blur(7px) !important;
+        -webkit-backdrop-filter: blur(7px) !important;
+    }
+
+
+    /* =========================================================
+       VENTANA
+       ========================================================= */
+
+    #modalNuevoCliente > .kxcliente-modal-dialogo {
+        position: relative !important;
+
+        z-index: 10 !important;
+
+        width: 800px !important;
+        max-width: calc(100vw - 40px) !important;
+
+        height: auto !important;
+
+        max-height: calc(100dvh - 40px) !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        overflow: hidden !important;
+
+        border:
+            1px solid rgba(248, 201, 92, .22) !important;
+
+        border-radius: 16px !important;
+
+        background:
+            linear-gradient(
+                145deg,
+                #0b1b2b,
+                #06111d
+            ) !important;
+
+        box-shadow:
+            0 30px 100px
+            rgba(0, 0, 0, .80) !important;
+
+        color: #e6eef6 !important;
+    }
+
+
+    /* =========================================================
+       CABECERA
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-modal-cabecera {
+        width: 100% !important;
+
+        flex: 0 0 auto !important;
+
+        display: flex !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+
+        gap: 16px !important;
+
+        padding: 18px 20px !important;
+
+        margin: 0 !important;
+
+        background: #081521 !important;
+
+        border-bottom:
+            1px solid rgba(255,255,255,.07) !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-cabecera > div {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-mini {
+        display: block !important;
+
+        margin: 0 0 3px !important;
+
+        color: #f8c95c !important;
+
+        font-size: 11px !important;
+        font-weight: 800 !important;
+
+        letter-spacing: 1px !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-cabecera h2 {
+        margin: 0 !important;
+        padding: 0 !important;
+
+        color: #ffffff !important;
+
+        font-size: 22px !important;
+        line-height: 1.2 !important;
+
+        font-weight: 850 !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-cabecera p {
+        margin: 5px 0 0 !important;
+        padding: 0 !important;
+
+        color: #758ca1 !important;
+
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+    }
+
+
+    /* =========================================================
+       CERRAR
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-modal-cerrar {
+        appearance: none !important;
+
+        flex: 0 0 40px !important;
+
+        width: 40px !important;
+        height: 40px !important;
+
+        min-width: 40px !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        border:
+            1px solid rgba(255,255,255,.10) !important;
+
+        border-radius: 9px !important;
+
+        background:
+            rgba(255,255,255,.035) !important;
+
+        color: #a9bdcf !important;
+
+        cursor: pointer !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-cerrar:hover {
+        color: #f8c95c !important;
+
+        border-color:
+            rgba(248,201,92,.35) !important;
+
+        background:
+            rgba(248,201,92,.07) !important;
+    }
+
+
+    /* =========================================================
+       CUERPO
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-modal-cuerpo {
+        position: relative !important;
+
+        flex: 1 1 auto !important;
+
+        width: 100% !important;
+
+        min-width: 0 !important;
+        min-height: 0 !important;
+
+        margin: 0 !important;
+
+        padding: 18px 20px !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+
+        background: transparent !important;
+    }
+
+
+    /* =========================================================
+       GRID
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-form-grid {
+        width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        display: grid !important;
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr) !important;
+
+        gap: 14px 16px !important;
+    }
+
+
+    /* =========================================================
+       CAMPOS
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-campo {
+        width: 100% !important;
+
+        min-width: 0 !important;
+        max-width: 100% !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        gap: 6px !important;
+    }
+
+    #modalNuevoCliente .kxcliente-campo-ancho {
+        grid-column: 1 / -1 !important;
+    }
+
+    #modalNuevoCliente .kxcliente-campo label {
+        display: block !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        color: #8da2b5 !important;
+
+        font-size: 13px !important;
+        line-height: 1.3 !important;
+
+        font-weight: 700 !important;
+    }
+
+
+    /* =========================================================
+       INPUTS Y SELECT
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-campo input,
+    #modalNuevoCliente .kxcliente-campo select {
+        display: block !important;
+
+        width: 100% !important;
+
+        min-width: 0 !important;
+        max-width: 100% !important;
+
+        height: 44px !important;
+
+        margin: 0 !important;
+
+        padding: 0 12px !important;
+
+        border:
+            1px solid rgba(90,145,200,.18) !important;
+
+        border-radius: 9px !important;
+
+        outline: none !important;
+
+        background: #0a1a29 !important;
+
+        color: #e8f1f8 !important;
+
+        font-family:
+            Inter,
+            "Segoe UI",
+            sans-serif !important;
+
+        font-size: 14px !important;
+        line-height: normal !important;
+
+        box-shadow: none !important;
+    }
+
+    #modalNuevoCliente .kxcliente-campo select {
+        cursor: pointer !important;
+    }
+
+    #modalNuevoCliente .kxcliente-campo input::placeholder {
+        color: #4e657a !important;
+        opacity: 1 !important;
+    }
+
+    #modalNuevoCliente .kxcliente-campo input:focus,
+    #modalNuevoCliente .kxcliente-campo select:focus {
+        border-color:
+            rgba(248,201,92,.55) !important;
+
+        background: #0c1d2c !important;
+
+        box-shadow:
+            0 0 0 3px
+            rgba(248,201,92,.07) !important;
+    }
+
+
+    /* =========================================================
+       SUBTÍTULO
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-subtitulo {
+        width: 100% !important;
+
+        margin: 2px 0 0 !important;
+
+        padding: 12px 0 0 !important;
+
+        border-top:
+            1px solid rgba(255,255,255,.06) !important;
+    }
+
+    #modalNuevoCliente .kxcliente-subtitulo strong {
+        display: block !important;
+
+        margin: 0 !important;
+
+        color: #e4edf5 !important;
+
+        font-size: 14px !important;
+    }
+
+    #modalNuevoCliente .kxcliente-subtitulo span {
+        display: block !important;
+
+        margin: 2px 0 0 !important;
+
+        color: #60768a !important;
+
+        font-size: 12px !important;
+    }
+
+
+    /* =========================================================
+       MENSAJE
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-modal-mensaje {
+        width: 100% !important;
+
+        margin: 15px 0 0 !important;
+
+        padding: 11px 13px !important;
+
+        border:
+            1px solid rgba(255,90,110,.18) !important;
+
+        border-radius: 9px !important;
+
+        background:
+            rgba(255,90,110,.06) !important;
+
+        color: #ff91a0 !important;
+
+        font-size: 13px !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-mensaje[hidden] {
+        display: none !important;
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-modal-acciones {
+        flex: 0 0 auto !important;
+
+        width: 100% !important;
+
+        margin: 0 !important;
+
+        padding: 14px 20px !important;
+
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+
+        gap: 9px !important;
+
+        background: #081521 !important;
+
+        border-top:
+            1px solid rgba(255,255,255,.07) !important;
+    }
+
+
+    #modalNuevoCliente .kxcliente-modal-acciones button {
+        appearance: none !important;
+
+        width: auto !important;
+
+        min-width: 130px !important;
+        height: 44px !important;
+
+        margin: 0 !important;
+
+        padding: 0 15px !important;
+
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 7px !important;
+
+        border-radius: 9px !important;
+
+        font-family: inherit !important;
+
+        font-size: 13px !important;
+        font-weight: 800 !important;
+
+        cursor: pointer !important;
+    }
+
+
+    /* CANCELAR */
+
+    #modalNuevoCliente #cancelarNuevoCliente {
+        border:
+            1px solid rgba(90,145,200,.14) !important;
+
+        background:
+            rgba(255,255,255,.025) !important;
+
+        color: #8fa4b7 !important;
+    }
+
+
+    /* GUARDAR */
+
+    #modalNuevoCliente #guardarNuevoCliente {
+        border: none !important;
+
+        background:
+            linear-gradient(
+                145deg,
+                #f8c95c,
+                #c8952c
+            ) !important;
+
+        color: #07111c !important;
+    }
+
+
+    /* =========================================================
+       SCROLL
+       ========================================================= */
+
+    #modalNuevoCliente .kxcliente-modal-cuerpo::-webkit-scrollbar {
+        width: 7px !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-cuerpo::-webkit-scrollbar-track {
+        background: #07131f !important;
+    }
+
+    #modalNuevoCliente .kxcliente-modal-cuerpo::-webkit-scrollbar-thumb {
+        background:
+            rgba(248,201,92,.25) !important;
+
+        border-radius: 20px !important;
+    }
+
+
+    /* =========================================================
+       MÓVIL
+       ========================================================= */
+
+    @@media (max-width: 650px) {
+
+        #modalNuevoCliente {
+            padding: 8px !important;
+        }
+
+        #modalNuevoCliente > .kxcliente-modal-dialogo {
+            width: 100% !important;
+
+            max-width: 100% !important;
+
+            max-height:
+                calc(100dvh - 16px) !important;
+
+            border-radius: 12px !important;
+        }
+
+        #modalNuevoCliente .kxcliente-modal-cabecera {
+            padding: 14px !important;
+        }
+
+        #modalNuevoCliente .kxcliente-modal-cuerpo {
+            padding: 14px !important;
+        }
+
+        #modalNuevoCliente .kxcliente-form-grid {
+            grid-template-columns:
+                minmax(0, 1fr) !important;
+
+            gap: 12px !important;
+        }
+
+        #modalNuevoCliente .kxcliente-campo-ancho {
+            grid-column: auto !important;
+        }
+
+        #modalNuevoCliente .kxcliente-campo input,
+        #modalNuevoCliente .kxcliente-campo select {
+            height: 46px !important;
+            font-size: 16px !important;
+        }
+
+        #modalNuevoCliente .kxcliente-modal-acciones {
+            padding: 12px 14px !important;
+
+            display: grid !important;
+
+            grid-template-columns:
+                minmax(0,1fr)
+                minmax(0,1fr) !important;
+        }
+
+        #modalNuevoCliente .kxcliente-modal-acciones button {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+    }
+
+
+    @@media (max-width: 400px) {
+
+        #modalNuevoCliente .kxcliente-modal-acciones {
+            grid-template-columns:
+                1fr !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+    <!-- ========================================================= -->
+    <!-- MODAL NUEVO CLIENTE -->
+    <!-- ========================================================= -->
+    <div id="modalNuevoCliente"
+         class="kxcliente-modal"
+         hidden>
+
+        <div id="overlayNuevoCliente"
+             class="kxcliente-modal-fondo">
+        </div>
+
+        <section class="kxcliente-modal-dialogo"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="tituloNuevoCliente">
+
+            <header class="kxcliente-modal-cabecera">
+
+                <div>
+                    <span class="kxcliente-modal-mini">
+                        CLIENTES
+                    </span>
+
+                    <h2 id="tituloNuevoCliente">
+                        Nuevo cliente
+                    </h2>
+
+                    <p>
+                        Registra un cliente sin salir de la venta.
+                    </p>
+                </div>
+
+                <button type="button"
+                        id="cerrarModalNuevoCliente"
+                        class="kxcliente-modal-cerrar"
+                        aria-label="Cerrar">
+
+                    <span uk-icon="icon: close"></span>
+
+                </button>
+
+            </header>
+
+
+            <div class="kxcliente-modal-cuerpo">
+
+                <div class="kxcliente-form-grid">
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoTipoCliente">
+                            Tipo de cliente
+                        </label>
+
+                        <select id="nuevoTipoCliente">
+
+                            <option value="NATURAL">
+                                Persona natural
+                            </option>
+
+                            <option value="JURIDICO">
+                                Empresa / Persona jurídica
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoTipoDocumento">
+                            Tipo de documento
+                        </label>
+
+                        <select id="nuevoTipoDocumento">
+
+                            <option value="DNI">
+                                DNI
+                            </option>
+
+                            <option value="RUC">
+                                RUC
+                            </option>
+
+                            <option value="CE">
+                                Carné de extranjería
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoNumeroDocumento">
+                            Número de documento
+                        </label>
+
+                        <input type="text"
+                               id="nuevoNumeroDocumento"
+                               maxlength="20"
+                               autocomplete="off"
+                               placeholder="Ej. 70000002" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoTelefono">
+                            Teléfono
+                        </label>
+
+                        <input type="text"
+                               id="nuevoTelefono"
+                               maxlength="20"
+                               autocomplete="off"
+                               placeholder="999111222" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoNombres">
+                            Nombres
+                        </label>
+
+                        <input type="text"
+                               id="nuevoNombres"
+                               maxlength="150"
+                               autocomplete="off"
+                               placeholder="Andrea" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoApellidos">
+                            Apellidos
+                        </label>
+
+                        <input type="text"
+                               id="nuevoApellidos"
+                               maxlength="150"
+                               autocomplete="off"
+                               placeholder="Flores Ramos" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo kxcliente-campo-ancho">
+
+                        <label for="nuevoRazonSocial">
+                            Razón social
+                        </label>
+
+                        <input type="text"
+                               id="nuevoRazonSocial"
+                               maxlength="200"
+                               autocomplete="off"
+                               placeholder="Solo para persona jurídica" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo kxcliente-campo-ancho">
+
+                        <label for="nuevoCorreo">
+                            Correo
+                        </label>
+
+                        <input type="email"
+                               id="nuevoCorreo"
+                               maxlength="200"
+                               autocomplete="off"
+                               placeholder="cliente@correo.com" />
+
+                    </div>
+
+
+                    <div class="kxcliente-subtitulo kxcliente-campo-ancho">
+                        <strong>
+                            Contacto principal
+                        </strong>
+
+                        <span>
+                            Datos opcionales del contacto del cliente.
+                        </span>
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoCargoContacto">
+                            Cargo
+                        </label>
+
+                        <input type="text"
+                               id="nuevoCargoContacto"
+                               maxlength="100"
+                               autocomplete="off"
+                               placeholder="Ej. Administrador" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoTipoDireccion">
+                            Tipo de dirección
+                        </label>
+
+                        <select id="nuevoTipoDireccion">
+
+                            <option value="FISCAL">
+                                Fiscal
+                            </option>
+
+                            <option value="ENTREGA">
+                                Entrega
+                            </option>
+
+                            <option value="DOMICILIO">
+                                Domicilio
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="kxcliente-subtitulo kxcliente-campo-ancho">
+                        <strong>
+                            Dirección
+                        </strong>
+
+                        <span>
+                            Puedes dejarla vacía si todavía no la registrarás.
+                        </span>
+                    </div>
+
+
+                    <div class="kxcliente-campo kxcliente-campo-ancho">
+
+                        <label for="nuevoDireccion">
+                            Dirección
+                        </label>
+
+                        <input type="text"
+                               id="nuevoDireccion"
+                               maxlength="250"
+                               autocomplete="off"
+                               placeholder="Av. / Calle / Jr." />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoDistrito">
+                            Distrito
+                        </label>
+
+                        <input type="text"
+                               id="nuevoDistrito"
+                               maxlength="100"
+                               autocomplete="off"
+                               placeholder="Distrito" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoProvincia">
+                            Provincia
+                        </label>
+
+                        <input type="text"
+                               id="nuevoProvincia"
+                               maxlength="100"
+                               autocomplete="off"
+                               placeholder="Provincia" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoDepartamento">
+                            Departamento
+                        </label>
+
+                        <input type="text"
+                               id="nuevoDepartamento"
+                               maxlength="100"
+                               autocomplete="off"
+                               placeholder="Departamento" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo">
+
+                        <label for="nuevoUbigeo">
+                            Ubigeo
+                        </label>
+
+                        <input type="text"
+                               id="nuevoUbigeo"
+                               maxlength="6"
+                               autocomplete="off"
+                               inputmode="numeric"
+                               placeholder="150110" />
+
+                    </div>
+
+
+                    <div class="kxcliente-campo kxcliente-campo-ancho">
+
+                        <label for="nuevoReferencia">
+                            Referencia
+                        </label>
+
+                        <input type="text"
+                               id="nuevoReferencia"
+                               maxlength="250"
+                               autocomplete="off"
+                               placeholder="Referencia de la dirección" />
+
+                    </div>
+
+                </div>
+
+
+                <div id="mensajeNuevoCliente"
+                     class="kxcliente-modal-mensaje"
+                     hidden>
+                </div>
+
+            </div>
+
+
+            <footer class="kxcliente-modal-acciones">
+
+                <button type="button"
+                        id="cancelarNuevoCliente"
+                        class="kxbotonsecundario">
+
+                    Cancelar
+
+                </button>
+
+
+                <button type="button"
+                        id="guardarNuevoCliente"
+                        class="kxcliente-boton-guardar">
+
+                    <span uk-icon="icon: check"></span>
+
+                    Guardar cliente
+
+                </button>
+
+            </footer>
+
+        </section>
+
+    </div>
+
+    <!-- Token para POST del handler Razor -->
+    <form method="post"
+          id="formTokenNuevaVenta"
+          hidden>
+        @Html.AntiForgeryToken()
+    </form>
+
+    <div class="kxventa">
+
+        <!-- ================================================= -->
+        <!-- SIDEBAR -->
+        <!-- ================================================= -->
+
+        <aside class="kxsidebar">
+
+            <div class="kxmarca">
+
+                <div class="kxlogo">
+                    K
+                </div>
+
+                <div class="kxmarcatexto">
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <span>
+                        Ventas Inteligentes
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="kxmenu">
+
+                <a href="/Ventas/PrincipalVentas"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: grid"></span>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Nueva"
+                   class="kxmenuitem activo">
+
+                    <span uk-icon="icon: cart"></span>
+
+                    <span>
+                        Nueva Venta
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Cotizaciones"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: file-text"></span>
+
+                    <span>
+                        Cotizaciones
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Pedidos"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: list"></span>
+
+                    <span>
+                        Pedidos
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Pagos"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: credit-card"></span>
+
+                    <span>
+                        Pagos
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Comprobantes"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: print"></span>
+
+                    <span>
+                        Comprobantes
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Devoluciones"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: history"></span>
+
+                    <span>
+                        Devoluciones
+                    </span>
+
+                </a>
+
+
+                <a href="/Ventas/Reclamos"
+                   class="kxmenuitem">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        Reclamos
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- ================================================= -->
+        <!-- CONTENIDO -->
+        <!-- ================================================= -->
+
+        <main class="kxcontenido">
+
+            <!-- ================================================= -->
+            <!-- CABECERA -->
+            <!-- ================================================= -->
+
+            <header class="kxcabecera">
+
+                <div>
+
+                    <p class="kxseccion">
+                        Gestión Comercial
+                    </p>
+
+                    <h1>
+                        Nueva Venta
+                    </h1>
+
+                    <p class="kxdescripcion">
+                        Registra productos, cliente y forma de pago.
+                    </p>
+
+                </div>
+
+
+                <div class="kxacciones">
+
+                    <a href="/Ventas/PrincipalVentas"
+                       class="kxbotonsecundario">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver
+
+                    </a>
+
+                </div>
+
+            </header>
+
+
+            <!-- ================================================= -->
+            <!-- CONTENEDOR PRINCIPAL -->
+            <!-- ================================================= -->
+
+            <div class="kxventagrid">
+
+                <!-- ================================================= -->
+                <!-- IZQUIERDA -->
+                <!-- ================================================= -->
+
+                <section class="kxventaizquierda">
+
+                    <!-- ================================================= -->
+                    <!-- 01 - CLIENTE -->
+                    <!-- ================================================= -->
+
+                    <article class="kxpanel">
+
+                        <div class="kxpanelcabecera">
+
+                            <div class="kxpaneltitulo">
+
+                                <span class="kxnumero">
+                                    01
+                                </span>
+
+                                <div>
+
+                                    <span class="kxpanelmini">
+                                        Cliente
+                                    </span>
+
+                                    <h2>
+                                        Datos del cliente
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="kxpanelacciones">
+
+                            <button type="button"
+                                    id="abrirModalNuevoCliente"
+                                    class="kxbotonsecundario">
+
+                                <span uk-icon="icon: plus-circle"></span>
+
+                                Nuevo cliente
+
+                            </button>
+
+                        </div>
+
+                        <div class="kxclientegrid">
+
+                            <!-- BUSCADOR -->
+
+                            <div class="kxcampo kxcampogrande">
+
+                                <label for="buscarCliente">
+                                    Buscar cliente
+                                </label>
+
+                                <div class="kxclientebuscador">
+
+                                    <div class="kxinputicono">
+
+                                        <span uk-icon="icon: search"></span>
+
+                                        <input type="text"
+                                               id="buscarCliente"
+                                               autocomplete="off"
+                                               placeholder="Nombre, DNI, RUC, teléfono o correo..." />
+
+                                    </div>
+
+
+                                    <!-- RESULTADOS -->
+
+                                    <div id="resultadosClientes"
+                                         class="kxresultadosclientes"
+                                         hidden>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ID REAL DEL CLIENTE -->
+
+                            <input type="hidden"
+                                   id="idClienteSeleccionado"
+                                   value="" />
+
+
+                            <!-- DOCUMENTO -->
+
+                            <div class="kxcampo">
+
+                                <label for="documentoCliente">
+                                    Documento
+                                </label>
+
+                                <input type="text"
+                                       id="documentoCliente"
+                                       placeholder="DNI / RUC"
+                                       readonly />
+
+                            </div>
+
+
+                            <!-- TELÉFONO -->
+
+                            <div class="kxcampo">
+
+                                <label for="telefonoCliente">
+                                    Teléfono
+                                </label>
+
+                                <input type="text"
+                                       id="telefonoCliente"
+                                       placeholder="+51..."
+                                       readonly />
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CLIENTE SELECCIONADO -->
+
+                        <div class="kxclienteseleccionado"
+                             id="clienteSeleccionado"
+                             hidden>
+
+                            <div class="kxclienteavatar"
+                                 id="clienteAvatar">
+
+                                C
+
+                            </div>
+
+
+                            <div class="kxclienteprincipal">
+
+                                <strong id="clienteNombre">
+                                </strong>
+
+                                <span id="clienteDocumentoTexto">
+                                </span>
+
+                                <small id="clienteCorreo">
+                                </small>
+
+                            </div>
+
+
+                            <button type="button"
+                                    id="quitarCliente"
+                                    class="kxbotonicono"
+                                    title="Quitar cliente">
+
+                                <span uk-icon="icon: close"></span>
+
+                            </button>
+
+                        </div>
+
+                    </article>
+                    <!-- PRODUCTOS -->
+
+                    <article class="kxpanel">
+
+                        <div class="kxpanelcabecera">
+
+                            <div class="kxpaneltitulo">
+
+                                <span class="kxnumero">
+                                    02
+                                </span>
+
+                                <div>
+
+                                    <span class="kxpanelmini">
+                                        Productos
+                                    </span>
+
+                                    <h2>
+                                        Agregar productos
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxbuscadorproducto">
+
+                            <span uk-icon="icon: search"></span>
+
+                            <input type="text"
+                                   id="buscarProducto"
+                                   autocomplete="off"
+                                   placeholder="Nombre, código, barras, categoría o marca..." />
+
+                        </div>
+
+
+                        <div class="kxproductosgrid"
+                             id="productosDisponibles">
+
+                            <div class="kxvacioproductos">
+
+                                Escribe al menos 2 caracteres
+                                para buscar productos.
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- CARRITO -->
+
+                    <article class="kxpanel">
+
+                        <div class="kxpanelcabecera">
+
+                            <div class="kxpaneltitulo">
+
+                                <span class="kxnumero">
+                                    03
+                                </span>
+
+                                <div>
+
+                                    <span class="kxpanelmini">
+                                        Detalle
+                                    </span>
+
+                                    <h2>
+                                        Productos de la venta
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+                            <span class="kxcontador"
+                                  id="cantidadProductos">
+                                0 productos
+                            </span>
+
+                        </div>
+
+
+                        <div class="kxtablacontenedor">
+
+                            <table class="kxtabla">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Producto
+                                        </th>
+
+                                        <th>
+                                            Precio
+                                        </th>
+
+                                        <th>
+                                            Cantidad
+                                        </th>
+
+                                        <th>
+                                            Descuento
+                                        </th>
+
+                                        <th>
+                                            Total
+                                        </th>
+
+                                        <th></th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="detalleVenta">
+
+                                    <tr id="filaVacia">
+
+                                        <td colspan="6"
+                                            class="kxvacio">
+
+                                            No has agregado productos a la venta.
+
+                                        </td>
+
+                                    </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- ================================================= -->
+                <!-- DERECHA -->
+                <!-- ================================================= -->
+
+                <aside class="kxventaderecha">
+
+                    <!-- RESUMEN -->
+
+                    <article class="kxpanel kxresumen">
+
+                        <div class="kxpanelcabecera">
+
+                            <div class="kxpaneltitulo">
+
+                                <span class="kxnumero">
+                                    04
+                                </span>
+
+                                <div>
+
+                                    <span class="kxpanelmini">
+                                        Resumen
+                                    </span>
+
+                                    <h2>
+                                        Total de venta
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxresumenlinea">
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <strong id="subtotalVenta">
+                                S/ 0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kxresumenlinea">
+
+                            <span>
+                                Descuento
+                            </span>
+
+                            <strong id="descuentoVenta">
+                                - S/ 0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kxresumenlinea">
+
+                            <span>
+                                @Model.CodigoImpuesto
+                                (@Model.PorcentajeImpuesto.ToString("0.##")%)
+                            </span>
+
+                            <strong id="igvVenta">
+                                S/ 0.00
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kxresumentotal">
+
+                            <span>
+                                Total
+                            </span>
+
+                            <strong id="totalVenta">
+                                S/ 0.00
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- PAGO -->
+
+                    <article class="kxpanel">
+
+                        <div class="kxpanelcabecera">
+
+                            <div class="kxpaneltitulo">
+
+                                <span class="kxnumero">
+                                    05
+                                </span>
+
+                                <div>
+
+                                    <span class="kxpanelmini">
+                                        Cobro
+                                    </span>
+
+                                    <h2>
+                                        Método de pago
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxmetodospago">
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="MetodoPago"
+                                       value="Efectivo"
+                                       checked />
+
+                                <span class="kxmetodopagoicono">
+                                    S/
+                                </span>
+
+                                <span>
+                                    Efectivo
+                                </span>
+
+                            </label>
+
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="MetodoPago"
+                                       value="Yape" />
+
+                                <span class="kxmetodopagoicono morado">
+                                    Y
+                                </span>
+
+                                <span>
+                                    Yape
+                                </span>
+
+                            </label>
+
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="MetodoPago"
+                                       value="Plin" />
+
+                                <span class="kxmetodopagoicono verde">
+                                    P
+                                </span>
+
+                                <span>
+                                    Plin
+                                </span>
+
+                            </label>
+
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="MetodoPago"
+                                       value="Tarjeta" />
+
+                                <span class="kxmetodopagoicono azul">
+
+                                    <span uk-icon="icon: credit-card"></span>
+
+                                </span>
+
+                                <span>
+                                    Tarjeta
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <div class="kxcampo">
+
+                            <label>
+                                Monto recibido
+                            </label>
+
+                            <div class="kxinputmoneda">
+
+                                <span>
+                                    S/
+                                </span>
+
+                                <input type="number"
+                                       id="montoRecibido"
+                                       value="0"
+                                       min="0"
+                                       step="0.01" />
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxvuelto">
+
+                            <span>
+                                Vuelto
+                            </span>
+
+                            <strong id="vueltoVenta">
+                                S/ 0.00
+                            </strong>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="kxaccionesventa">
+                        <button type="button"
+                                id="limpiarVenta"
+                                class="kxbotonsecundario kxbotongrande">
+
+                            <span uk-icon="icon: refresh"></span>
+
+                            Limpiar venta
+
+                        </button>
+
+
+                        <button type="button"
+                                id="confirmarVenta"
+                                class="kxbotonprincipal kxbotongrande">
+
+                            <span uk-icon="icon: check"></span>
+
+                            Confirmar venta
+
+                        </button>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+
+    <!-- =========================================================
+     CONFIGURACIÓN DE LA VENTA
+========================================================== -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const modal =
+            document.getElementById("modalNuevoCliente");
+
+        const abrir =
+            document.getElementById("abrirModalNuevoCliente");
+
+        const cerrar =
+            document.getElementById("cerrarModalNuevoCliente");
+
+        const cancelar =
+            document.getElementById("cancelarNuevoCliente");
+
+        const fondo =
+            document.getElementById("overlayNuevoCliente");
+
+
+        function abrirModalCliente() {
+
+            if (!modal) {
+                return;
+            }
+
+            modal.hidden = false;
+
+            modal.removeAttribute("hidden");
+
+            document.documentElement.style.overflow = "hidden";
+
+            document.body.style.overflow = "hidden";
+        }
+
+
+        function cerrarModalCliente() {
+
+            if (!modal) {
+                return;
+            }
+
+            modal.hidden = true;
+
+            modal.setAttribute(
+                "hidden",
+                ""
+            );
+
+            document.documentElement.style.overflow = "";
+
+            document.body.style.overflow = "";
+        }
+
+
+        if (abrir) {
+
+            abrir.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    abrirModalCliente();
+                }
+            );
+        }
+
+
+        if (cerrar) {
+
+            cerrar.addEventListener(
+                "click",
+                cerrarModalCliente
+            );
+        }
+
+
+        if (cancelar) {
+
+            cancelar.addEventListener(
+                "click",
+                cerrarModalCliente
+            );
+        }
+
+
+        if (fondo) {
+
+            fondo.addEventListener(
+                "click",
+                cerrarModalCliente
+            );
+        }
+
+
+        document.addEventListener(
+            "keydown",
+            function (event) {
+
+                if (
+                    event.key === "Escape" &&
+                    modal &&
+                    !modal.hidden
+                ) {
+
+                    cerrarModalCliente();
+                }
+            }
+        );
+
+    });
+</script>
+
+    <script src="~/js/ventas/nueva.js"
+            asp-append-version="true">
+    </script>
+
+</body>
+
+</html>

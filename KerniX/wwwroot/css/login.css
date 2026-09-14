@@ -1,0 +1,1480 @@
+﻿/* =========================================================
+   KERNIX ERP
+   LOGIN
+   ========================================================= */
+
+:root { /* ==========================================================
+   KERNIX - ERRORES DE CAMPOS
+   ========================================================== */
+
+    .kx-input-error {
+        border-color: #ff4d5e !important;
+        box-shadow: 0 0 0 1px rgba(255, 77, 94, .35), 0 0 18px rgba(255, 77, 94, .12) !important;
+    }
+
+    .kx-field-error {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 7px;
+        color: #ff7885;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    /* ==========================================================
+   ALERTA CENTRAL KERNIX
+   ========================================================== */
+
+    .kx-alert-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(0, 5, 15, .72);
+        backdrop-filter: blur(7px);
+        -webkit-backdrop-filter: blur(7px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .2s ease, visibility .2s ease;
+    }
+
+        .kx-alert-overlay.kx-alert-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    /* MODAL */
+
+    .kx-alert-modal {
+        position: relative;
+        width: min(420px, 92vw);
+        padding: 38px 34px 30px;
+        overflow: hidden;
+        text-align: center;
+        color: #ffffff;
+        background: linear-gradient( 145deg, rgba(8, 17, 31, .98), rgba(3, 9, 20, .99) );
+        border: 1px solid rgba(255, 190, 25, .65);
+        border-radius: 18px;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, .65), 0 0 35px rgba(255, 181, 0, .10);
+        transform: translateY(15px) scale(.96);
+        transition: transform .22s ease;
+    }
+
+    .kx-alert-visible .kx-alert-modal {
+        transform: translateY(0) scale(1);
+    }
+    /* BRILLO */
+
+    .kx-alert-glow {
+        position: absolute;
+        width: 190px;
+        height: 100px;
+        top: -70px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ffb300;
+        filter: blur(70px);
+        opacity: .20;
+        pointer-events: none;
+    }
+    /* ICONO */
+
+    .kx-alert-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        color: #ffbf19;
+        font-size: 29px;
+        font-weight: 800;
+        border: 1px solid #ffb800;
+        background: rgba(255, 184, 0, .08);
+        box-shadow: 0 0 28px rgba(255, 184, 0, .12);
+    }
+    /* DANGER */
+
+    .kx-alert-danger .kx-alert-modal
+
+{
+    border-color: rgba(255, 77, 94, .65);
+}
+
+.kx-alert-danger
+.kx-alert-icon {
+    color: #ff6c79;
+    border-color: #ff4d5e;
+    background: rgba(255, 77, 94, .08);
+    box-shadow: 0 0 28px rgba(255, 77, 94, .14);
+}
+
+
+/* TEXTOS */
+
+.kx-alert-title {
+    position: relative;
+    margin-bottom: 9px;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+}
+
+.kx-alert-message {
+    position: relative;
+    max-width: 330px;
+    margin: 0 auto 25px;
+    color: #aeb9ca;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+
+/* BOTÓN */
+
+.kx-alert-button {
+    position: relative;
+    width: 100%;
+    min-height: 47px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #101010;
+    font-size: 14px;
+    font-weight: 800;
+    background: linear-gradient( 180deg, #ffd45b, #f2a900 );
+    box-shadow: 0 8px 25px rgba(255, 177, 0, .18);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+    .kx-alert-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 30px rgba(255, 177, 0, .28);
+    }
+
+
+/* CERRAR */
+
+.kx-alert-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    z-index: 2;
+    border: 0;
+    background: transparent;
+    color: #718096;
+    font-size: 25px;
+    cursor: pointer;
+    transition: color .15s ease;
+}
+
+    .kx-alert-close:hover {
+        color: #ffffff;
+    }
+    --kx-bg: #020711;
+    --kx-bg-soft: #050b17;
+    --kx-white: #f8fafc;
+    --kx-muted: #a9b3c6;
+    --kx-gold: #ffbf22;
+    --kx-gold-light: #ffe28a;
+    --kx-gold-dark: #b96d00;
+    --kx-purple: #c653ff;
+    --kx-blue: #3faaff;
+    --kx-cyan: #27e6df;
+    --kx-border: rgba(218, 164, 38, .64);
+}
+/* ==========================================================
+   KERNIX - ERRORES DE CAMPOS
+   ========================================================== */
+
+.kx-input-error {
+    border-color: #ff4d5e !important;
+    box-shadow: 0 0 0 1px rgba(255, 77, 94, .35), 0 0 18px rgba(255, 77, 94, .12) !important;
+}
+
+.kx-field-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 7px;
+    color: #ff7885;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+
+/* ==========================================================
+   ALERTA CENTRAL KERNIX
+   ========================================================== */
+
+.kx-alert-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 5, 15, .72);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease, visibility .2s ease;
+}
+
+    .kx-alert-overlay.kx-alert-visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+
+/* MODAL */
+
+.kx-alert-modal {
+    position: relative;
+    width: min(420px, 92vw);
+    padding: 38px 34px 30px;
+    overflow: hidden;
+    text-align: center;
+    color: #ffffff;
+    background: linear-gradient( 145deg, rgba(8, 17, 31, .98), rgba(3, 9, 20, .99) );
+    border: 1px solid rgba(255, 190, 25, .65);
+    border-radius: 18px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, .65), 0 0 35px rgba(255, 181, 0, .10);
+    transform: translateY(15px) scale(.96);
+    transition: transform .22s ease;
+}
+
+.kx-alert-visible .kx-alert-modal {
+    transform: translateY(0) scale(1);
+}
+
+
+/* BRILLO */
+
+.kx-alert-glow {
+    position: absolute;
+    width: 190px;
+    height: 100px;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffb300;
+    filter: blur(70px);
+    opacity: .20;
+    pointer-events: none;
+}
+
+
+/* ICONO */
+
+.kx-alert-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    color: #ffbf19;
+    font-size: 29px;
+    font-weight: 800;
+    border: 1px solid #ffb800;
+    background: rgba(255, 184, 0, .08);
+    box-shadow: 0 0 28px rgba(255, 184, 0, .12);
+}
+
+
+/* DANGER */
+
+.kx-alert-danger
+.kx-alert-modal {
+    border-color: rgba(255, 77, 94, .65);
+}
+
+.kx-alert-danger
+.kx-alert-icon {
+    color: #ff6c79;
+    border-color: #ff4d5e;
+    background: rgba(255, 77, 94, .08);
+    box-shadow: 0 0 28px rgba(255, 77, 94, .14);
+}
+
+
+/* TEXTOS */
+
+.kx-alert-title {
+    position: relative;
+    margin-bottom: 9px;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+}
+
+.kx-alert-message {
+    position: relative;
+    max-width: 330px;
+    margin: 0 auto 25px;
+    color: #aeb9ca;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+
+/* BOTÓN */
+
+.kx-alert-button {
+    position: relative;
+    width: 100%;
+    min-height: 47px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    color: #101010;
+    font-size: 14px;
+    font-weight: 800;
+    background: linear-gradient( 180deg, #ffd45b, #f2a900 );
+    box-shadow: 0 8px 25px rgba(255, 177, 0, .18);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+    .kx-alert-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 30px rgba(255, 177, 0, .28);
+    }
+
+
+/* CERRAR */
+
+.kx-alert-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    z-index: 2;
+    border: 0;
+    background: transparent;
+    color: #718096;
+    font-size: 25px;
+    cursor: pointer;
+    transition: color .15s ease;
+}
+
+    .kx-alert-close:hover {
+        color: #ffffff;
+    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow-x: hidden;
+    background: radial-gradient( circle at 75% 20%, rgba(42, 40, 126, .16), transparent 32% ), #01050d;
+    color: var(--kx-white);
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.kx-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+/* =========================================================
+   CONTENEDOR GENERAL
+   ========================================================= */
+
+.kx-login-shell {
+    width: min(1080px, 100%);
+    min-height: 760px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(224, 166, 34, .88);
+    border-radius: 26px;
+    background: radial-gradient( circle at 76% 19%, rgba(39, 48, 156, .17), transparent 28% ), radial-gradient( circle at 48% 58%, rgba(91, 29, 159, .08), transparent 30% ), linear-gradient( 135deg, #020711, #030814 48%, #030713 );
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .75), 0 0 30px rgba(217, 155, 28, .09), inset 0 0 50px rgba(0, 0, 0, .65);
+}
+
+/* SEGUNDO MARCO */
+
+.kx-frame-inner {
+    position: absolute;
+    inset: 9px;
+    z-index: 30;
+    pointer-events: none;
+    border: 1px solid rgba(255, 198, 67, .34);
+    border-radius: 18px;
+}
+
+/* =========================================================
+   ESQUINAS DECORATIVAS
+   ========================================================= */
+
+.kx-corner {
+    width: 84px;
+    height: 84px;
+    position: absolute;
+    z-index: 31;
+    pointer-events: none;
+}
+
+    .kx-corner::before,
+    .kx-corner::after {
+        content: "";
+        position: absolute;
+        background: linear-gradient( 90deg, transparent, var(--kx-gold-light), var(--kx-gold) );
+        box-shadow: 0 0 8px rgba(255, 183, 29, .38);
+    }
+
+    .kx-corner::before {
+        width: 74px;
+        height: 2px;
+    }
+
+    .kx-corner::after {
+        width: 2px;
+        height: 74px;
+    }
+
+.kx-corner-tl {
+    top: 16px;
+    left: 16px;
+}
+
+    .kx-corner-tl::before,
+    .kx-corner-tl::after {
+        top: 0;
+        left: 0;
+    }
+
+.kx-corner-tr {
+    top: 16px;
+    right: 16px;
+    transform: scaleX(-1);
+}
+
+    .kx-corner-tr::before,
+    .kx-corner-tr::after {
+        top: 0;
+        left: 0;
+    }
+
+.kx-corner-bl {
+    bottom: 16px;
+    left: 16px;
+    transform: scaleY(-1);
+}
+
+    .kx-corner-bl::before,
+    .kx-corner-bl::after {
+        top: 0;
+        left: 0;
+    }
+
+.kx-corner-br {
+    right: 16px;
+    bottom: 16px;
+    transform: scale(-1);
+}
+
+    .kx-corner-br::before,
+    .kx-corner-br::after {
+        top: 0;
+        left: 0;
+    }
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+.kx-main {
+    min-height: 650px;
+    display: grid;
+    grid-template-columns: minmax(0, 52%) minmax(0, 48%);
+    position: relative;
+}
+
+/* =========================================================
+   DIVISIÓN CENTRAL
+   ========================================================= */
+
+.kx-center-divider {
+    width: 82px;
+    position: absolute;
+    z-index: 4;
+    top: -55px;
+    bottom: 104px;
+    left: 50%;
+    pointer-events: none;
+    transform: translateX(-50%) rotate(1deg);
+    border-right: 2px solid rgba(171, 79, 255, .82);
+    border-radius: 0 52% 52% 0 / 0 48% 48% 0;
+    filter: drop-shadow( 0 0 4px rgba(186, 72, 255, .95) ) drop-shadow( 0 0 11px rgba(45, 88, 255, .75) );
+}
+
+    .kx-center-divider::after {
+        content: "";
+        position: absolute;
+        right: -4px;
+        top: 0;
+        width: 5px;
+        height: 100%;
+        background: linear-gradient( transparent, rgba(37, 96, 255, .7), rgba(203, 72, 255, .8), rgba(30, 87, 255, .5), transparent );
+        filter: blur(4px);
+    }
+
+.kx-divider-diamond {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: -13px;
+    top: 42%;
+    transform: rotate(45deg);
+    border: 2px solid #df8cff;
+    background: radial-gradient( circle, #fff 0%, #c85cff 22%, #5426ff 55%, #07103b 100% );
+    box-shadow: 0 0 7px #fff, 0 0 15px #b33cff, 0 0 26px #234cff;
+}
+
+/* =========================================================
+   IZQUIERDA
+   ========================================================= */
+
+.kx-left {
+    min-width: 0;
+    position: relative;
+    z-index: 10;
+    padding: 48px 66px 30px 58px;
+}
+
+/* =========================================================
+   LOGO / BRAND
+   ========================================================= */
+
+.kx-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.kx-brand-logo {
+    width: 92px;
+    height: 92px;
+    display: block;
+    flex: 0 0 92px;
+    object-fit: cover;
+    border-radius: 11px;
+    filter: drop-shadow( 0 0 10px rgba(255, 183, 36, .30) );
+}
+
+.kx-brand-copy {
+    min-width: 0;
+}
+
+.kx-brand-name {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    line-height: 1;
+}
+
+    .kx-brand-name span {
+        color: #fff;
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .kx-brand-name strong {
+        color: var(--kx-gold);
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+.kx-brand-subtitle {
+    margin-top: 8px;
+    color: #aeb8ca;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   BIENVENIDA
+   ========================================================= */
+
+.kx-welcome {
+    margin-bottom: 24px;
+}
+
+.kx-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--kx-gold);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.kx-welcome h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp( 32px, 3.1vw, 43px );
+    font-weight: 850;
+    line-height: 1.03;
+    letter-spacing: -.9px;
+}
+
+    .kx-welcome h1 span {
+        color: var(--kx-gold);
+    }
+
+.kx-welcome p {
+    margin: 10px 0 0;
+    color: #bbc3d1;
+    font-size: 14px;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.kx-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.kx-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #f6f7fa;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.kx-input-wrapper {
+    width: 100%;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(221, 166, 29, .62);
+    border-radius: 11px;
+    background: linear-gradient( 180deg, rgba(7, 15, 27, .98), rgba(4, 11, 20, .98) );
+    box-shadow: inset 0 1px rgba(255, 255, 255, .015);
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+    .kx-input-wrapper:hover {
+        border-color: rgba(255, 194, 37, .82);
+    }
+
+    .kx-input-wrapper:focus-within {
+        border-color: #ffc32d;
+        box-shadow: 0 0 0 2px rgba(255, 191, 32, .06), 0 0 16px rgba(255, 178, 20, .12);
+    }
+
+    .kx-input-wrapper input {
+        width: 100%;
+        height: 100%;
+        padding: 0 50px 0 49px;
+        margin: 0;
+        border: 0 !important;
+        outline: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #fff;
+        font-size: 14px;
+    }
+
+        .kx-input-wrapper input::placeholder {
+            color: #667287;
+            opacity: 1;
+        }
+
+.kx-input-icon {
+    position: absolute;
+    z-index: 2;
+    left: 17px;
+    color: #e9ae16;
+}
+
+.kx-eye {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 3;
+    right: 7px;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #a9b2c1;
+    cursor: pointer;
+    transition: color .2s ease, transform .2s ease;
+}
+
+    .kx-eye:hover {
+        color: #fff;
+        transform: scale(1.05);
+    }
+
+/* =========================================================
+   VALIDACIONES
+   ========================================================= */
+
+.kx-validation {
+    display: block;
+    min-height: 4px;
+    margin-top: 4px;
+    color: #ff7474;
+    font-size: 11px;
+}
+
+.kx-alert {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 82, 82, .42);
+    border-radius: 9px;
+    background: rgba(121, 18, 24, .20);
+    color: #ffb4b4;
+    font-size: 12px;
+}
+
+/* =========================================================
+   RECORDAR / OLVIDAR
+   ========================================================= */
+
+.kx-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: -2px;
+}
+
+.kx-remember {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.kx-checkbox {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    appearance: none;
+    border: 1px solid var(--kx-gold);
+    border-radius: 3px;
+    background: #050b15;
+    cursor: pointer;
+}
+
+    .kx-checkbox:checked {
+        position: relative;
+        background: linear-gradient( 135deg, #ffd350, #d88700 );
+    }
+
+        .kx-checkbox:checked::after {
+            content: "✓";
+            display: block;
+            color: #151000;
+            font-size: 13px;
+            font-weight: 900;
+            line-height: 16px;
+            text-align: center;
+        }
+
+.kx-forgot {
+    color: var(--kx-gold);
+    font-size: 12px;
+    text-decoration: none;
+}
+
+    .kx-forgot:hover {
+        color: #ffe090;
+        text-decoration: none;
+    }
+
+/* =========================================================
+   BOTÓN LOGIN
+   ========================================================= */
+
+.kx-login-button {
+    width: 100%;
+    height: 61px;
+    display: grid;
+    grid-template-columns: 1fr 28px;
+    align-items: center;
+    position: relative;
+    margin-top: 1px;
+    padding: 0 18px 0 46px;
+    border: 2px solid #ffcf55;
+    border-radius: 9px;
+    outline: none;
+    background: linear-gradient( 180deg, #ffdc6b 0%, #ffc138 24%, #f1a50a 67%, #d78600 100% );
+    color: #160d00;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .85), inset 0 -4px 0 rgba(117, 63, 0, .30), 0 0 18px rgba(255, 174, 15, .24);
+    transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+}
+
+    .kx-login-button::before,
+    .kx-login-button::after {
+        content: "◆";
+        position: absolute;
+        top: 50%;
+        color: #7e4800;
+        font-size: 11px;
+        transform: translateY(-50%) rotate(45deg);
+        opacity: .7;
+    }
+
+    .kx-login-button::before {
+        left: 14px;
+    }
+
+    .kx-login-button::after {
+        right: 14px;
+    }
+
+    .kx-login-button:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -4px 0 rgba(117, 63, 0, .30), 0 0 25px rgba(255, 177, 19, .34);
+    }
+
+.kx-button-arrow {
+    font-size: 22px;
+}
+
+/* =========================================================
+   SEPARADOR
+   ========================================================= */
+
+.kx-or {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-top: 2px;
+}
+
+    .kx-or span {
+        height: 1px;
+        background: linear-gradient( 90deg, transparent, rgba(225, 166, 29, .66) );
+    }
+
+        .kx-or span:last-child {
+            background: linear-gradient( 90deg, rgba(225, 166, 29, .66), transparent );
+        }
+
+    .kx-or p {
+        margin: 0;
+        color: #c0c6d0;
+        font-size: 12px;
+    }
+
+/* =========================================================
+   SOCIAL
+   ========================================================= */
+
+.kx-social {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 11px;
+}
+
+.kx-social-button {
+    height: 51px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(134, 147, 169, .42);
+    border-radius: 9px;
+    background: linear-gradient( 180deg, rgba(9, 17, 30, .94), rgba(5, 11, 21, .98) );
+    color: #d9e0eb;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+}
+
+    .kx-social-button:hover {
+        border-color: rgba(255, 190, 31, .65);
+        background: rgba(16, 25, 40, .95);
+        transform: translateY(-1px);
+    }
+
+.kx-google {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 900;
+}
+
+.kx-microsoft {
+    width: 20px;
+    height: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+}
+
+    .kx-microsoft i:nth-child(1) {
+        background: #f35325;
+    }
+
+    .kx-microsoft i:nth-child(2) {
+        background: #81bc06;
+    }
+
+    .kx-microsoft i:nth-child(3) {
+        background: #05a6f0;
+    }
+
+    .kx-microsoft i:nth-child(4) {
+        background: #ffba08;
+    }
+
+/* =========================================================
+   SEGURIDAD
+   ========================================================= */
+
+.kx-security {
+    min-height: 86px;
+    display: grid;
+    grid-template-columns: 58px 1fr;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 15px;
+    border: 1px solid rgba(188, 80, 255, .42);
+    border-radius: 10px;
+    background: radial-gradient( circle at 14% 50%, rgba(119, 41, 213, .17), transparent 32% ), linear-gradient( 90deg, rgba(31, 16, 46, .62), rgba(7, 13, 24, .90) );
+}
+
+.kx-security-shield {
+    width: 51px;
+    height: 51px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d89629;
+    border-radius: 50% 50% 45% 45%;
+    color: #ffc42d;
+    background: radial-gradient( circle, rgba(255, 182, 29, .13), rgba(84, 23, 133, .15) );
+    box-shadow: 0 0 15px rgba(176, 58, 255, .20);
+}
+
+.kx-security strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #ffd052;
+    font-size: 13px;
+}
+
+.kx-security p {
+    margin: 0;
+    color: #c1c6d1;
+    font-size: 10px;
+    line-height: 1.45;
+}
+
+/* =========================================================
+   DERECHA
+   ========================================================= */
+
+.kx-right {
+    min-width: 0;
+    position: relative;
+    z-index: 8;
+    padding: 28px 46px 30px 43px;
+}
+
+/* =========================================================
+   PORTAL
+   ========================================================= */
+
+.kx-portal {
+    height: 274px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 0;
+}
+
+.kx-portal-glow {
+    width: 230px;
+    height: 230px;
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient( circle, rgba(255, 190, 39, .27), rgba(76, 48, 255, .12) 45%, transparent 72% );
+    filter: blur(17px);
+}
+
+.kx-portal-image {
+    width: 265px;
+    height: 265px;
+    display: block;
+    position: relative;
+    z-index: 2;
+    object-fit: cover;
+    border-radius: 50%;
+    filter: drop-shadow( 0 0 10px rgba(255, 192, 43, .58) ) drop-shadow( 0 0 25px rgba(52, 67, 255, .30) );
+}
+
+/* =========================================================
+   TÍTULO DERECHA
+   ========================================================= */
+
+.kx-right-heading {
+    margin-bottom: 17px;
+}
+
+    .kx-right-heading h2 {
+        margin: 0;
+        color: #fff;
+        font-size: 28px;
+        font-weight: 850;
+        line-height: 1.04;
+        letter-spacing: -.35px;
+    }
+
+        .kx-right-heading h2 span {
+            display: block;
+            color: var(--kx-gold);
+        }
+
+    .kx-right-heading p {
+        margin: 9px 0 0;
+        color: #b2bbcb;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+/* =========================================================
+   TARJETAS
+   ========================================================= */
+
+.kx-features {
+    display: grid;
+    gap: 10px;
+}
+
+.kx-feature {
+    min-height: 70px;
+    display: grid;
+    grid-template-columns: 45px minmax(0, 1fr) 20px;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 13px;
+    border: 1px solid currentColor;
+    border-radius: 11px;
+    background: linear-gradient( 90deg, rgba(6, 13, 24, .96), rgba(4, 10, 19, .88) );
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, .24);
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+    .kx-feature:hover {
+        transform: translateX(3px);
+        background: rgba(9, 17, 30, .97);
+        box-shadow: 0 0 18px color-mix( in srgb, currentColor 12%, transparent );
+    }
+
+.kx-feature-icon {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid currentColor;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .018);
+}
+
+.kx-ai-icon {
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.kx-feature-content {
+    min-width: 0;
+}
+
+    .kx-feature-content strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #fff;
+        font-size: 12px;
+    }
+
+    .kx-feature-content span {
+        display: block;
+        color: #abb5c5;
+        font-size: 9px;
+        line-height: 1.35;
+    }
+
+.kx-feature-arrow {
+    justify-self: end;
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.kx-feature-gold {
+    color: #ffc11e;
+    border-color: rgba(255, 193, 30, .58);
+}
+
+.kx-feature-purple {
+    color: #d054ff;
+    border-color: rgba(202, 76, 255, .58);
+}
+
+.kx-feature-blue {
+    color: #40aaff;
+    border-color: rgba(57, 162, 255, .56);
+}
+
+.kx-feature-cyan {
+    color: #24e5df;
+    border-color: rgba(36, 229, 223, .52);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.kx-footer {
+    min-height: 91px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    position: relative;
+    z-index: 12;
+    margin: 0 26px 22px;
+    padding: 13px 23px;
+    border: 1px solid rgba(225, 168, 38, .72);
+    border-radius: 13px;
+    background: linear-gradient( 180deg, rgba(7, 13, 23, .98), rgba(4, 9, 17, .98) );
+    box-shadow: inset 0 0 24px rgba(0, 0, 0, .5);
+}
+
+    .kx-footer::before {
+        content: "◆";
+        position: absolute;
+        top: -16px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        color: #cf62ff;
+        font-size: 23px;
+        text-shadow: 0 0 5px #fff, 0 0 12px #a73dff, 0 0 20px #2c4fff;
+    }
+
+.kx-footer-item {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: 43px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    padding: 0 13px;
+    border-right: 1px solid rgba(122, 132, 151, .20);
+}
+
+    .kx-footer-item:last-child {
+        border-right: 0;
+    }
+
+.kx-footer-icon {
+    width: 41px;
+    height: 41px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .02);
+}
+
+.kx-footer-item strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #fff;
+    font-size: 11px;
+}
+
+.kx-footer-item span {
+    display: block;
+    color: #9da9bb;
+    font-size: 9px;
+    line-height: 1.3;
+}
+
+.kx-footer-gold {
+    color: #ffc02b;
+}
+
+.kx-footer-purple {
+    color: #cf70ff;
+}
+
+.kx-footer-blue {
+    color: #65aaff;
+}
+
+/* =========================================================
+   UIKIT CORRECCIONES
+   ========================================================= */
+
+.kx-login-shell svg {
+    max-width: none;
+}
+
+.kx-login-shell a:hover {
+    text-decoration: none;
+}
+
+/* =========================================================
+   1366 / LAPTOP
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .kx-page {
+        padding: 12px;
+    }
+
+    .kx-login-shell {
+        width: min(980px, 100%);
+        min-height: 710px;
+    }
+
+    .kx-left {
+        padding: 40px 52px 25px 48px;
+    }
+
+    .kx-right {
+        padding: 25px 39px 25px 38px;
+    }
+
+    .kx-brand-logo {
+        width: 78px;
+        height: 78px;
+        flex-basis: 78px;
+    }
+
+    .kx-brand-name span {
+        font-size: 28px;
+    }
+
+    .kx-brand-name strong {
+        font-size: 26px;
+    }
+
+    .kx-portal {
+        height: 235px;
+    }
+
+    .kx-portal-image {
+        width: 225px;
+        height: 225px;
+    }
+
+    .kx-right-heading h2 {
+        font-size: 25px;
+    }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .kx-page {
+        display: block;
+        padding: 12px;
+    }
+
+    .kx-login-shell {
+        width: 100%;
+        min-height: auto;
+    }
+
+    .kx-main {
+        display: block;
+    }
+
+    .kx-center-divider {
+        display: none;
+    }
+
+    .kx-left,
+    .kx-right {
+        width: 100%;
+        padding: 45px 45px 30px;
+    }
+
+    .kx-left {
+        border-bottom: 1px solid rgba(217, 161, 34, .22);
+    }
+
+    .kx-portal {
+        height: 260px;
+    }
+
+    .kx-portal-image {
+        width: 250px;
+        height: 250px;
+    }
+
+    .kx-footer {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 18px;
+        margin-top: 10px;
+    }
+
+    .kx-footer-item:nth-child(2) {
+        border-right: 0;
+    }
+}
+
+/* =========================================================
+   MÓVIL
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .kx-page {
+        padding: 0;
+    }
+
+    .kx-login-shell {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+    }
+
+    .kx-frame-inner,
+    .kx-corner {
+        display: none;
+    }
+
+    .kx-left,
+    .kx-right {
+        padding: 30px 22px;
+    }
+
+    .kx-brand {
+        gap: 12px;
+        margin-bottom: 28px;
+    }
+
+    .kx-brand-logo {
+        width: 64px;
+        height: 64px;
+        flex-basis: 64px;
+    }
+
+    .kx-brand-name span {
+        font-size: 23px;
+    }
+
+    .kx-brand-name strong {
+        font-size: 21px;
+    }
+
+    .kx-brand-subtitle {
+        white-space: normal;
+        font-size: 9px;
+    }
+
+    .kx-welcome h1 {
+        font-size: 34px;
+    }
+
+    .kx-options {
+        align-items: flex-start;
+    }
+
+    .kx-login-button {
+        height: 58px;
+    }
+
+    .kx-security {
+        grid-template-columns: 50px 1fr;
+    }
+
+    .kx-portal {
+        height: 220px;
+    }
+
+    .kx-portal-image {
+        width: 205px;
+        height: 205px;
+    }
+
+    .kx-right-heading h2 {
+        font-size: 25px;
+    }
+
+    .kx-feature {
+        min-height: 72px;
+    }
+
+    .kx-footer {
+        grid-template-columns: 1fr;
+        gap: 0;
+        margin: 10px 15px 18px;
+        padding: 12px 18px;
+    }
+
+    .kx-footer-item {
+        padding: 11px 3px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(122, 132, 151, .16);
+    }
+
+        .kx-footer-item:last-child {
+            border-bottom: 0;
+        }
+}

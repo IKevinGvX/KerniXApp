@@ -1,0 +1,1424 @@
+﻿/* ==========================================================
+   KERNIX - NUEVA VENTA
+   ========================================================== */
+
+:root {
+    --kx-bg: #050d16;
+    --kx-bg-2: #07131f;
+    --kx-panel: #0a1724;
+    --kx-panel-2: #0c1c2b;
+    --kx-line: rgba(111, 161, 207, .14);
+    --kx-line-strong: rgba(248, 201, 92, .25);
+    --kx-text: #eaf1f7;
+    --kx-muted: #7f95a9;
+    --kx-gold: #f8c95c;
+    --kx-gold-2: #c9922c;
+    --kx-blue: #4ca4ff;
+    --kx-green: #31d0aa;
+    --kx-danger: #ff6f82;
+    --kx-radius: 16px;
+    --kx-shadow: 0 18px 55px rgba(0, 0, 0, .28);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at 80% 0%, rgba(22, 78, 124, .15), transparent 30%), linear-gradient(145deg, #040b13, #07131f 55%, #06101a);
+    color: var(--kx-text);
+}
+
+body {
+    min-height: 100vh;
+}
+
+/* ==========================================================
+   ESTRUCTURA
+   ========================================================== */
+
+.kxventa {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+}
+
+.kxsidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 22px 16px;
+    border-right: 1px solid var(--kx-line);
+    background: rgba(5, 14, 23, .95);
+    backdrop-filter: blur(14px);
+    z-index: 20;
+}
+
+.kxmarca {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 8px 24px;
+}
+
+.kxlogo {
+    width: 46px;
+    height: 46px;
+    display: grid;
+    place-items: center;
+    border-radius: 13px;
+    background: linear-gradient(145deg, var(--kx-gold), var(--kx-gold-2));
+    color: #08111b;
+    font-size: 22px;
+    font-weight: 900;
+    box-shadow: 0 12px 30px rgba(248, 201, 92, .18);
+}
+
+.kxmarcatexto {
+    min-width: 0;
+}
+
+    .kxmarcatexto strong {
+        display: block;
+        color: #fff;
+        font-size: 18px;
+        line-height: 1.1;
+    }
+
+    .kxmarcatexto span {
+        display: block;
+        margin-top: 4px;
+        color: var(--kx-muted);
+        font-size: 12px;
+    }
+
+.kxmenu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.kxmenuitem {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0 13px;
+    border-radius: 11px;
+    color: #8fa4b7 !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    font-weight: 700;
+    transition: .18s ease;
+}
+
+    .kxmenuitem:hover {
+        color: #fff !important;
+        background: rgba(255, 255, 255, .045);
+    }
+
+    .kxmenuitem.activo {
+        color: var(--kx-gold) !important;
+        background: rgba(248, 201, 92, .08);
+        border: 1px solid rgba(248, 201, 92, .13);
+    }
+
+.kxcontenido {
+    min-width: 0;
+    padding: 30px;
+}
+
+.kxcabecera {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.kxseccion {
+    margin: 0 0 5px;
+    color: var(--kx-gold);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+}
+
+.kxcabecera h1 {
+    margin: 0;
+    color: #fff;
+    font-size: 32px;
+    line-height: 1.15;
+    font-weight: 850;
+}
+
+.kxdescripcion {
+    margin: 7px 0 0;
+    color: var(--kx-muted);
+    font-size: 14px;
+}
+
+.kxacciones {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ==========================================================
+   GRID PRINCIPAL
+   ========================================================== */
+
+.kxventagrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 22px;
+    align-items: start;
+}
+
+.kxventaizquierda,
+.kxventaderecha {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+}
+
+.kxventaderecha {
+    position: sticky;
+    top: 24px;
+}
+
+/* ==========================================================
+   PANELES
+   ========================================================== */
+
+.kxpanel {
+    border: 1px solid var(--kx-line);
+    border-radius: var(--kx-radius);
+    background: linear-gradient(145deg, rgba(12, 29, 44, .96), rgba(7, 18, 29, .96));
+    box-shadow: var(--kx-shadow);
+    overflow: visible;
+}
+
+.kxpanelcabecera {
+    min-height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, .055);
+}
+
+.kxpaneltitulo {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.kxnumero {
+    flex: 0 0 auto;
+    min-width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(248, 201, 92, .18);
+    border-radius: 11px;
+    background: rgba(248, 201, 92, .07);
+    color: var(--kx-gold);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.kxpanelmini {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--kx-muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+}
+
+.kxpaneltitulo h2 {
+    margin: 0;
+    color: #f4f8fb;
+    font-size: 19px;
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.kxpanelacciones {
+    display: flex;
+    justify-content: flex-end;
+    padding: 14px 20px 0;
+}
+
+.kxcontador {
+    padding: 7px 11px;
+    border-radius: 999px;
+    background: rgba(76, 164, 255, .08);
+    color: #8dc5ff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* ==========================================================
+   BOTONES
+   ========================================================== */
+
+.kxbotonsecundario,
+.kxbotonprincipal,
+.kxbotonicono {
+    border: 0;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.kxbotonsecundario {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 15px;
+    border: 1px solid rgba(100, 153, 202, .15);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, .025);
+    color: #9fb4c7 !important;
+    text-decoration: none !important;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+    .kxbotonsecundario:hover {
+        border-color: rgba(248, 201, 92, .26);
+        color: var(--kx-gold) !important;
+        background: rgba(248, 201, 92, .05);
+    }
+
+.kxbotonprincipal {
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 18px;
+    border-radius: 11px;
+    background: linear-gradient(145deg, var(--kx-gold), var(--kx-gold-2));
+    color: #07111b;
+    font-size: 14px;
+    font-weight: 900;
+    box-shadow: 0 12px 28px rgba(248, 201, 92, .16);
+}
+
+.kxbotongrande {
+    min-height: 50px;
+}
+
+.kxbotonicono {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .025);
+    color: #9eb2c4;
+}
+
+/* ==========================================================
+   FORMULARIOS
+   ========================================================== */
+
+.kxclientegrid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(160px, .7fr) minmax(160px, .7fr);
+    gap: 15px;
+    padding: 18px 20px 20px;
+}
+
+.kxcampo {
+    min-width: 0;
+}
+
+    .kxcampo label {
+        display: block;
+        margin-bottom: 7px;
+        color: #90a5b8;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+.kxcampogrande {
+    min-width: 0;
+}
+
+.kxinputicono,
+.kxbuscadorproducto,
+.kxinputmoneda {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .kxinputicono > span,
+    .kxbuscadorproducto > span {
+        position: absolute;
+        left: 13px;
+        color: #587086;
+        pointer-events: none;
+    }
+
+    .kxinputicono input,
+    .kxbuscadorproducto input,
+    .kxcampo > input,
+    .kxinputmoneda input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid rgba(87, 143, 196, .15);
+        border-radius: 10px;
+        outline: none;
+        background: #091827;
+        color: #e9f1f8;
+        font-family: inherit;
+        font-size: 14px;
+    }
+
+    .kxinputicono input,
+    .kxbuscadorproducto input {
+        padding: 0 14px 0 42px;
+    }
+
+.kxcampo > input {
+    padding: 0 13px;
+}
+
+.kxinputmoneda input {
+    padding: 0 13px 0 42px;
+}
+
+.kxinputmoneda > span {
+    position: absolute;
+    left: 14px;
+    color: var(--kx-gold);
+    font-weight: 800;
+}
+
+.kxinputicono input:focus,
+.kxbuscadorproducto input:focus,
+.kxcampo > input:focus,
+.kxinputmoneda input:focus {
+    border-color: rgba(248, 201, 92, .48);
+    box-shadow: 0 0 0 3px rgba(248, 201, 92, .06);
+}
+
+.kxinputicono input::placeholder,
+.kxbuscadorproducto input::placeholder,
+.kxcampo > input::placeholder {
+    color: #50667b;
+}
+
+/* ==========================================================
+   CLIENTES
+   ========================================================== */
+
+.kxclientebuscador {
+    position: relative;
+}
+
+.kxresultadosclientes {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 50;
+    max-height: 310px;
+    overflow-y: auto;
+    border: 1px solid rgba(99, 153, 203, .16);
+    border-radius: 11px;
+    background: #081522;
+    box-shadow: 0 22px 55px rgba(0, 0, 0, .45);
+}
+
+.kxclienteseleccionado {
+    margin: 0 20px 20px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 40px;
+    gap: 12px;
+    align-items: center;
+    padding: 13px;
+    border: 1px solid rgba(49, 208, 170, .16);
+    border-radius: 12px;
+    background: rgba(49, 208, 170, .045);
+}
+
+.kxclienteavatar {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #183a57, #10283d);
+    color: #b9ddff;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.kxclienteprincipal strong {
+    display: block;
+    color: #f2f7fb;
+    font-size: 15px;
+}
+
+.kxclienteprincipal span,
+.kxclienteprincipal small {
+    display: block;
+    margin-top: 2px;
+    color: var(--kx-muted);
+    font-size: 12px;
+}
+
+/* ==========================================================
+   PRODUCTOS
+   ========================================================== */
+
+.kxbuscadorproducto {
+    margin: 18px 20px 14px;
+}
+
+.kxproductosgrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0 20px 20px;
+}
+
+.kxvacioproductos {
+    grid-column: 1 / -1;
+    min-height: 100px;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    border: 1px dashed rgba(100, 153, 202, .14);
+    border-radius: 11px;
+    color: #62788c;
+    text-align: center;
+    font-size: 13px;
+}
+
+/* ==========================================================
+   TABLA
+   ========================================================== */
+
+.kxtablacontenedor {
+    overflow-x: auto;
+    padding: 0 20px 20px;
+}
+
+.kxtabla {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+    .kxtabla th {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--kx-line);
+        color: #71879a;
+        font-size: 11px;
+        font-weight: 850;
+        text-transform: uppercase;
+        letter-spacing: .45px;
+        text-align: left;
+    }
+
+    .kxtabla td {
+        padding: 13px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, .045);
+        color: #d8e3ec;
+        font-size: 13px;
+    }
+
+.kxvacio {
+    padding: 28px 14px !important;
+    color: #5f7589 !important;
+    text-align: center !important;
+}
+
+/* ==========================================================
+   RESUMEN
+   ========================================================== */
+
+.kxresumenlinea,
+.kxresumentotal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 12px 20px;
+}
+
+    .kxresumenlinea span {
+        color: var(--kx-muted);
+        font-size: 13px;
+    }
+
+    .kxresumenlinea strong {
+        color: #dfe8ef;
+        font-size: 14px;
+    }
+
+.kxresumentotal {
+    margin: 8px 20px 20px;
+    padding: 15px 16px;
+    border: 1px solid rgba(248, 201, 92, .17);
+    border-radius: 12px;
+    background: rgba(248, 201, 92, .055);
+}
+
+    .kxresumentotal span {
+        color: #b8c7d5;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .kxresumentotal strong {
+        color: var(--kx-gold);
+        font-size: 24px;
+        font-weight: 900;
+    }
+
+/* ==========================================================
+   MÉTODOS DE PAGO
+   ========================================================== */
+
+.kxmetodospago {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding: 18px 20px;
+}
+
+.kxmetodopago {
+    position: relative;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 11px;
+    border: 1px solid rgba(95, 149, 198, .13);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .018);
+    cursor: pointer;
+    color: #b2c3d2;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+    .kxmetodopago input {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .kxmetodopago:has(input:checked) {
+        border-color: rgba(248, 201, 92, .36);
+        background: rgba(248, 201, 92, .07);
+        color: #f4f6f8;
+    }
+
+.kxmetodopagoicono {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 9px;
+    background: rgba(248, 201, 92, .11);
+    color: var(--kx-gold);
+    font-weight: 900;
+}
+
+    .kxmetodopagoicono.morado {
+        color: #cf9cff;
+        background: rgba(176, 105, 255, .10);
+    }
+
+    .kxmetodopagoicono.verde {
+        color: #58e7c0;
+        background: rgba(49, 208, 170, .10);
+    }
+
+    .kxmetodopagoicono.azul {
+        color: #72b9ff;
+        background: rgba(76, 164, 255, .10);
+    }
+
+.kxventaderecha .kxcampo {
+    padding: 0 20px 18px;
+}
+
+.kxvuelto {
+    margin: 0 20px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(49, 208, 170, .045);
+    border: 1px solid rgba(49, 208, 170, .12);
+}
+
+    .kxvuelto span {
+        color: var(--kx-muted);
+        font-size: 13px;
+    }
+
+    .kxvuelto strong {
+        color: var(--kx-green);
+        font-size: 16px;
+    }
+
+/* ==========================================================
+   ACCIONES VENTA
+   ========================================================== */
+
+.kxaccionesventa {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+    .kxaccionesventa .kxbotonsecundario,
+    .kxaccionesventa .kxbotonprincipal {
+        width: 100%;
+    }
+
+/* ==========================================================
+   MODAL NUEVO CLIENTE
+   ========================================================== */
+
+.kxcliente-modal,
+.kxcliente-modal *,
+.kxcliente-modal *::before,
+.kxcliente-modal *::after {
+    box-sizing: border-box;
+}
+
+    .kxcliente-modal[hidden] {
+        display: none !important;
+    }
+
+.kxcliente-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483647 !important;
+    width: 100% !important;
+    min-height: 100dvh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    overflow: hidden !important;
+}
+
+.kxcliente-modal-fondo {
+    position: absolute !important;
+    inset: 0 !important;
+    background: rgba(2, 8, 17, .92) !important;
+    backdrop-filter: blur(7px);
+}
+
+.kxcliente-modal-dialogo {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    max-width: 820px !important;
+    max-height: calc(100dvh - 40px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(248, 201, 92, .20) !important;
+    border-radius: 16px !important;
+    background: linear-gradient(145deg, #0a1928, #06111d) !important;
+    box-shadow: 0 36px 110px rgba(0, 0, 0, .78) !important;
+}
+
+.kxcliente-modal-cabecera {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+    background: #081521;
+}
+
+.kxcliente-modal-mini {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--kx-gold);
+    font-size: 11px;
+    font-weight: 850;
+    letter-spacing: .8px;
+}
+
+.kxcliente-modal-cabecera h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+}
+
+.kxcliente-modal-cabecera p {
+    margin: 5px 0 0;
+    color: #7990a6;
+    font-size: 13px;
+}
+
+.kxcliente-modal-cerrar {
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 9px;
+    background: rgba(255,255,255,.035);
+    color: #dce8f4;
+    cursor: pointer;
+}
+
+.kxcliente-modal-cuerpo {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    padding: 18px 20px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+.kxcliente-form-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 16px;
+}
+
+.kxcliente-campo {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.kxcliente-campo-ancho {
+    grid-column: 1 / -1;
+}
+
+.kxcliente-campo label {
+    color: #8da2b5;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.kxcliente-campo input,
+.kxcliente-campo select {
+    width: 100%;
+    height: 46px;
+    padding: 0 12px;
+    border: 1px solid rgba(90,145,200,.18);
+    border-radius: 9px;
+    outline: none;
+    background: #0a1a29;
+    color: #e8f1f8;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+    .kxcliente-campo input:focus,
+    .kxcliente-campo select:focus {
+        border-color: rgba(248,201,92,.55);
+        box-shadow: 0 0 0 3px rgba(248,201,92,.07);
+    }
+
+.kxcliente-subtitulo {
+    width: 100%;
+    margin-top: 2px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.06);
+}
+
+    .kxcliente-subtitulo strong {
+        display: block;
+        color: #e4edf5;
+        font-size: 14px;
+    }
+
+    .kxcliente-subtitulo span {
+        display: block;
+        margin-top: 2px;
+        color: #60768a;
+        font-size: 12px;
+    }
+
+.kxcliente-modal-mensaje {
+    width: 100%;
+    margin-top: 15px;
+    padding: 11px 13px;
+    border: 1px solid rgba(255,90,110,.18);
+    border-radius: 9px;
+    background: rgba(255,90,110,.06);
+    color: #ff91a0;
+    font-size: 13px;
+}
+
+    .kxcliente-modal-mensaje[hidden] {
+        display: none !important;
+    }
+
+.kxcliente-modal-acciones {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    padding: 14px 20px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    background: #081521;
+}
+
+    .kxcliente-modal-acciones button {
+        min-width: 130px;
+        height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 15px;
+        border-radius: 9px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+.kxcliente-boton-guardar {
+    border: none;
+    background: linear-gradient(145deg, var(--kx-gold), var(--kx-gold-2));
+    color: #07111c;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1180px) {
+    .kxventagrid {
+        grid-template-columns: minmax(0, 1fr) 320px;
+    }
+
+    .kxproductosgrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 980px) {
+    .kxventa {
+        grid-template-columns: 82px minmax(0, 1fr);
+    }
+
+    .kxsidebar {
+        padding: 18px 10px;
+    }
+
+    .kxmarcatexto,
+    .kxmenuitem > span:last-child {
+        display: none;
+    }
+
+    .kxmarca {
+        justify-content: center;
+    }
+
+    .kxmenuitem {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .kxventagrid {
+        grid-template-columns: 1fr;
+    }
+
+    .kxventaderecha {
+        position: static;
+    }
+}
+
+@media (max-width: 760px) {
+    .kxventa {
+        display: block;
+    }
+
+    .kxsidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 10px 12px;
+        border-right: 0;
+        border-bottom: 1px solid var(--kx-line);
+    }
+
+    .kxmarca {
+        display: none;
+    }
+
+    .kxmenu {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .kxmenuitem {
+        flex: 0 0 46px;
+        min-width: 46px;
+    }
+
+    .kxcontenido {
+        padding: 18px 14px 28px;
+    }
+
+    .kxcabecera {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+        .kxcabecera h1 {
+            font-size: 27px;
+        }
+
+    .kxclientegrid {
+        grid-template-columns: 1fr;
+    }
+
+    .kxproductosgrid {
+        grid-template-columns: 1fr;
+    }
+
+    .kxaccionesventa {
+        grid-template-columns: 1fr;
+    }
+
+    .kxcliente-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kxcliente-campo-ancho {
+        grid-column: auto;
+    }
+
+    .kxcliente-modal {
+        padding: 8px !important;
+        align-items: flex-start !important;
+    }
+
+    .kxcliente-modal-dialogo {
+        max-height: calc(100dvh - 16px) !important;
+    }
+
+    .kxcliente-modal-acciones {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+        .kxcliente-modal-acciones button {
+            width: 100%;
+            min-width: 0;
+        }
+}
+
+@media (max-width: 420px) {
+    .kxmetodospago {
+        grid-template-columns: 1fr;
+    }
+
+    .kxcliente-modal-acciones {
+        grid-template-columns: 1fr;
+    }
+}
+/* ==========================================================
+   MODERNIZAR RESULTADOS DE CLIENTE
+   ========================================================== */
+
+.kxresultadosclientes {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 60;
+    max-height: 280px;
+    overflow-y: auto;
+    border: 1px solid rgba(91, 145, 197, 0.16);
+    border-radius: 14px;
+    background: linear-gradient(145deg, #091522, #07111b);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.42);
+    padding: 8px;
+}
+
+.kxresultadocliente {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: #eaf2f8;
+    text-align: left;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+    .kxresultadocliente:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(248, 201, 92, 0.18);
+    }
+
+.kxresultadoavatar {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #163550, #0d2438);
+    color: #bfe0ff;
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.kxresultadoinfo {
+    min-width: 0;
+}
+
+    .kxresultadoinfo strong {
+        display: block;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kxresultadoinfo span {
+        display: block;
+        margin-top: 3px;
+        color: #8fa5b8;
+        font-size: 12px;
+    }
+
+    .kxresultadoinfo small {
+        display: block;
+        margin-top: 3px;
+        color: #6f8496;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+.kxclientecargando,
+.kxclienteerror,
+.kxclientesinvacio {
+    padding: 14px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.kxclientecargando,
+.kxclientesinvacio {
+    color: #90a5b8;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.kxclienteerror {
+    color: #ff9aa8;
+    background: rgba(255, 111, 130, 0.08);
+    border: 1px solid rgba(255, 111, 130, 0.18);
+}
+
+/* ==========================================================
+   MODERNIZAR CARDS DE PRODUCTOS
+   ========================================================== */
+
+.kxproductosgrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding: 0 20px 20px;
+}
+
+.kxproductocard {
+    width: 100%;
+    min-height: 112px;
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border: 1px solid rgba(90, 145, 200, 0.15);
+    border-radius: 14px;
+    background: linear-gradient(145deg, #0b1927, #091320);
+    color: #eef5fb;
+    text-align: left;
+    cursor: pointer;
+    transition: .18s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+    .kxproductocard:hover {
+        transform: translateY(-2px);
+        border-color: rgba(248, 201, 92, 0.22);
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    .kxproductocard.sinstock {
+        opacity: .58;
+        cursor: not-allowed;
+        filter: grayscale(.18);
+    }
+
+.kxproductoicono {
+    width: 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: linear-gradient(145deg, rgba(76, 164, 255, 0.14), rgba(76, 164, 255, 0.05));
+    color: #76bdff;
+    font-size: 18px;
+}
+
+.kxproductoinfo {
+    min-width: 0;
+}
+
+    .kxproductoinfo strong {
+        display: block;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .kxproductoinfo span {
+        display: block;
+        margin-top: 4px;
+        color: #84b7ff;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .kxproductoinfo small {
+        display: block;
+        margin-top: 5px;
+        color: #7c92a5;
+        font-size: 12px;
+        line-height: 1.35;
+    }
+
+.kxproductoprecio {
+    align-self: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(248, 201, 92, 0.10);
+    color: #ffd468;
+    font-size: 16px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+/* ==========================================================
+   MODERNIZAR FILA DEL CARRITO
+   ========================================================== */
+
+.kxcarritoproducto {
+    min-width: 0;
+}
+
+    .kxcarritoproducto strong {
+        display: block;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.25;
+    }
+
+    .kxcarritoproducto span {
+        display: block;
+        margin-top: 4px;
+        color: #7f95a9;
+        font-size: 12px;
+    }
+
+.kxcantidadcontrol {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px;
+    border: 1px solid rgba(90, 145, 200, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.kxcantidadboton {
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px;
+    background: #0d1d2c;
+    color: #dce7f1;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+    .kxcantidadboton:hover {
+        border-color: rgba(248, 201, 92, 0.25);
+        color: #ffd36b;
+    }
+
+.kxcantidadinput {
+    width: 64px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px;
+    background: #091827;
+    color: #ffffff;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    outline: none;
+}
+
+    .kxcantidadinput:focus {
+        border-color: rgba(248, 201, 92, 0.42);
+        box-shadow: 0 0 0 3px rgba(248, 201, 92, 0.06);
+    }
+
+.kxstockcarrito {
+    display: block;
+    margin-top: 6px;
+    color: #6d8497;
+    font-size: 11px;
+}
+
+.kxdescuentocontrol {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid rgba(90, 145, 200, 0.14);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.kxdescuentoinput {
+    width: 62px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 9px;
+    background: #091827;
+    color: #ffffff;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 800;
+    outline: none;
+}
+
+    .kxdescuentoinput:focus {
+        border-color: rgba(248, 201, 92, 0.42);
+        box-shadow: 0 0 0 3px rgba(248, 201, 92, 0.06);
+    }
+
+.kxdescuentocontrol span {
+    color: #9cb1c4;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.kxdescuentolimite {
+    display: block;
+    margin-top: 6px;
+    color: #6d8497;
+    font-size: 11px;
+}
+
+.kxtotallinea {
+    color: #ffd468;
+    font-size: 15px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.kxquitarproducto {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255, 111, 130, 0.18);
+    border-radius: 10px;
+    background: rgba(255, 111, 130, 0.06);
+    color: #ff8b99;
+    cursor: pointer;
+    transition: .18s ease;
+}
+
+    .kxquitarproducto:hover {
+        background: rgba(255, 111, 130, 0.12);
+        border-color: rgba(255, 111, 130, 0.28);
+    }
+
+/* ==========================================================
+   RESPONSIVE EXTRA
+   ========================================================== */
+
+@media (max-width: 1180px) {
+    .kxproductosgrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .kxproductosgrid {
+        grid-template-columns: 1fr;
+    }
+
+    .kxproductocard {
+        grid-template-columns: 48px minmax(0, 1fr);
+    }
+
+    .kxproductoprecio {
+        grid-column: 1 / -1;
+        justify-self: start;
+        margin-top: 6px;
+    }
+
+    .kxtabla {
+        min-width: 860px;
+    }
+}

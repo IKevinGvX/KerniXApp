@@ -1,0 +1,609 @@
+﻿@page
+@model KerniX.Pages.Configuracion.SeguridadModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Configuración de Seguridad";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/configuracion.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/general.css"
+          asp-append-version="true" />
+
+</head>
+
+<body class="kx-body">
+
+    <div class="kx-app">
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-logo">
+
+                <div class="kx-logo-icon">
+                    KX
+                </div>
+
+                <div>
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <small>
+                        Sistema Inteligente
+                    </small>
+
+                </div>
+
+            </div>
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+                    <span uk-icon="icon: home"></span>
+                    <span>Inicio</span>
+                </a>
+
+                <a href="/Ventas/Index">
+                    <span uk-icon="icon: cart"></span>
+                    <span>Ventas</span>
+                </a>
+
+                <a href="/Inventario/Index">
+                    <span uk-icon="icon: database"></span>
+                    <span>Inventario</span>
+                </a>
+
+                <a href="/Productos/Index">
+                    <span uk-icon="icon: thumbnails"></span>
+                    <span>Productos</span>
+                </a>
+
+                <a href="/Clientes/Index">
+                    <span uk-icon="icon: users"></span>
+                    <span>Clientes</span>
+                </a>
+
+                <a href="/IA/Index">
+                    <span uk-icon="icon: bolt"></span>
+                    <span>KerniX IA</span>
+                </a>
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="kx-content">
+
+            <header class="kx-topbar">
+
+                <div>
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-back">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver a configuración
+
+                    </a>
+
+                    <h1>
+                        Configuración de Seguridad
+                    </h1>
+
+                    <p>
+                        Define las políticas básicas de acceso,
+                        sesión y contraseña.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeExito))
+            {
+                <div class="kx-alert-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    <span>
+                        @Model.MensajeExito
+                    </span>
+
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeError))
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.MensajeError
+                    </span>
+
+                </div>
+            }
+
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <div asp-validation-summary="All">
+                    </div>
+
+                </div>
+            }
+
+
+            <form method="post"
+                  action="/Configuracion/Seguridad?handler=Guardar">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="IdEmpresa"
+                       value="@Model.IdEmpresa" />
+
+
+                <div class="kx-settings-layout">
+
+                    <!-- ========================================= -->
+                    <!-- ACCESO -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: lock">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Protección de acceso
+                                </h2>
+
+                                <p>
+                                    Intentos fallidos y bloqueo temporal.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Intentos máximos de acceso
+                            </label>
+
+                            <input type="number"
+                                   name="IntentosLoginMaximos"
+                                   value="@(Model.IntentosLoginMaximos ?? 5)"
+                                   min="1"
+                                   max="20"
+                                   step="1"
+                                   class="kx-input" />
+
+                            <small class="kx-help">
+                                Cantidad de intentos antes de bloquear el acceso.
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Minutos de bloqueo
+                            </label>
+
+                            <input type="number"
+                                   name="MinutosBloqueo"
+                                   value="@(Model.MinutosBloqueo ?? 15)"
+                                   min="1"
+                                   max="1440"
+                                   step="1"
+                                   class="kx-input" />
+
+                            <small class="kx-help">
+                                Tiempo durante el cual el usuario permanecerá bloqueado.
+                            </small>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ========================================= -->
+                    <!-- SESION -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: clock">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Sesión
+                                </h2>
+
+                                <p>
+                                    Duración de las sesiones del sistema.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Expiración de sesión
+                            </label>
+
+                            <input type="number"
+                                   name="MinutosExpiracionSesion"
+                                   value="@(Model.MinutosExpiracionSesion ?? 30)"
+                                   min="5"
+                                   max="1440"
+                                   step="1"
+                                   class="kx-input" />
+
+                            <small class="kx-help">
+                                Minutos de vigencia antes de finalizar la sesión.
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Valor actual
+                            </span>
+
+                            <strong>
+                                @(Model.MinutosExpiracionSesion ?? 30) minutos
+                            </strong>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ========================================= -->
+                    <!-- PASSWORD -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: key">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Política de contraseña
+                                </h2>
+
+                                <p>
+                                    Requisitos generales para contraseñas.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Longitud mínima
+                            </label>
+
+                            <input type="number"
+                                   name="LongitudMinimaPassword"
+                                   value="@(Model.LongitudMinimaPassword ?? 8)"
+                                   min="6"
+                                   max="128"
+                                   step="1"
+                                   class="kx-input" />
+
+                        </div>
+
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Días de vigencia
+                            </label>
+
+                            <input type="number"
+                                   name="DiasVigenciaPassword"
+                                   value="@(Model.DiasVigenciaPassword ?? 90)"
+                                   min="0"
+                                   max="3650"
+                                   step="1"
+                                   class="kx-input" />
+
+                            <small class="kx-help">
+                                Use 0 si no desea establecer vencimiento.
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-option">
+
+                            <div>
+
+                                <strong>
+                                    Requerir cambio de contraseña
+                                </strong>
+
+                                <small>
+                                    Solicita al usuario cambiar su contraseña
+                                    según la política configurada.
+                                </small>
+
+                            </div>
+
+
+                            <label class="kx-switch">
+
+                                <input type="hidden"
+                                       name="RequerirCambioPassword"
+                                       value="false" />
+
+                                <input type="checkbox"
+                                       name="RequerirCambioPassword"
+                                       value="true"
+                                       checked="@Model.RequerirCambioPassword" />
+
+                                <span class="kx-slider">
+                                </span>
+
+                            </label>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ========================================= -->
+                    <!-- RESUMEN -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: shield">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Estado actual
+                                </h2>
+
+                                <p>
+                                    Resumen de las políticas configuradas.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Empresa
+                            </span>
+
+                            <strong>
+                                #@Model.IdEmpresa
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Intentos máximos
+                            </span>
+
+                            <strong>
+                                @(Model.IntentosLoginMaximos ?? 5)
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Bloqueo
+                            </span>
+
+                            <strong>
+                                @(Model.MinutosBloqueo ?? 15) min
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Sesión
+                            </span>
+
+                            <strong>
+                                @(Model.MinutosExpiracionSesion ?? 30) min
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Longitud contraseña
+                            </span>
+
+                            <strong>
+                                @(Model.LongitudMinimaPassword ?? 8)
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Vigencia contraseña
+                            </span>
+
+                            <strong>
+                                @(Model.DiasVigenciaPassword ?? 90) días
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Cambio obligatorio
+                            </span>
+
+                            <strong>
+
+                                @(Model.RequerirCambioPassword
+                                    ? "Activado"
+                                    : "Desactivado")
+
+                            </strong>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- BOTONES -->
+                <!-- ============================================= -->
+
+                <div class="kx-form-actions">
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-btn-secondary">
+
+                        Cancelar
+
+                    </a>
+
+                    <button type="submit"
+                            class="kx-btn-primary">
+
+                        <span uk-icon="icon: check">
+                        </span>
+
+                        Guardar configuración
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+</body>
+
+</html>

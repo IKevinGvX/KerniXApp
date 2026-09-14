@@ -1,0 +1,148 @@
+﻿/* =========================================================
+   KERNIX - CONTROL GLOBAL DE IMÁGENES
+   Evita desbordamientos
+========================================================= */
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Contenedor principal */
+.kx-config-page,
+.kx-config-content,
+.kx-config-main {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   IMÁGENES DE TARJETAS / MÓDULOS
+========================================================= */
+
+.kx-config-card img,
+.kx-module-card img,
+.kx-config-image {
+    display: block;
+    width: 100%;
+    max-width: 220px;
+    height: 150px;
+    margin: 0 auto;
+    object-fit: contain;
+    object-position: center;
+}
+
+/* Si la imagen está dentro de un contenedor */
+.kx-image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   IMAGEN PRINCIPAL / BANNER
+========================================================= */
+
+.kx-config-hero img,
+.kx-config-banner img {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    max-height: 280px;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.kx-config-logo,
+.kx-sidebar-logo img {
+    width: auto;
+    max-width: 150px;
+    max-height: 55px;
+    object-fit: contain;
+}
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.kx-config-grid {
+    display: grid;
+    grid-template-columns: repeat( auto-fit, minmax(240px, 1fr) );
+    gap: 18px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.kx-config-card,
+.kx-module-card {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .kx-config-card img,
+    .kx-module-card img,
+    .kx-config-image {
+        max-width: 190px;
+        height: 130px;
+    }
+
+    .kx-config-hero img,
+    .kx-config-banner img {
+        max-width: 400px;
+        max-height: 230px;
+    }
+}
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .kx-config-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kx-config-card img,
+    .kx-module-card img,
+    .kx-config-image {
+        width: 100%;
+        max-width: 160px;
+        height: 110px;
+    }
+
+    .kx-config-hero img,
+    .kx-config-banner img {
+        width: 100%;
+        max-width: 300px;
+        max-height: 190px;
+    }
+
+    .kx-config-logo,
+    .kx-sidebar-logo img {
+        max-width: 120px;
+        max-height: 45px;
+    }
+}

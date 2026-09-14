@@ -1,0 +1,507 @@
+﻿@page
+@model KerniX.Pages.Configuracion.BackupsModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Copias de Seguridad";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/configuracion.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/general.css"
+          asp-append-version="true" />
+
+</head>
+
+<body class="kx-body">
+
+    <div class="kx-app">
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-logo">
+
+                <div class="kx-logo-icon">
+                    KX
+                </div>
+
+                <div>
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <small>
+                        Sistema Inteligente
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+                    <span uk-icon="icon: home"></span>
+                    <span>Inicio</span>
+                </a>
+
+                <a href="/Ventas/Index">
+                    <span uk-icon="icon: cart"></span>
+                    <span>Ventas</span>
+                </a>
+
+                <a href="/Inventario/Index">
+                    <span uk-icon="icon: database"></span>
+                    <span>Inventario</span>
+                </a>
+
+                <a href="/Productos/Index">
+                    <span uk-icon="icon: thumbnails"></span>
+                    <span>Productos</span>
+                </a>
+
+                <a href="/Clientes/Index">
+                    <span uk-icon="icon: users"></span>
+                    <span>Clientes</span>
+                </a>
+
+                <a href="/IA/Index">
+                    <span uk-icon="icon: bolt"></span>
+                    <span>KerniX IA</span>
+                </a>
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <main class="kx-content">
+
+            <header class="kx-topbar">
+
+                <div>
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-back">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver a configuración
+
+                    </a>
+
+                    <h1>
+                        Copias de Seguridad
+                    </h1>
+
+                    <p>
+                        Genera y consulta los respaldos
+                        de la base de datos KerniX.
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeExito))
+            {
+                <div class="kx-alert-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    <span>
+                        @Model.MensajeExito
+                    </span>
+
+                </div>
+            }
+
+
+            @if (!string.IsNullOrWhiteSpace(
+                Model.MensajeError))
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.MensajeError
+                    </span>
+
+                </div>
+            }
+
+
+            <div class="kx-settings-layout">
+
+                <!-- ============================================= -->
+                <!-- ESTADO -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+                            <span uk-icon="icon: database"></span>
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Estado del respaldo
+                            </h2>
+
+                            <p>
+                                Información del último backup completo.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Empresa
+                        </span>
+
+                        <strong>
+                            #@Model.IdEmpresa
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Base de datos
+                        </span>
+
+                        <strong>
+                            kernixerp
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Tipo
+                        </span>
+
+                        <strong>
+                            Completo
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Destino
+                        </span>
+
+                        <strong>
+                            C:\Backup
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Último respaldo
+                        </span>
+
+                        <strong>
+
+                            @(Model.UltimaFecha.HasValue
+                                ? Model.UltimaFecha.Value
+                                    .ToString("dd/MM/yyyy HH:mm:ss")
+                                : "Sin información")
+
+                        </strong>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- EJECUTAR -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+                            <span uk-icon="icon: cloud-upload"></span>
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Backup manual
+                            </h2>
+
+                            <p>
+                                Genera una copia completa inmediatamente.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-option">
+
+                        <div>
+
+                            <strong>
+                                Ejecutar copia completa
+                            </strong>
+
+                            <small>
+                                SQL Server generará un archivo .bak
+                                dentro de C:\Backup.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="post"
+                          action="/Configuracion/Backups?handler=EjecutarBackup">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="kx-btn-primary"
+                                onclick="return confirm('¿Desea generar una copia de seguridad completa ahora?');">
+
+                            <span uk-icon="icon: cloud-upload"></span>
+
+                            Generar backup
+
+                        </button>
+
+                    </form>
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- ARCHIVO -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+                            <span uk-icon="icon: file-text"></span>
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Último archivo
+                            </h2>
+
+                            <p>
+                                Ubicación detectada desde SQL Server.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (string.IsNullOrWhiteSpace(
+                        Model.UltimoArchivo))
+                    {
+                        <div class="kx-empty-box">
+
+                            <span uk-icon="icon: warning"></span>
+
+                            <strong>
+                                Sin respaldo detectado
+                            </strong>
+
+                            <p>
+                                Todavía no se encontró un backup completo.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="kx-form-group">
+
+                            <label>
+                                Archivo
+                            </label>
+
+                            <input type="text"
+                                   value="@Model.UltimoArchivo"
+                                   class="kx-input"
+                                   readonly />
+
+                        </div>
+                    }
+
+                </section>
+
+
+                <!-- ============================================= -->
+                <!-- INFORMACION -->
+                <!-- ============================================= -->
+
+                <section class="kx-card">
+
+                    <div class="kx-card-header">
+
+                        <div class="kx-card-icon">
+                            <span uk-icon="icon: info"></span>
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Información
+                            </h2>
+
+                            <p>
+                                Consideraciones para los respaldos.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Formato
+                        </span>
+
+                        <strong>
+                            .bak
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Compresión
+                        </span>
+
+                        <strong>
+                            Activada
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Checksum
+                        </span>
+
+                        <strong>
+                            Activado
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-summary-row">
+
+                        <span>
+                            Tipo de respaldo
+                        </span>
+
+                        <strong>
+                            BACKUP DATABASE
+                        </strong>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <div class="kx-form-actions">
+
+                <a href="/Configuracion/Index1"
+                   class="kx-btn-secondary">
+
+                    Volver
+
+                </a>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,794 @@
+﻿@page
+@model KerniX.Pages.Configuracion.GeneralModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Configuración General";
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/general1.css"
+          asp-append-version="true" />
+
+</head>
+
+<body class="kx-body">
+
+    <div class="kx-app">
+
+        <!-- ===================================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================================== -->
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-logo">
+
+                <div class="kx-logo-icon">
+                    KX
+                </div>
+
+                <div>
+
+                    <strong>
+                        KerniX
+                    </strong>
+
+                    <small>
+                        Sistema Inteligente
+                    </small>
+
+                </div>
+
+            </div>
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+
+                    <span uk-icon="icon: home"></span>
+
+                    <span>
+                        Inicio
+                    </span>
+
+                </a>
+
+                <a href="/Ventas/Index">
+
+                    <span uk-icon="icon: cart"></span>
+
+                    <span>
+                        Ventas
+                    </span>
+
+                </a>
+
+                <a href="/Inventario/Index">
+
+                    <span uk-icon="icon: database"></span>
+
+                    <span>
+                        Inventario
+                    </span>
+
+                </a>
+
+                <a href="/Productos/Index">
+
+                    <span uk-icon="icon: thumbnails"></span>
+
+                    <span>
+                        Productos
+                    </span>
+
+                </a>
+
+                <a href="/Clientes/Index">
+
+                    <span uk-icon="icon: users"></span>
+
+                    <span>
+                        Clientes
+                    </span>
+
+                </a>
+
+                <a href="/IA/Index">
+
+                    <span uk-icon="icon: bolt"></span>
+
+                    <span>
+                        KerniX IA
+                    </span>
+
+                </a>
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+        </aside>
+
+        <!-- ===================================================== -->
+        <!-- CONTENIDO -->
+        <!-- ===================================================== -->
+
+        <main class="kx-content">
+
+            <!-- ================================================= -->
+            <!-- CABECERA -->
+            <!-- ================================================= -->
+
+            <header class="kx-topbar">
+
+                <div>
+                    <a href="/Configuracion/Index1"
+                       class="kx-back">
+
+                        <span uk-icon="icon: arrow-left"></span>
+
+                        Volver a configuración
+
+                    </a>
+
+                    <h1>
+                        Configuración General
+                    </h1>
+
+                    <p>
+                        Parámetros principales de funcionamiento de KerniX.
+                    </p>
+
+                </div>
+
+            </header>
+
+            <!-- ================================================= -->
+            <!-- MENSAJE ÉXITO -->
+            <!-- ================================================= -->
+            @if (!string.IsNullOrWhiteSpace(
+                        Model.MensajeExito))
+            {
+                <div class="kx-alert-success">
+
+                    <span uk-icon="icon: check"></span>
+
+                    <span>
+                        @Model.MensajeExito
+                    </span>
+
+                </div>
+            }
+
+            <!-- ================================================= -->
+            <!-- MENSAJE ERROR -->
+            <!-- ================================================= -->
+            @if (!string.IsNullOrWhiteSpace(
+                        Model.MensajeError))
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <span>
+                        @Model.MensajeError
+                    </span>
+
+                </div>
+            }
+
+            <!-- ================================================= -->
+            <!-- VALIDACIONES -->
+            <!-- ================================================= -->
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="kx-alert-error">
+
+                    <span uk-icon="icon: warning"></span>
+
+                    <div asp-validation-summary="All">
+                    </div>
+
+                </div>
+            }
+
+            <!-- ================================================= -->
+            <!-- FORMULARIO -->
+            <!-- ================================================= -->
+
+            <form method="post"
+                  action="/Configuracion/General?handler=Guardar">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="IdEmpresa"
+                       value="@Model.IdEmpresa" />
+
+                <div class="kx-settings-layout">
+
+                    <!-- ========================================= -->
+                    <!-- LOCALIZACIÓN -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: world">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Localización
+                                </h2>
+
+                                <p>
+                                    Moneda, idioma y zona horaria.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- MONEDA -->
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Moneda principal
+                            </label>
+
+                            <select name="MonedaPrincipal"
+                                    class="kx-input">
+
+                                @if (Model.MonedaPrincipal == "PEN")
+                                {
+                                    <option value="PEN"
+                                            selected>
+                                        PEN - Sol Peruano
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="PEN">
+                                        PEN - Sol Peruano
+                                    </option>
+                                }
+
+                                @if (Model.MonedaPrincipal == "USD")
+                                {
+                                    <option value="USD"
+                                            selected>
+                                        USD - Dólar estadounidense
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="USD">
+                                        USD - Dólar estadounidense
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <!-- ZONA HORARIA -->
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Zona horaria
+                            </label>
+
+                            <select name="ZonaHoraria"
+                                    class="kx-input">
+
+                                @if (Model.ZonaHoraria == "America/Lima")
+                                {
+                                    <option value="America/Lima"
+                                            selected>
+                                        America/Lima - UTC-05
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="America/Lima">
+                                        America/Lima - UTC-05
+                                    </option>
+                                }
+
+                                @if (Model.ZonaHoraria == "America/Bogota")
+                                {
+                                    <option value="America/Bogota"
+                                            selected>
+                                        America/Bogota - UTC-05
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="America/Bogota">
+                                        America/Bogota - UTC-05
+                                    </option>
+                                }
+
+                                @if (Model.ZonaHoraria == "America/Mexico_City")
+                                {
+                                    <option value="America/Mexico_City"
+                                            selected>
+                                        America/Mexico City
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="America/Mexico_City">
+                                        America/Mexico City
+                                    </option>
+                                }
+
+                                @if (Model.ZonaHoraria == "Europe/Madrid")
+                                {
+                                    <option value="Europe/Madrid"
+                                            selected>
+                                        Europe/Madrid
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="Europe/Madrid">
+                                        Europe/Madrid
+                                    </option>
+                                }
+
+                                @if (Model.ZonaHoraria == "Europe/Berlin")
+                                {
+                                    <option value="Europe/Berlin"
+                                            selected>
+                                        Europe/Berlin
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="Europe/Berlin">
+                                        Europe/Berlin
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <!-- IDIOMA -->
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Idioma del sistema
+                            </label>
+
+                            <select name="Idioma"
+                                    class="kx-input">
+
+                                @if (Model.Idioma == "es-PE")
+                                {
+                                    <option value="es-PE"
+                                            selected>
+                                        Español - Perú
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="es-PE">
+                                        Español - Perú
+                                    </option>
+                                }
+
+                                @if (Model.Idioma == "es-ES")
+                                {
+                                    <option value="es-ES"
+                                            selected>
+                                        Español - España
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="es-ES">
+                                        Español - España
+                                    </option>
+                                }
+
+                                @if (Model.Idioma == "en-US")
+                                {
+                                    <option value="en-US"
+                                            selected>
+                                        English - Estados Unidos
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="en-US">
+                                        English - Estados Unidos
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ========================================= -->
+                    <!-- FORMATOS -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: calendar">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Formatos
+                                </h2>
+
+                                <p>
+                                    Presentación de fechas y horas.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- FECHA -->
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Formato de fecha
+                            </label>
+
+                            <select name="FormatoFecha"
+                                    class="kx-input">
+
+                                @if (Model.FormatoFecha == "dd/MM/yyyy")
+                                {
+                                    <option value="dd/MM/yyyy"
+                                            selected>
+                                        dd/MM/yyyy
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="dd/MM/yyyy">
+                                        dd/MM/yyyy
+                                    </option>
+                                }
+
+                                @if (Model.FormatoFecha == "yyyy-MM-dd")
+                                {
+                                    <option value="yyyy-MM-dd"
+                                            selected>
+                                        yyyy-MM-dd
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="yyyy-MM-dd">
+                                        yyyy-MM-dd
+                                    </option>
+                                }
+
+                                @if (Model.FormatoFecha == "MM/dd/yyyy")
+                                {
+                                    <option value="MM/dd/yyyy"
+                                            selected>
+                                        MM/dd/yyyy
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="MM/dd/yyyy">
+                                        MM/dd/yyyy
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <!-- HORA -->
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Formato de hora
+                            </label>
+
+                            <select name="FormatoHora"
+                                    class="kx-input">
+
+                                @if (Model.FormatoHora == "HH:mm")
+                                {
+                                    <option value="HH:mm"
+                                            selected>
+                                        24 horas - HH:mm
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="HH:mm">
+                                        24 horas - HH:mm
+                                    </option>
+                                }
+
+                                @if (Model.FormatoHora == "hh:mm tt")
+                                {
+                                    <option value="hh:mm tt"
+                                            selected>
+                                        12 horas - hh:mm AM/PM
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="hh:mm tt">
+                                        12 horas - hh:mm AM/PM
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ========================================= -->
+                    <!-- PRECISIÓN -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: settings">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Precisión
+                                </h2>
+
+                                <p>
+                                    Número de decimales utilizados.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- DECIMALES PRECIO -->
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Decimales para precios
+                            </label>
+
+                            <input type="number"
+                                   name="DecimalesPrecio"
+                                   value="@(Model.DecimalesPrecio ?? 2)"
+                                   min="0"
+                                   max="6"
+                                   step="1"
+                                   class="kx-input" />
+
+                        </div>
+
+                        <!-- DECIMALES CANTIDAD -->
+
+                        <div class="kx-form-group">
+
+                            <label>
+                                Decimales para cantidades
+                            </label>
+
+                            <input type="number"
+                                   name="DecimalesCantidad"
+                                   value="@(Model.DecimalesCantidad ?? 2)"
+                                   min="0"
+                                   max="6"
+                                   step="1"
+                                   class="kx-input" />
+
+                        </div>
+
+                    </section>
+
+                    <!-- ========================================= -->
+                    <!-- ESTADO ACTUAL -->
+                    <!-- ========================================= -->
+
+                    <section class="kx-card">
+
+                        <div class="kx-card-header">
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: info">
+                                </span>
+
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Estado actual
+                                </h2>
+
+                                <p>
+                                    Resumen de la configuración.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Empresa
+                            </span>
+
+                            <strong>
+                                #@Model.IdEmpresa
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Moneda
+                            </span>
+
+                            <strong>
+                                @(Model.MonedaPrincipal ?? "-")
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Zona horaria
+                            </span>
+
+                            <strong>
+                                @(Model.ZonaHoraria ?? "-")
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Idioma
+                            </span>
+
+                            <strong>
+                                @(Model.Idioma ?? "-")
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Decimales precio
+                            </span>
+
+                            <strong>
+                                @(Model.DecimalesPrecio ?? 2)
+                            </strong>
+
+                        </div>
+
+                        <div class="kx-summary-row">
+
+                            <span>
+                                Decimales cantidad
+                            </span>
+
+                            <strong>
+                                @(Model.DecimalesCantidad ?? 2)
+                            </strong>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- ================================================= -->
+                <!-- BOTONES -->
+                <!-- ================================================= -->
+
+                <div class="kx-form-actions">
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-btn-secondary">
+
+                        Cancelar
+
+                    </a>
+                    <button type="submit"
+                            class="kx-btn-primary">
+
+                        <span uk-icon="icon: check">
+                        </span>
+
+                        Guardar cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+</body>
+
+</html>
