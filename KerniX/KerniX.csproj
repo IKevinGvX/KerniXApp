@@ -44,6 +44,7 @@
     <Folder Include="Pages\Inventario\Salidas\" />
     <Folder Include="Pages\Inventario\UnidadesMedida\" />
     <Folder Include="Pages\Inventario\Productos\" />
+    <Folder Include="Pages\Pedido\" />
     <Folder Include="Pages\Proveedores\" />
     <Folder Include="Services\Clientes\" />
     <Folder Include="Services\Inventario\" />

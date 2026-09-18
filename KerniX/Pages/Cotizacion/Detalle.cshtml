@@ -1,0 +1,1857 @@
+﻿@page
+@model KerniX.Pages.Cotizacion.DetalleModel
+
+@{
+    Layout = null;
+
+    ViewData["Title"] = "Detalle de Cotización";
+
+    var c = Model.Cotizacion;
+
+    var cultura =
+        System.Globalization.CultureInfo.GetCultureInfo("es-PE");
+
+    string estado =
+        c.Estado?.Trim().ToLowerInvariant() ?? "";
+
+    string claseEstado = estado switch
+    {
+        "pendiente" => "pendiente",
+        "aprobada" => "aprobada",
+        "aprobado" => "aprobada",
+        "convertida" => "convertida",
+        "convertido" => "convertida",
+        "rechazada" => "rechazada",
+        "rechazado" => "rechazada",
+        _ => "otro"
+    };
+
+    string moneda(decimal valor)
+    {
+        return valor.ToString("C2", cultura);
+    }
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color"
+          content="#071523" />
+
+    <title>
+        Cotización @c.NumeroCotizacion | KerniX
+    </title>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
+    <style>
+
+            /* ================================================
+                                               VARIABLES
+                                               ================================================ */
+
+            :root {
+                --azul: #102c46;
+                --azul-oscuro: #071523;
+                --azul-claro: #eaf2f8;
+                --dorado: #d99c13;
+                --dorado-claro: #fff5dc;
+                --texto: #24384b;
+                --texto-secundario: #64788b;
+                --borde: #dce5ed;
+                --fondo: #f0f4f8;
+                --blanco: #ffffff;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html {
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family: "Inter", Arial, sans-serif;
+                background: var(--azul-oscuro);
+                color: var(--texto);
+            }
+
+            button,
+            a {
+                font-family: inherit;
+            }
+
+
+            /* ================================================
+                                               CONTENEDOR
+                                               ================================================ */
+
+            .document-page {
+                width: min(1100px, 100%);
+                margin: 0 auto;
+                padding: 28px 22px 45px;
+            }
+
+
+            /* ================================================
+                                               BARRA DE ACCIONES
+                                               ================================================ */
+
+            .screen-toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 22px;
+            }
+
+            .toolbar-left,
+            .toolbar-right {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 9px;
+                min-height: 42px;
+                padding: 0 17px;
+                border-radius: 9px;
+                font-size: 12px;
+                font-weight: 700;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            .btn-back {
+                border: 1px solid #294760;
+                background: #0b1d2d;
+                color: #d3e0eb;
+            }
+
+                .btn-back:hover {
+                    border-color: var(--dorado);
+                    color: #ffffff;
+                }
+
+            .btn-print {
+                border: 1px solid #edb832;
+                background: #f5bf39;
+                color: #142130;
+            }
+
+                .btn-print:hover {
+                    background: #ffcf56;
+                }
+
+            .toolbar-description {
+                margin: 0;
+                color: #91a8bd;
+                font-size: 11px;
+            }
+
+
+            /* ================================================
+                                               HOJA COMERCIAL
+                                               ================================================ */
+
+            .quote-sheet {
+                width: 100%;
+                padding: 35px 39px 28px;
+                border-radius: 14px;
+                background: #ffffff;
+                box-shadow: 0 20px 55px rgba(0, 0, 0, .35);
+                overflow: hidden;
+            }
+
+
+            /* ================================================
+                                               HEADER
+                                               ================================================ */
+
+            .quote-header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 25px;
+                padding-bottom: 23px;
+                border-bottom: 2px solid var(--azul);
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                min-width: 0;
+            }
+
+            .brand-logo {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                width: 67px;
+                height: 67px;
+                border-radius: 13px;
+                background: linear-gradient( 145deg, #ffdc6a, #d99c13 );
+                color: #102033;
+                font-size: 43px;
+                font-weight: 900;
+                letter-spacing: -4px;
+                padding-right: 4px;
+            }
+
+            .brand-content h1 {
+                margin: 0;
+                color: var(--azul);
+                font-size: 29px;
+                font-weight: 900;
+                letter-spacing: -.8px;
+            }
+
+            .brand-content p {
+                margin: 5px 0 0;
+                color: var(--texto-secundario);
+                font-size: 11px;
+                font-weight: 500;
+            }
+
+            .brand-line {
+                width: 53px;
+                height: 3px;
+                margin-top: 10px;
+                border-radius: 5px;
+                background: var(--dorado);
+            }
+
+
+            /* ================================================
+                                               RECUADRO DE COTIZACIÓN
+                                               ================================================ */
+
+            .quote-identity {
+                width: 245px;
+                flex-shrink: 0;
+                overflow: hidden;
+                border: 1px solid var(--dorado);
+                border-radius: 10px;
+                text-align: center;
+            }
+
+            .quote-identity-title {
+                padding: 11px;
+                background: var(--azul);
+                color: #ffffff;
+                font-size: 12px;
+                font-weight: 800;
+                letter-spacing: 1.6px;
+            }
+
+            .quote-identity-number {
+                padding: 17px 10px 11px;
+                color: var(--azul);
+                font-size: 22px;
+                font-weight: 900;
+                overflow-wrap: anywhere;
+            }
+
+            .quote-identity-status {
+                display: inline-block;
+                margin-bottom: 15px;
+                padding: 6px 13px;
+                border-radius: 30px;
+                font-size: 10px;
+                font-weight: 800;
+            }
+
+                .quote-identity-status.pendiente {
+                    background: #fff2ce;
+                    color: #926700;
+                }
+
+                .quote-identity-status.aprobada {
+                    background: #ddf7e6;
+                    color: #157347;
+                }
+
+                .quote-identity-status.convertida {
+                    background: #deecff;
+                    color: #1762b0;
+                }
+
+                .quote-identity-status.rechazada {
+                    background: #ffe1e1;
+                    color: #b42332;
+                }
+
+                .quote-identity-status.otro {
+                    background: #eef1f5;
+                    color: #526273;
+                }
+
+
+            /* ================================================
+                                               TÍTULO INTERNO
+                                               ================================================ */
+
+            .document-subtitle {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                margin: 20px 0 17px;
+            }
+
+                .document-subtitle strong {
+                    color: var(--azul);
+                    font-size: 11px;
+                    font-weight: 800;
+                    letter-spacing: .7px;
+                    text-transform: uppercase;
+                }
+
+                .document-subtitle span {
+                    color: var(--texto-secundario);
+                    font-size: 10px;
+                }
+
+
+            /* ================================================
+                                               INFORMACIÓN GENERAL
+                                               ================================================ */
+
+            .info-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 17px;
+            }
+
+            .info-card {
+                min-width: 0;
+                overflow: hidden;
+                border: 1px solid var(--borde);
+                border-radius: 10px;
+            }
+
+            .info-card-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 14px;
+                background: var(--azul-claro);
+                color: var(--azul);
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+                .info-card-title i {
+                    color: var(--dorado);
+                }
+
+            .info-card-body {
+                padding: 11px 14px 13px;
+            }
+
+            .info-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 7px 0;
+                border-bottom: 1px solid #edf1f5;
+            }
+
+                .info-row:last-child {
+                    border-bottom: 0;
+                }
+
+                .info-row span {
+                    flex-shrink: 0;
+                    color: var(--texto-secundario);
+                    font-size: 10px;
+                }
+
+                .info-row strong {
+                    color: var(--texto);
+                    font-size: 10px;
+                    font-weight: 700;
+                    text-align: right;
+                    overflow-wrap: anywhere;
+                }
+
+
+            /* ================================================
+                                               SECCIONES
+                                               ================================================ */
+
+            .section-heading {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin: 25px 0 11px;
+            }
+
+                .section-heading h2 {
+                    display: flex;
+                    align-items: center;
+                    gap: 9px;
+                    margin: 0;
+                    color: var(--azul);
+                    font-size: 13px;
+                    font-weight: 800;
+                }
+
+                    .section-heading h2 i {
+                        color: var(--dorado);
+                    }
+
+                .section-heading span {
+                    color: var(--texto-secundario);
+                    font-size: 10px;
+                }
+
+
+            /* ================================================
+                                               TABLA
+                                               ================================================ */
+
+            .table-wrapper {
+                width: 100%;
+                overflow-x: auto;
+                border: 1px solid var(--borde);
+                border-radius: 9px;
+            }
+
+            .quote-table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: fixed;
+            }
+
+                .quote-table th {
+                    padding: 12px 8px;
+                    background: var(--azul);
+                    color: #ffffff;
+                    font-size: 9px;
+                    font-weight: 700;
+                    text-align: left;
+                }
+
+                .quote-table td {
+                    padding: 12px 8px;
+                    border-bottom: 1px solid #e5ecf2;
+                    color: var(--texto);
+                    font-size: 10px;
+                    vertical-align: top;
+                    overflow-wrap: anywhere;
+                }
+
+                .quote-table tbody tr:nth-child(even) {
+                    background: #f8fafc;
+                }
+
+                .quote-table tbody tr:last-child td {
+                    border-bottom: 0;
+                }
+
+                .quote-table th:first-child {
+                    width: 25%;
+                }
+
+                .quote-table th:nth-child(2) {
+                    width: 14%;
+                }
+
+                .quote-table th:nth-child(3) {
+                    width: 9%;
+                }
+
+                .quote-table th:nth-child(4) {
+                    width: 13%;
+                }
+
+                .quote-table th:nth-child(5) {
+                    width: 12%;
+                }
+
+                .quote-table th:nth-child(6) {
+                    width: 12%;
+                }
+
+                .quote-table th:nth-child(7) {
+                    width: 15%;
+                }
+
+            .product-name {
+                display: block;
+                color: var(--azul);
+                font-weight: 800;
+            }
+
+            .product-code {
+                color: var(--texto-secundario);
+                font-size: 9px;
+            }
+
+            .text-right {
+                text-align: right !important;
+            }
+
+            .text-center {
+                text-align: center !important;
+            }
+
+            .line-total {
+                color: var(--azul);
+                font-weight: 800;
+                white-space: nowrap;
+            }
+
+            .empty-cell {
+                padding: 25px !important;
+                text-align: center;
+                color: var(--texto-secundario);
+            }
+
+
+            /* ================================================
+                                               OBSERVACIONES + TOTALES
+                                               ================================================ */
+
+            .bottom-grid {
+                display: grid;
+                grid-template-columns: 1.15fr .85fr;
+                align-items: start;
+                gap: 18px;
+                margin-top: 20px;
+            }
+
+            .observation-card {
+                overflow: hidden;
+                border: 1px solid var(--borde);
+                border-radius: 10px;
+            }
+
+            .observation-title {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 14px;
+                background: var(--azul-claro);
+                color: var(--azul);
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+                .observation-title i {
+                    color: var(--dorado);
+                }
+
+            .observation-content {
+                min-height: 85px;
+                padding: 14px;
+                color: #4c6175;
+                font-size: 11px;
+                line-height: 1.65;
+                white-space: pre-wrap;
+                overflow-wrap: anywhere;
+            }
+
+            .totals-card {
+                padding: 15px 17px;
+                border: 1px solid var(--borde);
+                border-radius: 10px;
+                background: #fbfcfe;
+            }
+
+            .total-line {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 15px;
+                padding: 9px 0;
+                border-bottom: 1px solid #e9eef3;
+            }
+
+                .total-line span {
+                    color: var(--texto-secundario);
+                    font-size: 11px;
+                }
+
+                .total-line strong {
+                    color: var(--texto);
+                    font-size: 11px;
+                    font-weight: 700;
+                    white-space: nowrap;
+                }
+
+                .total-line.total-final {
+                    margin-top: 7px;
+                    padding-top: 15px;
+                    border-top: 2px solid var(--azul);
+                    border-bottom: 0;
+                }
+
+            .total-final span {
+                color: var(--azul);
+                font-size: 14px;
+                font-weight: 900;
+            }
+
+            .total-final strong {
+                color: #b27b00;
+                font-size: 21px;
+                font-weight: 900;
+            }
+
+
+            /* ================================================
+                                               PIE DE DOCUMENTO
+                                               ================================================ */
+
+            .document-footer {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 15px;
+                margin-top: 27px;
+                padding-top: 14px;
+                border-top: 1px solid var(--borde);
+            }
+
+            .footer-brand {
+                color: var(--azul);
+                font-size: 11px;
+                font-weight: 900;
+            }
+
+                .footer-brand span {
+                    color: var(--dorado);
+                }
+
+            .footer-note {
+                color: var(--texto-secundario);
+                font-size: 9px;
+                text-align: right;
+            }
+
+
+            /* ================================================
+                                               RESPONSIVE
+                                               ================================================ */
+
+            @@media (max-width: 800px) {
+
+                .document-page {
+                    padding: 14px;
+                }
+
+                .quote-sheet {
+                    padding: 23px 18px;
+                }
+
+                .quote-header {
+                    flex-direction: column;
+                }
+
+                .quote-identity {
+                    width: 100%;
+                }
+
+                .info-grid,
+                .bottom-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .table-wrapper {
+                    overflow-x: auto;
+                }
+
+                .quote-table {
+                    min-width: 650px;
+                }
+
+                .screen-toolbar {
+                    align-items: stretch;
+                }
+
+                .toolbar-left,
+                .toolbar-right {
+                    width: 100%;
+                }
+
+                .btn {
+                    width: 100%;
+                }
+            }
+
+
+
+            /* ACCIONES DE ESTADO Y NOTIFICACIONES */
+            .toolbar-right {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+                .toolbar-right form {
+                    margin: 0;
+                }
+
+            .btn-approve {
+                border: 1px solid #34c77b;
+                background: #145c3e;
+                color: #fff;
+            }
+
+                .btn-approve:hover {
+                    background: #19734d;
+                }
+
+            .btn-reject {
+                border: 1px solid #ef6565;
+                background: #722c35;
+                color: #fff;
+            }
+
+                .btn-reject:hover {
+                    background: #8f3540;
+                }
+
+            .kx-state-message {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 18px;
+                padding: 14px 16px;
+                border-radius: 9px;
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+                .kx-state-message.success {
+                    border: 1px solid #239c66;
+                    background: #103c2b;
+                    color: #9df0c4;
+                }
+
+                .kx-state-message.error {
+                    border: 1px solid #a94343;
+                    background: #421c24;
+                    color: #ffb2b2;
+                }
+
+            @@media print {
+                .screen-toolbar, .kx-state-message {
+                    display: none !important;
+                }
+            }
+
+            /* ================================================
+                                               IMPRESIÓN A4
+                                               ================================================ */
+
+            @@page {
+                size: A4 portrait;
+                margin: 8mm;
+            }
+
+            @@media print {
+
+                html,
+                body {
+                    width: 100%;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    background: white !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+
+                .screen-toolbar {
+                    display: none !important;
+                }
+
+                .document-page {
+                    width: 100%;
+                    max-width: none;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .quote-sheet {
+                    width: 100%;
+                    margin: 0;
+                    padding: 0;
+                    border: 0;
+                    border-radius: 0;
+                    box-shadow: none;
+                    overflow: visible;
+                }
+                /* HEADER COMPACTO */
+
+                .quote-header {
+                    gap: 14px;
+                    padding-bottom: 12px;
+                    break-inside: avoid;
+                }
+
+                .brand-logo {
+                    width: 49px;
+                    height: 49px;
+                    border-radius: 8px;
+                    font-size: 31px;
+                }
+
+                .brand-content h1 {
+                    font-size: 21px;
+                }
+
+                .brand-content p {
+                    font-size: 9px;
+                }
+
+                .brand-line {
+                    margin-top: 6px;
+                }
+
+                .quote-identity {
+                    width: 195px;
+                }
+
+                .quote-identity-title {
+                    padding: 7px;
+                    font-size: 10px;
+                }
+
+                .quote-identity-number {
+                    padding: 9px 7px 6px;
+                    font-size: 17px;
+                }
+
+                .quote-identity-status {
+                    margin-bottom: 9px;
+                    padding: 4px 10px;
+                    font-size: 8px;
+                }
+                /* INFORMACIÓN COMPACTA */
+
+                .document-subtitle {
+                    margin: 12px 0 10px;
+                }
+
+                    .document-subtitle strong {
+                        font-size: 9px;
+                    }
+
+                    .document-subtitle span {
+                        font-size: 8px;
+                    }
+
+                .info-grid {
+                    gap: 10px;
+                    grid-template-columns: 1fr 1fr;
+                }
+
+                .info-card {
+                    break-inside: avoid;
+                }
+
+                .info-card-title {
+                    padding: 8px 10px;
+                    font-size: 9px;
+                }
+
+                .info-card-body {
+                    padding: 6px 10px;
+                }
+
+                .info-row {
+                    padding: 4px 0;
+                    gap: 8px;
+                }
+
+                    .info-row span,
+                    .info-row strong {
+                        font-size: 8px;
+                    }
+                /* PRODUCTOS */
+
+                .section-heading {
+                    margin: 14px 0 8px;
+                }
+
+                    .section-heading h2 {
+                        font-size: 10px;
+                    }
+
+                    .section-heading span {
+                        font-size: 8px;
+                    }
+
+                .table-wrapper {
+                    overflow: visible;
+                    border-radius: 0;
+                }
+
+                .quote-table {
+                    width: 100%;
+                    min-width: 0;
+                    table-layout: fixed;
+                }
+
+                    .quote-table th {
+                        padding: 7px 4px;
+                        font-size: 7.5px;
+                    }
+
+                    .quote-table td {
+                        padding: 7px 4px;
+                        font-size: 8px;
+                    }
+
+                .product-code {
+                    font-size: 7px;
+                }
+
+                .line-total {
+                    white-space: nowrap;
+                }
+
+                thead {
+                    display: table-header-group;
+                }
+
+                tr {
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+                /* OBSERVACIONES Y TOTALES */
+
+                .bottom-grid {
+                    grid-template-columns: 1.15fr .85fr;
+                    gap: 10px;
+                    margin-top: 13px;
+                }
+
+                .observation-title {
+                    padding: 8px 10px;
+                    font-size: 9px;
+                }
+
+                .observation-content {
+                    min-height: 40px;
+                    padding: 9px;
+                    font-size: 8px;
+                    line-height: 1.45;
+                }
+
+                .totals-card {
+                    padding: 9px 11px;
+                    break-inside: avoid;
+                }
+
+                .total-line {
+                    padding: 5px 0;
+                }
+
+                    .total-line span,
+                    .total-line strong {
+                        font-size: 8px;
+                    }
+
+                    .total-line.total-final {
+                        margin-top: 4px;
+                        padding-top: 9px;
+                    }
+
+                .total-final span {
+                    font-size: 11px;
+                }
+
+                .total-final strong {
+                    font-size: 15px;
+                }
+                /* PIE */
+
+                .document-footer {
+                    margin-top: 13px;
+                    padding-top: 8px;
+                    break-inside: avoid;
+                }
+
+                .footer-brand {
+                    font-size: 9px;
+                }
+
+                .footer-note {
+                    font-size: 7px;
+                }
+                /* CONSERVAR BLOQUES */
+
+                .quote-header,
+                .info-grid,
+                .bottom-grid,
+                .document-footer {
+                    page-break-inside: avoid;
+                }
+            }
+
+
+            /* ========================================================
+                           ACCIONES / ALMACEN / VENTA VINCULADA
+                           ======================================================== */
+            .toolbar-right {
+                flex-wrap: wrap;
+            }
+
+                .toolbar-right form {
+                    margin: 0;
+                }
+
+            .conversion-form {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .select-almacen {
+                min-width: 175px;
+                min-height: 42px;
+                padding: 0 12px;
+                border: 1px solid #35536a;
+                border-radius: 9px;
+                background: #0b1d2d;
+                color: #fff;
+                font-size: 12px;
+            }
+
+                .select-almacen:focus-visible {
+                    outline: 2px solid #f5bf39;
+                    outline-offset: 2px;
+                }
+
+            .btn-convert {
+                border: 1px solid #3586d1;
+                background: #14568c;
+                color: #fff;
+            }
+
+                .btn-convert:hover:not(:disabled) {
+                    background: #1b6eaf;
+                }
+
+                .btn-convert:disabled {
+                    opacity: .5;
+                    cursor: not-allowed;
+                }
+
+            .venta-vinculada {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 18px;
+                margin-bottom: 20px;
+                border: 1px solid #237b55;
+                border-radius: 12px;
+                background: #103526;
+                color: #fff;
+            }
+
+            .venta-vinculada-icono {
+                color: #70e0a6;
+                font-size: 25px;
+            }
+
+            .venta-vinculada-info {
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                gap: 5px;
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+
+                .venta-vinculada-info strong {
+                    font-size: 13px;
+                }
+
+                .venta-vinculada-info span {
+                    font-size: 11px;
+                    color: #b9e5cf;
+                }
+
+            .venta-vinculada-total {
+                font-size: 19px;
+                font-weight: 800;
+                color: #70e0a6;
+                white-space: nowrap;
+            }
+
+            @@media (max-width: 800px) {
+                .conversion-form, .select-almacen, .btn-convert {
+                    width: 100%;
+                }
+            }
+
+            @@media (max-width: 650px) {
+                .venta-vinculada {
+                    flex-wrap: wrap;
+                }
+            }
+            /* IMPRESIÓN: oculta controles y conserva solamente la hoja */
+            @@media print {
+                .screen-toolbar, .kx-state-message, .venta-vinculada {
+                    display: none !important;
+                }
+
+                .document-page > .quote-sheet {
+                    display: block !important;
+                }
+
+                .quote-sheet {
+                    print-color-adjust: exact;
+                    -webkit-print-color-adjust: exact;
+                }
+            }
+
+    </style>
+
+</head>
+
+<body>
+
+    <main class="document-page">
+
+        <!-- ================================================
+             ACCIONES SOLO PANTALLA
+             ================================================ -->
+
+        <div class="screen-toolbar">
+
+            <div class="toolbar-left">
+
+                <a href="/Cotizacion/Index"
+                   class="btn btn-back">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a Cotizaciones
+
+                </a>
+
+            </div>
+
+            <div class="toolbar-right">
+
+                @* ================================================
+       COTIZACIÓN PENDIENTE
+       ================================================ *@
+
+                @if (string.Equals(
+                    c.Estado,
+                    "Pendiente",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    <!-- APROBAR -->
+
+                    <form method="post"
+                          action="/Cotizacion/Detalle?handler=Aprobar&amp;id=@c.IdCotizacion"
+                          onsubmit="return confirm('¿Deseas aprobar esta cotización?');">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="btn btn-approve">
+
+                            <i class="fa-solid fa-check"></i>
+                            Aprobar
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- RECHAZAR -->
+
+                    <form method="post"
+                          action="/Cotizacion/Detalle?handler=Rechazar&amp;id=@c.IdCotizacion"
+                          onsubmit="return confirm('¿Deseas rechazar esta cotización?');">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="btn btn-reject">
+
+                            <i class="fa-solid fa-xmark"></i>
+                            Rechazar
+
+                        </button>
+
+                    </form>
+                }
+
+
+                @* ================================================
+       COTIZACIÓN APROBADA
+       ================================================ *@
+
+                @if (string.Equals(
+                    c.Estado,
+                    "Aprobada",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    <!-- CONVERTIR EN VENTA -->
+
+                    <form method="post"
+                          action="/Cotizacion/Detalle?handler=Convertir&amp;id=@c.IdCotizacion"
+                          class="conversion-form"
+                          onsubmit="return confirm('Esta operación registrará una venta real y podría descontar inventario. ¿Deseas continuar?');">
+
+                        @Html.AntiForgeryToken()
+
+                        <select name="idAlmacen"
+                                class="select-almacen"
+                                aria-label="Seleccionar almacén de salida"
+                                required>
+
+                            <option value="">
+                                Seleccionar almacén
+                            </option>
+
+                            @foreach (var almacen in Model.Almacenes)
+                            {
+                                <option value="@almacen.IdAlmacen">
+                                    @almacen.Nombre
+                                </option>
+                            }
+
+                        </select>
+
+                        @if (Model.Almacenes.Count > 0)
+                        {
+                            <button type="submit"
+                                    class="btn btn-convert">
+
+                                <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                                Convertir en venta
+
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="button"
+                                    class="btn btn-convert"
+                                    disabled>
+
+                                <i class="fa-solid fa-warehouse"></i>
+                                Sin almacenes disponibles
+
+                            </button>
+                        }
+
+                    </form>
+                }
+
+
+                @* ================================================
+       IMPRIMIR: DISPONIBLE EN TODOS LOS ESTADOS
+       ================================================ *@
+                <button type="button"
+                        id="btnImprimirCotizacion"
+                        class="btn btn-print"
+                        onclick="window.print()">
+                    <i class="fa-solid fa-print"></i>
+                    Imprimir / Guardar PDF
+                </button>
+
+            </div> <!-- /toolbar-right -->
+        </div> <!-- /screen-toolbar -->
+        @if (TempData["CotizacionExito"] is string mensajeExito)
+        {
+            <div class="kx-state-message success" role="status">
+                <i class="fa-solid fa-circle-check"></i>
+                @mensajeExito
+            </div>
+        }
+
+        @if (TempData["CotizacionError"] is string mensajeError)
+        {
+            <div class="kx-state-message error" role="alert">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                @mensajeError
+            </div>
+        }
+
+        <!-- ================================================
+             DOCUMENTO COMERCIAL
+             ================================================ -->
+        @if (Model.VentaVinculada is not null)
+        {
+            <section class="venta-vinculada">
+
+                <div class="venta-vinculada-icono">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <div class="venta-vinculada-info">
+
+                    <strong>
+                        Cotización convertida en venta
+                    </strong>
+
+                    <span>
+                        Venta: @Model.VentaVinculada.NumeroVenta
+                    </span>
+
+                    <span>
+                        ID: @Model.VentaVinculada.IdVenta
+                        · Estado: @Model.VentaVinculada.Estado
+                    </span>
+
+                </div>
+
+                <div class="venta-vinculada-total">
+                    @Model.VentaVinculada.Total.ToString("C2", cultura)
+                </div>
+
+            </section>
+        }
+        <article class="quote-sheet">
+
+            <!-- ============================================
+                 ENCABEZADO
+                 ============================================ -->
+
+            <header class="quote-header">
+
+                <div class="brand">
+
+                    <div class="brand-logo"
+                         aria-label="Logotipo KerniX">
+
+                        K
+
+                    </div>
+
+                    <div class="brand-content">
+
+                        <h1>KerniX</h1>
+
+                        <p>
+                            Gestión comercial inteligente
+                        </p>
+
+                        <div class="brand-line"></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quote-identity">
+
+                    <div class="quote-identity-title">
+
+                        COTIZACIÓN
+
+                    </div>
+
+                    <div class="quote-identity-number">
+
+                        @c.NumeroCotizacion
+
+                    </div>
+
+                    <span class="quote-identity-status @claseEstado">
+
+                        @c.Estado
+
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <!-- ============================================
+                 SUBTÍTULO
+                 ============================================ -->
+
+            <div class="document-subtitle">
+
+                <strong>
+
+                    <i class="fa-regular fa-file-lines"></i>
+
+                    Propuesta comercial
+
+                </strong>
+
+                <span>
+
+                    Cotización N.º @c.NumeroCotizacion
+
+                </span>
+
+            </div>
+
+
+            <!-- ============================================
+                 INFORMACIÓN GENERAL
+                 ============================================ -->
+
+            <section class="info-grid">
+
+
+                <!-- CLIENTE -->
+
+                <div class="info-card">
+
+                    <div class="info-card-title">
+
+                        <i class="fa-regular fa-user"></i>
+
+                        DATOS DEL CLIENTE
+
+                    </div>
+
+                    <div class="info-card-body">
+
+                        <div class="info-row">
+
+                            <span>Cliente</span>
+
+                            <strong>
+                                @c.Cliente
+                            </strong>
+
+                        </div>
+
+                        <div class="info-row">
+
+                            <span>Documento</span>
+
+                            <strong>
+
+                                @c.TipoDocumento @c.NumeroDocumento
+
+                            </strong>
+
+                        </div>
+
+                        <div class="info-row">
+
+                            <span>Teléfono</span>
+
+                            <strong>
+
+                                @(string.IsNullOrWhiteSpace(c.Telefono)
+                                    ? "No registrado"
+                                    : c.Telefono)
+
+                            </strong>
+
+                        </div>
+
+                        <div class="info-row">
+
+                            <span>Correo</span>
+
+                            <strong>
+
+                                @(string.IsNullOrWhiteSpace(c.Correo)
+                                    ? "No registrado"
+                                    : c.Correo)
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- COTIZACIÓN -->
+
+                <div class="info-card">
+
+                    <div class="info-card-title">
+
+                        <i class="fa-regular fa-calendar-check"></i>
+
+                        DATOS DE LA COTIZACIÓN
+
+                    </div>
+
+                    <div class="info-card-body">
+
+                        <div class="info-row">
+
+                            <span>Número</span>
+
+                            <strong>
+                                @c.NumeroCotizacion
+                            </strong>
+
+                        </div>
+
+                        <div class="info-row">
+
+                            <span>Emisión</span>
+
+                            <strong>
+
+                                @c.FechaEmision.ToString("dd/MM/yyyy")
+
+                            </strong>
+
+                        </div>
+
+                        <div class="info-row">
+
+                            <span>Válida hasta</span>
+
+                            <strong>
+
+                                @(c.FechaVencimiento?.ToString("dd/MM/yyyy")
+                                    ?? "Sin fecha")
+
+                            </strong>
+
+                        </div>
+
+                        <div class="info-row">
+
+                            <span>Estado</span>
+
+                            <strong>
+                                @c.Estado
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ============================================
+                 DETALLE DE PRODUCTOS
+                 ============================================ -->
+
+            <section class="products-section">
+
+                <div class="section-heading">
+
+                    <h2>
+
+                        <i class="fa-solid fa-box-open"></i>
+
+                        DETALLE DE PRODUCTOS
+
+                    </h2>
+
+                    <span>
+
+                        @c.Productos.Count producto(s)
+
+                    </span>
+
+                </div>
+
+
+                <div class="table-wrapper">
+
+                    <table class="quote-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Producto
+                                </th>
+
+                                <th>
+                                    Código
+                                </th>
+
+                                <th class="text-center">
+                                    Cant.
+                                </th>
+
+                                <th class="text-right">
+                                    Precio
+                                </th>
+
+                                <th class="text-right">
+                                    Desc.
+                                </th>
+
+                                <th class="text-right">
+                                    IGV
+                                </th>
+
+                                <th class="text-right">
+                                    Total
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @if (c.Productos.Count == 0)
+                            {
+
+                                <tr>
+
+                                    <td colspan="7"
+                                        class="empty-cell">
+
+                                        No existen productos registrados
+                                        para esta cotización.
+
+                                    </td>
+
+                                </tr>
+
+                            }
+                            else
+                            {
+
+                                @foreach (var item in c.Productos)
+                                {
+
+                                    <tr>
+
+                                        <td>
+
+                                            <span class="product-name">
+
+                                                @item.Nombre
+
+                                            </span>
+
+                                        </td>
+
+                                        <td>
+
+                                            <span class="product-code">
+
+                                                @item.Codigo
+
+                                            </span>
+
+                                        </td>
+
+                                        <td class="text-center">
+
+                                            @item.Cantidad.ToString("N0", cultura)
+
+                                        </td>
+
+                                        <td class="text-right">
+
+                                            @moneda(item.PrecioUnitario)
+
+                                        </td>
+
+                                        <td class="text-right">
+
+                                            @moneda(item.Descuento)
+
+                                        </td>
+
+                                        <td class="text-right">
+
+                                            @moneda(item.Impuesto)
+
+                                        </td>
+
+                                        <td class="text-right">
+
+                                            <span class="line-total">
+
+                                                @moneda(item.Total)
+
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                }
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ============================================
+                 OBSERVACIONES Y TOTALES
+                 ============================================ -->
+
+            <section class="bottom-grid">
+
+
+                <!-- OBSERVACIONES -->
+
+                <div class="observation-card">
+
+                    <div class="observation-title">
+
+                        <i class="fa-regular fa-comment-dots"></i>
+
+                        OBSERVACIONES
+
+                    </div>
+
+                    <div class="observation-content">
+                        @(string.IsNullOrWhiteSpace(c.Observacion)
+                            ? "Sin observaciones."
+                            : c.Observacion)
+                    </div>
+
+                </div>
+
+
+                <!-- RESUMEN ECONÓMICO -->
+
+                <div class="totals-card">
+
+                    <div class="total-line">
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong>
+
+                            @moneda(c.Subtotal)
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="total-line">
+
+                        <span>
+                            Descuento
+                        </span>
+
+                        <strong>
+
+                            - @moneda(c.Descuento)
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="total-line">
+
+                        <span>
+                            IGV
+                        </span>
+
+                        <strong>
+
+                            @moneda(c.Impuesto)
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="total-line total-final">
+
+                        <span>
+                            TOTAL
+                        </span>
+
+                        <strong>
+
+                            @moneda(c.Total)
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ============================================
+                 PIE DEL DOCUMENTO
+                 ============================================ -->
+
+            <footer class="document-footer">
+
+                <div class="footer-brand">
+
+                    Kerni<span>X</span>
+
+                </div>
+
+                <div class="footer-note">
+
+                    Documento generado desde KerniX.
+
+                    <br />
+
+                    Cotización @c.NumeroCotizacion
+
+                </div>
+
+            </footer>
+
+        </article>
+
+    </main>
+
+</body>
+</html>

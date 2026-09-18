@@ -1,17 +1,9 @@
-﻿document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        iniciarBuscadorClientes();
-
-    }
-);
-
-
-/* ==========================================================
+﻿/* ==========================================================
    CLIENTES
    ========================================================== */
 
+let numeroBusquedaClientes = 0;
+let numeroBusquedaProductos = 0;
 function iniciarBuscadorClientes() {
 
     const input =
@@ -33,22 +25,20 @@ function iniciarBuscadorClientes() {
     if (!input) {
 
         console.warn(
-            "No existe #buscarCliente"
+            "[KerniX] No existe #buscarCliente"
         );
 
         return;
-
     }
 
 
     if (!resultados) {
 
         console.warn(
-            "No existe #resultadosClientes"
+            "[KerniX] No existe #resultadosClientes"
         );
 
         return;
-
     }
 
 
@@ -67,16 +57,25 @@ function iniciarBuscadorClientes() {
 
             const termino =
                 input.value.trim();
+            numeroBusquedaClientes++;
+            const seleccionado = document.getElementById("idClienteSeleccionado");
+            if (seleccionado?.value) {
+                seleccionado.value = "";
+                const tarjeta = document.getElementById("clienteSeleccionado");
+                if (tarjeta) tarjeta.hidden = true;
+            }
+
+            console.log(
+                "[KerniX] Texto cliente:",
+                termino
+            );
 
 
-            if (
-                termino.length < 2
-            ) {
+            if (termino.length < 2) {
 
                 cerrarResultadosClientes();
 
                 return;
-
             }
 
 
@@ -91,7 +90,6 @@ function iniciarBuscadorClientes() {
                     },
                     300
                 );
-
         }
     );
 
@@ -104,16 +102,12 @@ function iniciarBuscadorClientes() {
                 input.value.trim();
 
 
-            if (
-                termino.length >= 2
-            ) {
+            if (termino.length >= 2) {
 
                 buscarClientes(
                     termino
                 );
-
             }
-
         }
     );
 
@@ -123,15 +117,14 @@ function iniciarBuscadorClientes() {
         function (event) {
 
             if (
-                event.key === "Escape"
+                event.key ===
+                "Escape"
             ) {
 
                 cerrarResultadosClientes();
 
                 input.blur();
-
             }
-
         }
     );
 
@@ -143,36 +136,9 @@ function iniciarBuscadorClientes() {
             function () {
 
                 limpiarClienteSeleccionado();
-
             }
         );
-
     }
-
-
-    document.addEventListener(
-        "click",
-        function (event) {
-
-            const contenedor =
-                document.querySelector(
-                    ".kxclientebuscador"
-                );
-
-
-            if (
-                contenedor &&
-                !contenedor.contains(
-                    event.target
-                )
-            ) {
-
-                cerrarResultadosClientes();
-
-            }
-
-        }
-    );
 }
 
 
@@ -192,15 +158,17 @@ async function buscarClientes(
 
     if (!resultados) {
 
-        return;
+        console.error(
+            "[KerniX] No existe #resultadosClientes"
+        );
 
+        return;
     }
 
 
-    resultados.hidden =
-        false;
-
-
+    const busquedaActual = ++numeroBusquedaClientes;
+    resultados.hidden = false;
+    resultados.style.display = "block";
     resultados.innerHTML = `
         <div class="kxclientecargando">
             Buscando clientes...
@@ -217,7 +185,7 @@ async function buscarClientes(
 
 
         console.log(
-            "Buscando clientes:",
+            "[KerniX] Buscar clientes:",
             url
         );
 
@@ -229,11 +197,10 @@ async function buscarClientes(
                     method:
                         "GET",
 
-                    headers: {
-
+                    headers:
+                    {
                         "Accept":
                             "application/json"
-
                     },
 
                     credentials:
@@ -242,34 +209,62 @@ async function buscarClientes(
             );
 
 
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-
-        }
-
-
-        const resultado =
-            await response.json();
+        const texto =
+            await response.text();
 
 
         console.log(
-            "Respuesta clientes:",
-            resultado
+            "[KerniX] HTTP clientes:",
+            response.status
         );
 
 
+        let resultado =
+            null;
+
+
+        try {
+
+            resultado =
+                texto
+                    ? JSON.parse(
+                        texto
+                    )
+                    : null;
+
+        }
+        catch (error) {
+
+            console.error(
+                "[KerniX] JSON clientes inválido:",
+                error
+            );
+
+
+            throw new Error(
+                "La respuesta del servidor no es JSON válido."
+            );
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                resultado?.message ||
+                `Error HTTP ${response.status}`
+            );
+        }
+
+
         if (
+            !resultado ||
             resultado.success !== true
         ) {
 
             throw new Error(
-                resultado.message ||
+                resultado?.message ||
                 "No se pudieron cargar los clientes."
             );
-
         }
 
 
@@ -281,31 +276,49 @@ async function buscarClientes(
                 : [];
 
 
+        console.log(
+            "[KerniX] Clientes encontrados:",
+            clientes.length,
+            clientes
+        );
+
+
+        if (busquedaActual !== numeroBusquedaClientes) return;
         mostrarClientes(
             clientes
         );
 
     }
     catch (error) {
-
+        if (busquedaActual !== numeroBusquedaClientes) return;
         console.error(
-            "Error buscando clientes:",
+            "[KerniX] Error buscarClientes:",
             error
         );
 
 
+        resultados.hidden =
+            false;
+
+
+        resultados.style.display =
+            "block";
+
+
         resultados.innerHTML = `
             <div class="kxclienteerror">
-                No fue posible cargar los clientes.
+                ${escaparHtml(
+            error.message ||
+            "No fue posible cargar los clientes."
+        )}
             </div>
         `;
-
     }
 }
 
 
 /* ==========================================================
-   MOSTRAR RESULTADOS
+   MOSTRAR CLIENTES
    ========================================================== */
 
 function mostrarClientes(
@@ -320,8 +333,11 @@ function mostrarClientes(
 
     if (!resultados) {
 
-        return;
+        console.error(
+            "[KerniX] No existe #resultadosClientes."
+        );
 
+        return;
     }
 
 
@@ -329,20 +345,45 @@ function mostrarClientes(
         "";
 
 
+    resultados.hidden =
+        false;
+
+
+    resultados.style.display =
+        "block";
+
+
+    resultados.style.height =
+        "auto";
+
+
+    resultados.style.minHeight =
+        "0";
+
+
+    resultados.style.maxHeight =
+        "320px";
+
+
+    resultados.style.overflowY =
+        "auto";
+
+
     if (
+        !Array.isArray(
+            clientes
+        )
+        ||
         clientes.length === 0
     ) {
 
         resultados.innerHTML = `
             <div class="kxclientesinvacio">
-
                 No se encontraron clientes.
-
             </div>
         `;
 
         return;
-
     }
 
 
@@ -420,17 +461,30 @@ function mostrarClientes(
 
                 </div>
 
+
+                <div class="kxresultadoseleccionar">
+
+                    Seleccionar
+
+                    <span uk-icon="icon: chevron-right"></span>
+
+                </div>
+
             `;
 
 
             boton.addEventListener(
                 "click",
-                function () {
+                function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
 
                     seleccionarCliente(
                         cliente
                     );
-
                 }
             );
 
@@ -438,13 +492,62 @@ function mostrarClientes(
             resultados.appendChild(
                 boton
             );
-
         }
     );
+
+
+    resultados.style.minHeight =
+        "70px";
+
+
+    console.log(
+        "[KerniX] Resultados renderizados:",
+        resultados.children.length
+    );
+
+
+    if (window.UIkit) {
+
+        UIkit.icon(
+            resultados
+        );
+    }
 }
 
 
 /* ==========================================================
+   CERRAR RESULTADOS CLIENTES
+   ========================================================== */
+
+function cerrarResultadosClientes() {
+    numeroBusquedaClientes++;
+
+    const resultados =
+        document.getElementById(
+            "resultadosClientes"
+        );
+
+
+    if (!resultados) {
+        return;
+    }
+
+
+    resultados.hidden =
+        true;
+
+
+    resultados.style.display =
+        "none";
+
+
+    resultados.style.minHeight =
+        "0";
+
+
+    resultados.innerHTML =
+        "";
+}/* ==========================================================
    SELECCIONAR CLIENTE
    ========================================================== */
 
@@ -452,14 +555,40 @@ function seleccionarCliente(
     cliente
 ) {
 
+    if (!cliente) {
+        return;
+    }
+
+
     const nombre =
         obtenerNombreCliente(
             cliente
         );
 
 
-    const documento =
+    const documentoTexto =
         obtenerDocumentoCliente(
+            cliente
+        );
+
+
+    const tipoDocumento =
+        String(
+            cliente.tipoDocumento || ""
+        )
+            .trim()
+            .toUpperCase();
+
+
+    const numeroDocumento =
+        String(
+            cliente.numeroDocumento || ""
+        )
+            .trim();
+
+
+    const direccion =
+        obtenerDireccionCliente(
             cliente
         );
 
@@ -470,9 +599,15 @@ function seleccionarCliente(
         );
 
 
-    const buscarCliente =
+    const tipoDocumentoCliente =
         document.getElementById(
-            "buscarCliente"
+            "tipoDocumentoCliente"
+        );
+
+
+    const codigoDocumentoCliente =
+        document.getElementById(
+            "codigoDocumentoCliente"
         );
 
 
@@ -485,6 +620,18 @@ function seleccionarCliente(
     const telefonoCliente =
         document.getElementById(
             "telefonoCliente"
+        );
+
+
+    const direccionCliente =
+        document.getElementById(
+            "direccionCliente"
+        );
+
+
+    const buscarCliente =
+        document.getElementById(
+            "buscarCliente"
         );
 
 
@@ -522,23 +669,27 @@ function seleccionarCliente(
 
         idCliente.value =
             cliente.idCliente || "";
-
     }
 
 
-    if (buscarCliente) {
+    if (tipoDocumentoCliente) {
 
-        buscarCliente.value =
-            nombre;
+        tipoDocumentoCliente.value =
+            tipoDocumento;
+    }
 
+
+    if (codigoDocumentoCliente) {
+
+        codigoDocumentoCliente.value =
+            tipoDocumento;
     }
 
 
     if (documentoCliente) {
 
         documentoCliente.value =
-            cliente.numeroDocumento || "";
-
+            numeroDocumento;
     }
 
 
@@ -546,7 +697,20 @@ function seleccionarCliente(
 
         telefonoCliente.value =
             cliente.telefono || "";
+    }
 
+
+    if (direccionCliente) {
+
+        direccionCliente.value =
+            direccion;
+    }
+
+
+    if (buscarCliente) {
+
+        buscarCliente.value =
+            nombre;
     }
 
 
@@ -554,15 +718,13 @@ function seleccionarCliente(
 
         clienteNombre.textContent =
             nombre;
-
     }
 
 
     if (clienteDocumentoTexto) {
 
         clienteDocumentoTexto.textContent =
-            documento;
-
+            documentoTexto;
     }
 
 
@@ -570,7 +732,6 @@ function seleccionarCliente(
 
         clienteCorreo.textContent =
             cliente.correo || "";
-
     }
 
 
@@ -580,7 +741,6 @@ function seleccionarCliente(
             obtenerInicial(
                 nombre
             );
-
     }
 
 
@@ -588,22 +748,107 @@ function seleccionarCliente(
 
         clienteSeleccionado.hidden =
             false;
-
     }
 
 
+    seleccionarComprobantePorCliente(
+        tipoDocumento,
+        numeroDocumento
+    );
+
+
     cerrarResultadosClientes();
+}
+
+
+/* ==========================================================
+   COMPROBANTE AUTOMÁTICO SEGÚN DOCUMENTO
+   ========================================================== */
+
+function seleccionarComprobantePorCliente(
+    tipoDocumento,
+    numeroDocumento
+) {
+
+    const tipo =
+        String(
+            tipoDocumento || ""
+        )
+            .trim()
+            .toUpperCase();
+
+
+    const numero =
+        String(
+            numeroDocumento || ""
+        )
+            .replace(
+                /\D/g,
+                ""
+            );
+
+
+    let comprobante =
+        "BOLETA";
+
+
+    if (
+        tipo === "RUC"
+        &&
+        numero.length === 11
+    ) {
+
+        comprobante =
+            "FACTURA";
+    }
+
+
+    if (
+        tipo === "DNI"
+        ||
+        tipo === "CE"
+    ) {
+
+        comprobante =
+            "BOLETA";
+    }
+
+
+    const radio =
+        document.querySelector(
+            `input[name="TipoComprobante"][value="${comprobante}"]`
+        );
+
+
+    if (radio) {
+
+        radio.checked =
+            true;
+    }
+
+
+    const campoComprobante =
+        document.getElementById(
+            "comprobanteCliente"
+        );
+
+
+    if (campoComprobante) {
+
+        campoComprobante.value =
+            comprobante;
+    }
 
 
     console.log(
-        "Cliente seleccionado:",
-        cliente
+        "[KerniX] Comprobante automático:",
+        comprobante
     );
 }
 
 
 /* ==========================================================
-   LIMPIAR CLIENTE
+   LIMPIAR CLIENTE SELECCIONADO
    ========================================================== */
 
 function limpiarClienteSeleccionado() {
@@ -612,8 +857,12 @@ function limpiarClienteSeleccionado() {
         [
             "idClienteSeleccionado",
             "buscarCliente",
+            "tipoDocumentoCliente",
+            "codigoDocumentoCliente",
             "documentoCliente",
-            "telefonoCliente"
+            "telefonoCliente",
+            "direccionCliente",
+            "comprobanteCliente"
         ];
 
 
@@ -630,9 +879,7 @@ function limpiarClienteSeleccionado() {
 
                 elemento.value =
                     "";
-
             }
-
         }
     );
 
@@ -647,7 +894,6 @@ function limpiarClienteSeleccionado() {
 
         nombre.textContent =
             "";
-
     }
 
 
@@ -661,7 +907,6 @@ function limpiarClienteSeleccionado() {
 
         documento.textContent =
             "";
-
     }
 
 
@@ -675,7 +920,6 @@ function limpiarClienteSeleccionado() {
 
         correo.textContent =
             "";
-
     }
 
 
@@ -689,7 +933,19 @@ function limpiarClienteSeleccionado() {
 
         seleccionado.hidden =
             true;
+    }
 
+
+    const radioBoleta =
+        document.querySelector(
+            'input[name="TipoComprobante"][value="BOLETA"]'
+        );
+
+
+    if (radioBoleta) {
+
+        radioBoleta.checked =
+            true;
     }
 
 
@@ -705,80 +961,49 @@ function limpiarClienteSeleccionado() {
     if (input) {
 
         input.focus();
-
     }
 }
 
 
 /* ==========================================================
-   CERRAR RESULTADOS
-   ========================================================== */
-
-function cerrarResultadosClientes() {
-
-    const resultados =
-        document.getElementById(
-            "resultadosClientes"
-        );
-
-
-    if (!resultados) {
-
-        return;
-
-    }
-
-
-    resultados.hidden =
-        true;
-
-
-    resultados.innerHTML =
-        "";
-}
-
-
-/* ==========================================================
-   HELPERS
+   HELPERS CLIENTE
    ========================================================== */
 
 function obtenerNombreCliente(
     cliente
 ) {
 
-    if (
-        cliente.nombreMostrar
-    ) {
-
-        return cliente.nombreMostrar;
-
+    if (!cliente) {
+        return "Cliente";
     }
 
 
-    if (
-        cliente.nombreCompleto
-    ) {
+    if (cliente.nombreCompleto) {
 
-        return cliente.nombreCompleto;
-
+        return String(
+            cliente.nombreCompleto
+        ).trim();
     }
 
 
-    if (
-        cliente.razonSocial
-    ) {
+    if (cliente.razonSocial) {
 
-        return cliente.razonSocial;
-
+        return String(
+            cliente.razonSocial
+        ).trim();
     }
 
 
     const nombres =
-        cliente.nombres || "";
+        String(
+            cliente.nombres || ""
+        ).trim();
 
 
     const apellidos =
-        cliente.apellidos || "";
+        String(
+            cliente.apellidos || ""
+        ).trim();
 
 
     const completo =
@@ -786,7 +1011,8 @@ function obtenerNombreCliente(
             .trim();
 
 
-    return completo || "Cliente";
+    return completo ||
+        "Cliente";
 }
 
 
@@ -794,12 +1020,24 @@ function obtenerDocumentoCliente(
     cliente
 ) {
 
+    if (!cliente) {
+        return "";
+    }
+
+
     const tipo =
-        cliente.tipoDocumento || "";
+        String(
+            cliente.tipoDocumento || ""
+        )
+            .trim()
+            .toUpperCase();
 
 
     const numero =
-        cliente.numeroDocumento || "";
+        String(
+            cliente.numeroDocumento || ""
+        )
+            .trim();
 
 
     return `${tipo} ${numero}`
@@ -807,21 +1045,95 @@ function obtenerDocumentoCliente(
 }
 
 
+function obtenerDireccionCliente(
+    cliente
+) {
+
+    if (!cliente) {
+        return "";
+    }
+
+
+    if (
+        cliente.direccion
+    ) {
+
+        return String(
+            cliente.direccion
+        ).trim();
+    }
+
+
+    if (
+        cliente.direccionPrincipal
+    ) {
+
+        return String(
+            cliente.direccionPrincipal
+        ).trim();
+    }
+
+
+    if (
+        Array.isArray(
+            cliente.direcciones
+        )
+        &&
+        cliente.direcciones.length > 0
+    ) {
+
+        const principal =
+            cliente.direcciones.find(
+                x =>
+                    x.esPrincipal === true
+            )
+            ||
+            cliente.direcciones[0];
+
+
+        if (!principal) {
+            return "";
+        }
+
+
+        return [
+            principal.direccion,
+            principal.distrito,
+            principal.provincia,
+            principal.departamento
+        ]
+            .filter(
+                x =>
+                    x &&
+                    String(x).trim()
+            )
+            .join(
+                ", "
+            );
+    }
+
+
+    return "";
+}
+
+
 function obtenerInicial(
     valor
 ) {
 
-    if (
-        !valor
-    ) {
+    const texto =
+        String(
+            valor || ""
+        )
+            .trim();
 
+
+    if (!texto) {
         return "C";
-
     }
 
 
-    return valor
-        .trim()
+    return texto
         .charAt(0)
         .toUpperCase();
 }
@@ -831,35 +1143,30 @@ function escaparHtml(
     valor
 ) {
 
-    const elemento =
+    const div =
         document.createElement(
             "div"
         );
 
 
-    elemento.textContent =
+    div.textContent =
         String(
-            valor || ""
+            valor ?? ""
         );
 
 
-    return elemento.innerHTML;
+    return div.innerHTML;
 }/* ==========================================================
-   PRODUCTOS REALES
+   PRODUCTOS
    ========================================================== */
 
-let temporizadorProductos = null;
+let temporizadorProductos =
+    null;
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        iniciarBuscadorProductos();
-
-    }
-);
-
+/* ==========================================================
+   INICIAR BUSCADOR PRODUCTOS
+   ========================================================== */
 
 function iniciarBuscadorProductos() {
 
@@ -870,6 +1177,11 @@ function iniciarBuscadorProductos() {
 
 
     if (!input) {
+
+        console.warn(
+            "[KerniX] No existe #buscarProducto"
+        );
+
         return;
     }
 
@@ -887,8 +1199,14 @@ function iniciarBuscadorProductos() {
                 input.value.trim();
 
 
-            if (termino.length < 2) {
+            console.log(
+                "[KerniX] Texto producto:",
+                termino
+            );
 
+
+            if (termino.length < 2) {
+                numeroBusquedaProductos++;
                 mostrarMensajeProductos(
                     "Escribe al menos 2 caracteres para buscar productos."
                 );
@@ -908,15 +1226,19 @@ function iniciarBuscadorProductos() {
                     },
                     300
                 );
-
         }
     );
 }
 
 
+/* ==========================================================
+   BUSCAR PRODUCTOS
+   ========================================================== */
+
 async function buscarProductos(
     termino
 ) {
+    const busquedaActual = ++numeroBusquedaProductos;
 
     mostrarMensajeProductos(
         "Buscando productos..."
@@ -931,6 +1253,12 @@ async function buscarProductos(
             )}`;
 
 
+        console.log(
+            "[KerniX] Buscar productos:",
+            url
+        );
+
+
         const response =
             await fetch(
                 url,
@@ -938,7 +1266,8 @@ async function buscarProductos(
                     method:
                         "GET",
 
-                    headers: {
+                    headers:
+                    {
                         "Accept":
                             "application/json"
                     },
@@ -949,49 +1278,105 @@ async function buscarProductos(
             );
 
 
+        const texto =
+            await response.text();
+
+
+        console.log(
+            "[KerniX] HTTP productos:",
+            response.status
+        );
+
+
+        let resultado =
+            null;
+
+
+        try {
+
+            resultado =
+                texto
+                    ? JSON.parse(
+                        texto
+                    )
+                    : null;
+
+        }
+        catch (error) {
+
+            console.error(
+                "[KerniX] JSON productos inválido:",
+                error
+            );
+
+
+            throw new Error(
+                "La respuesta de productos no es JSON válido."
+            );
+        }
+
+
         if (!response.ok) {
 
             throw new Error(
-                `HTTP ${response.status}`
+                resultado?.message ||
+                `Error HTTP ${response.status}`
             );
-
         }
 
 
-        const resultado =
-            await response.json();
-
-
-        if (!resultado.success) {
+        if (
+            !resultado ||
+            resultado.success !== true
+        ) {
 
             throw new Error(
-                resultado.message ||
+                resultado?.message ||
                 "No se pudieron cargar los productos."
             );
-
         }
 
 
+        const productos =
+            Array.isArray(
+                resultado.data
+            )
+                ? resultado.data
+                : [];
+
+
+        console.log(
+            "[KerniX] Productos encontrados:",
+            productos.length,
+            productos
+        );
+
+
+        if (busquedaActual !== numeroBusquedaProductos) return;
         mostrarProductos(
-            resultado.data || []
+            productos
         );
 
     }
     catch (error) {
-
+        if (busquedaActual !== numeroBusquedaProductos) return;
         console.error(
-            "Error buscando productos:",
+            "[KerniX] Error buscarProductos:",
             error
         );
 
 
         mostrarMensajeProductos(
+            error.message ||
             "No fue posible cargar productos."
         );
-
     }
 }
 
+
+/* ==========================================================
+   MOSTRAR PRODUCTOS
+   ========================================================== */
 
 function mostrarProductos(
     productos
@@ -1004,6 +1389,11 @@ function mostrarProductos(
 
 
     if (!contenedor) {
+
+        console.error(
+            "[KerniX] No existe #productosDisponibles"
+        );
+
         return;
     }
 
@@ -1012,7 +1402,13 @@ function mostrarProductos(
         "";
 
 
-    if (productos.length === 0) {
+    if (
+        !Array.isArray(
+            productos
+        )
+        ||
+        productos.length === 0
+    ) {
 
         mostrarMensajeProductos(
             "No se encontraron productos."
@@ -1025,26 +1421,63 @@ function mostrarProductos(
     productos.forEach(
         function (producto) {
 
-            const card =
-                document.createElement(
-                    "button"
+            const idProducto =
+                Number(
+                    producto.idProducto || 0
                 );
 
 
-            card.type =
-                "button";
+            const nombre =
+                String(
+                    producto.nombre || "Producto"
+                );
+
+
+            const codigo =
+                String(
+                    producto.codigo || ""
+                );
+
+
+            const categoria =
+                String(
+                    producto.categoria || ""
+                );
+
+
+            const precio =
+                Number(
+                    producto.precioVenta || 0
+                );
+
+
+            const stockDisponible =
+                Number(
+                    producto.stockDisponible || 0
+                );
+
+
+            const controlaStock =
+                producto.controlaStock === true;
+
+
+            const sinStock =
+                controlaStock
+                &&
+                stockDisponible <= 0
+                &&
+                !CONFIG_VENTA
+                    .permitirVentaSinStock;
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
             card.className =
                 "kxproductocard";
-
-
-            const sinStock =
-                producto.controlaStock === true
-                &&
-                Number(
-                    producto.stockDisponible
-                ) <= 0;
 
 
             if (sinStock) {
@@ -1052,88 +1485,105 @@ function mostrarProductos(
                 card.classList.add(
                     "sinstock"
                 );
-
             }
 
 
             card.innerHTML = `
 
                 <div class="kxproductoicono">
-
                     <span uk-icon="icon: cart"></span>
-
                 </div>
-
 
                 <div class="kxproductoinfo">
 
                     <strong>
                         ${escaparHtml(
-                producto.nombre
+                nombre
             )}
                     </strong>
 
                     <span>
                         ${escaparHtml(
-                producto.codigo
+                codigo
             )}
                     </span>
 
                     <small>
-
                         ${escaparHtml(
-                producto.categoria || ""
+                categoria
             )}
 
-                        ·
+                        · Stock:
 
-                        Stock:
-                        ${Number(
-                producto.stockDisponible || 0
-            )}
+                        ${stockDisponible}
 
                         ${escaparHtml(
                 producto.abreviaturaUnidad ||
-                ""
+                "und"
             )}
-
                     </small>
 
                 </div>
 
+                <div class="kxproductoacciones">
 
-                <div class="kxproductoprecio">
+                    <div class="kxproductoprecio">
+                        S/
+                        ${precio.toFixed(2)}
+                    </div>
 
-                    S/
-                    ${Number(
-                producto.precioVenta || 0
-            ).toFixed(2)}
+                    ${sinStock
+                    ?
+                    `
+                            <button type="button"
+                                    class="kxproducto-agregar deshabilitado"
+                                    disabled>
+                                Sin stock
+                            </button>
+                            `
+                    :
+                    `
+                            <button type="button"
+                                    class="kxproducto-agregar">
+
+                                <span uk-icon="icon: plus"></span>
+
+                                Agregar
+                            </button>
+                            `
+                }
 
                 </div>
-
             `;
 
 
-            if (!sinStock) {
+            const botonAgregar =
+                card.querySelector(
+                    ".kxproducto-agregar"
+                );
 
-                card.addEventListener(
+
+            if (
+                botonAgregar
+                &&
+                !sinStock
+            ) {
+
+                botonAgregar.addEventListener(
                     "click",
                     function () {
 
                         agregarProductoCarrito(
                             producto
                         );
-
                     }
                 );
-
             }
 
 
             contenedor.appendChild(
                 card
             );
-
         }
     );
 
@@ -1143,10 +1593,13 @@ function mostrarProductos(
         UIkit.icon(
             contenedor
         );
-
     }
 }
 
+
+/* ==========================================================
+   MENSAJE PRODUCTOS
+   ========================================================== */
 
 function mostrarMensajeProductos(
     mensaje
@@ -1164,77 +1617,100 @@ function mostrarMensajeProductos(
 
 
     contenedor.innerHTML = `
-
         <div class="kxvacioproductos">
-
             ${escaparHtml(
         mensaje
     )}
-
         </div>
-
     `;
-}/* ==========================================================
-   CARRITO DE NUEVA VENTA
+}
+
+
+/* ==========================================================
+   CARRITO
    ========================================================== */
 
-const carritoVenta = [];
+const carritoVenta =
+    [];
 
-const CONFIG_VENTA = {
 
+/* ==========================================================
+   CONFIGURACIÓN VENTA
+   ========================================================== */
+
+const CONFIG_VENTA =
+{
     descuentoMaximoPorcentaje:
         Number(
-            window.kernixConfiguracionVenta
-                ?.descuentoMaximo ?? 0
+            window
+                .kernixConfiguracionVenta
+                ?.descuentoMaximo
+            ?? 0
         ),
 
     permitirVentaSinStock:
-        window.kernixConfiguracionVenta
-            ?.permitirVentaSinStock === true,
+        window
+            .kernixConfiguracionVenta
+            ?.permitirVentaSinStock
+        === true,
 
     validarStockAntesVenta:
-        window.kernixConfiguracionVenta
-            ?.validarStockAntesVenta !== false,
+        window
+            .kernixConfiguracionVenta
+            ?.validarStockAntesVenta
+        !== false,
 
     permitirCambioPrecio:
-        window.kernixConfiguracionVenta
-            ?.permitirCambioPrecio === true,
+        window
+            .kernixConfiguracionVenta
+            ?.permitirCambioPrecio
+        === true,
 
     permitirVentaCredito:
-        window.kernixConfiguracionVenta
-            ?.permitirVentaCredito === true,
+        window
+            .kernixConfiguracionVenta
+            ?.permitirVentaCredito
+        === true,
 
     idEmpresa:
         Number(
-            window.kernixConfiguracionVenta
-                ?.idEmpresa ?? 0
+            window
+                .kernixConfiguracionVenta
+                ?.idEmpresa
+            ?? 0
         ),
 
     idSucursal:
         Number(
-            window.kernixConfiguracionVenta
-                ?.idSucursal ?? 0
+            window
+                .kernixConfiguracionVenta
+                ?.idSucursal
+            ?? 0
         ),
 
     idAlmacen:
         Number(
-            window.kernixConfiguracionVenta
-                ?.idAlmacen ?? 0
+            window
+                .kernixConfiguracionVenta
+                ?.idAlmacen
+            ?? 0
         )
 };
 
 
 console.log(
-    "[KerniX] Reglas activas:",
+    "[KerniX] Configuración venta:",
     CONFIG_VENTA
 );
 
 
 /* ==========================================================
-   AGREGAR PRODUCTO
+   AGREGAR PRODUCTO AL CARRITO
    ========================================================== */
 
-function agregarProductoCarrito(producto) {
+function agregarProductoCarrito(
+    producto
+) {
 
     if (!producto) {
         return;
@@ -1242,10 +1718,18 @@ function agregarProductoCarrito(producto) {
 
 
     const idProducto =
-        Number(producto.idProducto);
+        Number(
+            producto.idProducto || 0
+        );
 
 
-    if (!idProducto) {
+    if (idProducto <= 0) {
+
+        mostrarAvisoVenta(
+            "El producto seleccionado no es válido.",
+            "danger"
+        );
+
         return;
     }
 
@@ -1261,8 +1745,12 @@ function agregarProductoCarrito(producto) {
 
 
     if (
-        controlaStock &&
+        controlaStock
+        &&
         stockDisponible <= 0
+        &&
+        !CONFIG_VENTA
+            .permitirVentaSinStock
     ) {
 
         mostrarAvisoVenta(
@@ -1274,26 +1762,44 @@ function agregarProductoCarrito(producto) {
     }
 
 
+    const precioProducto = Number(producto.precioVenta);
+    if (!Number.isFinite(precioProducto) || precioProducto <= 0) {
+        mostrarAvisoVenta("El producto no tiene un precio de venta válido.", "warning");
+        return;
+    }
+
     const existente =
         carritoVenta.find(
             item =>
-                item.idProducto === idProducto
+                item.idProducto ===
+                idProducto
         );
 
 
     if (existente) {
 
         const nuevaCantidad =
-            existente.cantidad + 1;
+            Number(
+                existente.cantidad
+            )
+            + 1;
 
 
         if (
-            controlaStock &&
-            nuevaCantidad > stockDisponible
+            controlaStock
+            &&
+            CONFIG_VENTA
+                .validarStockAntesVenta
+            &&
+            !CONFIG_VENTA
+                .permitirVentaSinStock
+            &&
+            nuevaCantidad >
+            stockDisponible
         ) {
 
             mostrarAvisoVenta(
-                `Solo hay ${stockDisponible} ${producto.abreviaturaUnidad || "und"} disponibles.`,
+                `Solo hay ${stockDisponible} unidades disponibles.`,
                 "warning"
             );
 
@@ -1307,53 +1813,53 @@ function agregarProductoCarrito(producto) {
     }
     else {
 
-        carritoVenta.push({
+        carritoVenta.push(
+            {
+                idProducto:
+                    idProducto,
 
-            idProducto:
-                idProducto,
+                codigo:
+                    producto.codigo || "",
 
-            codigo:
-                producto.codigo || "",
+                nombre:
+                    producto.nombre ||
+                    "Producto",
 
-            nombre:
-                producto.nombre || "",
+                precioUnitario:
+                    Number(
+                        producto.precioVenta || 0
+                    ),
 
-            precioUnitario:
-                Number(
-                    producto.precioVenta || 0
-                ),
+                cantidad:
+                    1,
 
-            cantidad:
-                1,
+                descuentoPorcentaje:
+                    0,
 
-            descuentoPorcentaje:
-                0,
+                stockDisponible:
+                    stockDisponible,
 
-            stockDisponible:
-                stockDisponible,
+                controlaStock:
+                    controlaStock,
 
-            controlaStock:
-                controlaStock,
-
-            abreviaturaUnidad:
-                producto.abreviaturaUnidad || "und"
-
-        });
-
+                abreviaturaUnidad:
+                    producto.abreviaturaUnidad ||
+                    "und"
+            }
+        );
     }
 
 
     renderizarCarrito();
 
+
     mostrarAvisoVenta(
-        `${producto.nombre} agregado a la venta.`,
+        `${producto.nombre || "Producto"} agregado a la venta.`,
         "success"
     );
 }
-
-
 /* ==========================================================
-   RENDERIZAR
+   RENDERIZAR CARRITO
    ========================================================== */
 
 function renderizarCarrito() {
@@ -1365,6 +1871,11 @@ function renderizarCarrito() {
 
 
     if (!tbody) {
+
+        console.warn(
+            "[KerniX] No existe #detalleVenta"
+        );
+
         return;
     }
 
@@ -1378,7 +1889,6 @@ function renderizarCarrito() {
     ) {
 
         tbody.innerHTML = `
-
             <tr id="filaVacia">
 
                 <td colspan="6"
@@ -1389,7 +1899,6 @@ function renderizarCarrito() {
                 </td>
 
             </tr>
-
         `;
 
 
@@ -1405,20 +1914,30 @@ function renderizarCarrito() {
         function (item) {
 
             const subtotalLinea =
-                item.precioUnitario *
-                item.cantidad;
+                Number(
+                    item.precioUnitario || 0
+                )
+                *
+                Number(
+                    item.cantidad || 0
+                );
 
 
             const descuentoMonto =
-                subtotalLinea *
+                subtotalLinea
+                *
                 (
-                    item.descuentoPorcentaje /
+                    Number(
+                        item.descuentoPorcentaje || 0
+                    )
+                    /
                     100
                 );
 
 
             const totalLinea =
-                subtotalLinea -
+                subtotalLinea
+                -
                 descuentoMonto;
 
 
@@ -1496,9 +2015,13 @@ function renderizarCarrito() {
                     <small class="kxstockcarrito">
 
                         Disponible:
-                        ${item.stockDisponible}
+                        ${Number(
+                item.stockDisponible || 0
+            )}
+
                         ${escaparHtml(
-                item.abreviaturaUnidad
+                item.abreviaturaUnidad ||
+                "und"
             )}
 
                     </small>
@@ -1561,14 +2084,12 @@ function renderizarCarrito() {
                     </button>
 
                 </td>
-
             `;
 
 
             tbody.appendChild(
                 tr
             );
-
         }
     );
 
@@ -1585,7 +2106,6 @@ function renderizarCarrito() {
         UIkit.icon(
             tbody
         );
-
     }
 }
 
@@ -1614,17 +2134,17 @@ function registrarEventosCarrito() {
 
 
                         const accion =
-                            boton.dataset.accion;
+                            String(
+                                boton.dataset.accion || ""
+                            );
 
 
                         cambiarCantidadProducto(
                             idProducto,
                             accion
                         );
-
                     }
                 );
-
             }
         );
 
@@ -1656,10 +2176,8 @@ function registrarEventosCarrito() {
                             idProducto,
                             cantidad
                         );
-
                     }
                 );
-
             }
         );
 
@@ -1691,10 +2209,8 @@ function registrarEventosCarrito() {
                             idProducto,
                             descuento
                         );
-
                     }
                 );
-
             }
         );
 
@@ -1719,17 +2235,15 @@ function registrarEventosCarrito() {
                         quitarProductoCarrito(
                             idProducto
                         );
-
                     }
                 );
-
             }
         );
 }
 
 
 /* ==========================================================
-   CANTIDAD
+   CAMBIAR CANTIDAD
    ========================================================== */
 
 function cambiarCantidadProducto(
@@ -1740,7 +2254,8 @@ function cambiarCantidadProducto(
     const item =
         carritoVenta.find(
             x =>
-                x.idProducto === idProducto
+                x.idProducto ===
+                idProducto
         );
 
 
@@ -1750,24 +2265,20 @@ function cambiarCantidadProducto(
 
 
     let nuevaCantidad =
-        item.cantidad;
+        Number(
+            item.cantidad || 1
+        );
 
 
-    if (
-        accion === "sumar"
-    ) {
+    if (accion === "sumar") {
 
         nuevaCantidad++;
-
     }
 
 
-    if (
-        accion === "restar"
-    ) {
+    if (accion === "restar") {
 
         nuevaCantidad--;
-
     }
 
 
@@ -1778,6 +2289,10 @@ function cambiarCantidadProducto(
 }
 
 
+/* ==========================================================
+   ESTABLECER CANTIDAD
+   ========================================================== */
+
 function establecerCantidadProducto(
     idProducto,
     cantidad
@@ -1786,7 +2301,8 @@ function establecerCantidadProducto(
     const item =
         carritoVenta.find(
             x =>
-                x.idProducto === idProducto
+                x.idProducto ===
+                idProducto
         );
 
 
@@ -1797,7 +2313,9 @@ function establecerCantidadProducto(
 
     let nuevaCantidad =
         Math.floor(
-            Number(cantidad)
+            Number(
+                cantidad
+            )
         );
 
 
@@ -1809,7 +2327,6 @@ function establecerCantidadProducto(
 
         nuevaCantidad =
             1;
-
     }
 
 
@@ -1819,25 +2336,37 @@ function establecerCantidadProducto(
 
         nuevaCantidad =
             1;
-
     }
 
 
     if (
-        item.controlaStock &&
+        item.controlaStock
+        &&
+        CONFIG_VENTA
+            .validarStockAntesVenta
+        &&
+        !CONFIG_VENTA
+            .permitirVentaSinStock
+        &&
         nuevaCantidad >
-        item.stockDisponible
+        Number(
+            item.stockDisponible || 0
+        )
     ) {
 
         mostrarAvisoVenta(
-            `No puedes vender ${nuevaCantidad}. Stock disponible: ${item.stockDisponible}.`,
+            `Stock disponible: ${item.stockDisponible}.`,
             "warning"
         );
 
 
         nuevaCantidad =
-            item.stockDisponible;
-
+            Math.max(
+                1,
+                Number(
+                    item.stockDisponible || 1
+                )
+            );
     }
 
 
@@ -1861,7 +2390,8 @@ function establecerDescuentoProducto(
     const item =
         carritoVenta.find(
             x =>
-                x.idProducto === idProducto
+                x.idProducto ===
+                idProducto
         );
 
 
@@ -1870,7 +2400,7 @@ function establecerDescuentoProducto(
     }
 
 
-    let valor =
+    let nuevoDescuento =
         Number(
             descuento
         );
@@ -1878,28 +2408,26 @@ function establecerDescuentoProducto(
 
     if (
         !Number.isFinite(
-            valor
+            nuevoDescuento
         )
     ) {
 
-        valor =
+        nuevoDescuento =
             0;
-
     }
 
 
     if (
-        valor < 0
+        nuevoDescuento < 0
     ) {
 
-        valor =
+        nuevoDescuento =
             0;
-
     }
 
 
     if (
-        valor >
+        nuevoDescuento >
         CONFIG_VENTA
             .descuentoMaximoPorcentaje
     ) {
@@ -1910,15 +2438,14 @@ function establecerDescuentoProducto(
         );
 
 
-        valor =
+        nuevoDescuento =
             CONFIG_VENTA
                 .descuentoMaximoPorcentaje;
-
     }
 
 
     item.descuentoPorcentaje =
-        valor;
+        nuevoDescuento;
 
 
     renderizarCarrito();
@@ -1926,7 +2453,7 @@ function establecerDescuentoProducto(
 
 
 /* ==========================================================
-   QUITAR
+   QUITAR PRODUCTO
    ========================================================== */
 
 function quitarProductoCarrito(
@@ -1936,21 +2463,20 @@ function quitarProductoCarrito(
     const indice =
         carritoVenta.findIndex(
             x =>
-                x.idProducto === idProducto
+                x.idProducto ===
+                idProducto
         );
 
 
     if (
-        indice === -1
+        indice < 0
     ) {
         return;
     }
 
 
-    const nombre =
-        carritoVenta[
-            indice
-        ].nombre;
+    const producto =
+        carritoVenta[indice];
 
 
     carritoVenta.splice(
@@ -1963,141 +2489,14 @@ function quitarProductoCarrito(
 
 
     mostrarAvisoVenta(
-        `${nombre} fue retirado de la venta.`,
+        `${producto.nombre} fue retirado de la venta.`,
         "primary"
     );
 }
 
 
 /* ==========================================================
-   RESUMEN
-   ========================================================== */
-function recalcularVenta() {
-
-    let subtotalBruto = 0;
-    let descuentoTotal = 0;
-
-
-    carritoVenta.forEach(
-        function (item) {
-
-            const subtotalLinea =
-                Number(item.precioUnitario) *
-                Number(item.cantidad);
-
-
-            const descuentoLinea =
-                subtotalLinea *
-                (
-                    Number(item.descuentoPorcentaje) /
-                    100
-                );
-
-
-            subtotalBruto +=
-                subtotalLinea;
-
-
-            descuentoTotal +=
-                descuentoLinea;
-        }
-    );
-
-
-    const total =
-        Math.max(
-            subtotalBruto -
-            descuentoTotal,
-            0
-        );
-
-
-    const porcentaje =
-        Number(
-            CONFIG_VENTA.impuestoPorcentaje || 0
-        );
-
-
-    let impuesto = 0;
-
-    let subtotalSinImpuesto =
-        total;
-
-
-    if (porcentaje > 0) {
-
-        subtotalSinImpuesto =
-            total /
-            (
-                1 +
-                (
-                    porcentaje /
-                    100
-                )
-            );
-
-
-        impuesto =
-            total -
-            subtotalSinImpuesto;
-    }
-
-
-    colocarMontoVenta(
-        "subtotalVenta",
-        subtotalBruto
-    );
-
-
-    colocarMontoVenta(
-        "descuentoVenta",
-        descuentoTotal,
-        true
-    );
-
-
-    colocarMontoVenta(
-        "igvVenta",
-        impuesto
-    );
-
-
-    colocarMontoVenta(
-        "totalVenta",
-        total
-    );
-
-
-    calcularVueltoVenta(
-        total
-    );
-
-
-    return {
-
-        subtotal:
-            subtotalBruto,
-
-        descuento:
-            descuentoTotal,
-
-        impuesto:
-            impuesto,
-
-        subtotalSinImpuesto:
-            subtotalSinImpuesto,
-
-        total:
-            total,
-
-        porcentajeImpuesto:
-            porcentaje
-    };
-}
-
-
-/* ==========================================================
-   CONTADOR
+   CONTADOR DE PRODUCTOS
    ========================================================== */
 
 function actualizarContadorProductos() {
@@ -2113,382 +2512,369 @@ function actualizarContadorProductos() {
     }
 
 
-    const cantidadLineas =
-        carritoVenta.length;
-
-
-    const unidades =
+    const cantidad =
         carritoVenta.reduce(
             (
-                total,
+                acumulado,
                 item
             ) =>
-                total +
-                item.cantidad,
+                acumulado
+                +
+                Number(
+                    item.cantidad || 0
+                ),
             0
         );
 
 
     contador.textContent =
-        cantidadLineas === 1
-
-            ? `${cantidadLineas} producto · ${unidades} und`
-
-            : `${cantidadLineas} productos · ${unidades} und`;
+        cantidad === 1
+            ? "1 producto"
+            : `${cantidad} productos`;
 }
 
 
 /* ==========================================================
-   MONTO RECIBIDO / VUELTO
+   CALCULAR VENTA
    ========================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+function calcularVenta() {
 
-        const montoRecibido =
-            document.getElementById(
-                "montoRecibido"
-            );
+    let subtotalBruto =
+        0;
+
+    let descuentoTotal =
+        0;
 
 
-        if (montoRecibido) {
+    carritoVenta.forEach(
+        function (item) {
 
-            montoRecibido.addEventListener(
-                "input",
-                function () {
+            const cantidad =
+                Number(
+                    item.cantidad || 0
+                );
 
-                    recalcularVenta();
 
-                }
-            );
+            const precio =
+                Number(
+                    item.precioUnitario || 0
+                );
 
+
+            const porcentajeDescuento =
+                Number(
+                    item.descuentoPorcentaje || 0
+                );
+
+
+            const subtotalLinea =
+                precio
+                *
+                cantidad;
+
+
+            const descuentoLinea =
+                subtotalLinea
+                *
+                (
+                    porcentajeDescuento
+                    /
+                    100
+                );
+
+
+            subtotalBruto +=
+                subtotalLinea;
+
+
+            descuentoTotal +=
+                descuentoLinea;
         }
+    );
 
+
+    const totalConImpuesto =
+        Math.max(
+            0,
+            subtotalBruto
+            -
+            descuentoTotal
+        );
+
+
+    const porcentajeImpuesto =
+        Number(
+            window
+                .kernixConfiguracionVenta
+                ?.porcentajeImpuesto
+            || 0
+        );
+
+
+    let subtotalSinImpuesto =
+        totalConImpuesto;
+
+
+    let impuesto =
+        0;
+
+
+    if (
+        porcentajeImpuesto > 0
+    ) {
+
+        subtotalSinImpuesto =
+            totalConImpuesto
+            /
+            (
+                1
+                +
+                porcentajeImpuesto
+                /
+                100
+            );
+
+
+        impuesto =
+            totalConImpuesto
+            -
+            subtotalSinImpuesto;
     }
-);
 
 
-function calcularVueltoVenta(
+    return {
+
+        subtotalBruto:
+            subtotalBruto,
+
+        descuento:
+            descuentoTotal,
+
+        subtotal:
+            subtotalSinImpuesto,
+
+        impuesto:
+            impuesto,
+
+        total:
+            totalConImpuesto
+    };
+}
+
+
+/* ==========================================================
+   RECALCULAR RESUMEN
+   ========================================================== */
+
+function recalcularVenta() {
+
+    const calculo =
+        calcularVenta();
+
+
+    const subtotal =
+        document.getElementById(
+            "subtotalVenta"
+        );
+
+
+    const descuento =
+        document.getElementById(
+            "descuentoVenta"
+        );
+
+
+    const igv =
+        document.getElementById(
+            "igvVenta"
+        );
+
+
+    const total =
+        document.getElementById(
+            "totalVenta"
+        );
+
+
+    if (subtotal) {
+
+        subtotal.textContent =
+            `S/ ${formatearNumeroVenta(
+                calculo.subtotal
+            )}`;
+    }
+
+
+    if (descuento) {
+
+        descuento.textContent =
+            `- S/ ${formatearNumeroVenta(
+                calculo.descuento
+            )}`;
+    }
+
+
+    if (igv) {
+
+        igv.textContent =
+            `S/ ${formatearNumeroVenta(
+                calculo.impuesto
+            )}`;
+    }
+
+
+    if (total) {
+
+        total.textContent =
+            `S/ ${formatearNumeroVenta(
+                calculo.total
+            )}`;
+    }
+
+
+    recalcularVuelto(
+        calculo.total
+    );
+}
+
+
+/* ==========================================================
+   VUELTO
+   ========================================================== */
+
+function recalcularVuelto(
     totalVenta
 ) {
 
-    const input =
+    const montoRecibido =
         document.getElementById(
             "montoRecibido"
         );
 
 
-    const vuelto =
+    const vueltoVenta =
         document.getElementById(
             "vueltoVenta"
         );
 
 
+    if (!vueltoVenta) {
+        return;
+    }
+
+
+    const metodoPago =
+        document.querySelector(
+            'input[name="MetodoPago"]:checked'
+        )
+            ?.value
+            ?.trim()
+        || "Efectivo";
+
+
     if (
-        !input ||
-        !vuelto
+        metodoPago.toUpperCase()
+        !== "EFECTIVO"
     ) {
+
+        vueltoVenta.textContent =
+            "S/ 0.00";
+
         return;
     }
 
 
     const recibido =
         Number(
-            input.value || 0
+            montoRecibido?.value || 0
         );
 
 
-    const diferencia =
-        recibido -
-        totalVenta;
+    const total =
+        Number(
+            totalVenta || 0
+        );
 
 
-    vuelto.textContent =
+    let vuelto =
+        recibido
+        -
+        total;
+
+
+    if (
+        !Number.isFinite(
+            vuelto
+        )
+        ||
+        vuelto < 0
+    ) {
+
+        vuelto =
+            0;
+    }
+
+
+    vueltoVenta.textContent =
         `S/ ${formatearNumeroVenta(
-            Math.max(
-                diferencia,
-                0
-            )
+            vuelto
         )}`;
 }
 
 
 /* ==========================================================
-   HELPERS
+   FORMATO DE NÚMERO
    ========================================================== */
-
-function colocarMontoVenta(
-    id,
-    valor,
-    negativo = false
-) {
-
-    const elemento =
-        document.getElementById(
-            id
-        );
-
-
-    if (!elemento) {
-        return;
-    }
-
-
-    elemento.textContent =
-        negativo
-            ? `- S/ ${formatearNumeroVenta(valor)}`
-            : `S/ ${formatearNumeroVenta(valor)}`;
-}
-
 
 function formatearNumeroVenta(
     valor
 ) {
 
-    return Number(
-        valor || 0
-    ).toLocaleString(
-        "es-PE",
-        {
-            minimumFractionDigits:
-                2,
+    const numero =
+        Number(
+            valor || 0
+        );
 
-            maximumFractionDigits:
-                2
-        }
+
+    if (
+        !Number.isFinite(
+            numero
+        )
+    ) {
+
+        return "0.00";
+    }
+
+
+    return numero.toFixed(
+        2
     );
 }
 
 
-function mostrarAvisoVenta(
-    mensaje,
-    status = "primary"
-) {
-
-    if (
-        window.UIkit
-    ) {
-
-        UIkit.notification({
-            message:
-                mensaje,
-
-            status:
-                status,
-
-            pos:
-                "top-right",
-
-            timeout:
-                2500
-        });
-
-
-        return;
-    }
-
-
-    console.log(
-        mensaje
-    );
-}/* ==========================================================
-   LIMPIAR VENTA
+/* ==========================================================
+   EVENTOS DE PAGO
    ========================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+function iniciarEventosPago() {
 
-        const boton =
-            document.getElementById(
-                "limpiarVenta"
-            );
+    const montoRecibido =
+        document.getElementById(
+            "montoRecibido"
+        );
 
 
-        if (!boton) {
-            return;
-        }
+    if (montoRecibido) {
 
-
-        boton.addEventListener(
-            "click",
+        montoRecibido.addEventListener(
+            "input",
             function () {
 
-                if (
-                    carritoVenta.length === 0 &&
-                    !document.getElementById(
-                        "idClienteSeleccionado"
-                    )?.value
-                ) {
-
-                    mostrarAvisoVenta(
-                        "La venta ya está vacía.",
-                        "primary"
-                    );
-
-                    return;
-                }
-
-
-                if (window.UIkit) {
-
-                    UIkit.modal.confirm(
-                        "¿Deseas limpiar todos los datos de la venta?"
-                    )
-                        .then(
-                            function () {
-
-                                limpiarVentaCompleta();
-
-                            }
-                        )
-                        .catch(
-                            function () {
-                            }
-                        );
-
-                    return;
-                }
-
-
-                if (
-                    confirm(
-                        "¿Deseas limpiar todos los datos de la venta?"
-                    )
-                ) {
-
-                    limpiarVentaCompleta();
-
-                }
-
+                recalcularVenta();
             }
         );
-
     }
-);
-
-
-function limpiarVentaCompleta() {
-
-    // =========================================================
-    // CARRITO
-    // =========================================================
-
-    carritoVenta.splice(
-        0,
-        carritoVenta.length
-    );
-
-
-    // =========================================================
-    // CLIENTE
-    // =========================================================
-
-    const idCliente =
-        document.getElementById(
-            "idClienteSeleccionado"
-        );
-
-    const buscarCliente =
-        document.getElementById(
-            "buscarCliente"
-        );
-
-    const documento =
-        document.getElementById(
-            "documentoCliente"
-        );
-
-    const telefono =
-        document.getElementById(
-            "telefonoCliente"
-        );
-
-    const clienteSeleccionado =
-        document.getElementById(
-            "clienteSeleccionado"
-        );
-
-    const resultadosClientes =
-        document.getElementById(
-            "resultadosClientes"
-        );
-
-
-    if (idCliente) {
-        idCliente.value = "";
-    }
-
-    if (buscarCliente) {
-        buscarCliente.value = "";
-    }
-
-    if (documento) {
-        documento.value = "";
-    }
-
-    if (telefono) {
-        telefono.value = "";
-    }
-
-    if (clienteSeleccionado) {
-        clienteSeleccionado.hidden = true;
-    }
-
-    if (resultadosClientes) {
-
-        resultadosClientes.innerHTML =
-            "";
-
-        resultadosClientes.hidden =
-            true;
-    }
-
-
-    // =========================================================
-    // PRODUCTOS
-    // =========================================================
-
-    const buscarProducto =
-        document.getElementById(
-            "buscarProducto"
-        );
-
-    const productosDisponibles =
-        document.getElementById(
-            "productosDisponibles"
-        );
-
-
-    if (buscarProducto) {
-        buscarProducto.value = "";
-    }
-
-
-    if (productosDisponibles) {
-
-        productosDisponibles.innerHTML = `
-
-            <div class="kxvacioproductos">
-
-                Escribe al menos 2 caracteres
-                para buscar productos.
-
-            </div>
-
-        `;
-    }
-
-
-    // =========================================================
-    // PAGO
-    // =========================================================
-
-    const efectivo =
-        document.querySelector(
-            'input[name="MetodoPago"][value="Efectivo"]'
-        );
 
 
     document
@@ -2498,210 +2884,379 @@ function limpiarVentaCompleta() {
         .forEach(
             function (radio) {
 
-                radio.checked =
-                    false;
+                radio.addEventListener(
+                    "change",
+                    function () {
 
+                        const metodo =
+                            String(
+                                radio.value || ""
+                            )
+                                .trim()
+                                .toUpperCase();
+
+
+                        if (
+                            montoRecibido
+                            &&
+                            metodo !== "EFECTIVO"
+                        ) {
+
+                            const calculo =
+                                calcularVenta();
+
+
+                            montoRecibido.value =
+                                calculo.total.toFixed(
+                                    2
+                                );
+                        }
+
+
+                        recalcularVenta();
+                    }
+                );
             }
         );
+}
+function iniciarModalNuevoCliente() {
 
-
-    if (efectivo) {
-        efectivo.checked = true;
-    }
-
-
-    const recibido =
+    const abrir =
         document.getElementById(
-            "montoRecibido"
+            "abrirModalNuevoCliente"
+        );
+
+    const cancelar =
+        document.getElementById(
+            "cancelarNuevoCliente"
+        );
+
+    const cerrar =
+        document.getElementById(
+            "cerrarModalNuevoCliente"
+        );
+
+    const overlay =
+        document.getElementById(
+            "overlayNuevoCliente"
+        );
+
+    const guardar =
+        document.getElementById(
+            "guardarNuevoCliente"
         );
 
 
-    if (recibido) {
-        recibido.value = "0";
+    if (abrir) {
+
+        abrir.onclick =
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                abrirModalNuevoCliente();
+            };
     }
 
 
-    // =========================================================
-    // REDIBUJAR
-    // =========================================================
+    if (cerrar) {
 
-    renderizarCarrito();
+        cerrar.onclick =
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                cerrarModalNuevoCliente();
+            };
+    }
 
 
-    mostrarAvisoVenta(
-        "La venta fue limpiada.",
-        "success"
-    );
-}/* ==========================================================
-   MODAL NUEVO CLIENTE
-   ========================================================== */
+    if (cancelar) {
+
+        cancelar.onclick =
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                console.log(
+                    "[KerniX] CLICK CANCELAR"
+                );
+
+                cerrarModalNuevoCliente();
+            };
+    }
+
+
+    if (overlay) {
+
+        overlay.onclick =
+            function (event) {
+
+                event.preventDefault();
+
+                cerrarModalNuevoCliente();
+            };
+    }
+
+
+    if (guardar) {
+
+        guardar.onclick =
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                guardarNuevoCliente();
+            };
+    }
+
+
+    const tipoCliente =
+        document.getElementById(
+            "nuevoTipoCliente"
+        );
+
+    if (tipoCliente) {
+
+        tipoCliente.onchange =
+            actualizarFormularioTipoCliente;
+    }
+
+
+    const tipoDocumento =
+        document.getElementById(
+            "nuevoTipoDocumento"
+        );
+
+    if (tipoDocumento) {
+
+        tipoDocumento.onchange =
+            actualizarDocumentoNuevoCliente;
+    }
+}
 /* ==========================================================
-   NUEVO CLIENTE
+   ABRIR MODAL
    ========================================================== */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+let focoAnteriorModal = null;
+let scrollAnteriorModal = null;
+function abrirModalNuevoCliente() {
+    const modal = document.getElementById("modalNuevoCliente");
+    if (!modal || !modal.hidden) return;
+    focoAnteriorModal = document.activeElement;
+    scrollAnteriorModal = document.body.style.overflow;
+    limpiarFormularioNuevoCliente();
+    actualizarFormularioTipoCliente();
+    actualizarDocumentoNuevoCliente();
+    modal.hidden = false;
+    document.body.style.overflow = "hidden";
+    document.getElementById("nuevoNumeroDocumento")?.focus();
+}
+function cerrarModalNuevoCliente() {
+    const modal = document.getElementById("modalNuevoCliente");
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    document.body.style.overflow = scrollAnteriorModal ?? "";
+    ocultarMensajeNuevoCliente();
+    if (focoAnteriorModal?.isConnected) focoAnteriorModal.focus();
+}
 
-        const modal =
-            document.getElementById(
-                "modalNuevoCliente"
-            );
+function actualizarFormularioTipoCliente() {
 
-        const abrir =
-            document.getElementById(
-                "abrirModalNuevoCliente"
-            );
-
-        const cerrar =
-            document.getElementById(
-                "cerrarModalNuevoCliente"
-            );
-
-        const cancelar =
-            document.getElementById(
-                "cancelarNuevoCliente"
-            );
-
-        const guardar =
-            document.getElementById(
-                "guardarNuevoCliente"
-            );
-
-        const overlay =
-            document.getElementById(
-                "overlayNuevoCliente"
-            );
-
-        const tipoCliente =
-            document.getElementById(
-                "nuevoTipoCliente"
-            );
+    const tipo =
+        obtenerValorNuevoCliente(
+            "nuevoTipoCliente"
+        )
+            .toUpperCase();
 
 
-        if (!modal) {
-            return;
+    const razonSocial =
+        document.getElementById(
+            "nuevoRazonSocial"
+        );
+
+    const nombres =
+        document.getElementById(
+            "nuevoNombres"
+        );
+
+    const apellidos =
+        document.getElementById(
+            "nuevoApellidos"
+        );
+
+    const tipoDocumento =
+        document.getElementById(
+            "nuevoTipoDocumento"
+        );
+
+
+    if (
+        tipo ===
+        "JURIDICO"
+    ) {
+
+        if (razonSocial) {
+
+            razonSocial.disabled =
+                false;
+
+            razonSocial.placeholder =
+                "Ej. Comercial Mejía S.A.C.";
         }
 
 
-        /* =====================================================
-           ABRIR
-           ===================================================== */
+        if (nombres) {
 
-        abrir?.addEventListener(
-            "click",
-            function () {
+            nombres.disabled =
+                true;
 
-                limpiarFormularioNuevoCliente();
-
-                modal.hidden =
-                    false;
-
-                document.body.style.overflow =
-                    "hidden";
+            nombres.value =
+                "";
+        }
 
 
-                actualizarFormularioTipoCliente();
+        if (apellidos) {
+
+            apellidos.disabled =
+                true;
+
+            apellidos.value =
+                "";
+        }
 
 
-                setTimeout(
-                    function () {
+        if (tipoDocumento) {
 
-                        document
-                            .getElementById(
-                                "nuevoNumeroDocumento"
-                            )
-                            ?.focus();
-
-                    },
-                    100
-                );
-
-            }
-        );
-
-
-        /* =====================================================
-           CERRAR X
-           ===================================================== */
-
-        cerrar?.addEventListener(
-            "click",
-            cerrarModalNuevoCliente
-        );
-
-
-        /* =====================================================
-           CANCELAR
-           ===================================================== */
-
-        cancelar?.addEventListener(
-            "click",
-            cerrarModalNuevoCliente
-        );
-
-
-        /* =====================================================
-           OVERLAY
-           ===================================================== */
-
-        overlay?.addEventListener(
-            "click",
-            cerrarModalNuevoCliente
-        );
-
-
-        /* =====================================================
-           ESC
-           ===================================================== */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (
-                    event.key === "Escape"
-                    &&
-                    modal.hidden === false
-                ) {
-
-                    cerrarModalNuevoCliente();
-
-                }
-
-            }
-        );
-
-
-        /* =====================================================
-           CAMBIAR TIPO CLIENTE
-           ===================================================== */
-
-        tipoCliente?.addEventListener(
-            "change",
-            actualizarFormularioTipoCliente
-        );
-
-
-        /* =====================================================
-           GUARDAR
-           ===================================================== */
-
-        guardar?.addEventListener(
-            "click",
-            async function () {
-
-                await guardarNuevoCliente();
-
-            }
-        );
+            tipoDocumento.value =
+                "RUC";
+        }
 
     }
-);
+    else {
+
+        if (razonSocial) {
+
+            razonSocial.disabled =
+                true;
+
+            razonSocial.value =
+                "";
+
+            razonSocial.placeholder =
+                "Solo para persona jurídica";
+        }
+
+
+        if (nombres) {
+
+            nombres.disabled =
+                false;
+        }
+
+
+        if (apellidos) {
+
+            apellidos.disabled =
+                false;
+        }
+
+
+        if (
+            tipoDocumento
+            &&
+            tipoDocumento.value ===
+            "RUC"
+        ) {
+
+            tipoDocumento.value =
+                "DNI";
+        }
+    }
+
+
+    actualizarDocumentoNuevoCliente();
+}
 
 
 /* ==========================================================
-   GUARDAR CLIENTE
+   CONFIGURAR DOCUMENTO
+   ========================================================== */
+
+function actualizarDocumentoNuevoCliente() {
+
+    const tipoDocumento =
+        obtenerValorNuevoCliente(
+            "nuevoTipoDocumento"
+        )
+            .toUpperCase();
+
+
+    const input =
+        document.getElementById(
+            "nuevoNumeroDocumento"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.inputMode =
+        "numeric";
+
+
+    if (
+        tipoDocumento === "DNI"
+    ) {
+
+        input.maxLength =
+            8;
+
+        input.placeholder =
+            "8 dígitos";
+
+        return;
+    }
+
+
+    if (
+        tipoDocumento === "RUC"
+    ) {
+
+        input.maxLength =
+            11;
+
+        input.placeholder =
+            "11 dígitos";
+
+        return;
+    }
+
+
+    if (
+        tipoDocumento === "CE"
+    ) {
+
+        input.maxLength =
+            20;
+
+        input.inputMode =
+            "text";
+
+        input.placeholder =
+            "Carné de extranjería";
+    }
+}
+
+
+/* ==========================================================
+   GUARDAR NUEVO CLIENTE
    ========================================================== */
 
 async function guardarNuevoCliente() {
@@ -2719,10 +3274,6 @@ async function guardarNuevoCliente() {
 
     ocultarMensajeNuevoCliente();
 
-
-    /* =====================================================
-       OBTENER VALORES
-       ===================================================== */
 
     const tipoCliente =
         obtenerValorNuevoCliente(
@@ -2744,6 +3295,12 @@ async function guardarNuevoCliente() {
         );
 
 
+    const telefono =
+        obtenerValorNuevoCliente(
+            "nuevoTelefono"
+        );
+
+
     const nombres =
         obtenerValorNuevoCliente(
             "nuevoNombres"
@@ -2759,12 +3316,6 @@ async function guardarNuevoCliente() {
     const razonSocial =
         obtenerValorNuevoCliente(
             "nuevoRazonSocial"
-        );
-
-
-    const telefono =
-        obtenerValorNuevoCliente(
-            "nuevoTelefono"
         );
 
 
@@ -2792,12 +3343,6 @@ async function guardarNuevoCliente() {
         );
 
 
-    const referencia =
-        obtenerValorNuevoCliente(
-            "nuevoReferencia"
-        );
-
-
     const distrito =
         obtenerValorNuevoCliente(
             "nuevoDistrito"
@@ -2822,9 +3367,14 @@ async function guardarNuevoCliente() {
         );
 
 
-    /* =====================================================
+    const referencia =
+        obtenerValorNuevoCliente(
+            "nuevoReferencia"
+        );
+
+    /* ======================================================
        VALIDACIONES
-       ===================================================== */
+       ====================================================== */
 
     if (!tipoCliente) {
 
@@ -2865,7 +3415,7 @@ async function guardarNuevoCliente() {
     ) {
 
         mostrarMensajeNuevoCliente(
-            "El DNI debe contener 8 dígitos."
+            "El DNI debe contener exactamente 8 dígitos."
         );
 
         return;
@@ -2881,7 +3431,7 @@ async function guardarNuevoCliente() {
     ) {
 
         mostrarMensajeNuevoCliente(
-            "El RUC debe contener 11 dígitos."
+            "El RUC debe contener exactamente 11 dígitos."
         );
 
         return;
@@ -2932,11 +3482,12 @@ async function guardarNuevoCliente() {
     }
 
 
-    /* =====================================================
+    /* ======================================================
        CONTACTOS
-       ===================================================== */
+       ====================================================== */
 
-    const contactos = [];
+    const contactos =
+        [];
 
 
     if (
@@ -2957,7 +3508,6 @@ async function guardarNuevoCliente() {
         ) {
 
             nombreContacto =
-                nombres ||
                 razonSocial;
 
         }
@@ -2966,7 +3516,6 @@ async function guardarNuevoCliente() {
             nombreContacto =
                 `${nombres} ${apellidos}`
                     .trim();
-
         }
 
 
@@ -2976,13 +3525,13 @@ async function guardarNuevoCliente() {
                     nombreContacto,
 
                 cargo:
-                    cargo,
+                    cargo || null,
 
                 telefono:
-                    telefono,
+                    telefono || null,
 
                 correo:
-                    correo,
+                    correo || null,
 
                 esPrincipal:
                     true,
@@ -2991,15 +3540,15 @@ async function guardarNuevoCliente() {
                     true
             }
         );
-
     }
 
 
-    /* =====================================================
+    /* ======================================================
        DIRECCIONES
-       ===================================================== */
+       ====================================================== */
 
-    const direcciones = [];
+    const direcciones =
+        [];
 
 
     if (direccion) {
@@ -3014,19 +3563,19 @@ async function guardarNuevoCliente() {
                     direccion,
 
                 referencia:
-                    referencia,
+                    referencia || null,
 
                 distrito:
-                    distrito,
+                    distrito || null,
 
                 provincia:
-                    provincia,
+                    provincia || null,
 
                 departamento:
-                    departamento,
+                    departamento || null,
 
                 ubigeo:
-                    ubigeo,
+                    ubigeo || null,
 
                 esPrincipal:
                     true,
@@ -3035,13 +3584,12 @@ async function guardarNuevoCliente() {
                     true
             }
         );
-
     }
 
 
-    /* =====================================================
-       REQUEST
-       ===================================================== */
+    /* ======================================================
+       REQUEST CLIENTE
+       ====================================================== */
 
     const request =
     {
@@ -3049,8 +3597,7 @@ async function guardarNuevoCliente() {
             Number(
                 window
                     .kernixConfiguracionVenta
-                    ?.idEmpresa
-                || 0
+                    ?.idEmpresa || 1
             ),
 
         tipoCliente:
@@ -3086,25 +3633,22 @@ async function guardarNuevoCliente() {
 
 
     console.log(
-        "[KerniX] Cliente request:",
+        "[KerniX] Crear cliente request:",
         request
     );
 
 
-    /* =====================================================
-       TOKEN ANTI FORGERY
-       ===================================================== */
+    /* ======================================================
+       TOKEN
+       ====================================================== */
 
     const token =
         document.querySelector(
-            'input[name="__RequestVerificationToken"]'
+            '#formTokenNuevaVenta input[name="__RequestVerificationToken"]'
         )
-            ?.value;
+            ?.value
+        || "";
 
-
-    /* =====================================================
-       POST
-       ===================================================== */
 
     try {
 
@@ -3113,8 +3657,9 @@ async function guardarNuevoCliente() {
 
 
         boton.innerHTML = `
-            Guardando...
-        `;
+        <span uk-spinner="ratio: .7"></span>
+        Guardando...
+    `;
 
 
         const response =
@@ -3123,9 +3668,6 @@ async function guardarNuevoCliente() {
                 {
                     method:
                         "POST",
-
-                    credentials:
-                        "same-origin",
 
                     headers:
                     {
@@ -3136,8 +3678,11 @@ async function guardarNuevoCliente() {
                             "application/json",
 
                         "RequestVerificationToken":
-                            token || ""
+                            token
                     },
+
+                    credentials:
+                        "same-origin",
 
                     body:
                         JSON.stringify(
@@ -3151,61 +3696,64 @@ async function guardarNuevoCliente() {
             await response.text();
 
 
+        console.log(
+            "[KerniX] HTTP CrearCliente:",
+            response.status
+        );
+
+
+        console.log(
+            "[KerniX] RAW CrearCliente:",
+            texto
+        );
+
+
         let resultado =
             null;
 
 
-        if (texto) {
+        try {
 
-            try {
-
-                resultado =
-                    JSON.parse(
+            resultado =
+                texto
+                    ? JSON.parse(
                         texto
-                    );
-
-            }
-            catch {
-
-                console.error(
-                    "Respuesta no JSON:",
-                    texto
-                );
-
-            }
+                    )
+                    : null;
 
         }
+        catch (error) {
+
+            console.error(
+                "[KerniX] JSON CrearCliente inválido:",
+                error
+            );
 
 
-        console.log(
-            "[KerniX] Crear cliente:",
-            resultado
-        );
+            throw new Error(
+                "El servidor devolvió una respuesta inválida."
+            );
+        }
 
 
         if (!response.ok) {
 
             throw new Error(
-                resultado?.message
-                ||
+                resultado?.message ||
                 `Error HTTP ${response.status}`
             );
-
         }
 
 
         if (
-            !resultado
-            ||
+            !resultado ||
             resultado.success !== true
         ) {
 
             throw new Error(
-                resultado?.message
-                ||
+                resultado?.message ||
                 "No se pudo registrar el cliente."
             );
-
         }
 
 
@@ -3214,29 +3762,16 @@ async function guardarNuevoCliente() {
             throw new Error(
                 "El servidor no devolvió el cliente creado."
             );
-
         }
 
-
-        /* =================================================
-           SELECCIONAR CLIENTE RECIÉN CREADO
-           ================================================= */
 
         seleccionarCliente(
             resultado.data
         );
 
 
-        /* =================================================
-           CERRAR
-           ================================================= */
-
         cerrarModalNuevoCliente();
 
-
-        /* =================================================
-           AVISO
-           ================================================= */
 
         mostrarAvisoVenta(
             "Cliente registrado correctamente.",
@@ -3245,7 +3780,7 @@ async function guardarNuevoCliente() {
 
 
         console.log(
-            "[KerniX] Cliente creado y seleccionado:",
+            "[KerniX] Cliente creado correctamente:",
             resultado.data
         );
 
@@ -3253,14 +3788,13 @@ async function guardarNuevoCliente() {
     catch (error) {
 
         console.error(
-            "[KerniX] Error registrando cliente:",
+            "[KerniX] Error guardarNuevoCliente:",
             error
         );
 
 
         mostrarMensajeNuevoCliente(
-            error.message
-            ||
+            error.message ||
             "No se pudo registrar el cliente."
         );
 
@@ -3270,158 +3804,30 @@ async function guardarNuevoCliente() {
         boton.disabled =
             false;
 
-
         boton.innerHTML = `
-            <span uk-icon="icon: check"></span>
-            Guardar cliente
-        `;
-
+        <span uk-icon="icon: check"></span>
+        Guardar cliente
+    `;
 
         if (window.UIkit) {
 
             UIkit.icon(
                 boton
             );
-
         }
-
     }
+
 
 }
 
 
 /* ==========================================================
-   CERRAR MODAL
+   HELPERS MODAL NUEVO CLIENTE
    ========================================================== */
 
-function cerrarModalNuevoCliente() {
-
-    const modal =
-        document.getElementById(
-            "modalNuevoCliente"
-        );
-
-
-    if (!modal) {
-        return;
-    }
-
-
-    modal.hidden =
-        true;
-
-
-    document.body.style.overflow =
-        "";
-
-
-    ocultarMensajeNuevoCliente();
-}
-
 
 /* ==========================================================
-   TIPO DE CLIENTE
-   ========================================================== */
-
-function actualizarFormularioTipoCliente() {
-
-    const tipo =
-        obtenerValorNuevoCliente(
-            "nuevoTipoCliente"
-        )
-            .toUpperCase();
-
-
-    const razonSocial =
-        document.getElementById(
-            "nuevoRazonSocial"
-        );
-
-
-    const nombres =
-        document.getElementById(
-            "nuevoNombres"
-        );
-
-
-    const apellidos =
-        document.getElementById(
-            "nuevoApellidos"
-        );
-
-
-    const tipoDocumento =
-        document.getElementById(
-            "nuevoTipoDocumento"
-        );
-
-
-    if (
-        tipo ===
-        "JURIDICO"
-    ) {
-
-        if (razonSocial) {
-
-            razonSocial.disabled =
-                false;
-
-        }
-
-
-        if (tipoDocumento) {
-
-            tipoDocumento.value =
-                "RUC";
-
-        }
-
-    }
-    else {
-
-        if (razonSocial) {
-
-            razonSocial.value =
-                "";
-
-        }
-
-
-        if (nombres) {
-
-            nombres.disabled =
-                false;
-
-        }
-
-
-        if (apellidos) {
-
-            apellidos.disabled =
-                false;
-
-        }
-
-
-        if (
-            tipoDocumento
-            &&
-            tipoDocumento.value ===
-            "RUC"
-        ) {
-
-            tipoDocumento.value =
-                "DNI";
-
-        }
-
-    }
-
-}
-
-
-/* ==========================================================
-   OBTENER VALOR
+   HELPERS MODAL NUEVO CLIENTE
    ========================================================== */
 
 function obtenerValorNuevoCliente(
@@ -3445,10 +3851,6 @@ function obtenerValorNuevoCliente(
         .trim();
 }
 
-
-/* ==========================================================
-   LIMPIAR FORMULARIO
-   ========================================================== */
 
 function limpiarFormularioNuevoCliente() {
 
@@ -3483,9 +3885,7 @@ function limpiarFormularioNuevoCliente() {
 
                 elemento.value =
                     "";
-
             }
-
         }
     );
 
@@ -3512,7 +3912,6 @@ function limpiarFormularioNuevoCliente() {
 
         tipoCliente.value =
             "NATURAL";
-
     }
 
 
@@ -3520,7 +3919,6 @@ function limpiarFormularioNuevoCliente() {
 
         tipoDocumento.value =
             "DNI";
-
     }
 
 
@@ -3528,17 +3926,12 @@ function limpiarFormularioNuevoCliente() {
 
         tipoDireccion.value =
             "FISCAL";
-
     }
 
 
     ocultarMensajeNuevoCliente();
 }
 
-
-/* ==========================================================
-   ERROR MODAL
-   ========================================================== */
 
 function mostrarMensajeNuevoCliente(
     mensaje
@@ -3591,10 +3984,6 @@ function ocultarMensajeNuevoCliente() {
 }
 
 
-/* ==========================================================
-   VALIDAR CORREO
-   ========================================================== */
-
 function validarCorreoCliente(
     correo
 ) {
@@ -3603,4 +3992,1177 @@ function validarCorreoCliente(
         .test(
             correo
         );
+}/* ==========================================================
+   TIPO DE COMPROBANTE
+   ========================================================== */
+
+function obtenerTipoComprobanteSeleccionado() {
+
+    const seleccionado =
+        document.querySelector(
+            'input[name="TipoComprobante"]:checked'
+        );
+
+
+    if (!seleccionado) {
+
+        return "BOLETA";
+    }
+
+
+    return String(
+        seleccionado.value || "BOLETA"
+    )
+        .trim()
+        .toUpperCase();
 }
+
+
+/* ==========================================================
+   VALIDAR TIPO DE COMPROBANTE
+   ========================================================== */
+
+function validarTipoComprobanteSeleccionado() {
+
+    const comprobante =
+        obtenerTipoComprobanteSeleccionado();
+
+
+    const tipoDocumento =
+        String(
+            document.getElementById(
+                "tipoDocumentoCliente"
+            )?.value || ""
+        )
+            .trim()
+            .toUpperCase();
+
+
+    const numeroDocumento =
+        String(
+            document.getElementById(
+                "documentoCliente"
+            )?.value || ""
+        )
+            .trim();
+
+
+    const numero =
+        numeroDocumento.replace(
+            /\D/g,
+            ""
+        );
+
+
+    if (
+        comprobante ===
+        "SIN_COMPROBANTE"
+    ) {
+
+        return true;
+    }
+
+
+    if (
+        comprobante ===
+        "NOTA_VENTA"
+    ) {
+
+        return true;
+    }
+
+
+    if (
+        comprobante ===
+        "BOLETA"
+    ) {
+
+        if (
+            tipoDocumento === "DNI"
+            &&
+            numero.length !== 8
+        ) {
+
+            mostrarAvisoVenta(
+                "El DNI debe contener exactamente 8 dígitos.",
+                "warning"
+            );
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+    if (
+        comprobante ===
+        "FACTURA"
+    ) {
+
+        if (
+            tipoDocumento !== "RUC"
+        ) {
+
+            mostrarAvisoVenta(
+                "Para emitir una factura el cliente debe tener RUC.",
+                "warning"
+            );
+
+            return false;
+        }
+
+
+        if (
+            numero.length !== 11
+        ) {
+
+            mostrarAvisoVenta(
+                "El RUC debe contener exactamente 11 dígitos.",
+                "warning"
+            );
+
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+    mostrarAvisoVenta(
+        "El tipo de comprobante seleccionado no es válido.",
+        "warning"
+    );
+
+
+    return false;
+}
+
+
+/* ==========================================================
+   ÚLTIMA VENTA / COMPROBANTE
+   ========================================================== */
+
+let ultimaVentaRegistrada =
+    null;
+
+let ultimoComprobanteEmitido =
+    null;
+
+
+/* ==========================================================
+   CONFIRMAR VENTA
+   ========================================================== */
+
+async function confirmarVentaServidor() {
+
+    const boton =
+        document.getElementById(
+            "confirmarVenta"
+        );
+
+    if (boton?.disabled) return;
+
+    if (!boton) {
+
+        console.error(
+            "[KerniX] No existe #confirmarVenta"
+        );
+
+        return;
+    }
+
+
+    if (
+        carritoVenta.length === 0
+    ) {
+
+        mostrarAvisoVenta(
+            "Agrega al menos un producto a la venta.",
+            "warning"
+        );
+
+        return;
+    }
+
+
+    const idCliente =
+        Number(
+            document.getElementById(
+                "idClienteSeleccionado"
+            )?.value || 0
+        );
+
+
+    if (
+        idCliente <= 0
+    ) {
+
+        mostrarAvisoVenta(
+            "Selecciona un cliente.",
+            "warning"
+        );
+
+        return;
+    }
+
+
+    if (
+        !validarTipoComprobanteSeleccionado()
+    ) {
+
+        return;
+    }
+
+
+    const tipoComprobante =
+        obtenerTipoComprobanteSeleccionado();
+
+
+    const metodoPago =
+        String(
+            document.querySelector(
+                'input[name="MetodoPago"]:checked'
+            )?.value || ""
+        )
+            .trim();
+
+
+    if (!metodoPago) {
+
+        mostrarAvisoVenta(
+            "Selecciona un método de pago.",
+            "warning"
+        );
+
+        return;
+    }
+
+
+    const calculo =
+        calcularVenta();
+
+
+    const montoRecibido =
+        Number(
+            document.getElementById(
+                "montoRecibido"
+            )?.value || 0
+        );
+
+
+    if (
+        metodoPago.toUpperCase() ===
+        "EFECTIVO"
+        &&
+        montoRecibido <
+        calculo.total
+    ) {
+
+        mostrarAvisoVenta(
+            "El monto recibido es menor al total de la venta.",
+            "warning"
+        );
+
+        return;
+    }
+    const request =
+    {
+        idCliente:
+            idCliente,
+
+        metodoPago:
+            metodoPago,
+
+        tipoComprobante:
+            tipoComprobante,
+
+        observacion:
+            null,
+
+        numeroOperacion:
+            null,
+
+        detalles:
+            carritoVenta.map(
+                function (item) {
+
+                    return {
+                        idProducto:
+                            Number(
+                                item.idProducto
+                            ),
+
+                        cantidad:
+                            Number(
+                                item.cantidad
+                            ),
+
+                        precioUnitario:
+                            Number(
+                                item.precioUnitario
+                            ),
+
+                        descuento:
+                            Number(
+                                item.descuentoPorcentaje || 0
+                            )
+                    };
+                }
+            )
+    };
+
+
+    const token =
+        document.querySelector(
+            '#formTokenNuevaVenta input[name="__RequestVerificationToken"]'
+        )
+            ?.value
+        || "";
+
+
+    try {
+
+        boton.disabled =
+            true;
+
+
+        boton.innerHTML = `
+            <span uk-spinner="ratio: .7"></span>
+            Procesando venta...
+        `;
+
+
+        const response =
+            await fetch(
+                `${window.location.pathname}?handler=ConfirmarVenta`,
+                {
+                    method:
+                        "POST",
+
+                    headers:
+                    {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json",
+
+                        "RequestVerificationToken":
+                            token
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body:
+                        JSON.stringify(
+                            request
+                        )
+                }
+            );
+
+
+        const texto =
+            await response.text();
+
+
+        let resultado =
+            null;
+
+
+        try {
+
+            resultado =
+                texto
+                    ? JSON.parse(
+                        texto
+                    )
+                    : null;
+
+        }
+        catch {
+
+            console.error(
+                "[KerniX] Confirmar venta - respuesta no JSON:",
+                texto
+            );
+
+
+            throw new Error(
+                "El servidor devolvió una respuesta inválida."
+            );
+        }
+
+
+        console.log(
+            "[KerniX] Confirmar venta respuesta:",
+            resultado
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                resultado?.message ||
+                `HTTP ${response.status}`
+            );
+        }
+
+
+        if (
+            !resultado ||
+            resultado.success !== true
+        ) {
+
+            throw new Error(
+                resultado?.message ||
+                "No se pudo registrar la venta."
+            );
+        }
+
+
+        const data =
+            resultado.data || {};
+
+
+        ultimaVentaRegistrada =
+            data.venta || null;
+
+
+        ultimoComprobanteEmitido =
+            data.comprobante || null;
+
+
+        mostrarAvisoVenta(
+            resultado.message ||
+            "Venta registrada correctamente.",
+            "success"
+        );
+
+
+        if (
+            ultimoComprobanteEmitido
+        ) {
+
+            mostrarComprobanteEmitido(
+                ultimoComprobanteEmitido,
+                tipoComprobante
+            );
+
+        }
+        else {
+
+            ocultarComprobanteEmitido();
+        }
+
+
+        boton.disabled =
+            true;
+
+
+        boton.innerHTML = `
+            <span uk-icon="icon: check"></span>
+            Venta registrada
+        `;
+
+
+        if (window.UIkit) {
+
+            UIkit.icon(
+                boton
+            );
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "[KerniX] Error confirmarVentaServidor:",
+            error
+        );
+
+
+        mostrarAvisoVenta(
+            error.message ||
+            "No se pudo registrar la venta.",
+            "danger"
+        );
+
+
+        boton.disabled =
+            false;
+
+
+        boton.innerHTML = `
+            <span uk-icon="icon: check"></span>
+            Confirmar venta
+        `;
+
+
+        if (window.UIkit) {
+
+            UIkit.icon(
+                boton
+            );
+        }
+    }
+}
+
+
+/* ==========================================================
+   MOSTRAR COMPROBANTE EMITIDO
+   ========================================================== */
+
+function mostrarComprobanteEmitido(
+    comprobante,
+    tipoComprobante
+) {
+
+    const contenedor =
+        document.getElementById(
+            "comprobanteEmitido"
+        );
+
+
+    const numero =
+        document.getElementById(
+            "comprobanteEmitidoNumero"
+        );
+
+
+    const tipo =
+        document.getElementById(
+            "comprobanteEmitidoTipo"
+        );
+
+
+    const botonEnviar =
+        document.getElementById(
+            "enviarBoleta"
+        );
+
+
+    if (!contenedor) {
+        return;
+    }
+
+
+    const serie =
+        String(
+            comprobante?.serie || ""
+        );
+
+
+    const correlativo =
+        String(
+            comprobante?.correlativo || ""
+        );
+
+
+    let numeroCompleto =
+        String(
+            comprobante?.numeroComprobante ||
+            comprobante?.numero ||
+            ""
+        );
+
+
+    if (
+        !numeroCompleto
+        &&
+        serie
+        &&
+        correlativo
+    ) {
+
+        numeroCompleto =
+            `${serie}-${correlativo}`;
+    }
+
+
+    if (numero) {
+
+        numero.textContent =
+            numeroCompleto ||
+            "Comprobante generado";
+    }
+
+
+    if (tipo) {
+
+        tipo.textContent =
+            obtenerNombreTipoComprobante(
+                tipoComprobante
+            );
+    }
+
+
+    contenedor.hidden =
+        false;
+
+
+    if (botonEnviar) {
+
+        if (
+            tipoComprobante ===
+            "BOLETA"
+        ) {
+
+            botonEnviar.hidden =
+                false;
+
+
+            botonEnviar.innerHTML = `
+                <span uk-icon="icon: copy"></span>
+                Copiar datos de boleta
+            `;
+
+        }
+        else if (
+            tipoComprobante ===
+            "FACTURA"
+        ) {
+
+            botonEnviar.hidden =
+                false;
+
+
+            botonEnviar.innerHTML = `
+                <span uk-icon="icon: copy"></span>
+                Copiar datos de factura
+            `;
+
+        }
+        else {
+
+            botonEnviar.hidden =
+                true;
+        }
+    }
+
+
+    if (window.UIkit) {
+
+        UIkit.icon(
+            contenedor
+        );
+
+
+        if (botonEnviar) {
+
+            UIkit.icon(
+                botonEnviar
+            );
+        }
+    }
+}
+
+
+/* ==========================================================
+   OCULTAR COMPROBANTE
+   ========================================================== */
+
+function ocultarComprobanteEmitido() {
+
+    const contenedor =
+        document.getElementById(
+            "comprobanteEmitido"
+        );
+
+
+    const botonEnviar =
+        document.getElementById(
+            "enviarBoleta"
+        );
+
+
+    if (contenedor) {
+
+        contenedor.hidden =
+            true;
+    }
+
+
+    if (botonEnviar) {
+
+        botonEnviar.hidden =
+            true;
+    }
+
+
+    ultimoComprobanteEmitido =
+        null;
+}
+
+
+/* ==========================================================
+   NOMBRE DEL COMPROBANTE
+   ========================================================== */
+
+function obtenerNombreTipoComprobante(
+    tipo
+) {
+
+    const valor =
+        String(
+            tipo || ""
+        )
+            .trim()
+            .toUpperCase();
+
+
+    switch (valor) {
+
+        case "BOLETA":
+            return "Boleta";
+
+        case "FACTURA":
+            return "Factura";
+
+        case "NOTA_VENTA":
+            return "Nota de venta";
+
+        case "SIN_COMPROBANTE":
+            return "Sin comprobante";
+
+        default:
+            return "Comprobante";
+    }
+}
+
+
+/* ==========================================================
+   ENVIAR BOLETA / FACTURA
+   ========================================================== */
+
+async function enviarBoletaCliente() {
+    if (!ultimaVentaRegistrada || !ultimoComprobanteEmitido) {
+        mostrarAvisoVenta("Primero registra una venta y genera su comprobante.", "warning");
+        return;
+    }
+    const tipo = document.getElementById("comprobanteEmitidoTipo")?.textContent?.trim() || "Comprobante";
+    const numero = document.getElementById("comprobanteEmitidoNumero")?.textContent?.trim() || "Sin número";
+    const texto = `${tipo}: ${numero}`;
+    try {
+        if (!navigator.clipboard?.writeText) throw new Error("Portapapeles no disponible");
+        await navigator.clipboard.writeText(texto);
+        mostrarAvisoVenta("Datos del comprobante copiados. El envío por correo requiere un endpoint en el servidor.", "success");
+    } catch {
+        mostrarAvisoVenta(`Comprobante: ${texto}. Copia este dato manualmente; el envío por correo no está implementado.`, "primary");
+    }
+}
+
+/* ==========================================================
+   LIMPIAR VENTA COMPLETA
+   ========================================================== */
+function limpiarVentaCompleta() {
+
+    carritoVenta.splice(
+        0,
+        carritoVenta.length
+    );
+
+
+    limpiarClienteSeleccionado();
+
+
+    const buscarProducto =
+        document.getElementById(
+            "buscarProducto"
+        );
+
+
+    if (buscarProducto) {
+
+        buscarProducto.value =
+            "";
+    }
+
+
+    mostrarMensajeProductos(
+        "Escribe al menos 2 caracteres para buscar productos."
+    );
+
+
+    const montoRecibido =
+        document.getElementById(
+            "montoRecibido"
+        );
+
+
+    if (montoRecibido) {
+
+        montoRecibido.value =
+            "0";
+    }
+
+
+    const metodoEfectivo =
+        document.querySelector(
+            'input[name="MetodoPago"][value="Efectivo"]'
+        );
+
+
+    if (metodoEfectivo) {
+
+        metodoEfectivo.checked =
+            true;
+    }
+
+
+    const comprobanteBoleta =
+        document.querySelector(
+            'input[name="TipoComprobante"][value="BOLETA"]'
+        );
+
+
+    if (comprobanteBoleta) {
+
+        comprobanteBoleta.checked =
+            true;
+    }
+
+
+    ultimaVentaRegistrada =
+        null;
+
+
+    ocultarComprobanteEmitido();
+
+
+    const botonConfirmar =
+        document.getElementById(
+            "confirmarVenta"
+        );
+
+
+    if (botonConfirmar) {
+
+        botonConfirmar.disabled =
+            false;
+
+
+        botonConfirmar.innerHTML = `
+            <span uk-icon="icon: check"></span>
+            Confirmar venta
+        `;
+    }
+
+
+    renderizarCarrito();
+
+
+    recalcularVenta();
+
+
+    if (window.UIkit) {
+
+        UIkit.icon(
+            document.body
+        );
+    }
+
+
+    mostrarAvisoVenta(
+        "La venta fue limpiada.",
+        "primary"
+    );
+}
+
+
+/* ==========================================================
+   AVISO / NOTIFICACIÓN
+   ========================================================== */
+function mostrarAvisoVenta(
+    mensaje,
+    estado = "primary"
+) {
+
+    const anterior =
+        document.getElementById(
+            "kxToastVenta"
+        );
+
+
+    if (anterior) {
+
+        anterior.remove();
+    }
+
+
+    const toast =
+        document.createElement(
+            "div"
+        );
+
+
+    toast.id =
+        "kxToastVenta";
+
+
+    toast.textContent =
+        mensaje;
+
+
+    toast.style.position =
+        "fixed";
+
+    toast.style.top =
+        "24px";
+
+    toast.style.right =
+        "24px";
+
+    toast.style.zIndex =
+        "99999999";
+
+    toast.style.minWidth =
+        "300px";
+
+    toast.style.maxWidth =
+        "450px";
+
+    toast.style.padding =
+        "16px 20px";
+
+    toast.style.borderRadius =
+        "12px";
+
+    toast.style.fontWeight =
+        "700";
+
+    toast.style.fontSize =
+        "14px";
+
+    toast.style.boxShadow =
+        "0 15px 40px rgba(0,0,0,.45)";
+
+    toast.style.color =
+        "#ffffff";
+
+
+    if (estado === "success") {
+
+        toast.style.background =
+            "#16835d";
+
+    }
+    else if (estado === "danger") {
+
+        toast.style.background =
+            "#b83248";
+
+    }
+    else if (estado === "warning") {
+
+        toast.style.background =
+            "#b7791f";
+
+    }
+    else {
+
+        toast.style.background =
+            "#1d4f7a";
+    }
+
+
+    document.body.appendChild(
+        toast
+    );
+
+
+    setTimeout(
+        function () {
+
+            toast.remove();
+
+        },
+        3500
+    );
+}
+
+/* ==========================================================
+   EVENTOS DE COMPROBANTE
+   ========================================================== */
+
+function iniciarEventosComprobante() {
+
+    const radios =
+        document.querySelectorAll(
+            'input[name="TipoComprobante"]'
+        );
+
+
+    radios.forEach(
+        function (radio) {
+
+            radio.addEventListener(
+                "change",
+                function () {
+
+                    const tipo =
+                        obtenerTipoComprobanteSeleccionado();
+
+
+                    const campo =
+                        document.getElementById(
+                            "comprobanteCliente"
+                        );
+
+
+                    if (campo) {
+
+                        campo.value =
+                            tipo;
+                    }
+
+
+                    console.log(
+                        "[KerniX] Comprobante seleccionado:",
+                        tipo
+                    );
+                }
+            );
+        }
+    );
+}
+
+
+/* ==========================================================
+   EVENTOS GENERALES DE VENTA
+   ========================================================== */
+
+function iniciarEventosVenta() {
+
+    const limpiar =
+        document.getElementById(
+            "limpiarVenta"
+        );
+
+
+    const confirmar =
+        document.getElementById(
+            "confirmarVenta"
+        );
+
+
+    const enviar =
+        document.getElementById(
+            "enviarBoleta"
+        );
+
+
+    if (limpiar) {
+
+        limpiar.addEventListener(
+            "click",
+            function () {
+
+                limpiarVentaCompleta();
+            }
+        );
+    }
+    else {
+
+        console.warn(
+            "[KerniX] No existe #limpiarVenta"
+        );
+    }
+
+
+    if (confirmar) {
+
+        confirmar.addEventListener(
+            "click",
+            function () {
+
+                confirmarVentaServidor();
+            }
+        );
+    }
+    else {
+
+        console.warn(
+            "[KerniX] No existe #confirmarVenta"
+        );
+    }
+
+
+    if (enviar) {
+
+        enviar.addEventListener(
+            "click",
+            function () {
+
+                enviarBoletaCliente();
+            }
+        );
+    }
+    else {
+
+        console.warn(
+            "[KerniX] No existe #enviarBoleta"
+        );
+    }
+}
+
+
+/* ==========================================================
+   INICIALIZACIÓN GENERAL
+   ========================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        console.log(
+            "[KerniX] Inicializando Nueva Venta..."
+        );
+
+
+        try {
+
+            iniciarBuscadorClientes();
+
+
+            iniciarBuscadorProductos();
+
+
+            iniciarModalNuevoCliente();
+            document.addEventListener("keydown", event => {
+                if (event.key === "Escape" && !document.getElementById("modalNuevoCliente")?.hidden) cerrarModalNuevoCliente();
+            });
+
+
+            iniciarEventosPago();
+
+
+            iniciarEventosComprobante();
+
+
+            iniciarEventosVenta();
+
+
+            renderizarCarrito();
+
+
+            ocultarComprobanteEmitido();
+
+
+            console.log(
+                "[KerniX] Nueva Venta inicializada correctamente."
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "[KerniX] Error inicializando Nueva Venta:",
+                error
+            );
+        }
+    }
+);

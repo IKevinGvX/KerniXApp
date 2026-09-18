@@ -1,0 +1,4454 @@
+﻿@page
+@model KerniX.Pages.Cotizacion.IndexModel
+
+@using System.Globalization
+@using System.Text.Json
+
+@{
+    Layout = null;
+
+    ViewData["Title"] = "Cotizaciones";
+
+
+    /* ============================================================
+       USUARIO
+       ============================================================ */
+
+    var nombreUsuario =
+        HttpContext.Session.GetString("NombreUsuario")
+        ?? "Administrador";
+
+    var empleado =
+        HttpContext.Session.GetString("Empleado")
+        ?? nombreUsuario;
+
+    var cargo =
+        HttpContext.Session.GetString("Cargo")
+        ?? "Administrador";
+
+    var inicial =
+        string.IsNullOrWhiteSpace(empleado)
+            ? "A"
+            : empleado.Substring(0, 1).ToUpper();
+
+
+    /* ============================================================
+       DATOS GRÁFICO
+       ============================================================ */
+
+    var estadosLabels =
+        Model.Estados
+            .Select(x => x.Estado)
+            .ToList();
+
+    var estadosValores =
+        Model.Estados
+            .Select(x => x.Cantidad)
+            .ToList();
+
+    var labelsJson =
+        JsonSerializer.Serialize(
+            estadosLabels
+        );
+
+    var valoresJson =
+        JsonSerializer.Serialize(
+            estadosValores
+        );
+
+
+    /* ============================================================
+       CLIENTES PARA FILTRO
+       ============================================================ */
+
+    var clientes =
+        Model.Cotizaciones
+            .GroupBy(
+                x => new
+                {
+                    x.IdCliente,
+                    x.Cliente
+                }
+            )
+            .Select(x => x.Key)
+            .OrderBy(x => x.Cliente)
+            .ToList();
+
+
+    /* ============================================================
+       TOP PRODUCTOS
+       ============================================================ */
+
+    decimal maxProducto =
+        Model.TopProductos.Count > 0
+            ? Model.TopProductos.Max(
+                x => x.TotalCotizado
+            )
+            : 1;
+
+    if (maxProducto <= 0)
+    {
+        maxProducto = 1;
+    }
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color"
+          content="#020812" />
+
+    <title>
+        Cotizaciones | KerniX
+    </title>
+
+
+    <!-- GOOGLE FONT -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet" />
+
+
+    <!-- FONT AWESOME -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
+
+    <!-- CSS KERNIX -->
+
+    <link rel="stylesheet"
+          href="~/css/cotizacion/index.css"
+          asp-append-version="true" />
+
+
+    <style>
+
+            /*
+                     * =========================================================
+                     * COMPLEMENTOS DEL INDEX
+                     * =========================================================
+                     */
+
+            .kx-user-area {
+                position: relative;
+                cursor: pointer;
+                user-select: none;
+            }
+
+
+            /* =========================================================
+                       USER DROPDOWN
+                       ========================================================= */
+
+            .kx-user-dropdown {
+                position: absolute;
+                top: calc(100% + 13px);
+                right: 0;
+                z-index: 6000;
+                display: none;
+                width: 220px;
+                overflow: hidden;
+                border: 1px solid #1c3c59;
+                border-radius: 10px;
+                background: #061321;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, .55);
+            }
+
+                .kx-user-dropdown.show {
+                    display: block;
+                }
+
+            .kx-user-dropdown-header {
+                padding: 14px;
+                border-bottom: 1px solid #17304a;
+            }
+
+                .kx-user-dropdown-header strong {
+                    display: block;
+                    color: #ffffff;
+                    font-size: 11px;
+                }
+
+                .kx-user-dropdown-header span {
+                    display: block;
+                    margin-top: 4px;
+                    color: #71879d;
+                    font-size: 8px;
+                }
+
+            .kx-user-dropdown a {
+                display: flex;
+                align-items: center;
+                min-height: 40px;
+                padding: 0 13px;
+                gap: 10px;
+                color: #b7c7d7;
+                text-decoration: none;
+                font-size: 10px;
+            }
+
+                .kx-user-dropdown a:hover {
+                    color: white;
+                    background: #0a2035;
+                }
+
+                .kx-user-dropdown a i {
+                    width: 16px;
+                    color: #f6b91f;
+                }
+
+                .kx-user-dropdown a.logout {
+                    color: #ff8787;
+                    border-top: 1px solid #17304a;
+                }
+
+                    .kx-user-dropdown a.logout i {
+                        color: #ff5b5b;
+                    }
+
+
+            /* =========================================================
+                       DATE POPUP
+                       ========================================================= */
+
+            .kx-top-range {
+                position: relative;
+                cursor: pointer;
+            }
+
+            .kx-range-popup {
+                position: absolute;
+                top: calc(100% + 12px);
+                right: 0;
+                z-index: 5500;
+                display: none;
+                width: 320px;
+                padding: 14px;
+                border: 1px solid #76540d;
+                border-radius: 10px;
+                background: #061321;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, .55);
+                cursor: default;
+            }
+
+                .kx-range-popup.show {
+                    display: block;
+                }
+
+            .kx-range-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 9px;
+            }
+
+            .kx-range-field label {
+                display: block;
+                margin-bottom: 6px;
+                color: #8096aa;
+                font-size: 8px;
+            }
+
+            .kx-range-field input {
+                width: 100%;
+                height: 35px;
+                padding: 0 9px;
+                color: #dce7f0;
+                border: 1px solid #1b3a57;
+                border-radius: 6px;
+                outline: none;
+                background: #040e19;
+                font-size: 9px;
+            }
+
+                .kx-range-field input:focus {
+                    border-color: #f6b91f;
+                }
+
+            .kx-range-actions {
+                display: flex;
+                margin-top: 11px;
+                gap: 8px;
+            }
+
+                .kx-range-actions a,
+                .kx-range-actions button {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex: 1;
+                    height: 33px;
+                    border-radius: 6px;
+                    text-decoration: none;
+                    font-size: 9px;
+                    font-weight: 700;
+                    cursor: pointer;
+                }
+
+            .kx-range-reset {
+                color: #9aabba;
+                border: 1px solid #1b3955;
+                background: #071523;
+            }
+
+            .kx-range-apply {
+                color: #07101a;
+                border: 1px solid #ffe084;
+                background: linear-gradient( 180deg, #ffd55a, #d49113 );
+            }
+
+
+            /* =========================================================
+                       GLOBAL SEARCH RESULTS
+                       ========================================================= */
+
+            .kx-global-search {
+                position: relative;
+            }
+
+            .kx-global-results {
+                position: absolute;
+                top: calc(100% + 10px);
+                left: 0;
+                z-index: 5000;
+                display: none;
+                width: 100%;
+                max-height: 340px;
+                overflow-y: auto;
+                border: 1px solid #1a3a58;
+                border-radius: 9px;
+                background: #061321;
+                box-shadow: 0 20px 45px rgba(0, 0, 0, .55);
+            }
+
+                .kx-global-results.show {
+                    display: block;
+                }
+
+            .kx-global-result {
+                display: flex;
+                align-items: center;
+                min-height: 50px;
+                padding: 8px 11px;
+                gap: 10px;
+                border-bottom: 1px solid rgba(25, 55, 82, .7);
+                color: #d9e5ef;
+                text-decoration: none;
+            }
+
+                .kx-global-result:hover {
+                    background: #0a2035;
+                }
+
+            .kx-global-result-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                width: 30px;
+                height: 30px;
+                color: #f6b91f;
+                border: 1px solid #75520d;
+                border-radius: 6px;
+                background: rgba(246, 185, 31, .06);
+            }
+
+            .kx-global-result-data {
+                min-width: 0;
+            }
+
+                .kx-global-result-data strong {
+                    display: block;
+                    overflow: hidden;
+                    color: #e5edf5;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    font-size: 9px;
+                }
+
+                .kx-global-result-data span {
+                    display: block;
+                    margin-top: 3px;
+                    overflow: hidden;
+                    color: #74899e;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    font-size: 8px;
+                }
+
+            .kx-global-empty {
+                padding: 25px;
+                color: #62798f;
+                text-align: center;
+                font-size: 9px;
+            }
+
+
+            /* =========================================================
+                       ROW ACTIONS
+                       ========================================================= */
+
+            .kx-actions {
+                position: relative;
+            }
+
+            .kx-row-menu {
+                position: absolute;
+                top: 23px;
+                right: 0;
+                z-index: 3000;
+                display: none;
+                width: 155px;
+                overflow: hidden;
+                border: 1px solid #1b3b58;
+                border-radius: 7px;
+                background: #061321;
+                box-shadow: 0 15px 30px rgba(0, 0, 0, .5);
+            }
+
+                .kx-row-menu.show {
+                    display: block;
+                }
+
+                .kx-row-menu a {
+                    display: flex;
+                    align-items: center;
+                    min-height: 34px;
+                    padding: 0 10px;
+                    gap: 8px;
+                    color: #b9c7d5;
+                    text-decoration: none;
+                    font-size: 8px;
+                }
+
+                    .kx-row-menu a:hover {
+                        color: white;
+                        background: #0a2035;
+                    }
+
+                .kx-row-menu i {
+                    width: 13px;
+                    color: #f6b91f;
+                }
+
+
+            /* =========================================================
+                       PAGINATION
+                       ========================================================= */
+
+            .kx-page-row.page-hidden {
+                display: none;
+            }
+
+
+            /* =========================================================
+                       3D CHART
+                       ========================================================= */
+
+            .kx-donut.kx-donut-3d {
+                perspective: 900px;
+            }
+
+                .kx-donut.kx-donut-3d canvas {
+                    filter: drop-shadow( 0 17px 10px rgba(0, 0, 0, .55) );
+                }
+
+            .kx-donut-center {
+                z-index: 5;
+            }
+
+
+            /* =========================================================
+                       NOTIFICATION PANELS
+                       ========================================================= */
+
+            .kx-top-panel {
+                position: fixed;
+                top: 62px;
+                right: 20px;
+                z-index: 7000;
+                display: none;
+                width: 310px;
+                overflow: hidden;
+                border: 1px solid #1b3b58;
+                border-radius: 10px;
+                background: #061321;
+                box-shadow: 0 20px 55px rgba(0, 0, 0, .58);
+            }
+
+                .kx-top-panel.show {
+                    display: block;
+                }
+
+            .kx-top-panel-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                min-height: 45px;
+                padding: 0 13px;
+                border-bottom: 1px solid #17304a;
+            }
+
+                .kx-top-panel-header strong {
+                    color: #ffffff;
+                    font-size: 11px;
+                }
+
+                .kx-top-panel-header span {
+                    color: #f6b91f;
+                    font-size: 8px;
+                }
+
+            .kx-top-panel-item {
+                display: flex;
+                align-items: center;
+                min-height: 55px;
+                padding: 8px 12px;
+                gap: 9px;
+                border-bottom: 1px solid rgba(23, 48, 74, .75);
+            }
+
+            .kx-top-panel-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                width: 30px;
+                height: 30px;
+                color: #f6b91f;
+                border: 1px solid #66490d;
+                border-radius: 6px;
+                background: rgba(246, 185, 31, .05);
+            }
+
+            .kx-top-panel-item strong {
+                display: block;
+                color: #dbe6f0;
+                font-size: 8px;
+            }
+
+            .kx-top-panel-item span {
+                display: block;
+                margin-top: 3px;
+                color: #70869b;
+                font-size: 7px;
+            }
+
+
+            /* =========================================================
+                       VIEW ALL
+                       ========================================================= */
+
+            .kx-view-all {
+                color: #f6b91f;
+                border: 0;
+                background: none;
+                font-size: 9px;
+                cursor: pointer;
+            }
+
+
+            /* =========================================================
+                       MOBILE
+                       ========================================================= */
+
+            @@media(max-width:700px) {
+
+                .kx-user-dropdown {
+                    position: fixed;
+                    top: 60px;
+                    right: 10px;
+                }
+
+                .kx-range-popup {
+                    position: fixed;
+                    top: 60px;
+                    right: 10px;
+                    left: 10px;
+                    width: auto;
+                }
+
+                .kx-top-panel {
+                    right: 10px;
+                    left: 10px;
+                    width: auto;
+                }
+            }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="kx-app">
+
+
+        <!-- =========================================================
+         SIDEBAR
+         ========================================================= -->
+
+        <aside class="kx-sidebar"
+               id="sidebar">
+
+
+            <!-- LOGO -->
+
+            <div class="kx-brand">
+
+                <div class="kx-brand-symbol">
+                    K
+                </div>
+
+                <div class="kx-brand-name">
+                    KerniX
+                </div>
+
+            </div>
+
+
+            <!-- MENU -->
+
+            <nav class="kx-sidebar-menu">
+<!-- VENTAS -->
+
+                <div class="kx-menu-section open"
+                     id="ventasSection">
+
+                    <div class="kx-menu-parent">
+
+                        <span class="kx-menu-parent-left">
+
+                            <span class="kx-menu-icon">
+
+                                <i class="fa-solid fa-cart-shopping"></i>
+
+                            </span>
+
+                            <span class="kx-menu-text">
+                                Ventas
+                            </span>
+
+                        </span>
+
+                        <i class="fa-solid fa-chevron-down kx-menu-chevron"></i>
+
+                    </div>
+
+
+                    <div class="kx-submenu">
+
+
+                        <a href="/Ventas/PrincipalVentas"
+                           class="kx-submenu-link">
+
+                            <span class="kx-sub-dot"></span>
+
+                            Resumen de Ventas
+
+                        </a>
+
+
+                        <a href="/Cliente/Index"
+                           class="kx-submenu-link">
+
+                            <span class="kx-sub-dot"></span>
+
+                            Clientes
+
+                        </a>
+
+
+                        <a href="/Cotizacion/Index"
+                           class="kx-submenu-link active">
+
+                            <span class="kx-sub-dot"></span>
+
+                            Cotizaciones
+
+                        </a>
+
+
+                        <a href="/Pedido/Index"
+                           class="kx-submenu-link">
+
+                            <span class="kx-sub-dot"></span>
+
+                            Órdenes de Venta
+
+                        </a>
+
+
+                        <a href="/Productos/Index"
+                           class="kx-submenu-link">
+
+                            <span class="kx-sub-dot"></span>
+
+                            Productos
+
+                        </a>
+
+
+                        <a href="/Reportes/Ventas"
+                           class="kx-submenu-link">
+
+                            <span class="kx-sub-dot"></span>
+
+                            Reportes de Ventas
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <a href="/Inventario/Index"
+                   class="kx-menu-link">
+
+                    <span class="kx-menu-icon">
+
+                        <i class="fa-solid fa-cube"></i>
+
+                    </span>
+
+                    <span class="kx-menu-text">
+                        Inventario
+                    </span>
+
+                </a>
+
+
+                <a href="/Compras/Index"
+                   class="kx-menu-link">
+
+                    <span class="kx-menu-icon">
+
+                        <i class="fa-solid fa-bag-shopping"></i>
+
+                    </span>
+
+                    <span class="kx-menu-text">
+                        Compras
+                    </span>
+
+                </a>
+<a href="/IA/Index"
+                   class="kx-menu-link">
+
+                    <span class="kx-menu-icon">
+
+                        <i class="fa-solid fa-brain"></i>
+
+                    </span>
+
+                    <span class="kx-menu-text">
+                        IA Inteligente
+                    </span>
+
+                </a>
+
+
+                <a href="/Configuracion/General"
+                   class="kx-menu-link">
+
+                    <span class="kx-menu-icon">
+
+                        <i class="fa-solid fa-gear"></i>
+
+                    </span>
+
+                    <span class="kx-menu-text">
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+
+            <!-- IA SIDEBAR -->
+
+            <div class="kx-ai-sidebar">
+
+                <div class="kx-ai-sidebar-top">
+
+                    <div>
+
+                        <h3>
+                            KerniX IA
+                        </h3>
+
+                        <p>
+                            Tu asistente inteligente para impulsar
+                            tus ventas y tomar mejores decisiones.
+                        </p>
+
+                    </div>
+
+
+                    <div class="kx-ai-orb-small">
+
+                        <span>
+                            AI
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <a href="/IA/Index"
+                   class="kx-ai-sidebar-button"
+                   style="
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    text-decoration:none;
+                    ">
+
+                    Abrir Asistente
+
+                </a>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- =========================================================
+         PAGE
+         ========================================================= -->
+
+        <div class="kx-page">
+
+
+            <!-- =====================================================
+             TOPBAR
+             ===================================================== -->
+
+            <header class="kx-topbar">
+
+
+                <!-- MOBILE MENU -->
+
+                <button type="button"
+                        class="kx-mobile-menu"
+                        id="mobileMenuButton">
+
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+
+                <!-- =================================================
+                 GLOBAL SEARCH
+                 ================================================= -->
+
+                <div class="kx-global-search">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                    <input type="text"
+                           id="globalSearch"
+                           autocomplete="off"
+                           placeholder="Buscar clientes, productos, cotizaciones..." />
+
+
+                    <kbd>
+                        Ctrl + K
+                    </kbd>
+
+
+                    <div class="kx-global-results"
+                         id="globalResults">
+
+                        <div class="kx-global-empty">
+
+                            Escribe para buscar.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                 RIGHT
+                 ================================================= -->
+
+                <div class="kx-topbar-actions">
+
+
+                    <!-- DATE -->
+
+                    <div class="kx-top-range"
+                         id="rangeButton">
+
+
+                        <i class="fa-regular fa-calendar-check"></i>
+
+
+                        <span>
+
+                            @(Model.FechaDesde?.ToString("dd/MM/yyyy")
+                              ?? "--/--/----")
+
+                            -
+
+                            @(Model.FechaHasta?.ToString("dd/MM/yyyy")
+                              ?? "--/--/----")
+
+                        </span>
+
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+
+                        <form method="get"
+                              class="kx-range-popup"
+                              id="rangePopup">
+
+
+                            <input type="hidden"
+                                   name="IdCliente"
+                                   value="@Model.IdCliente" />
+
+                            <input type="hidden"
+                                   name="Estado"
+                                   value="@Model.Estado" />
+
+
+                            <div class="kx-range-grid">
+
+
+                                <div class="kx-range-field">
+
+                                    <label>
+                                        Desde
+                                    </label>
+
+                                    <input type="date"
+                                           name="FechaDesde"
+                                           value="@Model.FechaDesde?.ToString("yyyy-MM-dd")" />
+
+                                </div>
+
+
+                                <div class="kx-range-field">
+
+                                    <label>
+                                        Hasta
+                                    </label>
+
+                                    <input type="date"
+                                           name="FechaHasta"
+                                           value="@Model.FechaHasta?.ToString("yyyy-MM-dd")" />
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kx-range-actions">
+
+                                <a href="/Cotizacion/Index"
+                                   class="kx-range-reset">
+
+                                    Limpiar
+
+                                </a>
+
+
+                                <button type="submit"
+                                        class="kx-range-apply">
+
+                                    Aplicar
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- THEME -->
+
+                    <button type="button"
+                            class="kx-top-icon"
+                            id="themeButton"
+                            title="Tema">
+
+                        <i class="fa-regular fa-sun"></i>
+
+                    </button>
+
+
+                    <!-- NOTIFICATIONS -->
+
+                    <button type="button"
+                            class="kx-top-icon notification"
+                            id="notificationButton"
+                            title="Notificaciones">
+
+                        <i class="fa-regular fa-bell"></i>
+
+                        <span class="kx-notification-badge">
+                            5
+                        </span>
+
+                    </button>
+
+
+                    <!-- MESSAGES -->
+
+                    <button type="button"
+                            class="kx-top-icon notification"
+                            id="messageButton"
+                            title="Mensajes">
+
+                        <i class="fa-regular fa-envelope"></i>
+
+                        <span class="kx-notification-badge">
+                            2
+                        </span>
+
+                    </button>
+
+
+                    <!-- USER -->
+
+                    <div class="kx-user-area"
+                         id="userButton">
+
+
+                        <div class="kx-user-avatar">
+                            @inicial
+                        </div>
+
+
+                        <div class="kx-user-information">
+
+                            <strong>
+                                @empleado
+                            </strong>
+
+                            <span>
+                                @cargo
+                            </span>
+
+                        </div>
+
+
+                        <i class="fa-solid fa-chevron-down"></i>
+
+
+                        <div class="kx-user-dropdown"
+                             id="userDropdown">
+
+
+                            <div class="kx-user-dropdown-header">
+
+                                <strong>
+                                    @empleado
+                                </strong>
+
+                                <span>
+                                    @nombreUsuario
+                                </span>
+
+                            </div>
+
+                            <!-- PERFIL -->
+
+                            <a href="/Perfil/Index">
+
+                                <i class="fa-regular fa-user"></i>
+
+                                Ver perfil
+
+                            </a>
+
+
+                            <!-- CONFIGURACIÓN -->
+
+                            <a href="/Configuracion/General">
+
+                                <i class="fa-solid fa-gear"></i>
+
+                                Configuración
+
+                            </a>
+
+
+                            <!-- CERRAR SESIÓN -->
+
+                            <a href="/Account/Logout"
+                               class="logout">
+
+                                <i class="fa-solid fa-right-from-bracket"></i>
+
+                                Cerrar sesión
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- =====================================================
+             CONTENT
+             ===================================================== -->
+
+            <main class="kx-content">
+
+
+                @if (!string.IsNullOrWhiteSpace(Model.ErrorMensaje))
+                {
+                    <div class="kx-error">
+
+                        <i class="fa-solid fa-circle-exclamation"></i>
+
+                        @Model.ErrorMensaje
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                 TITLE
+                 ================================================= -->
+
+                <section class="kx-heading">
+
+
+                    <div class="kx-heading-icon">
+
+                        <i class="fa-regular fa-clipboard"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h1>
+                            Cotizaciones
+                        </h1>
+
+                        <p>
+                            Gestiona y da seguimiento a todas tus cotizaciones.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+
+                <!-- =================================================
+                 KPI
+                 ================================================= -->
+
+                <section class="kx-kpi-grid">
+
+
+                    <!-- KPI 1 -->
+
+                    <article class="kx-kpi blue">
+
+
+                        <div class="kx-kpi-icon">
+
+                            <i class="fa-regular fa-clipboard"></i>
+
+                        </div>
+
+
+                        <div class="kx-kpi-data">
+
+                            <span>
+                                Cotizaciones del Mes
+                            </span>
+
+                            <strong>
+                                @Model.Resumen.TotalCotizaciones
+                            </strong>
+
+                            <small>
+
+                                <b>
+
+                                    <i class="fa-solid fa-chart-line"></i>
+
+                                    Periodo seleccionado
+
+                                </b>
+
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-mini-chart blue-bars">
+
+                            <span style="height:24%"></span>
+                            <span style="height:32%"></span>
+                            <span style="height:48%"></span>
+                            <span style="height:38%"></span>
+                            <span style="height:54%"></span>
+                            <span style="height:33%"></span>
+                            <span style="height:64%"></span>
+                            <span style="height:45%"></span>
+                            <span style="height:71%"></span>
+                            <span style="height:80%"></span>
+                            <span style="height:90%"></span>
+                            <span style="height:100%"></span>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- KPI 2 -->
+
+                    <article class="kx-kpi gold">
+
+
+                        <div class="kx-kpi-icon">
+
+                            <i class="fa-regular fa-hourglass-half"></i>
+
+                        </div>
+
+
+                        <div class="kx-kpi-data">
+
+                            <span>
+                                Pendientes
+                            </span>
+
+                            <strong>
+                                @Model.Resumen.Pendientes
+                            </strong>
+
+                            <small>
+
+                                <b>
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    En seguimiento
+
+                                </b>
+
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-mini-chart gold-bars">
+
+                            <span style="height:21%"></span>
+                            <span style="height:30%"></span>
+                            <span style="height:39%"></span>
+                            <span style="height:46%"></span>
+                            <span style="height:37%"></span>
+                            <span style="height:56%"></span>
+                            <span style="height:43%"></span>
+                            <span style="height:65%"></span>
+                            <span style="height:53%"></span>
+                            <span style="height:72%"></span>
+                            <span style="height:84%"></span>
+                            <span style="height:98%"></span>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- KPI 3 -->
+
+                    <article class="kx-kpi blue">
+
+
+                        <div class="kx-kpi-icon">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                        </div>
+
+
+                        <div class="kx-kpi-data">
+
+                            <span>
+                                Aprobadas
+                            </span>
+
+                            <strong>
+                                @Model.Resumen.Aprobadas
+                            </strong>
+
+                            <small>
+
+                                <b>
+
+                                    <i class="fa-solid fa-check"></i>
+
+                                    Confirmadas
+
+                                </b>
+
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-mini-chart blue-bars">
+
+                            <span style="height:18%"></span>
+                            <span style="height:36%"></span>
+                            <span style="height:42%"></span>
+                            <span style="height:34%"></span>
+                            <span style="height:51%"></span>
+                            <span style="height:31%"></span>
+                            <span style="height:59%"></span>
+                            <span style="height:44%"></span>
+                            <span style="height:66%"></span>
+                            <span style="height:76%"></span>
+                            <span style="height:86%"></span>
+                            <span style="height:96%"></span>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- KPI 4 -->
+
+                    <article class="kx-kpi gold">
+
+
+                        <div class="kx-kpi-icon">
+
+                            <i class="fa-solid fa-cart-shopping"></i>
+
+                        </div>
+
+
+                        <div class="kx-kpi-data">
+
+                            <span>
+                                Convertidas en Venta
+                            </span>
+
+                            <strong>
+                                @Model.Resumen.Convertidas
+                            </strong>
+
+                            <small>
+
+                                <b>
+
+                                    <i class="fa-solid fa-arrow-trend-up"></i>
+
+                                    Ventas generadas
+
+                                </b>
+
+                            </small>
+
+                        </div>
+
+
+                        <div class="kx-mini-chart gold-bars">
+
+                            <span style="height:16%"></span>
+                            <span style="height:26%"></span>
+                            <span style="height:39%"></span>
+                            <span style="height:31%"></span>
+                            <span style="height:48%"></span>
+                            <span style="height:27%"></span>
+                            <span style="height:57%"></span>
+                            <span style="height:43%"></span>
+                            <span style="height:67%"></span>
+                            <span style="height:76%"></span>
+                            <span style="height:88%"></span>
+                            <span style="height:99%"></span>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+
+                <!-- =================================================
+                 FILTER
+                 ================================================= -->
+
+                <form method="get"
+                      class="kx-filter-panel">
+
+
+                    <div class="kx-filter-heading">
+
+                        <i class="fa-solid fa-filter"></i>
+
+                        <strong>
+                            Filtros
+                        </strong>
+
+                    </div>
+
+
+                    <!-- FECHAS -->
+
+                    <div class="kx-filter-control date-filter">
+
+                        <label>
+                            Rango de fechas
+                        </label>
+
+
+                        <div class="kx-date-pair">
+
+                            <input type="date"
+                                   name="FechaDesde"
+                                   value="@Model.FechaDesde?.ToString("yyyy-MM-dd")" />
+
+                            <span>
+                                -
+                            </span>
+
+                            <input type="date"
+                                   name="FechaHasta"
+                                   value="@Model.FechaHasta?.ToString("yyyy-MM-dd")" />
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CLIENTE -->
+
+                    <div class="kx-filter-control">
+
+                        <label>
+                            Cliente
+                        </label>
+
+                        <select name="IdCliente">
+
+                            <option value="">
+                                Todos los clientes
+                            </option>
+
+                            @foreach (var cliente in clientes)
+                            {
+                                if (Model.IdCliente == cliente.IdCliente)
+                                {
+                                    <option value="@cliente.IdCliente"
+                                            selected>
+
+                                        @cliente.Cliente
+
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@cliente.IdCliente">
+
+                                        @cliente.Cliente
+
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ESTADO -->
+
+                    <div class="kx-filter-control">
+
+                        <label>
+                            Estado
+                        </label>
+
+                        <select name="Estado">
+
+                            <option value="">
+                                Todos los estados
+                            </option>
+
+
+                            @{
+                                string[] estadosDisponibles =
+                                {
+                                "Pendiente",
+                                "Aprobada",
+                                "Convertida",
+                                "Rechazada"
+                            };
+                            }
+
+
+                            @foreach (var estado in estadosDisponibles)
+                            {
+                                if (
+                                    string.Equals(
+                                        Model.Estado,
+                                        estado,
+                                        StringComparison.OrdinalIgnoreCase
+                                    )
+                                )
+                                {
+                                    <option value="@estado"
+                                            selected>
+                                        @estado
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@estado">
+                                        @estado
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- LIMPIAR -->
+
+                    <a href="/Cotizacion/Index"
+                       class="kx-clear-button">
+
+                        Limpiar
+
+                    </a>
+
+
+                    <!-- BUSCAR -->
+
+                    <button type="submit"
+                            class="kx-search-button">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        Buscar
+
+                    </button>
+
+
+                    <!-- NUEVA -->
+
+                    <a href="/Cotizacion/Nueva"
+                       class="kx-new-button">
+
+                        <i class="fa-solid fa-plus"></i>
+
+                        Nueva Cotización
+
+                    </a>
+
+                </form>
+
+
+
+                <!-- =================================================
+                 MAIN DASHBOARD ROW
+                 ================================================= -->
+
+                <section class="kx-dashboard-row">
+
+
+                    <!-- =================================================
+                     TABLE
+                     ================================================= -->
+
+                    <article class="kx-panel kx-quotes">
+
+
+                        <div class="kx-panel-heading">
+
+                            <h2>
+                                Lista de Cotizaciones
+                            </h2>
+
+                            <span class="kx-count">
+
+                                @Model.Cotizaciones.Count registros
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-table-scroll">
+
+
+                            <table class="kx-table"
+                                   id="cotizacionTable">
+
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            N° Cotización
+                                        </th>
+
+                                        <th>
+                                            Fecha
+                                        </th>
+
+                                        <th>
+                                            Cliente
+                                        </th>
+
+                                        <th>
+                                            Validez
+                                        </th>
+
+                                        <th>
+                                            Total
+                                        </th>
+
+                                        <th>
+                                            Estado
+                                        </th>
+
+                                        <th>
+                                            Acciones
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody id="cotizacionTableBody">
+
+
+                                    @if (Model.Cotizaciones.Count == 0)
+                                    {
+                                        <tr>
+
+                                            <td colspan="7"
+                                                class="kx-empty">
+
+                                                <i class="fa-regular fa-folder-open"></i>
+
+                                                No se encontraron cotizaciones.
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var item in Model.Cotizaciones)
+                                        {
+                                            var estadoClase =
+                                                item.Estado
+                                                    .Trim()
+                                                    .ToLowerInvariant()
+                                                    .Replace(" ", "-");
+
+
+                                            <tr class="kx-page-row"
+                                                data-search="
+                                                @item.NumeroCotizacion
+                                                @item.Cliente
+                                                @item.NumeroDocumento
+                                                @item.Estado
+                                                ">
+
+
+                                                <!-- NUMERO -->
+
+                                                <td class="kx-number">
+
+                                                    @item.NumeroCotizacion
+
+                                                </td>
+
+
+                                                <!-- FECHA -->
+
+                                                <td>
+
+                                                    @item.FechaEmision.ToString(
+                                                        "dd/MM/yyyy HH:mm"
+                                                    )
+
+                                                </td>
+
+
+                                                <!-- CLIENTE -->
+
+                                                <td class="kx-client-name">
+
+                                                    @item.Cliente
+
+                                                </td>
+
+
+                                                <!-- VENCIMIENTO -->
+
+                                                <td>
+
+                                                    @if (
+                                                        item.FechaVencimiento.HasValue
+                                                    )
+                                                    {
+                                                        @item.FechaVencimiento.Value.ToString(
+                                                            "dd/MM/yyyy"
+                                                        )
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="kx-muted">
+
+                                                            Sin fecha
+
+                                                        </span>
+                                                    }
+
+                                                </td>
+
+
+                                                <!-- TOTAL -->
+
+                                                <td class="kx-money">
+
+                                                    S/ @item.Total.ToString("N2")
+
+                                                </td>
+
+
+                                                <!-- ESTADO -->
+
+                                                <td>
+
+                                                    <span class="kx-status @estadoClase">
+
+                                                        @item.Estado
+
+                                                    </span>
+
+                                                </td>
+
+
+                                                <!-- ACTIONS -->
+
+                                                <td>
+
+                                                    <div class="kx-actions">
+
+
+                                                        <a href="/Cotizacion/Detalle?id=@item.IdCotizacion"
+                                                           class="kx-action"
+                                                           title="Ver detalle">
+
+                                                            <i class="fa-regular fa-eye"></i>
+
+                                                        </a>
+
+
+                                                        <button type="button"
+                                                                class="kx-action kx-more-button"
+                                                                title="Más opciones">
+
+                                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+
+                                                        </button>
+
+
+                                                        <div class="kx-row-menu">
+
+
+                                                            <a href="/Cotizacion/Detalle?id=@item.IdCotizacion">
+
+                                                                <i class="fa-regular fa-eye"></i>
+
+                                                                Ver detalle
+
+                                                            </a>
+
+
+                                                            <a href="/Cotizacion/Editar?id=@item.IdCotizacion">
+
+                                                                <i class="fa-regular fa-pen-to-square"></i>
+
+                                                                Editar
+
+                                                            </a>
+
+
+                                                            <a href="/Cotizacion/Detalle?id=@item.IdCotizacion&accion=convertir">
+
+                                                                <i class="fa-solid fa-cart-shopping"></i>
+
+                                                                Convertir en venta
+
+                                                            </a>
+
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <!-- PAGINATION -->
+
+                        <div class="kx-table-footer">
+
+
+                            <span id="paginationInfo">
+
+                                0 resultados
+
+                            </span>
+
+
+                            <div class="kx-pagination"
+                                 id="pagination">
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================================
+                     CHART 3D
+                     ================================================= -->
+
+                    <article class="kx-panel kx-state-chart">
+
+
+                        <div class="kx-panel-heading">
+
+                            <h2>
+                                Cotizaciones por Estado
+                            </h2>
+
+                        </div>
+
+
+                        <div class="kx-chart-container">
+
+
+                            <div class="kx-donut kx-donut-3d">
+
+
+                                @if (Model.Estados.Count > 0)
+                                {
+                                    <canvas id="estadoChart"></canvas>
+                                }
+                                else
+                                {
+                                    <div class="kx-chart-empty">
+
+                                        Sin información para graficar.
+
+                                    </div>
+                                }
+
+
+                                @if (Model.Estados.Count > 0)
+                                {
+                                    <div class="kx-donut-center">
+
+                                        <strong>
+
+                                            @Model.Resumen.TotalCotizaciones
+
+                                        </strong>
+
+                                        <span>
+                                            Total
+                                        </span>
+
+                                    </div>
+                                }
+
+                            </div>
+
+
+                            <!-- LEGEND -->
+
+                            <div class="kx-chart-legend">
+
+
+                                @foreach (var estado in Model.Estados)
+                                {
+                                    decimal porcentaje =
+                                        Model.Resumen.TotalCotizaciones == 0
+                                            ? 0
+                                            : (
+                                                (decimal)estado.Cantidad /
+                                                Model.Resumen.TotalCotizaciones
+                                              ) * 100;
+
+
+                                    <div class="kx-legend-row">
+
+                                        <span class="kx-legend-name">
+
+                                            <i class="kx-legend-dot"></i>
+
+                                            @estado.Estado
+
+                                        </span>
+
+
+                                        <strong>
+
+                                            @porcentaje.ToString("N1")%
+
+                                        </strong>
+
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================================
+                     ACTIVITY
+                     ================================================= -->
+
+                    <article class="kx-panel kx-activity"
+                             id="activityPanel">
+
+
+                        <div class="kx-panel-heading">
+
+                            <h2>
+                                Actividad Reciente
+                            </h2>
+
+
+                            <button type="button"
+                                    class="kx-view-all"
+                                    data-expand-target="activityList">
+
+                                Ver todas
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="kx-activity-list"
+                             id="activityList">
+
+
+                            @if (Model.ActividadReciente.Count == 0)
+                            {
+                                <div class="kx-empty-box">
+
+                                    No existe actividad reciente.
+
+                                </div>
+                            }
+                            else
+                            {
+                                var actividadPosicion = 0;
+
+
+                                @foreach (
+                                    var item in
+                                    Model.ActividadReciente
+                                )
+                                {
+                                    actividadPosicion++;
+
+
+                                    var actividadClase =
+                                        item.Estado
+                                            .Trim()
+                                            .ToLowerInvariant()
+                                            .Replace(" ", "-");
+
+
+                                    <div class="kx-activity-item @(actividadPosicion > 5 ? "kx-extra-activity" : "")"
+                                         style="@(actividadPosicion > 5 ? "display:none;" : "")">
+
+
+                                        <div class="kx-activity-icon @actividadClase">
+
+                                            <i class="fa-regular fa-file-lines"></i>
+
+                                        </div>
+
+
+                                        <div class="kx-activity-content">
+
+                                            <strong>
+
+                                                Cotización @item.Estado.ToLower()
+
+                                            </strong>
+
+
+                                            <span>
+
+                                                @item.NumeroCotizacion
+                                                -
+                                                @item.Cliente
+
+                                            </span>
+
+                                        </div>
+
+
+                                        <time>
+
+                                            @item.FechaEmision.ToString(
+                                                "dd/MM HH:mm"
+                                            )
+
+                                        </time>
+
+                                    </div>
+                                }
+                            }
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+
+                <!-- =================================================
+                 BOTTOM
+                 ================================================= -->
+
+                <section class="kx-bottom-grid">
+
+
+                    <!-- =================================================
+                     TOP PRODUCTS
+                     ================================================= -->
+
+                    <article class="kx-panel"
+                             id="productsPanel">
+
+
+                        <div class="kx-panel-heading">
+
+                            <h2>
+                                Top Productos Más Cotizados
+                            </h2>
+
+
+                            <button type="button"
+                                    class="kx-view-all"
+                                    id="viewAllProducts">
+
+                                Ver todos
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="kx-products-list">
+
+
+                            @if (Model.TopProductos.Count == 0)
+                            {
+                                <div class="kx-empty-box">
+
+                                    No existen productos cotizados.
+
+                                </div>
+                            }
+                            else
+                            {
+                                int posicion = 0;
+
+
+                                @foreach (
+                                    var producto in
+                                    Model.TopProductos
+                                )
+                                {
+                                    posicion++;
+
+
+                                    var porcentaje =
+                                        (
+                                            producto.TotalCotizado /
+                                            maxProducto
+                                        ) * 100;
+
+
+                                    <div class="kx-product-row kx-product-item"
+                                         style="@(posicion > 5 ? "display:none;" : "")">
+
+
+                                        <div class="kx-product-position">
+
+                                            @posicion
+
+                                        </div>
+
+
+                                        <div class="kx-product-icon">
+
+                                            <i class="fa-solid fa-box"></i>
+
+                                        </div>
+
+
+                                        <div class="kx-product-name">
+
+                                            <strong>
+
+                                                @producto.Nombre
+
+                                            </strong>
+
+                                            <small>
+
+                                                @producto.Codigo
+
+                                            </small>
+
+                                        </div>
+
+
+                                        <div class="kx-product-progress">
+
+                                            <span style="
+                                                width:
+                                                @porcentaje.ToString(
+                                                    "0.##",
+                                                    CultureInfo.InvariantCulture
+                                                )%;
+                                                ">
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="kx-product-number">
+
+                                            <strong>
+
+                                                @producto.TotalCotizado.ToString(
+                                                    "N0"
+                                                )
+
+                                            </strong>
+
+                                            <span>
+                                                unidades
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================================
+                     IA
+                     ================================================= -->
+
+                    <article class="kx-panel kx-ai-panel">
+
+
+                        <div class="kx-ai-visual">
+
+                            <div class="kx-ai-orb">
+
+                                <span>
+                                    AI
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-ai-panel-content">
+
+
+                            <span class="kx-ai-eyebrow">
+
+                                INTELIGENCIA COMERCIAL
+
+                            </span>
+
+
+                            <h2>
+
+                                Sugerencia de KerniX IA
+
+                            </h2>
+
+
+                            <strong>
+
+                                Clientes con mayor posibilidad de conversión
+
+                            </strong>
+
+
+                            <p>
+
+                                KerniX analiza el comportamiento histórico de
+                                cotizaciones, aprobaciones y conversiones para
+                                ayudarte a priorizar oportunidades comerciales.
+
+                            </p>
+
+
+                            <a href="/IA/Index?origen=cotizaciones"
+                               class="kx-ai-analysis">
+
+                                Ver análisis completo
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- =================================================
+                     TOP CLIENTS
+                     ================================================= -->
+
+                    <article class="kx-panel"
+                             id="clientsPanel">
+
+
+                        <div class="kx-panel-heading">
+
+                            <h2>
+                                Top Clientes con Mayor Probabilidad de Cierre
+                            </h2>
+
+
+                            <button type="button"
+                                    class="kx-view-all"
+                                    id="viewAllClients">
+
+                                Ver todos
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="kx-clients-head">
+
+                            <span>
+                                Cliente
+                            </span>
+
+                            <span>
+                                Cotizaciones
+                            </span>
+
+                            <span>
+                                Conversión
+                            </span>
+
+                            <span>
+                                Monto
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-clients-list">
+
+
+                            @if (Model.TopClientes.Count == 0)
+                            {
+                                <div class="kx-empty-box">
+
+                                    No existen datos de clientes.
+
+                                </div>
+                            }
+                            else
+                            {
+                                int clientePosicion = 0;
+
+
+                                @foreach (
+                                    var cliente in
+                                    Model.TopClientes
+                                )
+                                {
+                                    clientePosicion++;
+
+
+                                    var conversion =
+                                        Math.Max(
+                                            0,
+                                            Math.Min(
+                                                100,
+                                                cliente.PorcentajeConversion
+                                            )
+                                        );
+
+
+                                    <div class="kx-client-row kx-client-item"
+                                         style="@(clientePosicion > 5 ? "display:none;" : "")">
+
+
+                                        <strong>
+
+                                            @cliente.Cliente
+
+                                        </strong>
+
+
+                                        <span>
+
+                                            @cliente.CantidadCotizaciones
+
+                                        </span>
+
+
+                                        <div class="kx-probability">
+
+
+                                            <span>
+
+                                                @conversion.ToString("N0")%
+
+                                            </span>
+
+
+                                            <div class="kx-probability-bar">
+
+                                                <i style="
+                                                    width:
+                                                    @conversion.ToString(
+                                                       "0.##",
+                                                       CultureInfo.InvariantCulture
+                                                   )%;
+                                                    ">
+                                                </i>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <strong class="kx-client-money">
+
+                                            S/ @cliente.ImporteCotizado.ToString(
+                                                                                        "N2"
+                                                                                    )
+
+                                        </strong>
+
+                                    </div>
+                                }
+                            }
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =============================================================
+     MOBILE OVERLAY
+     ============================================================= -->
+
+    <div class="kx-sidebar-overlay"
+         id="sidebarOverlay">
+    </div>
+
+
+
+    <!-- =============================================================
+     NOTIFICATIONS
+     ============================================================= -->
+
+    <div class="kx-top-panel"
+         id="notificationPanel">
+
+
+        <div class="kx-top-panel-header">
+
+            <strong>
+                Notificaciones
+            </strong>
+
+            <span>
+                5 nuevas
+            </span>
+
+        </div>
+
+
+        <div class="kx-top-panel-item">
+
+            <div class="kx-top-panel-icon">
+
+                <i class="fa-solid fa-check"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Cotización aprobada
+                </strong>
+
+                <span>
+                    Revisa las cotizaciones aprobadas recientemente.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="kx-top-panel-item">
+
+            <div class="kx-top-panel-icon">
+
+                <i class="fa-solid fa-clock"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Cotización próxima a vencer
+                </strong>
+
+                <span>
+                    Tienes cotizaciones que necesitan seguimiento.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="kx-top-panel-item">
+
+            <div class="kx-top-panel-icon">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Actividad comercial
+                </strong>
+
+                <span>
+                    KerniX detectó nuevos movimientos comerciales.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =============================================================
+     MESSAGES
+     ============================================================= -->
+
+    <div class="kx-top-panel"
+         id="messagePanel">
+
+
+        <div class="kx-top-panel-header">
+
+            <strong>
+                Mensajes
+            </strong>
+
+            <span>
+                2 nuevos
+            </span>
+
+        </div>
+
+
+        <div class="kx-top-panel-item">
+
+            <div class="kx-top-panel-icon">
+
+                <i class="fa-regular fa-envelope"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Seguimiento comercial
+                </strong>
+
+                <span>
+                    Revisa las cotizaciones pendientes.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="kx-top-panel-item">
+
+            <div class="kx-top-panel-icon">
+
+                <i class="fa-solid fa-user"></i>
+
+            </div>
+
+            <div>
+
+                <strong>
+                    Atención al cliente
+                </strong>
+
+                <span>
+                    Hay nuevas interacciones por revisar.
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =============================================================
+     DATA FOR JAVASCRIPT
+     ============================================================= -->
+
+    <script>
+
+            window.kernixCotizacionChart = {
+
+                labels:
+                        @Html.Raw(labelsJson),
+
+                valores:
+                        @Html.Raw(valoresJson)
+
+                };
+
+
+            window.kernixCotizaciones = [
+
+                    @foreach (var item in Model.Cotizaciones)
+                {
+                    <text>
+                            {
+                                id:
+                                        @item.IdCotizacion,
+
+                            numero:
+                            @Html.Raw(
+                            JsonSerializer.Serialize(
+                            item.NumeroCotizacion
+                            )
+                            ),
+
+                            cliente:
+                            @Html.Raw(
+                            JsonSerializer.Serialize(
+                            item.Cliente
+                            )
+                            ),
+
+                            documento:
+                            @Html.Raw(
+                            JsonSerializer.Serialize(
+                            item.NumeroDocumento
+                            )
+                            ),
+
+                            estado:
+                            @Html.Raw(
+                            JsonSerializer.Serialize(
+                            item.Estado
+                            )
+                            ),
+
+                            total:
+                            @item.Total.ToString(
+                            CultureInfo.InvariantCulture
+                            )
+                                },
+                    </text>
+                    }
+
+                ];
+
+    </script>
+
+
+
+    <!-- =============================================================
+     CHART JS
+     ============================================================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js">
+    </script>
+
+
+
+    <script>
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                function () {
+
+                    iniciarSidebar();
+
+                    iniciarMenuUsuario();
+
+                    iniciarSelectorFecha();
+
+                    iniciarPanelesSuperiores();
+
+                    iniciarBuscadorGlobal();
+
+                    iniciarMenusFila();
+
+                    iniciarPaginacion();
+
+                    iniciarVerTodos();
+
+                    iniciarGrafico3D();
+
+                }
+            );
+
+
+
+            /* ============================================================
+               SIDEBAR
+               ============================================================ */
+
+            function iniciarSidebar() {
+
+                const mobileButton =
+                    document.getElementById(
+                        "mobileMenuButton"
+                    );
+
+                const sidebar =
+                    document.getElementById(
+                        "sidebar"
+                    );
+
+                const overlay =
+                    document.getElementById(
+                        "sidebarOverlay"
+                    );
+
+
+                if (
+                    !mobileButton ||
+                    !sidebar ||
+                    !overlay
+                ) {
+                    return;
+                }
+
+
+                mobileButton.addEventListener(
+                    "click",
+                    function () {
+
+                        sidebar.classList.add(
+                            "show"
+                        );
+
+                        overlay.classList.add(
+                            "show"
+                        );
+
+                    }
+                );
+
+
+                overlay.addEventListener(
+                    "click",
+                    function () {
+
+                        sidebar.classList.remove(
+                            "show"
+                        );
+
+                        overlay.classList.remove(
+                            "show"
+                        );
+
+                    }
+                );
+
+            }
+
+
+
+            /* ============================================================
+               USER MENU
+               ============================================================ */
+
+            function iniciarMenuUsuario() {
+
+                const button =
+                    document.getElementById(
+                        "userButton"
+                    );
+
+                const dropdown =
+                    document.getElementById(
+                        "userDropdown"
+                    );
+
+
+                if (
+                    !button ||
+                    !dropdown
+                ) {
+                    return;
+                }
+
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                        dropdown.classList.toggle(
+                            "show"
+                        );
+
+                    }
+                );
+
+
+                dropdown.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+                document.addEventListener(
+                    "click",
+                    function () {
+
+                        dropdown.classList.remove(
+                            "show"
+                        );
+
+                    }
+                );
+
+            }
+
+
+
+            /* ============================================================
+               DATE SELECTOR
+               ============================================================ */
+
+            function iniciarSelectorFecha() {
+
+                const button =
+                    document.getElementById(
+                        "rangeButton"
+                    );
+
+                const popup =
+                    document.getElementById(
+                        "rangePopup"
+                    );
+
+
+                if (
+                    !button ||
+                    !popup
+                ) {
+                    return;
+                }
+
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                        popup.classList.toggle(
+                            "show"
+                        );
+
+                    }
+                );
+
+
+                popup.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+                document.addEventListener(
+                    "click",
+                    function () {
+
+                        popup.classList.remove(
+                            "show"
+                        );
+
+                    }
+                );
+
+            }
+
+
+
+            /* ============================================================
+               NOTIFICATIONS / MESSAGES
+               ============================================================ */
+
+            function iniciarPanelesSuperiores() {
+
+                const notificationButton =
+                    document.getElementById(
+                        "notificationButton"
+                    );
+
+                const notificationPanel =
+                    document.getElementById(
+                        "notificationPanel"
+                    );
+
+                const messageButton =
+                    document.getElementById(
+                        "messageButton"
+                    );
+
+                const messagePanel =
+                    document.getElementById(
+                        "messagePanel"
+                    );
+
+
+                if (
+                    notificationButton &&
+                    notificationPanel
+                ) {
+
+                    notificationButton.addEventListener(
+                        "click",
+                        function (event) {
+
+                            event.stopPropagation();
+
+                            messagePanel?.classList.remove(
+                                "show"
+                            );
+
+                            notificationPanel.classList.toggle(
+                                "show"
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                if (
+                    messageButton &&
+                    messagePanel
+                ) {
+
+                    messageButton.addEventListener(
+                        "click",
+                        function (event) {
+
+                            event.stopPropagation();
+
+                            notificationPanel?.classList.remove(
+                                "show"
+                            );
+
+                            messagePanel.classList.toggle(
+                                "show"
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                notificationPanel?.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+                messagePanel?.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+                document.addEventListener(
+                    "click",
+                    function () {
+
+                        notificationPanel?.classList.remove(
+                            "show"
+                        );
+
+                        messagePanel?.classList.remove(
+                            "show"
+                        );
+
+                    }
+                );
+
+            }
+
+
+
+            /* ============================================================
+               GLOBAL SEARCH
+               ============================================================ */
+
+            function iniciarBuscadorGlobal() {
+
+                const input =
+                    document.getElementById(
+                        "globalSearch"
+                    );
+
+                const results =
+                    document.getElementById(
+                        "globalResults"
+                    );
+
+
+                if (
+                    !input ||
+                    !results
+                ) {
+                    return;
+                }
+
+
+                document.addEventListener(
+                    "keydown",
+                    function (event) {
+
+                        if (
+                            event.ctrlKey &&
+                            event.key.toLowerCase() === "k"
+                        ) {
+
+                            event.preventDefault();
+
+                            input.focus();
+
+                            input.select();
+
+                        }
+
+                    }
+                );
+
+
+                input.addEventListener(
+                    "input",
+                    function () {
+
+                        const query =
+                            normalizarTexto(
+                                input.value.trim()
+                            );
+
+
+                        if (query.length === 0) {
+
+                            results.classList.remove(
+                                "show"
+                            );
+
+                            results.innerHTML =
+                                `
+                                        <div class="kx-global-empty">
+                                            Escribe para buscar.
+                                        </div>
+                                    `;
+
+                            return;
+
+                        }
+
+
+                        const encontrados =
+                            window.kernixCotizaciones
+                                .filter(
+                                    function (item) {
+
+                                        const contenido =
+                                            normalizarTexto(
+                                                item.numero +
+                                                " " +
+                                                item.cliente +
+                                                " " +
+                                                item.documento +
+                                                " " +
+                                                item.estado
+                                            );
+
+
+                                        return contenido.includes(
+                                            query
+                                        );
+
+                                    }
+                                )
+                                .slice(
+                                    0,
+                                    8
+                                );
+
+
+                        if (
+                            encontrados.length === 0
+                        ) {
+
+                            results.innerHTML =
+                                `
+                                        <div class="kx-global-empty">
+                                            No se encontraron resultados.
+                                        </div>
+                                    `;
+
+                        }
+                        else {
+
+                            results.innerHTML =
+                                encontrados
+                                    .map(
+                                        function (item) {
+
+                                            return `
+                                                    <a
+                                                        href="/Cotizacion/Detalle?id=${item.id}"
+                                                        class="kx-global-result">
+
+                                                        <div class="kx-global-result-icon">
+
+                                                            <i class="fa-regular fa-file-lines"></i>
+
+                                                        </div>
+
+                                                        <div class="kx-global-result-data">
+
+                                                            <strong>
+                                                                ${escaparHtml(item.numero)}
+                                                                -
+                                                                ${escaparHtml(item.cliente)}
+                                                            </strong>
+
+                                                            <span>
+                                                                ${escaparHtml(item.estado)}
+                                                                ·
+                                                                S/ ${Number(item.total).toFixed(2)}
+                                                            </span>
+
+                                                        </div>
+
+                                                    </a>
+                                                `;
+
+                                        }
+                                    )
+                                    .join("");
+
+                        }
+
+
+                        results.classList.add(
+                            "show"
+                        );
+
+                    }
+                );
+
+
+                input.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+                results.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.stopPropagation();
+
+                    }
+                );
+
+
+                document.addEventListener(
+                    "click",
+                    function () {
+
+                        results.classList.remove(
+                            "show"
+                        );
+
+                    }
+                );
+
+            }
+
+
+
+            /* ============================================================
+               TABLE MENUS
+               ============================================================ */
+
+            function iniciarMenusFila() {
+
+                const botones =
+                    document.querySelectorAll(
+                        ".kx-more-button"
+                    );
+
+
+                botones.forEach(
+                    function (button) {
+
+                        button.addEventListener(
+                            "click",
+                            function (event) {
+
+                                event.stopPropagation();
+
+
+                                const menu =
+                                    button.parentElement
+                                        ?.querySelector(
+                                            ".kx-row-menu"
+                                        );
+
+
+                                document
+                                    .querySelectorAll(
+                                        ".kx-row-menu.show"
+                                    )
+                                    .forEach(
+                                        function (actual) {
+
+                                            if (
+                                                actual !== menu
+                                            ) {
+
+                                                actual.classList.remove(
+                                                    "show"
+                                                );
+
+                                            }
+
+                                        }
+                                    );
+
+
+                                menu?.classList.toggle(
+                                    "show"
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+
+                document.addEventListener(
+                    "click",
+                    function () {
+
+                        document
+                            .querySelectorAll(
+                                ".kx-row-menu.show"
+                            )
+                            .forEach(
+                                function (menu) {
+
+                                    menu.classList.remove(
+                                        "show"
+                                    );
+
+                                }
+                            );
+
+                    }
+                );
+
+            }
+
+
+
+            /* ============================================================
+               PAGINATION
+               ============================================================ */
+
+            function iniciarPaginacion() {
+
+                const rows =
+                    Array.from(
+                        document.querySelectorAll(
+                            ".kx-page-row"
+                        )
+                    );
+
+
+                const container =
+                    document.getElementById(
+                        "pagination"
+                    );
+
+                const info =
+                    document.getElementById(
+                        "paginationInfo"
+                    );
+
+
+                if (
+                    rows.length === 0 ||
+                    !container ||
+                    !info
+                ) {
+
+                    if (info) {
+
+                        info.textContent =
+                            "0 resultados";
+
+                    }
+
+                    return;
+
+                }
+
+
+                const pageSize =
+                    8;
+
+                let currentPage =
+                    1;
+
+
+                const totalPages =
+                    Math.ceil(
+                        rows.length /
+                        pageSize
+                    );
+
+
+                function render() {
+
+                    const start =
+                        (
+                            currentPage - 1
+                        ) * pageSize;
+
+                    const end =
+                        start +
+                        pageSize;
+
+
+                    rows.forEach(
+                        function (
+                            row,
+                            index
+                        ) {
+
+                            row.classList.toggle(
+                                "page-hidden",
+                                !(
+                                    index >= start &&
+                                    index < end
+                                )
+                            );
+
+                        }
+                    );
+
+
+                    const visibleEnd =
+                        Math.min(
+                            end,
+                            rows.length
+                        );
+
+
+                    info.textContent =
+                        `Mostrando ${start + 1} a ${visibleEnd} de ${rows.length} resultados`;
+
+
+                    renderButtons();
+
+                }
+
+
+                function renderButtons() {
+
+                    container.innerHTML =
+                        "";
+
+
+                    const previous =
+                        document.createElement(
+                            "button"
+                        );
+
+                    previous.type =
+                        "button";
+
+                    previous.innerHTML =
+                        '<i class="fa-solid fa-chevron-left"></i>';
+
+                    previous.disabled =
+                        currentPage === 1;
+
+                    previous.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                currentPage > 1
+                            ) {
+
+                                currentPage--;
+
+                                render();
+
+                            }
+
+                        }
+                    );
+
+                    container.appendChild(
+                        previous
+                    );
+
+
+                    for (
+                        let page = 1;
+                        page <= totalPages;
+                        page++
+                    ) {
+
+                        const button =
+                            document.createElement(
+                                "button"
+                            );
+
+                        button.type =
+                            "button";
+
+                        button.textContent =
+                            page;
+
+
+                        if (
+                            page === currentPage
+                        ) {
+
+                            button.classList.add(
+                                "active"
+                            );
+
+                        }
+
+
+                        button.addEventListener(
+                            "click",
+                            function () {
+
+                                currentPage =
+                                    page;
+
+                                render();
+
+                            }
+                        );
+
+
+                        container.appendChild(
+                            button
+                        );
+
+                    }
+
+
+                    const next =
+                        document.createElement(
+                            "button"
+                        );
+
+                    next.type =
+                        "button";
+
+                    next.innerHTML =
+                        '<i class="fa-solid fa-chevron-right"></i>';
+
+                    next.disabled =
+                        currentPage === totalPages;
+
+                    next.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                currentPage <
+                                totalPages
+                            ) {
+
+                                currentPage++;
+
+                                render();
+
+                            }
+
+                        }
+                    );
+
+
+                    container.appendChild(
+                        next
+                    );
+
+                }
+
+
+                render();
+
+            }
+
+
+
+            /* ============================================================
+               VIEW ALL
+               ============================================================ */
+
+            function iniciarVerTodos() {
+
+                const productsButton =
+                    document.getElementById(
+                        "viewAllProducts"
+                    );
+
+
+                if (productsButton) {
+
+                    let expanded =
+                        false;
+
+
+                    productsButton.addEventListener(
+                        "click",
+                        function () {
+
+                            expanded =
+                                !expanded;
+
+
+                            document
+                                .querySelectorAll(
+                                    ".kx-product-item"
+                                )
+                                .forEach(
+                                    function (
+                                        item,
+                                        index
+                                    ) {
+
+                                        item.style.display =
+                                            expanded ||
+                                                index < 5
+                                                ? ""
+                                                : "none";
+
+                                    }
+                                );
+
+
+                            productsButton.textContent =
+                                expanded
+                                    ? "Ver menos"
+                                    : "Ver todos";
+
+                        }
+                    );
+
+                }
+
+
+                const clientsButton =
+                    document.getElementById(
+                        "viewAllClients"
+                    );
+
+
+                if (clientsButton) {
+
+                    let expanded =
+                        false;
+
+
+                    clientsButton.addEventListener(
+                        "click",
+                        function () {
+
+                            expanded =
+                                !expanded;
+
+
+                            document
+                                .querySelectorAll(
+                                    ".kx-client-item"
+                                )
+                                .forEach(
+                                    function (
+                                        item,
+                                        index
+                                    ) {
+
+                                        item.style.display =
+                                            expanded ||
+                                                index < 5
+                                                ? ""
+                                                : "none";
+
+                                    }
+                                );
+
+
+                            clientsButton.textContent =
+                                expanded
+                                    ? "Ver menos"
+                                    : "Ver todos";
+
+                        }
+                    );
+
+                }
+
+
+                document
+                    .querySelectorAll(
+                        "[data-expand-target]"
+                    )
+                    .forEach(
+                        function (button) {
+
+                            let expanded =
+                                false;
+
+
+                            button.addEventListener(
+                                "click",
+                                function () {
+
+                                    expanded =
+                                        !expanded;
+
+
+                                    document
+                                        .querySelectorAll(
+                                            ".kx-extra-activity"
+                                        )
+                                        .forEach(
+                                            function (item) {
+
+                                                item.style.display =
+                                                    expanded
+                                                        ? ""
+                                                        : "none";
+
+                                            }
+                                        );
+
+
+                                    button.textContent =
+                                        expanded
+                                            ? "Ver menos"
+                                            : "Ver todas";
+
+                                }
+                            );
+
+                        }
+                    );
+
+            }
+
+
+
+            /* ============================================================
+               3D DONUT
+               ============================================================ */
+
+            function iniciarGrafico3D() {
+
+                const canvas =
+                    document.getElementById(
+                        "estadoChart"
+                    );
+
+
+                if (
+                    !canvas ||
+                    typeof Chart ===
+                    "undefined"
+                ) {
+                    return;
+                }
+
+
+                const source =
+                    window.kernixCotizacionChart;
+
+
+                if (!source) {
+                    return;
+                }
+
+
+                const labels =
+                    Array.isArray(
+                        source.labels
+                    )
+                        ? source.labels
+                        : [];
+
+
+                const valores =
+                    Array.isArray(
+                        source.valores
+                    )
+                        ? source.valores
+                        : [];
+
+
+                if (
+                    labels.length === 0 ||
+                    valores.length === 0
+                ) {
+                    return;
+                }
+
+
+                const colores =
+                    labels.map(
+                        obtenerColorEstado
+                    );
+
+
+                const profundidadColores =
+                    labels.map(
+                        obtenerColorProfundidad
+                    );
+
+
+                /*
+                 * EFECTO DE PROFUNDIDAD.
+                 *
+                 * Dibuja varias capas inferiores.
+                 */
+
+                const profundidadPlugin = {
+
+                    id:
+                        "kernixDepth",
+
+                    beforeDatasetDraw(
+                        chart
+                    ) {
+
+                        const meta =
+                            chart.getDatasetMeta(
+                                0
+                            );
+
+                        const ctx =
+                            chart.ctx;
+
+
+                        if (
+                            !meta ||
+                            !meta.data
+                        ) {
+                            return;
+                        }
+
+
+                        for (
+                            let depth = 13;
+                            depth >= 2;
+                            depth--
+                        ) {
+
+                            meta.data.forEach(
+                                function (
+                                    arc,
+                                    index
+                                ) {
+
+                                    const props =
+                                        arc.getProps(
+                                            [
+                                                "x",
+                                                "y",
+                                                "startAngle",
+                                                "endAngle",
+                                                "innerRadius",
+                                                "outerRadius"
+                                            ],
+                                            true
+                                        );
+
+
+                                    ctx.save();
+
+                                    ctx.beginPath();
+
+
+                                    ctx.arc(
+                                        props.x,
+                                        props.y +
+                                        depth,
+                                        props.outerRadius,
+                                        props.startAngle,
+                                        props.endAngle
+                                    );
+
+
+                                    ctx.arc(
+                                        props.x,
+                                        props.y +
+                                        depth,
+                                        props.innerRadius,
+                                        props.endAngle,
+                                        props.startAngle,
+                                        true
+                                    );
+
+
+                                    ctx.closePath();
+
+
+                                    ctx.fillStyle =
+                                        profundidadColores[
+                                        index
+                                        ];
+
+
+                                    ctx.fill();
+
+
+                                    ctx.restore();
+
+                                }
+                            );
+
+                        }
+
+                    }
+
+                };
+
+
+                const glowPlugin = {
+
+                    id:
+                        "kernixGlow",
+
+                    beforeDatasetDraw(
+                        chart
+                    ) {
+
+                        const ctx =
+                            chart.ctx;
+
+
+                        ctx.save();
+
+
+                        ctx.shadowColor =
+                            "rgba(0,0,0,.70)";
+
+
+                        ctx.shadowBlur =
+                            18;
+
+
+                        ctx.shadowOffsetX =
+                            4;
+
+
+                        ctx.shadowOffsetY =
+                            12;
+
+                    },
+
+
+                    afterDatasetDraw(
+                        chart
+                    ) {
+
+                        chart.ctx.restore();
+
+                    }
+
+                };
+
+
+                new Chart(
+                    canvas,
+                    {
+
+                        type:
+                            "doughnut",
+
+
+                        data: {
+
+                            labels:
+                                labels,
+
+
+                            datasets: [
+                                {
+
+                                    data:
+                                        valores,
+
+
+                                    backgroundColor:
+                                        colores,
+
+
+                                    borderColor:
+                                        colores.map(
+                                            function (
+                                                color
+                                            ) {
+
+                                                return aclararColor(
+                                                    color,
+                                                    35
+                                                );
+
+                                            }
+                                        ),
+
+
+                                    borderWidth:
+                                        2,
+
+
+                                    hoverOffset:
+                                        13,
+
+
+                                    hoverBorderWidth:
+                                        3,
+
+
+                                    spacing:
+                                        1
+
+                                }
+                            ]
+
+                        },
+
+
+                        plugins: [
+                            profundidadPlugin,
+                            glowPlugin
+                        ],
+
+
+                        options: {
+
+                            responsive:
+                                true,
+
+
+                            maintainAspectRatio:
+                                true,
+
+
+                            cutout:
+                                "58%",
+
+
+                            rotation:
+                                -90,
+
+
+                            layout: {
+
+                                padding: {
+
+                                    top:
+                                        8,
+
+                                    right:
+                                        12,
+
+                                    bottom:
+                                        28,
+
+                                    left:
+                                        12
+
+                                }
+
+                            },
+
+
+                            animation: {
+
+                                animateRotate:
+                                    true,
+
+                                animateScale:
+                                    true,
+
+                                duration:
+                                    1000
+
+                            },
+
+
+                            plugins: {
+
+                                legend: {
+
+                                    display:
+                                        false
+
+                                },
+
+
+                                tooltip: {
+
+                                    enabled:
+                                        true,
+
+
+                                    backgroundColor:
+                                        "#061321",
+
+
+                                    borderColor:
+                                        "#31526f",
+
+
+                                    borderWidth:
+                                        1,
+
+
+                                    titleColor:
+                                        "#ffffff",
+
+
+                                    bodyColor:
+                                        "#dce7f0",
+
+
+                                    padding:
+                                        11,
+
+
+                                    callbacks: {
+
+                                        label(
+                                            context
+                                        ) {
+
+                                            const value =
+                                                Number(
+                                                    context.raw ||
+                                                    0
+                                                );
+
+
+                                            const total =
+                                                context
+                                                    .dataset
+                                                    .data
+                                                    .reduce(
+                                                        function (
+                                                            accumulator,
+                                                            current
+                                                        ) {
+
+                                                            return (
+                                                                Number(
+                                                                    accumulator
+                                                                ) +
+                                                                Number(
+                                                                    current
+                                                                )
+                                                            );
+
+                                                        },
+                                                        0
+                                                    );
+
+
+                                            const porcentaje =
+                                                total > 0
+                                                    ? (
+                                                        value /
+                                                        total *
+                                                        100
+                                                    ).toFixed(
+                                                        1
+                                                    )
+                                                    : "0.0";
+
+
+                                            return (
+                                                " " +
+                                                context.label +
+                                                ": " +
+                                                value +
+                                                " (" +
+                                                porcentaje +
+                                                "%)"
+                                            );
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+                );
+
+            }
+
+
+
+            /* ============================================================
+               COLORS
+               ============================================================ */
+
+            function obtenerColorEstado(
+                estado
+            ) {
+
+                const value =
+                    normalizarTexto(
+                        estado
+                    );
+
+
+                if (
+                    value.includes(
+                        "pendiente"
+                    )
+                ) {
+
+                    return "#ffb900";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "aprob"
+                    )
+                ) {
+
+                    return "#38d94f";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "convert"
+                    )
+                ) {
+
+                    return "#1687ff";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "rechaz"
+                    )
+                ) {
+
+                    return "#ff3636";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "venc"
+                    )
+                ) {
+
+                    return "#9b5cff";
+
+                }
+
+
+                return "#00d4d4";
+
+            }
+
+
+
+            function obtenerColorProfundidad(
+                estado
+            ) {
+
+                const value =
+                    normalizarTexto(
+                        estado
+                    );
+
+
+                if (
+                    value.includes(
+                        "pendiente"
+                    )
+                ) {
+
+                    return "#624100";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "aprob"
+                    )
+                ) {
+
+                    return "#0c641f";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "convert"
+                    )
+                ) {
+
+                    return "#063d82";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "rechaz"
+                    )
+                ) {
+
+                    return "#771717";
+
+                }
+
+
+                if (
+                    value.includes(
+                        "venc"
+                    )
+                ) {
+
+                    return "#47237e";
+
+                }
+
+
+                return "#006868";
+
+            }
+
+
+
+            function aclararColor(
+                hex,
+                porcentaje
+            ) {
+
+                const num =
+                    parseInt(
+                        hex.replace(
+                            "#",
+                            ""
+                        ),
+                        16
+                    );
+
+
+                let r =
+                    (
+                        num >>
+                        16
+                    ) +
+                    porcentaje;
+
+
+                let g =
+                    (
+                        (
+                            num >>
+                            8
+                        ) &
+                        0x00FF
+                    ) +
+                    porcentaje;
+
+
+                let b =
+                    (
+                        num &
+                        0x0000FF
+                    ) +
+                    porcentaje;
+
+
+                r =
+                    Math.min(
+                        255,
+                        r
+                    );
+
+
+                g =
+                    Math.min(
+                        255,
+                        g
+                    );
+
+
+                b =
+                    Math.min(
+                        255,
+                        b
+                    );
+
+
+                return (
+                    "#" +
+                    (
+                        b |
+                        (
+                            g <<
+                            8
+                        ) |
+                        (
+                            r <<
+                            16
+                        )
+                    )
+                        .toString(
+                            16
+                        )
+                        .padStart(
+                            6,
+                            "0"
+                        )
+                );
+
+            }
+
+
+
+            /* ============================================================
+               UTILS
+               ============================================================ */
+
+            function normalizarTexto(
+                texto
+            ) {
+
+                return String(
+                    texto ||
+                    ""
+                )
+                    .toLowerCase()
+                    .normalize(
+                        "NFD"
+                    )
+                    .replace(
+                        /[\u0300-\u036f]/g,
+                        ""
+                    );
+
+            }
+
+
+
+            function escaparHtml(
+                texto
+            ) {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.textContent =
+                    String(
+                        texto ??
+                        ""
+                    );
+
+
+                return div.innerHTML;
+
+            }
+
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,2890 @@
+﻿@page
+@model KerniX.Pages.Cotizacion.NuevaModel
+
+@using System.Globalization
+@using System.Text.Json
+
+@{
+    Layout = null;
+
+    ViewData["Title"] = "Nueva Cotización";
+
+    var productosJson =
+        JsonSerializer.Serialize(
+            Model.Productos,
+            new JsonSerializerOptions
+            {
+                PropertyNamingPolicy =
+                    JsonNamingPolicy.CamelCase
+            }
+        );
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        Nueva Cotización | KerniX
+    </title>
+
+
+    <!-- =====================================================
+         FUENTE
+         ===================================================== -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com" />
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet" />
+
+
+    <!-- =====================================================
+         FONT AWESOME
+         ===================================================== -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+
+
+    <!-- =====================================================
+         CSS
+         ===================================================== -->
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: "Inter", sans-serif;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(16, 76, 130, .18),
+                    transparent 35%
+                ),
+                #020812;
+            color: #eaf3fb;
+        }
+
+
+        body {
+            min-height: 100vh;
+        }
+
+
+        button,
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+        }
+
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+
+        /* =====================================================
+           PAGE
+           ===================================================== */
+
+        .kx-page {
+            min-height: 100vh;
+            padding: 25px;
+        }
+
+
+        .kx-container {
+            width: min(1500px, 100%);
+            margin: 0 auto;
+        }
+
+
+        /* =====================================================
+           TOP
+           ===================================================== */
+
+        .kx-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            min-height: 68px;
+
+            margin-bottom: 22px;
+            padding: 0 22px;
+
+            border: 1px solid #173550;
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(8, 25, 41, .97),
+                    rgba(4, 16, 28, .97)
+                );
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, .28);
+        }
+
+
+        .kx-brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+
+        .kx-brand-symbol {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 38px;
+            height: 38px;
+
+            border: 1px solid #8c650e;
+            border-radius: 9px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #f8c84b,
+                    #a56e07
+                );
+
+            color: #07111b;
+            font-size: 20px;
+            font-weight: 900;
+
+            box-shadow:
+                0 0 25px rgba(246, 185, 31, .18);
+        }
+
+
+        .kx-brand-name {
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+
+
+        .kx-back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 38px;
+            padding: 0 15px;
+            gap: 8px;
+
+            border: 1px solid #254764;
+            border-radius: 8px;
+
+            background: #071624;
+
+            color: #c8d7e5;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+
+            transition: .2s ease;
+        }
+
+
+        .kx-back:hover {
+            color: #ffffff;
+            border-color: #f6b91f;
+        }
+
+
+        /* =====================================================
+           HEADER
+           ===================================================== */
+
+        .kx-heading {
+            display: flex;
+            align-items: center;
+
+            margin-bottom: 24px;
+            gap: 14px;
+        }
+
+
+        .kx-heading-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 50px;
+            height: 50px;
+
+            border: 1px solid #725313;
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(246, 185, 31, .16),
+                    rgba(246, 185, 31, .04)
+                );
+
+            color: #f6b91f;
+            font-size: 19px;
+        }
+
+
+        .kx-heading h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 24px;
+        }
+
+
+        .kx-heading p {
+            margin: 5px 0 0;
+            color: #7f95a9;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           ALERT
+           ===================================================== */
+
+        .kx-alert {
+            display: flex;
+            align-items: center;
+
+            margin-bottom: 18px;
+            padding: 13px 15px;
+            gap: 10px;
+
+            border: 1px solid rgba(255, 75, 75, .4);
+            border-radius: 9px;
+
+            background: rgba(180, 24, 24, .11);
+
+            color: #ff9a9a;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           LAYOUT
+           ===================================================== */
+
+        .kx-layout {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.7fr)
+                minmax(330px, .7fr);
+
+            gap: 18px;
+        }
+
+
+        .kx-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+
+        /* =====================================================
+           PANEL
+           ===================================================== */
+
+        .kx-panel {
+            overflow: hidden;
+
+            border: 1px solid #173754;
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(7, 23, 38, .98),
+                    rgba(3, 14, 25, .98)
+                );
+
+            box-shadow:
+                0 16px 45px rgba(0, 0, 0, .25);
+        }
+
+
+        .kx-panel-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            min-height: 53px;
+
+            padding: 0 17px;
+
+            border-bottom: 1px solid #15314a;
+        }
+
+
+        .kx-panel-heading-left {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+
+        .kx-panel-heading i {
+            color: #f6b91f;
+        }
+
+
+        .kx-panel-heading h2 {
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+
+        .kx-panel-body {
+            padding: 17px;
+        }
+
+
+        /* =====================================================
+           FORM
+           ===================================================== */
+
+        .kx-form-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 14px;
+        }
+
+
+        .kx-field {
+            min-width: 0;
+        }
+
+
+        .kx-field.full {
+            grid-column: 1 / -1;
+        }
+
+
+        .kx-field label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #8ba0b3;
+
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+
+        .kx-field label b {
+            color: #ff6969;
+        }
+
+
+        .kx-input,
+        .kx-select,
+        .kx-textarea {
+            width: 100%;
+
+            border: 1px solid #1d3e5b;
+            border-radius: 8px;
+            outline: none;
+
+            background: #030e19;
+
+            color: #dce8f2;
+
+            transition: .2s ease;
+        }
+
+
+        .kx-input,
+        .kx-select {
+            height: 42px;
+            padding: 0 12px;
+        }
+
+
+        .kx-textarea {
+            min-height: 95px;
+            padding: 12px;
+
+            resize: vertical;
+        }
+
+
+        .kx-input:focus,
+        .kx-select:focus,
+        .kx-textarea:focus {
+            border-color: #eeb21d;
+
+            box-shadow:
+                0 0 0 3px rgba(246, 185, 31, .07);
+        }
+
+
+        /* =====================================================
+           CLIENT INFO
+           ===================================================== */
+
+        .kx-client-card {
+            display: none;
+
+            margin-top: 13px;
+            padding: 13px;
+
+            border: 1px solid #1b4363;
+            border-radius: 9px;
+
+            background:
+                rgba(8, 32, 52, .55);
+        }
+
+
+        .kx-client-card.show {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 11px;
+        }
+
+
+        .kx-client-info span {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #6f8598;
+            font-size: 8px;
+        }
+
+
+        .kx-client-info strong {
+            color: #dbe7f1;
+            font-size: 10px;
+        }
+
+
+        /* =====================================================
+           PRODUCT SEARCH
+           ===================================================== */
+
+        .kx-product-search-wrapper {
+            position: relative;
+        }
+
+
+        .kx-product-search {
+            position: relative;
+        }
+
+
+        .kx-product-search > i {
+            position: absolute;
+
+            top: 50%;
+            left: 13px;
+
+            color: #657f94;
+
+            transform:
+                translateY(-50%);
+        }
+
+
+        .kx-product-search input {
+            padding-left: 38px;
+        }
+
+
+        .kx-product-results {
+            position: absolute;
+
+            top: calc(100% + 7px);
+            right: 0;
+            left: 0;
+
+            z-index: 100;
+
+            display: none;
+
+            max-height: 330px;
+
+            overflow-y: auto;
+
+            border: 1px solid #204666;
+            border-radius: 9px;
+
+            background: #061522;
+
+            box-shadow:
+                0 20px 45px rgba(0, 0, 0, .55);
+        }
+
+
+        .kx-product-results.show {
+            display: block;
+        }
+
+
+        .kx-product-result {
+            display: grid;
+
+            grid-template-columns:
+                42px 1fr auto;
+
+            align-items: center;
+
+            min-height: 60px;
+
+            padding: 8px 12px;
+            gap: 10px;
+
+            border-bottom: 1px solid #142f47;
+
+            cursor: pointer;
+        }
+
+
+        .kx-product-result:hover {
+            background: #092038;
+        }
+
+
+        .kx-product-result-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 36px;
+            height: 36px;
+
+            border: 1px solid #78560d;
+            border-radius: 7px;
+
+            background:
+                rgba(246, 185, 31, .06);
+
+            color: #f6b91f;
+        }
+
+
+        .kx-product-result-data {
+            min-width: 0;
+        }
+
+
+        .kx-product-result-data strong {
+            display: block;
+
+            overflow: hidden;
+
+            color: #e9f1f8;
+
+            font-size: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+
+        .kx-product-result-data span {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #6f8497;
+
+            font-size: 8px;
+        }
+
+
+        .kx-product-result-price {
+            color: #f6b91f;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+
+        .kx-product-empty {
+            padding: 20px;
+
+            color: #6e8397;
+
+            text-align: center;
+            font-size: 10px;
+        }
+
+
+        /* =====================================================
+           TABLE
+           ===================================================== */
+
+        .kx-table-scroll {
+            overflow-x: auto;
+        }
+
+
+        .kx-table {
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        .kx-table th {
+            padding: 11px 10px;
+
+            border-bottom: 1px solid #1a3853;
+
+            background: #061522;
+
+            color: #71889b;
+
+            text-align: left;
+            white-space: nowrap;
+
+            font-size: 8px;
+            text-transform: uppercase;
+        }
+
+
+        .kx-table td {
+            padding: 10px;
+
+            border-bottom:
+                1px solid rgba(25, 55, 82, .6);
+
+            color: #bdccda;
+
+            font-size: 9px;
+            vertical-align: middle;
+        }
+
+
+        .kx-table tbody tr:hover {
+            background:
+                rgba(13, 46, 73, .24);
+        }
+
+
+        .kx-table-product strong {
+            display: block;
+
+            color: #e6eff7;
+
+            font-size: 10px;
+        }
+
+
+        .kx-table-product span {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #667c8f;
+            font-size: 8px;
+        }
+
+
+        .kx-number-input {
+            width: 80px;
+            height: 32px;
+
+            padding: 0 8px;
+
+            border: 1px solid #1d3e5b;
+            border-radius: 6px;
+            outline: none;
+
+            background: #020c16;
+
+            color: #dce7f0;
+
+            text-align: right;
+
+            font-size: 9px;
+        }
+
+
+        .kx-number-input:focus {
+            border-color: #f6b91f;
+        }
+
+
+        .kx-remove {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 31px;
+            height: 31px;
+
+            border: 1px solid rgba(255, 70, 70, .35);
+            border-radius: 6px;
+
+            background:
+                rgba(255, 50, 50, .07);
+
+            color: #ff6767;
+
+            cursor: pointer;
+        }
+
+
+        .kx-remove:hover {
+            background:
+                rgba(255, 50, 50, .14);
+        }
+
+
+        .kx-empty-row {
+            padding: 35px !important;
+
+            color: #60788e !important;
+
+            text-align: center !important;
+        }
+
+
+        /* =====================================================
+           SUMMARY
+           ===================================================== */
+
+        .kx-summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+
+        .kx-summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+
+        .kx-summary-row span {
+            color: #859bad;
+            font-size: 10px;
+        }
+
+
+        .kx-summary-row strong {
+            color: #e4edf5;
+            font-size: 11px;
+        }
+
+
+        .kx-summary-divider {
+            height: 1px;
+
+            margin: 2px 0;
+
+            background: #193650;
+        }
+
+
+        .kx-summary-total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-top: 3px;
+            padding-top: 14px;
+
+            border-top: 1px solid #2a4a63;
+        }
+
+
+        .kx-summary-total span {
+            color: #ffffff;
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+
+        .kx-summary-total strong {
+            color: #f6b91f;
+
+            font-size: 22px;
+            font-weight: 900;
+
+            text-shadow:
+                0 0 20px rgba(246, 185, 31, .17);
+        }
+
+
+        /* =====================================================
+           INFO
+           ===================================================== */
+
+        .kx-info-card {
+            display: flex;
+            align-items: flex-start;
+
+            padding: 13px;
+            gap: 10px;
+
+            border: 1px solid #174769;
+            border-radius: 8px;
+
+            background:
+                rgba(10, 62, 98, .14);
+        }
+
+
+        .kx-info-card i {
+            margin-top: 2px;
+            color: #39a9ff;
+        }
+
+
+        .kx-info-card strong {
+            display: block;
+
+            margin-bottom: 4px;
+
+            color: #dce9f5;
+            font-size: 10px;
+        }
+
+
+        .kx-info-card p {
+            margin: 0;
+
+            color: #72899e;
+
+            font-size: 9px;
+            line-height: 1.55;
+        }
+
+
+        /* =====================================================
+           ACTIONS
+           ===================================================== */
+
+        .kx-actions {
+            display: flex;
+
+            justify-content: flex-end;
+
+            margin-top: 18px;
+
+            gap: 10px;
+        }
+
+
+        .kx-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 42px;
+
+            padding: 0 18px;
+
+            gap: 8px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            cursor: pointer;
+        }
+
+
+        .kx-button.secondary {
+            border: 1px solid #24435e;
+
+            background: #071522;
+
+            color: #9eb0bf;
+        }
+
+
+        .kx-button.secondary:hover {
+            color: #ffffff;
+            border-color: #49708f;
+        }
+
+
+        .kx-button.primary {
+            border: 1px solid #ffe080;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    #ffd65b,
+                    #d49412
+                );
+
+            color: #07111b;
+
+            box-shadow:
+                0 8px 25px rgba(246, 185, 31, .15);
+        }
+
+
+        .kx-button.primary:hover {
+            filter: brightness(1.06);
+        }
+
+
+        .kx-button.primary:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @@media(max-width: 1050px) {
+
+            .kx-layout {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @@media(max-width: 700px) {
+
+            .kx-page {
+                padding: 12px;
+            }
+
+
+            .kx-topbar {
+                padding: 0 13px;
+            }
+
+
+            .kx-brand-name {
+                display: none;
+            }
+
+
+            .kx-heading h1 {
+                font-size: 20px;
+            }
+
+
+            .kx-form-grid {
+                grid-template-columns: 1fr;
+            }
+
+
+            .kx-client-card.show {
+                grid-template-columns: 1fr;
+            }
+
+
+            .kx-actions {
+                flex-direction: column-reverse;
+            }
+
+
+            .kx-button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="kx-page">
+
+        <div class="kx-container">
+
+
+            <!-- =================================================
+                 TOPBAR
+                 ================================================= -->
+
+            <header class="kx-topbar">
+
+                <div class="kx-brand">
+
+                    <div class="kx-brand-symbol">
+                        K
+                    </div>
+
+                    <div class="kx-brand-name">
+                        KerniX
+                    </div>
+
+                </div>
+
+
+                <a href="/Cotizacion/Index"
+                   class="kx-back">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Volver a Cotizaciones
+
+                </a>
+
+            </header>
+
+
+
+            <!-- =================================================
+                 TITLE
+                 ================================================= -->
+
+            <section class="kx-heading">
+
+                <div class="kx-heading-icon">
+
+                    <i class="fa-regular fa-file-lines"></i>
+
+                </div>
+
+                <div>
+
+                    <h1>
+                        Nueva Cotización
+                    </h1>
+
+                    <p>
+                        Registra una nueva propuesta comercial para tu cliente.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMensaje))
+            {
+                <div class="kx-alert">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+
+                    <span>
+                        @Model.ErrorMensaje
+                    </span>
+
+                </div>
+            }
+
+
+
+            <!-- =================================================
+                 FORM
+                 ================================================= -->
+
+            <form method="post"
+                  action="/Cotizacion/Nueva"
+                  id="cotizacionForm">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       id="DetalleJson"
+                       name="DetalleJson"
+                       value="" />
+
+                <div class="kx-layout">
+
+
+                    <!-- =================================================
+                         LEFT
+                         ================================================= -->
+
+                    <div class="kx-column">
+
+
+                        <!-- =============================================
+                             DATOS GENERALES
+                             ============================================= -->
+
+                        <article class="kx-panel">
+
+                            <div class="kx-panel-heading">
+
+                                <div class="kx-panel-heading-left">
+
+                                    <i class="fa-regular fa-user"></i>
+
+                                    <h2>
+                                        Datos de la Cotización
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kx-panel-body">
+
+                                <div class="kx-form-grid">
+
+
+                                    <!-- CLIENTE -->
+
+                                    <div class="kx-field">
+
+                                        <label for="IdCliente">
+
+                                            Cliente
+
+                                            <b>*</b>
+
+                                        </label>
+
+                                        <select asp-for="IdCliente"
+                                                id="IdCliente"
+                                                name="IdCliente"
+                                                class="kx-select">
+
+                                            <option value="">
+                                                Seleccione un cliente
+                                            </option>
+
+                                            @foreach (var cliente in Model.Clientes)
+                                            {
+                                                <option value="@cliente.IdCliente"
+                                                        data-documento="@cliente.NumeroDocumento"
+                                                        data-tipo-documento="@cliente.TipoDocumento"
+                                                        data-telefono="@cliente.Telefono"
+                                                        data-correo="@cliente.Correo">
+
+                                                    @cliente.Cliente
+
+                                                    -
+                                                    @cliente.NumeroDocumento
+
+                                                </option>
+                                            }
+
+                                        </select>
+
+                                    </div>
+
+
+
+                                    <!-- VENCIMIENTO -->
+
+                                    <div class="kx-field">
+
+                                        <label asp-for="FechaVencimiento">
+
+                                            Válida hasta
+
+                                            <b>*</b>
+
+                                        </label>
+
+                                        <input type="date"
+                                               id="FechaVencimiento"
+                                               name="FechaVencimiento"
+                                               class="kx-input"
+                                               value="@(Model.FechaVencimiento?.ToString("yyyy-MM-dd") ?? DateTime.Today.AddDays(15).ToString("yyyy-MM-dd"))"
+                                               min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                               required />
+
+                                    </div>
+
+
+                                    <!-- CLIENT INFO -->
+
+                                    <div class="kx-field full">
+
+                                        <div class="kx-client-card"
+                                             id="clientInfo">
+
+                                            <div class="kx-client-info">
+
+                                                <span>
+                                                    Documento
+                                                </span>
+
+                                                <strong id="clientDocument">
+                                                    -
+                                                </strong>
+
+                                            </div>
+
+
+                                            <div class="kx-client-info">
+
+                                                <span>
+                                                    Teléfono
+                                                </span>
+
+                                                <strong id="clientPhone">
+                                                    -
+                                                </strong>
+
+                                            </div>
+
+
+                                            <div class="kx-client-info">
+
+                                                <span>
+                                                    Correo
+                                                </span>
+
+                                                <strong id="clientEmail">
+                                                    -
+                                                </strong>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- =============================================
+                             PRODUCTOS
+                             ============================================= -->
+
+                        <article class="kx-panel">
+
+                            <div class="kx-panel-heading">
+
+                                <div class="kx-panel-heading-left">
+
+                                    <i class="fa-solid fa-box"></i>
+
+                                    <h2>
+                                        Productos
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kx-panel-body">
+
+
+                                <!-- BUSCADOR -->
+
+                                <div class="kx-product-search-wrapper">
+
+                                    <div class="kx-product-search">
+
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                                        <input type="text"
+                                               id="productSearch"
+                                               class="kx-input"
+                                               autocomplete="off"
+                                               placeholder="Buscar por código, nombre o código de barras..." />
+
+                                    </div>
+
+
+                                    <div class="kx-product-results"
+                                         id="productResults">
+
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- TABLE -->
+
+                            <div class="kx-table-scroll">
+
+                                <table class="kx-table">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Producto
+                                            </th>
+
+                                            <th>
+                                                Cantidad
+                                            </th>
+
+                                            <th>
+                                                Precio
+                                            </th>
+
+                                            <th>
+                                                Desc.
+                                            </th>
+
+                                            <th>
+                                                IGV
+                                            </th>
+
+                                            <th>
+                                                Total
+                                            </th>
+
+                                            <th>
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody id="detailTableBody">
+
+                                        <tr id="emptyDetailRow">
+
+                                            <td colspan="7"
+                                                class="kx-empty-row">
+
+                                                <i class="fa-solid fa-cart-plus"></i>
+
+                                                &nbsp;
+
+                                                Busca y agrega productos a la cotización.
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- =============================================
+                             OBSERVACIÓN
+                             ============================================= -->
+
+                        <article class="kx-panel">
+
+                            <div class="kx-panel-heading">
+
+                                <div class="kx-panel-heading-left">
+
+                                    <i class="fa-regular fa-message"></i>
+
+                                    <h2>
+                                        Observaciones
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kx-panel-body">
+
+                                <div class="kx-field">
+
+                                    <label asp-for="Observacion">
+                                        Observación
+                                    </label>
+
+                                    <textarea id="Observacion"
+                                              name="Observacion"
+                                              class="kx-textarea"
+                                              maxlength="1000"
+                                              placeholder="Escribe condiciones, notas o información adicional...">@Model.Observacion</textarea>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         RIGHT
+                         ================================================= -->
+
+                    <div class="kx-column">
+
+
+                        <!-- =============================================
+                             RESUMEN
+                             ============================================= -->
+
+                        <article class="kx-panel">
+
+                            <div class="kx-panel-heading">
+
+                                <div class="kx-panel-heading-left">
+
+                                    <i class="fa-solid fa-calculator"></i>
+
+                                    <h2>
+                                        Resumen
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="kx-panel-body">
+
+
+                                <div class="kx-summary-list">
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Subtotal
+                                        </span>
+
+                                        <strong id="summarySubtotal">
+                                            S/ 0.00
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Descuento productos
+                                        </span>
+
+                                        <strong id="summaryProductDiscount">
+                                            - S/ 0.00
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-divider">
+                                    </div>
+
+                                    <div class="kx-field">
+
+                                        <label for="DescuentoGeneral">
+                                            Descuento general
+                                        </label>
+
+                                        <input type="number"
+                                               name="DescuentoGeneral"
+                                               id="DescuentoGeneral"
+                                               class="kx-input"
+                                               min="0"
+                                               step="0.01"
+                                               value="@Model.DescuentoGeneral.ToString(
+                                                       "0.00",
+                                                       System.Globalization.CultureInfo.InvariantCulture
+                                                   )" />
+
+                                    </div>
+
+                                    <div class="kx-summary-divider">
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            IGV
+                                        </span>
+
+                                        <strong id="summaryTax">
+                                            S/ 0.00
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-total">
+
+                                        <span>
+                                            TOTAL
+                                        </span>
+
+                                        <strong id="summaryTotal">
+                                            S/ 0.00
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+
+
+                        <!-- =============================================
+                             INFO
+                             ============================================= -->
+
+                        <article class="kx-panel">
+
+                            <div class="kx-panel-body">
+
+                                <div class="kx-info-card">
+
+                                    <i class="fa-solid fa-circle-info"></i>
+
+                                    <div>
+
+                                        <strong>
+                                            Estado inicial
+                                        </strong>
+
+                                        <p>
+                                            La cotización se registrará automáticamente
+                                            con estado
+                                            <b>Pendiente</b>.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     BUTTONS
+                     ================================================= -->
+
+                <div class="kx-actions">
+
+
+                    <a href="/Cotizacion/Index"
+                       class="kx-button secondary">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="kx-button primary"
+                            id="saveButton">
+
+                        <i class="fa-regular fa-floppy-disk"></i>
+
+                        Guardar Cotización
+
+                    </button>
+
+                </div>
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================================================
+         DATA
+         ========================================================= -->
+
+    <script>
+
+        const productos =
+            @Html.Raw(productosJson);
+
+    </script>
+
+
+
+    <!-- =========================================================
+         JAVASCRIPT
+         ========================================================= -->
+
+    <script>
+
+        /*
+         * =====================================================
+         * VARIABLES
+         * =====================================================
+         */
+
+        const IGV =
+            0.18;
+
+
+        const detalles =
+            [];
+
+
+        const form =
+            document.getElementById(
+                "cotizacionForm"
+            );
+
+
+        const detalleJson =
+            document.getElementById(
+                "DetalleJson"
+            );
+
+
+        const clienteSelect =
+            document.getElementById(
+                "IdCliente"
+            );
+
+
+        const clientInfo =
+            document.getElementById(
+                "clientInfo"
+            );
+
+
+        const clientDocument =
+            document.getElementById(
+                "clientDocument"
+            );
+
+
+        const clientPhone =
+            document.getElementById(
+                "clientPhone"
+            );
+
+
+        const clientEmail =
+            document.getElementById(
+                "clientEmail"
+            );
+
+
+        const productSearch =
+            document.getElementById(
+                "productSearch"
+            );
+
+
+        const productResults =
+            document.getElementById(
+                "productResults"
+            );
+
+
+        const detailTableBody =
+            document.getElementById(
+                "detailTableBody"
+            );
+            const generalDiscount =
+                document.getElementById("DescuentoGeneral");
+
+
+        const summarySubtotal =
+            document.getElementById(
+                "summarySubtotal"
+            );
+
+
+        const summaryProductDiscount =
+            document.getElementById(
+                "summaryProductDiscount"
+            );
+
+
+        const summaryTax =
+            document.getElementById(
+                "summaryTax"
+            );
+
+
+        const summaryTotal =
+            document.getElementById(
+                "summaryTotal"
+            );
+
+
+        const saveButton =
+            document.getElementById(
+                "saveButton"
+            );
+
+
+
+        /*
+         * =====================================================
+         * CLIENTE
+         * =====================================================
+         */
+
+        clienteSelect?.addEventListener(
+            "change",
+            mostrarClienteSeleccionado
+        );
+
+
+        function mostrarClienteSeleccionado() {
+
+            const opcion =
+                clienteSelect.options[
+                    clienteSelect.selectedIndex
+                ];
+
+
+            if (
+                !opcion ||
+                !opcion.value
+            ) {
+
+                clientInfo.classList.remove(
+                    "show"
+                );
+
+                return;
+            }
+
+
+            const tipoDocumento =
+                opcion.dataset.tipoDocumento
+                || "";
+
+
+            const documento =
+                opcion.dataset.documento
+                || "-";
+
+
+            const telefono =
+                opcion.dataset.telefono
+                || "-";
+
+
+            const correo =
+                opcion.dataset.correo
+                || "-";
+
+
+            clientDocument.textContent =
+                tipoDocumento
+                    ? `${tipoDocumento}: ${documento}`
+                    : documento;
+
+
+            clientPhone.textContent =
+                telefono;
+
+
+            clientEmail.textContent =
+                correo;
+
+
+            clientInfo.classList.add(
+                "show"
+            );
+
+        }
+
+
+
+        /*
+         * =====================================================
+         * PRODUCT SEARCH
+         * =====================================================
+         */
+
+        productSearch?.addEventListener(
+            "focus",
+            function () {
+
+                buscarProductos();
+
+            }
+        );
+
+
+        productSearch?.addEventListener(
+            "input",
+            function () {
+
+                buscarProductos();
+
+            }
+        );
+
+
+        function buscarProductos() {
+
+            const query =
+                normalizar(
+                    productSearch.value
+                );
+
+
+            const encontrados =
+                productos
+                    .filter(
+                        producto => {
+
+                            if (
+                                detalles.some(
+                                    detalle =>
+                                        detalle.idProducto ===
+                                        producto.idProducto
+                                )
+                            ) {
+                                return false;
+                            }
+
+
+                            if (
+                                query.length === 0
+                            ) {
+                                return true;
+                            }
+
+
+                            const contenido =
+                                normalizar(
+                                    `
+                                    ${producto.codigo ?? ""}
+                                    ${producto.codigoBarras ?? ""}
+                                    ${producto.nombre ?? ""}
+                                    ${producto.descripcion ?? ""}
+                                    `
+                                );
+
+
+                            return contenido.includes(
+                                query
+                            );
+
+                        }
+                    )
+                    .slice(
+                        0,
+                        12
+                    );
+
+
+            renderResultadosProductos(
+                encontrados
+            );
+
+        }
+
+
+
+        function renderResultadosProductos(
+            lista
+        ) {
+
+            productResults.innerHTML =
+                "";
+
+
+            if (
+                lista.length === 0
+            ) {
+
+                productResults.innerHTML =
+                    `
+                    <div class="kx-product-empty">
+                        No se encontraron productos.
+                    </div>
+                    `;
+
+
+                productResults.classList.add(
+                    "show"
+                );
+
+
+                return;
+            }
+
+
+            lista.forEach(
+                producto => {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    row.className =
+                        "kx-product-result";
+
+
+                    row.innerHTML =
+                        `
+                        <div class="kx-product-result-icon">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+
+                        <div class="kx-product-result-data">
+
+                            <strong>
+                                ${escaparHtml(producto.nombre)}
+                            </strong>
+
+                            <span>
+                                ${escaparHtml(producto.codigo)}
+                                ${producto.codigoBarras
+                                    ? " · " + escaparHtml(producto.codigoBarras)
+                                    : ""}
+                            </span>
+
+                        </div>
+
+                        <div class="kx-product-result-price">
+                            ${formatearMoneda(producto.precioVenta)}
+                        </div>
+                        `;
+
+
+                    row.addEventListener(
+                        "click",
+                        function () {
+
+                            agregarProducto(
+                                producto
+                            );
+
+                        }
+                    );
+
+
+                    productResults.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+
+            productResults.classList.add(
+                "show"
+            );
+
+        }
+
+
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !productResults.contains(
+                        event.target
+                    )
+                    &&
+                    event.target !==
+                    productSearch
+                ) {
+
+                    productResults.classList.remove(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+
+
+        /*
+         * =====================================================
+         * AGREGAR PRODUCTO
+         * =====================================================
+         */
+
+        function agregarProducto(
+            producto
+        ) {
+
+            if (
+                detalles.some(
+                    item =>
+                        item.idProducto ===
+                        producto.idProducto
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const detalle =
+            {
+                idProducto:
+                    producto.idProducto,
+
+                producto:
+                    producto.nombre,
+
+                codigo:
+                    producto.codigo,
+
+                cantidad:
+                    1,
+
+                precioUnitario:
+                    Number(
+                        producto.precioVenta
+                        || 0
+                    ),
+
+                descuento:
+                    0,
+
+                impuesto:
+                    0,
+
+                subtotal:
+                    0
+            };
+
+
+            recalcularDetalle(
+                detalle
+            );
+
+
+            detalles.push(
+                detalle
+            );
+
+
+            productSearch.value =
+                "";
+
+
+            productResults.classList.remove(
+                "show"
+            );
+
+
+            renderDetalle();
+
+        }
+
+
+
+        /*
+         * =====================================================
+         * RECALCULAR DETALLE
+         * =====================================================
+         */
+
+        function recalcularDetalle(
+            item
+        ) {
+
+            const cantidad =
+                Math.max(
+                    0,
+                    Number(
+                        item.cantidad
+                        || 0
+                    )
+                );
+
+
+            const precio =
+                Math.max(
+                    0,
+                    Number(
+                        item.precioUnitario
+                        || 0
+                    )
+                );
+
+
+            let descuento =
+                Math.max(
+                    0,
+                    Number(
+                        item.descuento
+                        || 0
+                    )
+                );
+
+
+            const subtotal =
+                cantidad *
+                precio;
+
+
+            if (
+                descuento >
+                subtotal
+            ) {
+
+                descuento =
+                    subtotal;
+
+            }
+
+
+            const baseImponible =
+                Math.max(
+                    0,
+                    subtotal -
+                    descuento
+                );
+
+
+            const impuesto =
+                baseImponible *
+                IGV;
+
+
+            item.cantidad =
+                redondear4(
+                    cantidad
+                );
+
+
+            item.precioUnitario =
+                redondear4(
+                    precio
+                );
+
+
+            item.descuento =
+                redondear4(
+                    descuento
+                );
+
+
+            item.subtotal =
+                redondear4(
+                    subtotal
+                );
+
+
+            item.impuesto =
+                redondear4(
+                    impuesto
+                );
+
+        }
+
+
+
+        /*
+         * =====================================================
+         * TABLE
+         * =====================================================
+         */
+
+        function renderDetalle() {
+
+            detailTableBody.innerHTML =
+                "";
+
+
+            if (
+                detalles.length === 0
+            ) {
+
+                detailTableBody.innerHTML =
+                    `
+                    <tr>
+                        <td colspan="7"
+                            class="kx-empty-row">
+
+                            <i class="fa-solid fa-cart-plus"></i>
+
+                            &nbsp;
+
+                            Busca y agrega productos a la cotización.
+
+                        </td>
+                    </tr>
+                    `;
+
+
+                recalcularResumen();
+
+
+                return;
+            }
+
+
+            detalles.forEach(
+                (
+                    item,
+                    index
+                ) => {
+
+                    const totalLinea =
+                        (
+                            item.subtotal -
+                            item.descuento
+                        )
+                        +
+                        item.impuesto;
+
+
+                    const row =
+                        document.createElement(
+                            "tr"
+                        );
+
+
+                    row.innerHTML =
+                        `
+                        <td class="kx-table-product">
+
+                            <strong>
+                                ${escaparHtml(item.producto)}
+                            </strong>
+
+                            <span>
+                                ${escaparHtml(item.codigo)}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+            <input
+                type="number"
+                class="kx-number-input js-cantidad"
+                min="1"
+                step="1"
+                value="${Math.trunc(item.cantidad)}"
+                data-index="${index}"
+            />
+
+                        </td>
+
+
+                        <td>
+
+                            <input
+                                type="number"
+                                class="kx-number-input js-precio"
+                                min="0"
+                                step="0.01"
+                                value="${item.precioUnitario}"
+                                data-index="${index}"
+                            />
+
+                        </td>
+
+
+                        <td>
+
+                            <input
+                                type="number"
+                                class="kx-number-input js-descuento"
+                                min="0"
+                                step="0.01"
+                                value="${item.descuento}"
+                                data-index="${index}"
+                            />
+
+                        </td>
+
+
+                        <td>
+                            ${formatearMoneda(item.impuesto)}
+                        </td>
+
+
+                        <td>
+                            <strong>
+                                ${formatearMoneda(totalLinea)}
+                            </strong>
+                        </td>
+
+
+                        <td>
+
+                            <button
+                                type="button"
+                                class="kx-remove"
+                                data-index="${index}"
+                                title="Eliminar producto">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </button>
+
+                        </td>
+                        `;
+
+
+                    detailTableBody.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+
+            registrarEventosDetalle();
+
+
+            recalcularResumen();
+
+        }
+
+
+
+        /*
+         * =====================================================
+         * EVENTS TABLE
+         * =====================================================
+         */
+
+        function registrarEventosDetalle() {
+
+            document
+                .querySelectorAll(
+                    ".js-cantidad"
+                )
+                .forEach(
+                    input => {
+
+                        input.addEventListener(
+                            "change",
+                            function () {
+
+                                const index =
+                                    Number(
+                                        this.dataset.index
+                                    );
+
+
+                                detalles[index].cantidad =
+                                    Number(
+                                        this.value
+                                    );
+
+
+                                recalcularDetalle(
+                                    detalles[index]
+                                );
+
+
+                                renderDetalle();
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            document
+                .querySelectorAll(
+                    ".js-precio"
+                )
+                .forEach(
+                    input => {
+
+                        input.addEventListener(
+                            "change",
+                            function () {
+
+                                const index =
+                                    Number(
+                                        this.dataset.index
+                                    );
+
+
+                                detalles[index].precioUnitario =
+                                    Number(
+                                        this.value
+                                    );
+
+
+                                recalcularDetalle(
+                                    detalles[index]
+                                );
+
+
+                                renderDetalle();
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            document
+                .querySelectorAll(
+                    ".js-descuento"
+                )
+                .forEach(
+                    input => {
+
+                        input.addEventListener(
+                            "change",
+                            function () {
+
+                                const index =
+                                    Number(
+                                        this.dataset.index
+                                    );
+
+
+                                detalles[index].descuento =
+                                    Number(
+                                        this.value
+                                    );
+
+
+                                recalcularDetalle(
+                                    detalles[index]
+                                );
+
+
+                                renderDetalle();
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            document
+                .querySelectorAll(
+                    ".kx-remove"
+                )
+                .forEach(
+                    button => {
+
+                        button.addEventListener(
+                            "click",
+                            function () {
+
+                                const index =
+                                    Number(
+                                        this.dataset.index
+                                    );
+
+
+                                detalles.splice(
+                                    index,
+                                    1
+                                );
+
+
+                                renderDetalle();
+
+                            }
+                        );
+
+                    }
+                );
+
+        }
+
+
+
+        /*
+         * =====================================================
+         * GENERAL DISCOUNT
+         * =====================================================
+         */
+
+        generalDiscount?.addEventListener(
+            "input",
+            function () {
+
+                recalcularResumen();
+
+            }
+        );
+
+
+
+        /*
+         * =====================================================
+         * RESUMEN
+         * =====================================================
+         */
+
+        function recalcularResumen() {
+
+            let subtotal =
+                0;
+
+
+            let descuentoProductos =
+                0;
+
+
+            let impuesto =
+                0;
+
+
+            detalles.forEach(
+                item => {
+
+                    subtotal +=
+                        Number(
+                            item.subtotal
+                            || 0
+                        );
+
+
+                    descuentoProductos +=
+                        Number(
+                            item.descuento
+                            || 0
+                        );
+
+
+                    impuesto +=
+                        Number(
+                            item.impuesto
+                            || 0
+                        );
+
+                }
+            );
+
+
+            let descuentoGeneral =
+                Math.max(
+                    0,
+                    Number(
+                        generalDiscount?.value
+                        || 0
+                    )
+                );
+
+
+            const maxDescuentoGeneral =
+                Math.max(
+                    0,
+                    subtotal -
+                    descuentoProductos
+                );
+
+
+            if (
+                descuentoGeneral >
+                maxDescuentoGeneral
+            ) {
+
+                descuentoGeneral =
+                    maxDescuentoGeneral;
+
+
+                generalDiscount.value =
+                    descuentoGeneral.toFixed(
+                        2
+                    );
+
+            }
+
+
+            const total =
+                Math.max(
+                    0,
+                    subtotal
+                    -
+                    descuentoProductos
+                    -
+                    descuentoGeneral
+                    +
+                    impuesto
+                );
+
+
+            summarySubtotal.textContent =
+                formatearMoneda(
+                    subtotal
+                );
+
+
+            summaryProductDiscount.textContent =
+                "- " +
+                formatearMoneda(
+                    descuentoProductos
+                );
+
+
+            summaryTax.textContent =
+                formatearMoneda(
+                    impuesto
+                );
+
+
+            summaryTotal.textContent =
+                formatearMoneda(
+                    total
+                );
+
+        }
+
+            form.addEventListener("submit", function (event) {
+
+                const cliente = document.getElementById("IdCliente");
+                const detalleInput = document.getElementById("DetalleJson");
+                const boton = document.getElementById("saveButton");
+
+                // VALIDAR CLIENTE
+                if (!cliente || Number(cliente.value) <= 0) {
+
+                    event.preventDefault();
+
+                    alert("Debe seleccionar un cliente.");
+
+                    cliente?.focus();
+
+                    return;
+                }
+
+                // VALIDAR PRODUCTOS
+                if (detalles.length === 0) {
+
+                    event.preventDefault();
+
+                    alert("Debe agregar al menos un producto.");
+
+                    productSearch.focus();
+
+                    return;
+                }
+
+                // PREPARAR DETALLE
+                const detalleEnviar = detalles.map(item => {
+
+                    recalcularDetalle(item);
+
+                    return {
+                        idProducto: item.idProducto,
+                        producto: item.producto,
+                        codigo: item.codigo,
+                        cantidad: item.cantidad,
+                        precioUnitario: item.precioUnitario,
+                        descuento: item.descuento,
+                        impuesto: item.impuesto,
+                        subtotal: item.subtotal
+                    };
+                });
+
+                // ASIGNAR JSON AL INPUT OCULTO
+                detalleInput.value = JSON.stringify(detalleEnviar);
+
+                console.log("Cliente:", cliente.value);
+                console.log("Detalle enviado:", detalleInput.value);
+
+                // BLOQUEAR DOBLE REGISTRO
+                boton.disabled = true;
+
+                boton.innerHTML = `
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    Guardando...
+                `;
+            });
+
+        /*
+         * =====================================================
+         * HELPERS
+         * =====================================================
+         */
+
+        function formatearMoneda(
+            valor
+        ) {
+
+            return new Intl.NumberFormat(
+                "es-PE",
+                {
+                    style:
+                        "currency",
+
+                    currency:
+                        "PEN",
+
+                    minimumFractionDigits:
+                        2
+                }
+            ).format(
+                Number(
+                    valor
+                    || 0
+                )
+            );
+
+        }
+
+
+
+        function redondear4(
+            valor
+        ) {
+
+            return Math.round(
+                (
+                    Number(
+                        valor
+                        || 0
+                    )
+                    +
+                    Number.EPSILON
+                )
+                *
+                10000
+            )
+            /
+            10000;
+
+        }
+
+
+
+        function normalizar(
+            texto
+        ) {
+
+            return String(
+                texto
+                || ""
+            )
+            .normalize(
+                "NFD"
+            )
+            .replace(
+                /[\u0300-\u036f]/g,
+                ""
+            )
+            .toLowerCase()
+            .trim();
+
+        }
+
+
+
+        function escaparHtml(
+            texto
+        ) {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.textContent =
+                texto
+                ?? "";
+
+
+            return div.innerHTML;
+
+        }
+
+
+
+        /*
+         * =====================================================
+         * INIT
+         * =====================================================
+         */
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                mostrarClienteSeleccionado();
+
+                recalcularResumen();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

@@ -1,14 +1,17 @@
-using System.Globalization;
+using Azure.Core;
 using KerniX.Api.Models.Configuracion.Impuesto;
 using KerniX.Api.Services.Configuracion;
-using KerniX.Models.Ventas.Venta;
 using KerniX.Models.Ventas.Comprobante;
 using KerniX.Models.Ventas.Pago;
-using Microsoft.Data.SqlClient;
+using KerniX.Models.Ventas.Venta;
 using KerniX.Security;
 using KerniX.Services.Ventas;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
+using System.Globalization;
+using static KerniX.Models.Ventas.Venta.VentaConfirmarRequest;
+
 
 namespace KerniX.Pages.Ventas;
 
@@ -37,6 +40,8 @@ public sealed class NuevaModel
 
     private readonly IComprobanteDbService
         _comprobanteDbService;
+    private readonly IConfiguration
+        _configuration;
     public NuevaModel(
         IClienteVentaService clienteVentaService,
         IProductoVentaService productoVentaService,
@@ -45,6 +50,7 @@ public sealed class NuevaModel
         IVentaDbService ventaDbService,
         IPagoDbService pagoDbService,
         IComprobanteDbService comprobanteDbService,
+        IConfiguration configuration,
         ILogger<NuevaModel> logger)
     {
         _clienteVentaService =
@@ -67,6 +73,9 @@ public sealed class NuevaModel
 
         _comprobanteDbService =
             comprobanteDbService;
+
+        _configuration =
+            configuration;
 
         _logger =
             logger;
@@ -173,9 +182,8 @@ public sealed class NuevaModel
     // =========================================================
     // GET PÁGINA
     // =========================================================
-
     public async Task<IActionResult>
-        OnGetAsync()
+     OnGetAsync()
     {
         int? idUsuario =
             HttpContext.Session.GetInt32(
@@ -208,6 +216,34 @@ public sealed class NuevaModel
             HttpContext.Session.GetInt32(
                 "IdAlmacen")
             ?? 1;
+
+
+        // Guardar valores válidos en sesión
+        HttpContext.Session.SetInt32(
+            "IdEmpresa",
+            IdEmpresa);
+
+
+        HttpContext.Session.SetInt32(
+            "IdSucursal",
+            IdSucursal);
+
+
+        HttpContext.Session.SetInt32(
+            "IdAlmacen",
+            IdAlmacen);
+
+
+        _logger.LogInformation(
+            "Nueva Venta cargada. " +
+            "Usuario={IdUsuario} | " +
+            "Empresa={IdEmpresa} | " +
+            "Sucursal={IdSucursal} | " +
+            "Almacen={IdAlmacen}",
+            idUsuario.Value,
+            IdEmpresa,
+            IdSucursal,
+            IdAlmacen);
 
 
         try
@@ -257,8 +293,6 @@ public sealed class NuevaModel
 
         return Page();
     }
-
-
     // =========================================================
     // BUSCAR CLIENTES
     // =========================================================
@@ -698,33 +732,21 @@ public sealed class NuevaModel
     // =========================================================
 
     public async Task<IActionResult>
-        OnPostConfirmarVentaAsync(
-            [FromBody]
-            VentaConfirmarRequest request,
-            CancellationToken cancellationToken)
+      OnPostConfirmarVentaAsync(
+          [FromBody]
+        VentaConfirmarRequest request,
+          CancellationToken cancellationToken)
     {
+        if (request is null)
+        {
+            return ErrorVenta(
+                "No se recibieron los datos de la venta.");
+        }
+
+
         int? idUsuario =
             HttpContext.Session.GetInt32(
                 SessionKeys.IdUsuario);
-
-        int? idEmpleado =
-            HttpContext.Session.GetInt32(
-                "IdEmpleado");
-
-        int idEmpresa =
-            HttpContext.Session.GetInt32(
-                "IdEmpresa")
-            ?? 0;
-
-        int idSucursal =
-            HttpContext.Session.GetInt32(
-                "IdSucursal")
-            ?? 0;
-
-        int idAlmacen =
-            HttpContext.Session.GetInt32(
-                "IdAlmacen")
-            ?? 0;
 
 
         if (
@@ -746,33 +768,125 @@ public sealed class NuevaModel
         }
 
 
+        int? idEmpleado =
+            HttpContext.Session.GetInt32(
+                "IdEmpleado");
+
+
+        if (
+            !idEmpleado.HasValue ||
+            idEmpleado.Value <= 0
+        )
+        {
+            idEmpleado =
+                await ObtenerIdEmpleadoUsuarioAsync(
+                    idUsuario.Value,
+                    cancellationToken);
+
+
+            if (
+                idEmpleado.HasValue &&
+                idEmpleado.Value > 0
+            )
+            {
+                HttpContext.Session.SetInt32(
+                    "IdEmpleado",
+                    idEmpleado.Value);
+
+
+                _logger.LogInformation(
+                    "IdEmpleado recuperado desde seg.usuario. " +
+                    "IdUsuario={IdUsuario} | IdEmpleado={IdEmpleado}",
+                    idUsuario.Value,
+                    idEmpleado.Value);
+            }
+        }
+
+
         if (
             !idEmpleado.HasValue ||
             idEmpleado.Value <= 0
         )
         {
             return ErrorVenta(
-                "No se encontró el empleado de la sesión.");
+                "El usuario actual no tiene un empleado asociado en seg.usuario.");
         }
 
 
-        if (
-            idEmpresa <= 0 ||
-            idSucursal <= 0 ||
-            idAlmacen <= 0
-        )
+        // =========================================================
+        // EMPRESA / SUCURSAL / ALMACÉN
+        // Primero sesión, luego request, luego fallback 1
+        // =========================================================
+
+        int idEmpresa =
+            HttpContext.Session.GetInt32(
+                "IdEmpresa")
+            ?? request.IdEmpresa;
+
+
+        int idSucursal =
+            HttpContext.Session.GetInt32(
+                "IdSucursal")
+            ?? request.IdSucursal;
+
+
+        int idAlmacen =
+            HttpContext.Session.GetInt32(
+                "IdAlmacen")
+            ?? request.IdAlmacen;
+
+
+        if (idEmpresa <= 0)
         {
-            return ErrorVenta(
-                "La empresa, sucursal o almacén de la sesión no son válidos.");
+            idEmpresa = 1;
         }
 
 
-        if (request is null)
+        if (idSucursal <= 0)
         {
-            return ErrorVenta(
-                "No se recibieron los datos de la venta.");
+            idSucursal = 1;
         }
 
+
+        if (idAlmacen <= 0)
+        {
+            idAlmacen = 1;
+        }
+
+
+        // Guardar contexto válido en sesión
+        HttpContext.Session.SetInt32(
+            "IdEmpresa",
+            idEmpresa);
+
+
+        HttpContext.Session.SetInt32(
+            "IdSucursal",
+            idSucursal);
+
+
+        HttpContext.Session.SetInt32(
+            "IdAlmacen",
+            idAlmacen);
+
+
+        _logger.LogInformation(
+            "Confirmar venta contexto. " +
+            "Empresa={IdEmpresa} | " +
+            "Sucursal={IdSucursal} | " +
+            "Almacen={IdAlmacen} | " +
+            "Usuario={IdUsuario} | " +
+            "Empleado={IdEmpleado}",
+            idEmpresa,
+            idSucursal,
+            idAlmacen,
+            idUsuario.Value,
+            idEmpleado.Value);
+
+
+        // =========================================================
+        // VALIDAR CLIENTE
+        // =========================================================
 
         if (request.IdCliente <= 0)
         {
@@ -780,6 +894,10 @@ public sealed class NuevaModel
                 "Selecciona un cliente.");
         }
 
+
+        // =========================================================
+        // VALIDAR DETALLE
+        // =========================================================
 
         if (
             request.Detalles is null ||
@@ -791,6 +909,10 @@ public sealed class NuevaModel
         }
 
 
+        // =========================================================
+        // MÉTODO DE PAGO
+        // =========================================================
+
         string metodoPago =
             request.MetodoPago?
                 .Trim()
@@ -798,13 +920,19 @@ public sealed class NuevaModel
             ?? string.Empty;
 
 
-        if (string.IsNullOrWhiteSpace(
-            metodoPago))
+        if (
+            string.IsNullOrWhiteSpace(
+                metodoPago)
+        )
         {
             return ErrorVenta(
                 "Selecciona un método de pago.");
         }
 
+
+        // =========================================================
+        // TIPO DE COMPROBANTE
+        // =========================================================
 
         string tipoComprobante =
             request.TipoComprobante?
@@ -815,20 +943,26 @@ public sealed class NuevaModel
 
         string[] tiposPermitidos =
         {
-            "BOLETA",
-            "FACTURA",
-            "NOTA_VENTA",
-            "SIN_COMPROBANTE"
-        };
+        "BOLETA",
+        "FACTURA",
+        "NOTA_VENTA",
+        "SIN_COMPROBANTE"
+    };
 
 
-        if (!tiposPermitidos.Contains(
-            tipoComprobante))
+        if (
+            !tiposPermitidos.Contains(
+                tipoComprobante)
+        )
         {
             return ErrorVenta(
                 "El tipo de comprobante no es válido.");
         }
 
+
+        // =========================================================
+        // VALIDAR PRODUCTOS
+        // =========================================================
 
         foreach (
             VentaConfirmarDetalleRequest detalle
@@ -840,17 +974,20 @@ public sealed class NuevaModel
                     "Existe un producto inválido.");
             }
 
+
             if (detalle.Cantidad <= 0)
             {
                 return ErrorVenta(
                     "La cantidad debe ser mayor que cero.");
             }
 
+
             if (detalle.PrecioUnitario < 0)
             {
                 return ErrorVenta(
                     "El precio no puede ser negativo.");
             }
+
 
             if (detalle.Descuento < 0)
             {
@@ -862,6 +999,10 @@ public sealed class NuevaModel
 
         try
         {
+            // =====================================================
+            // VENTA
+            // =====================================================
+
             string numeroVenta =
                 $"V-{DateTime.Now:yyyyMMddHHmmssfff}";
 
@@ -927,6 +1068,10 @@ public sealed class NuevaModel
                         ventaRequest);
 
 
+            // =====================================================
+            // PAGO
+            // =====================================================
+
             var pagoRequest =
                 new PagoCrearRequest
                 {
@@ -958,6 +1103,10 @@ public sealed class NuevaModel
                     .RegistrarAsync(
                         pagoRequest);
 
+
+            // =====================================================
+            // COMPROBANTE
+            // =====================================================
 
             ComprobanteResponse? comprobante =
                 null;
@@ -1007,6 +1156,10 @@ public sealed class NuevaModel
             }
 
 
+            // =====================================================
+            // OK
+            // =====================================================
+
             _logger.LogInformation(
                 "Venta confirmada correctamente. " +
                 "IdVenta={IdVenta} | " +
@@ -1021,8 +1174,10 @@ public sealed class NuevaModel
                 new
                 {
                     success = true,
+
                     message =
                         "Venta registrada correctamente.",
+
                     data =
                         new
                         {
@@ -1033,12 +1188,16 @@ public sealed class NuevaModel
                 });
         }
         catch (OperationCanceledException)
-            when (cancellationToken.IsCancellationRequested)
+            when (
+                cancellationToken
+                    .IsCancellationRequested
+            )
         {
             return new JsonResult(
                 new
                 {
                     success = false,
+
                     message =
                         "La operación fue cancelada."
                 })
@@ -1052,15 +1211,22 @@ public sealed class NuevaModel
             _logger.LogError(
                 ex,
                 "Error SQL confirmando venta. " +
-                "Empresa={IdEmpresa} | Cliente={IdCliente}",
+                "Empresa={IdEmpresa} | " +
+                "Sucursal={IdSucursal} | " +
+                "Almacen={IdAlmacen} | " +
+                "Cliente={IdCliente}",
                 idEmpresa,
+                idSucursal,
+                idAlmacen,
                 request.IdCliente);
+
 
             return new JsonResult(
                 new
                 {
                     success = false,
-                    message = ex.Message
+                    message =
+                        ex.Message
                 })
             {
                 StatusCode =
@@ -1072,15 +1238,22 @@ public sealed class NuevaModel
             _logger.LogError(
                 ex,
                 "Error confirmando venta. " +
-                "Empresa={IdEmpresa} | Cliente={IdCliente}",
+                "Empresa={IdEmpresa} | " +
+                "Sucursal={IdSucursal} | " +
+                "Almacen={IdAlmacen} | " +
+                "Cliente={IdCliente}",
                 idEmpresa,
+                idSucursal,
+                idAlmacen,
                 request.IdCliente);
+
 
             return new JsonResult(
                 new
                 {
                     success = false,
-                    message = ex.Message
+                    message =
+                        ex.Message
                 })
             {
                 StatusCode =
@@ -1364,6 +1537,81 @@ public sealed class NuevaModel
             IdEmpresa,
             CodigoImpuesto,
             PorcentajeImpuesto);
+    }
+
+
+    // =========================================================
+    // OBTENER EMPLEADO DEL USUARIO
+    // =========================================================
+
+    private async Task<int?>
+        ObtenerIdEmpleadoUsuarioAsync(
+            int idUsuario,
+            CancellationToken cancellationToken)
+    {
+        if (idUsuario <= 0)
+        {
+            return null;
+        }
+
+        string connectionString =
+            _configuration.GetConnectionString(
+                "KerniXDb")
+            ?? throw new InvalidOperationException(
+                "No existe la cadena de conexión 'KerniXDb'.");
+
+        const string sql = """
+            SELECT TOP (1)
+                u.id_empleado
+            FROM seg.usuario u
+            WHERE u.id_usuario = @id_usuario
+              AND u.estado = 1;
+            """;
+
+        await using var connection =
+            new SqlConnection(
+                connectionString);
+
+        await connection.OpenAsync(
+            cancellationToken);
+
+        await using var command =
+            new SqlCommand(
+                sql,
+                connection);
+
+        command.Parameters.Add(
+            "@id_usuario",
+            System.Data.SqlDbType.Int)
+            .Value =
+            idUsuario;
+
+        object? resultado =
+            await command.ExecuteScalarAsync(
+                cancellationToken);
+
+        if (
+            resultado is null ||
+            resultado is DBNull
+        )
+        {
+            _logger.LogWarning(
+                "No se encontró id_empleado para el usuario {IdUsuario}.",
+                idUsuario);
+
+            return null;
+        }
+
+        int idEmpleado =
+            Convert.ToInt32(
+                resultado);
+
+        if (idEmpleado <= 0)
+        {
+            return null;
+        }
+
+        return idEmpleado;
     }
 
 

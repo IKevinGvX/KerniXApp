@@ -18,16 +18,22 @@ public sealed class VentaConfirmarRequest
         Detalles
     { get; set; }
         = new();
-}
 
 
-public sealed class VentaConfirmarDetalleRequest
-{
-    public int IdProducto { get; set; }
+    public int IdEmpresa { get; set; }
 
-    public decimal Cantidad { get; set; }
+    public int IdSucursal { get; set; }
 
-    public decimal PrecioUnitario { get; set; }
+    public int IdAlmacen { get; set; }
 
-    public decimal Descuento { get; set; }
+    public sealed class VentaConfirmarDetalleRequest
+    {
+        public int IdProducto { get; set; }
+
+        public decimal Cantidad { get; set; }
+
+        public decimal PrecioUnitario { get; set; }
+
+        public decimal Descuento { get; set; }
+    }
 }

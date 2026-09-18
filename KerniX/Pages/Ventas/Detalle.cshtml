@@ -1,0 +1,962 @@
+﻿@page
+@model KerniX.Pages.Ventas.DetalleModel
+@using System.Linq
+@using System.Globalization
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Detalle de venta";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        Detalle de venta | KerniX
+    </title>
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/css/ventas/detalle.css?v=3")" />
+</head>
+
+<body>
+
+    <main class="container">
+
+        <!-- =====================================================
+             BARRA DE ACCIONES
+             ===================================================== -->
+
+        <header class="toolbar no-print">
+
+            <a class="back"
+               href="/Ventas/PrincipalVentas">
+
+                ← Volver a ventas
+
+            </a>
+
+            <div class="buttons">
+
+                @if (Model.Venta?.IdCotizacion > 0)
+                {
+                    <a class="secondary"
+                       href="/Cotizacion/Detalle?id=@Model.Venta.IdCotizacion">
+
+                        Ver cotización original
+
+                    </a>
+                }
+
+                @if (Model.Venta != null)
+                {
+                    <button type="button"
+                            onclick="window.print()">
+
+                        Imprimir / Guardar PDF
+
+                    </button>
+                }
+
+            </div>
+
+        </header>
+
+
+        <!-- =====================================================
+             ERROR
+             ===================================================== -->
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="error"
+                 role="alert">
+
+                @Model.MensajeError
+
+            </div>
+        }
+        else if (Model.Venta is { } venta)
+        {
+            // =================================================
+            // CÁLCULOS DEL REPORTE
+            // =================================================
+
+            var totalUnidades =
+                Model.Productos.Sum(x => x.Cantidad);
+
+            var productosUnicos =
+                Model.Productos
+                    .Select(x => x.IdProducto)
+                    .Distinct()
+                    .Count();
+
+            var cantidadLineas =
+                Model.Productos.Count;
+
+            // Composición del total registrado:
+            // subtotal + IGV, cuando no existen diferencias.
+            // No se debe sumar nuevamente el descuento.
+
+            decimal subtotal =
+                Math.Max(0m, venta.Subtotal);
+
+            decimal impuesto =
+                Math.Max(0m, venta.Impuesto);
+
+            decimal descuento =
+                Math.Max(0m, venta.Descuento);
+
+            decimal total =
+                Math.Max(0m, venta.Total);
+
+            decimal baseComposicion =
+                subtotal + impuesto;
+
+            decimal porcentajeSubtotal =
+                baseComposicion > 0
+                    ? subtotal / baseComposicion * 100m
+                    : 0m;
+
+            decimal porcentajeIgv =
+                baseComposicion > 0
+                    ? impuesto / baseComposicion * 100m
+                    : 0m;
+
+            // El descuento usa otra referencia:
+            // importe antes de aplicar el descuento.
+
+            decimal baseAntesDescuento =
+                subtotal + descuento;
+
+            decimal porcentajeDescuento =
+                baseAntesDescuento > 0
+                    ? descuento / baseAntesDescuento * 100m
+                    : 0m;
+
+            // Para las barras se toma el importe mayor
+            // entre las líneas de productos.
+
+            decimal maximoProducto =
+                Model.Productos.Count > 0
+                    ? Model.Productos.Max(x => Math.Max(0m, x.Total))
+                    : 0m;
+
+            <article class="sheet">
+
+                <!-- =================================================
+                     ENCABEZADO
+                     ================================================= -->
+
+                <div class="heading">
+
+                    <div>
+
+                        <p class="eyebrow">
+                            KerniX · Gestión comercial
+                        </p>
+
+                        <h1>
+                            Detalle de venta
+                        </h1>
+
+                        <p class="number">
+                            @venta.NumeroVenta
+                        </p>
+
+                    </div>
+
+                    <span class="status">
+                        @venta.Estado
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     INFORMACIÓN DE VENTA
+                     ================================================= -->
+
+                <div class="meta">
+
+                    <!-- FECHA -->
+
+                    <div>
+
+                        <small>
+                            Fecha
+                        </small>
+
+                        <strong>
+
+                            @(venta.FechaVenta == DateTime.MinValue
+                                ? "No registrada"
+                                : venta.FechaVenta.ToString("dd/MM/yyyy HH:mm"))
+
+                        </strong>
+
+                    </div>
+
+
+                    <!-- CLIENTE -->
+
+                    <div>
+
+                        <small>
+                            Cliente
+                        </small>
+
+                        <strong>
+
+                            @(string.IsNullOrWhiteSpace(venta.Cliente)
+                                ? "No disponible"
+                                : venta.Cliente)
+
+                        </strong>
+
+                        @if (!string.IsNullOrWhiteSpace(venta.Documento))
+                        {
+                            <span>
+                                @venta.Documento
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <!-- VENDEDOR -->
+
+                    <div>
+
+                        <small>
+                            Vendedor
+                        </small>
+
+                        <strong>
+
+                            @(string.IsNullOrWhiteSpace(venta.Vendedor)
+                                ? "Nombre no disponible"
+                                : venta.Vendedor)
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     TÍTULO DEL REPORTE
+                     ================================================= -->
+
+                <div class="report-heading">
+
+                    <div>
+
+                        <span class="report-kicker">
+                            Análisis comercial
+                        </span>
+
+                        <h2>
+                            Resumen visual de la venta
+                        </h2>
+
+                        <p>
+                            Indicadores calculados con los datos
+                            registrados de esta operación.
+                        </p>
+
+                    </div>
+
+                    <span class="report-reference">
+                        @venta.NumeroVenta
+                    </span>
+
+                </div>
+
+
+                <!-- =================================================
+                     4 TARJETAS 3D
+                     ================================================= -->
+
+                <section class="dashboard-3d"
+                         aria-label="Indicadores de la venta">
+
+                    <!-- TOTAL -->
+
+                    <article class="metric-3d metric-total">
+
+                        <span class="metric-icon">
+                            S/
+                        </span>
+
+                        <span class="metric-label">
+                            Total de venta
+                        </span>
+
+                        <strong class="metric-value">
+
+                            S/ @venta.Total.ToString("N2")
+
+                        </strong>
+
+                        <span class="metric-sub">
+                            Importe registrado
+                        </span>
+
+                    </article>
+
+
+                    <!-- PRODUCTOS ÚNICOS -->
+
+                    <article class="metric-3d metric-products">
+
+                        <span class="metric-icon">
+                            ◈
+                        </span>
+
+                        <span class="metric-label">
+                            Productos únicos
+                        </span>
+
+                        <strong class="metric-value">
+
+                            @productosUnicos
+
+                        </strong>
+
+                        <span class="metric-sub">
+
+                            @cantidadLineas líneas de venta
+
+                        </span>
+
+                    </article>
+
+
+                    <!-- UNIDADES -->
+
+                    <article class="metric-3d metric-items">
+
+                        <span class="metric-icon">
+                            ▣
+                        </span>
+
+                        <span class="metric-label">
+                            Unidades vendidas
+                        </span>
+
+                        <strong class="metric-value">
+
+                            @totalUnidades.ToString("N2")
+
+                        </strong>
+
+                        <span class="metric-sub">
+                            Cantidad acumulada
+                        </span>
+
+                    </article>
+
+
+                    <!-- IGV -->
+
+                    <article class="metric-3d metric-tax">
+
+                        <span class="metric-icon">
+                            %
+                        </span>
+
+                        <span class="metric-label">
+                            IGV de la venta
+                        </span>
+
+                        <strong class="metric-value">
+
+                            S/ @venta.Impuesto.ToString("N2")
+
+                        </strong>
+
+                        <span class="metric-sub">
+                            Impuesto registrado
+                        </span>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =================================================
+                     GRÁFICOS CIRCULARES 3D
+                     ================================================= -->
+
+                <section class="visual-3d-grid"
+                         aria-label="Gráficos de composición de la venta">
+
+                    <!-- SUBTOTAL -->
+
+                    <article class="ring-card-3d">
+
+                        <div class="ring-3d"
+                             style="--value:@porcentajeSubtotal.ToString("0.####", CultureInfo.InvariantCulture);">
+
+                            <div class="ring-center">
+
+                                <strong>
+
+                                    @porcentajeSubtotal.ToString("N1")%
+
+                                </strong>
+
+                                <span>
+                                    Subtotal
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ring-meta">
+
+                            <span class="ring-caption">
+                                Composición
+                            </span>
+
+                            <h3>
+                                Participación del subtotal
+                            </h3>
+
+                            <p>
+
+                                S/ @venta.Subtotal.ToString("N2")
+
+                            </p>
+
+                            <small>
+
+                                Porcentaje respecto a subtotal + IGV.
+
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- IGV -->
+
+                    <article class="ring-card-3d">
+
+                        <div class="ring-3d ring-igv"
+                             style="--value:@porcentajeIgv.ToString("0.####", CultureInfo.InvariantCulture);">
+
+                            <div class="ring-center">
+
+                                <strong>
+
+                                    @porcentajeIgv.ToString("N1")%
+
+                                </strong>
+
+                                <span>
+                                    IGV
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ring-meta">
+
+                            <span class="ring-caption">
+                                Composición
+                            </span>
+
+                            <h3>
+                                Participación del IGV
+                            </h3>
+
+                            <p>
+
+                                S/ @venta.Impuesto.ToString("N2")
+
+                            </p>
+
+                            <small>
+
+                                Porcentaje respecto a subtotal + IGV.
+
+                            </small>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- DESCUENTO -->
+
+                    <article class="ring-card-3d">
+
+                        <div class="ring-3d ring-discount"
+                             style="--value:@porcentajeDescuento.ToString("0.####", CultureInfo.InvariantCulture);">
+
+                            <div class="ring-center">
+
+                                <strong>
+
+                                    @porcentajeDescuento.ToString("N1")%
+
+                                </strong>
+
+                                <span>
+                                    Descuento
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="ring-meta">
+
+                            <span class="ring-caption">
+                                Descuentos
+                            </span>
+
+                            <h3>
+                                Descuento registrado
+                            </h3>
+
+                            <p>
+
+                                S/ @venta.Descuento.ToString("N2")
+
+                            </p>
+
+                            <small>
+
+                                Referencia: subtotal + descuento.
+
+                            </small>
+
+                        </div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- =================================================
+                     GRÁFICO DE BARRAS 3D POR PRODUCTO
+                     ================================================= -->
+
+                <section class="product-chart-panel"
+                         aria-label="Gráfico de ventas por producto">
+
+                    <div class="chart-header">
+
+                        <div>
+
+                            <span class="report-kicker">
+                                Comparación de importes
+                            </span>
+
+                            <h2>
+                                Ventas por producto
+                            </h2>
+
+                            <p>
+                                Total registrado por cada línea de venta.
+                            </p>
+
+                        </div>
+
+                        <span class="chart-chip">
+                            @cantidadLineas líneas
+                        </span>
+
+                    </div>
+
+
+                    @if (Model.Productos.Count == 0)
+                    {
+                        <div class="chart-empty">
+
+                            No existen productos para graficar.
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="bar-chart-3d">
+
+                            @foreach (
+                                var linea in Model.Productos
+                                    .OrderByDescending(x => x.Total)
+                            )
+                            {
+                                decimal importeLinea =
+                                    Math.Max(0m, linea.Total);
+
+                                decimal porcentajeBarra =
+                                    maximoProducto > 0
+                                        ? importeLinea / maximoProducto * 100m
+                                        : 0m;
+
+                                <div class="bar-row">
+
+                                    <div class="bar-row-top">
+
+                                        <div class="bar-product">
+
+                                            <strong>
+                                                @linea.Producto
+                                            </strong>
+
+                                            <small>
+
+                                                @linea.Cantidad.ToString("N2")
+                                                unidades
+
+                                            </small>
+
+                                        </div>
+
+                                        <strong class="bar-total">
+
+                                            S/ @linea.Total.ToString("N2")
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="bar-track">
+
+                                        <div class="bar-fill"
+                                             style="width:@porcentajeBarra.ToString("0.####", CultureInfo.InvariantCulture)%"
+                                             role="meter"
+                                             aria-label="Importe de @linea.Producto"
+                                             aria-valuemin="0"
+                                             aria-valuemax="@maximoProducto.ToString(CultureInfo.InvariantCulture)"
+                                             aria-valuenow="@importeLinea.ToString(CultureInfo.InvariantCulture)">
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                        <p class="chart-note">
+
+                            La barra más larga representa el producto
+                            con mayor importe. La escala se calcula
+                            únicamente con las líneas de esta venta.
+
+                        </p>
+                    }
+
+                </section>
+
+
+                <!-- =================================================
+                     PRODUCTOS VENDIDOS
+                     ================================================= -->
+
+                <section class="products-section">
+
+                    <div class="section-title">
+
+                        <div>
+
+                            <span class="report-kicker">
+                                Detalle comercial
+                            </span>
+
+                            <h2>
+                                Productos vendidos
+                            </h2>
+
+                        </div>
+
+                        <span class="section-count">
+
+                            @cantidadLineas registros
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-wrap">
+
+                        <table>
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Producto
+                                    </th>
+
+                                    <th class="num">
+                                        Cantidad
+                                    </th>
+
+                                    <th class="num">
+                                        Precio unit.
+                                    </th>
+
+                                    <th class="num">
+                                        Descuento
+                                    </th>
+
+                                    <th class="num">
+                                        IGV
+                                    </th>
+
+                                    <th class="num">
+                                        Total
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @if (Model.Productos.Count == 0)
+                                {
+                                    <tr>
+
+                                        <td colspan="6"
+                                            class="empty">
+
+                                            No se encontraron líneas
+                                            de esta venta.
+
+                                        </td>
+
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var linea in Model.Productos)
+                                    {
+                                        <tr>
+
+                                            <td>
+
+                                                <strong>
+
+                                                    @linea.Producto
+
+                                                </strong>
+
+                                                <small>
+
+                                                    Código interno:
+                                                    @linea.IdProducto
+
+                                                </small>
+
+                                            </td>
+
+
+                                            <td class="num">
+
+                                                @linea.Cantidad.ToString("N2")
+
+                                            </td>
+
+
+                                            <td class="num">
+
+                                                S/ @linea.PrecioUnitario.ToString("N2")
+
+                                            </td>
+
+
+                                            <td class="num">
+
+                                                S/ @linea.Descuento.ToString("N2")
+
+                                            </td>
+
+
+                                            <td class="num">
+
+                                                S/ @linea.Impuesto.ToString("N2")
+
+                                            </td>
+
+
+                                            <td class="num">
+
+                                                <strong>
+
+                                                    S/ @linea.Total.ToString("N2")
+
+                                                </strong>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     OBSERVACIONES Y TOTALES
+                     ================================================= -->
+
+                <div class="bottom">
+
+                    <!-- OBSERVACIONES -->
+
+                    <section class="notes">
+
+                        <h2>
+                            Observaciones
+                        </h2>
+
+                        <p>
+
+                            @(string.IsNullOrWhiteSpace(venta.Observacion)
+                                ? "Sin observaciones."
+                                : venta.Observacion)
+
+                        </p>
+
+
+                        @if (venta.IdCotizacion.HasValue)
+                        {
+                            <p>
+
+                                Origen: cotización
+                                #@venta.IdCotizacion
+
+                            </p>
+                        }
+
+
+                        <p class="muted">
+
+                            Reporte de consulta de la venta registrada.
+                            No genera cobros, comprobantes
+                            ni movimientos adicionales de inventario.
+
+                        </p>
+
+                    </section>
+
+
+                    <!-- TOTALES -->
+
+                    <section class="totals">
+
+                        <div>
+
+                            <span>
+                                Subtotal
+                            </span>
+
+                            <strong>
+
+                                S/ @venta.Subtotal.ToString("N2")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Descuento
+                            </span>
+
+                            <strong>
+
+                                S/ @venta.Descuento.ToString("N2")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                IGV
+                            </span>
+
+                            <strong>
+
+                                S/ @venta.Impuesto.ToString("N2")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="grand">
+
+                            <span>
+                                Total
+                            </span>
+
+                            <strong>
+
+                                S/ @venta.Total.ToString("N2")
+
+                            </strong>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <!-- =================================================
+                     PIE DE REPORTE
+                     ================================================= -->
+
+                <footer class="report-footer">
+
+                    <span>
+                        KerniX · Reporte de detalle de venta
+                    </span>
+
+                    <strong>
+                        @venta.NumeroVenta
+                    </strong>
+
+                </footer>
+
+            </article>
+        }
+
+    </main>
+
+</body>
+
+</html>

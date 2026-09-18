@@ -1,0 +1,21 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Compilacion .NET
+**/bin/
+**/obj/
+
+# Archivos temporales
+*.tmp
+*.log
+
+# Backups
+*.bak
+
+# Configuracion local y secretos
+**/appsettings.Development.json
+**/appsettings.Local.json
+.env
+.env.*

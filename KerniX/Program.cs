@@ -2,6 +2,7 @@ using KerniX.Api.Services.Configuracion;
 using KerniX.Middleware;
 using KerniX.Security;
 using KerniX.Services.Auth;
+using KerniX.Services.Cotizacion;
 using KerniX.Services.Empleados;
 using KerniX.Services.Usuarios;
 using KerniX.Services.Ventas;
@@ -35,7 +36,10 @@ public class Program
         {
             apiBaseUrl += "/";
         }
-
+        builder.Services.AddScoped<
+    ICotizacionDbService,
+    CotizacionDbService
+>();
         Uri apiUri =
             new(apiBaseUrl);
 
