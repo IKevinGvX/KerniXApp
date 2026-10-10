@@ -1,0 +1,347 @@
+﻿@page "/Inventario/Reversiones"
+@model KerniX.Pages.Inventario.Reversiones.IndexModel
+
+@{
+    ViewData["Title"] = "Reversiones";
+
+    decimal cantidadGenerica =
+        Model.Items
+            .Where(x => x.PermiteReversionGenerica)
+            .Sum(x => x.Cantidad);
+
+    decimal cantidadProtegida =
+        Model.Items
+            .Where(x => !x.PermiteReversionGenerica)
+            .Sum(x => x.Cantidad);
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/auditoria-inventario.css"
+      asp-append-version="true" />
+
+<div class="kai-page kai-page--reverse">
+
+    <main class="kai-shell">
+
+        <section class="kai-hero">
+
+            <div>
+
+                <div class="kai-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Reversiones</strong>
+                </div>
+
+                <div class="kai-eyebrow">
+                    INVENTARIO · AUDITORÍA
+                </div>
+
+                <h1>
+                    Reversiones <strong>controladas</strong>
+                </h1>
+
+                <p>
+                    El movimiento original nunca se elimina.
+                    Una reversión crea un movimiento inverso,
+                    conserva la trazabilidad y enlaza origen con reversa.
+                </p>
+
+            </div>
+
+
+            <div class="kai-actions">
+
+                <a href="/Inventario"
+                   class="kai-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="/Inventario/Kardex"
+                   class="kai-btn kai-btn-cyan">
+                    <span uk-icon="icon: list; ratio: .8"></span>
+                    Kardex
+                </a>
+
+            </div>
+
+        </section>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeExito))
+        {
+            <div class="kai-alert kai-alert-ok">
+                <span uk-icon="icon: check; ratio: .8"></span>
+                @Model.MensajeExito
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kai-alert kai-alert-error">
+                <span uk-icon="icon: warning; ratio: .8"></span>
+                @Model.MensajeError
+            </div>
+        }
+
+
+        <section class="kai-kpis">
+
+            <article>
+                <span>DISPONIBLES</span>
+                <strong>@Model.Items.Count</strong>
+                <small>Movimientos aún no revertidos</small>
+            </article>
+
+            <article class="positive">
+                <span>REVERSIÓN DIRECTA</span>
+                <strong>@Model.Genericos</strong>
+                <small>@cantidadGenerica.ToString("N2") unidades</small>
+            </article>
+
+            <article class="protected">
+                <span>PROTEGIDOS</span>
+                <strong>@Model.Protegidos</strong>
+                <small>@cantidadProtegida.ToString("N2") unidades</small>
+            </article>
+
+            <article>
+                <span>INTEGRIDAD</span>
+                <strong>0 DELETE</strong>
+                <small>Original siempre conservado</small>
+            </article>
+
+        </section>
+
+
+        <section class="kai-rule-grid">
+
+            <article class="safe">
+
+                <div class="kai-rule-icon">
+                    ↶
+                </div>
+
+                <div>
+                    <strong>Reversión genérica</strong>
+                    <p>
+                        Permitida para movimientos operativos compatibles.
+                        Genera un movimiento inverso y relación REVERSE.
+                    </p>
+                </div>
+
+            </article>
+
+
+            <article class="locked">
+
+                <div class="kai-rule-icon">
+                    ⛨
+                </div>
+
+                <div>
+                    <strong>Movimiento protegido</strong>
+                    <p>
+                        Ventas y otros procesos comerciales deben anularse
+                        desde su módulo de origen.
+                    </p>
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <section class="kai-card">
+
+            <header class="kai-card-head">
+
+                <div>
+                    <span>MOVIMIENTOS</span>
+
+                    <h2>
+                        Reversibles
+                    </h2>
+
+                    <p>
+                        Busca por ID, código, producto, almacén o referencia.
+                    </p>
+                </div>
+
+
+                <form method="get"
+                      class="kai-toolbar">
+
+                    <div class="kai-field">
+                        <label>Buscar</label>
+
+                        <input type="text"
+                               name="Buscar"
+                               value="@Model.Buscar"
+                               maxlength="200"
+                               placeholder="ID, producto, referencia..." />
+                    </div>
+
+                    <button type="submit"
+                            class="kai-btn kai-btn-cyan">
+                        Buscar
+                    </button>
+
+                    <a href="/Inventario/Reversiones"
+                       class="kai-btn">
+                        Limpiar
+                    </a>
+
+                </form>
+
+            </header>
+
+
+            <div class="kai-table-wrap">
+
+                <table class="kai-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>FECHA / HORA</th>
+                            <th>TIPO</th>
+                            <th>PRODUCTO</th>
+                            <th>ALMACÉN</th>
+                            <th>CANTIDAD</th>
+                            <th>STOCK</th>
+                            <th>REFERENCIA</th>
+                            <th>ACCIÓN</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="9">
+                                <div class="kai-empty">
+                                    No hay movimientos reversibles.
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong class="kai-number">
+                                        #@item.IdMovimientoInventario
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.FechaMovimiento.ToString("dd/MM/yyyy")
+                                    </strong>
+
+                                    <small>
+                                        @item.FechaMovimiento.ToString("HH:mm")
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <span class="kai-badge violet">
+                                        @item.CodigoMovimiento
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.Producto
+                                    </strong>
+
+                                    <small>
+                                        @item.CodigoProducto
+                                    </small>
+                                </td>
+
+                                <td>
+                                    @item.Almacen
+                                </td>
+
+                                <td>
+                                    @item.Cantidad.ToString("N2")
+                                </td>
+
+                                <td>
+                                    <span class="kai-stock-flow">
+                                        @item.StockAnterior.ToString("N2")
+                                        <b>→</b>
+                                        @item.StockNuevo.ToString("N2")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @(item.Referencia ?? "—")
+                                </td>
+
+                                <td>
+                                    @if (item.PermiteReversionGenerica)
+                                    {
+                                        <form method="post"
+                                              action="?handler=Revertir"
+                                              class="kai-reverse-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="idMovimiento"
+                                                   value="@item.IdMovimientoInventario" />
+
+                                            <input type="text"
+                                                   name="motivo"
+                                                   maxlength="300"
+                                                   placeholder="Motivo obligatorio"
+                                                   required />
+
+                                            <button type="submit"
+                                                    class="kai-btn kai-btn-red kai-btn-small"
+                                                    data-confirm="¿Revertir este movimiento? El original permanecerá registrado.">
+                                                Revertir
+                                            </button>
+
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="kai-badge gold">
+                                            Módulo origen
+                                        </span>
+                                    }
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
+
+<script src="~/js/Inventario/auditoria-inventario.js"
+        asp-append-version="true"></script>

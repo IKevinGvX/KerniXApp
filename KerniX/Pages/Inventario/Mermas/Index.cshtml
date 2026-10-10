@@ -1,0 +1,561 @@
+﻿@page "/Inventario/Mermas"
+@model KerniX.Pages.Inventario.Mermas.IndexModel
+
+@{
+    ViewData["Title"] = "Mermas";
+
+    int perdidas =
+        Model.Items.Count(
+            x => string.Equals(
+                x.Causa?.Trim(),
+                "pérdida",
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
+
+    int robos =
+        Model.Items.Count(
+            x => string.Equals(
+                x.Causa?.Trim(),
+                "robo",
+                StringComparison.OrdinalIgnoreCase
+            )
+        );
+
+    decimal mayorMerma =
+        Model.Items.Count > 0
+            ? Model.Items.Max(x => x.Cantidad)
+            : 0M;
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/mermas.css"
+      asp-append-version="true" />
+
+<div class="kme-page">
+
+    <main class="kme-shell">
+
+        <section class="kme-hero">
+
+            <div>
+
+                <div class="kme-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Mermas</strong>
+                </div>
+
+                <div class="kme-eyebrow">
+                    INVENTARIO · PÉRDIDAS CONTROLADAS
+                </div>
+
+                <h1>
+                    Mermas de <strong>Stock</strong>
+                </h1>
+
+                <p>
+                    Registra pérdidas físicas justificadas por daño,
+                    vencimiento, pérdida, robo, destrucción u otra causa.
+                    Cada operación genera un egreso trazable en Kardex.
+                </p>
+
+            </div>
+
+
+            <div class="kme-actions">
+
+                <a href="/Inventario"
+                   class="kme-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="#nueva-merma"
+                   class="kme-btn kme-btn-red">
+                    <span uk-icon="icon: plus-circle; ratio: .8"></span>
+                    Nueva Merma
+                </a>
+
+                <a href="/Inventario/Kardex"
+                   class="kme-btn kme-btn-cyan">
+                    <span uk-icon="icon: list; ratio: .8"></span>
+                    Kardex
+                </a>
+
+            </div>
+
+        </section>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeExito))
+        {
+            <div class="kme-alert kme-alert-ok">
+                <span uk-icon="icon: check; ratio: .8"></span>
+                @Model.MensajeExito
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kme-alert kme-alert-error">
+                <span uk-icon="icon: warning; ratio: .8"></span>
+                @Model.MensajeError
+            </div>
+        }
+
+
+        <section class="kme-kpis">
+
+            <article>
+                <span>REGISTROS</span>
+                <strong>@Model.Items.Count</strong>
+                <small>Mermas registradas</small>
+            </article>
+
+            <article class="negative">
+                <span>UNIDADES RETIRADAS</span>
+                <strong>-@Model.CantidadTotal.ToString("N2")</strong>
+                <small>Total descontado por merma</small>
+            </article>
+
+            <article>
+                <span>DAÑOS</span>
+                <strong>@Model.Danos</strong>
+                <small>Casos clasificados como daño</small>
+            </article>
+
+            <article>
+                <span>VENCIMIENTOS</span>
+                <strong>@Model.Vencimientos</strong>
+                <small>Casos por vencimiento</small>
+            </article>
+
+        </section>
+
+
+        <section class="kme-cause-grid">
+
+            <article>
+                <div class="kme-cause-icon danger">
+                    !
+                </div>
+
+                <div>
+                    <strong>Daño</strong>
+                    <small>
+                        Producto deteriorado o inutilizable.
+                    </small>
+                </div>
+            </article>
+
+            <article>
+                <div class="kme-cause-icon warning">
+                    ⏱
+                </div>
+
+                <div>
+                    <strong>Vencimiento</strong>
+                    <small>
+                        Producto fuera de fecha o vida útil.
+                    </small>
+                </div>
+            </article>
+
+            <article>
+                <div class="kme-cause-icon muted">
+                    ?
+                </div>
+
+                <div>
+                    <strong>Pérdida</strong>
+                    <small>
+                        @perdidas registros identificados.
+                    </small>
+                </div>
+            </article>
+
+            <article>
+                <div class="kme-cause-icon red">
+                    ×
+                </div>
+
+                <div>
+                    <strong>Robo</strong>
+                    <small>
+                        @robos registros identificados.
+                    </small>
+                </div>
+            </article>
+
+        </section>
+
+
+        <section id="nueva-merma"
+                 class="kme-card">
+
+            <header class="kme-card-head">
+
+                <div>
+                    <span>NUEVA MERMA</span>
+
+                    <h2>
+                        Registrar pérdida física
+                    </h2>
+
+                    <p>
+                        La cantidad indicada será descontada del stock disponible.
+                    </p>
+                </div>
+
+                <span class="kme-badge red">
+                    EGRESO
+                </span>
+
+            </header>
+
+
+            <div class="kme-card-body">
+
+                <form method="post"
+                      action="?handler=Registrar">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="kme-form-grid">
+
+                        <div class="kme-field">
+                            <label>Almacén</label>
+
+                            <select name="idAlmacen"
+                                    required>
+
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var almacen in Model.Catalogos.Almacenes)
+                                {
+                                    <option value="@almacen.IdAlmacen">
+                                        @almacen.Codigo · @almacen.Nombre
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kme-field">
+                            <label>Producto</label>
+
+                            <select name="idProducto"
+                                    required>
+
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var producto in Model.Catalogos.Productos)
+                                {
+                                    <option value="@producto.IdProducto">
+                                        @producto.Codigo · @producto.Nombre
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kme-field">
+                            <label>Cantidad</label>
+
+                            <input type="number"
+                                   name="cantidad"
+                                   min="0.0001"
+                                   step="0.0001"
+                                   placeholder="0.00"
+                                   required />
+                        </div>
+
+
+                        <div class="kme-field">
+                            <label>Causa</label>
+
+                            <select name="causa"
+                                    required>
+
+                                <option value="daño">
+                                    Daño
+                                </option>
+
+                                <option value="vencimiento">
+                                    Vencimiento
+                                </option>
+
+                                <option value="pérdida">
+                                    Pérdida
+                                </option>
+
+                                <option value="robo">
+                                    Robo
+                                </option>
+
+                                <option value="destrucción">
+                                    Destrucción
+                                </option>
+
+                                <option value="otro">
+                                    Otro
+                                </option>
+
+                            </select>
+                        </div>
+
+
+                        <div class="kme-field kme-field-full">
+                            <label>Motivo obligatorio</label>
+
+                            <textarea name="motivo"
+                                      maxlength="300"
+                                      placeholder="Describe lo ocurrido, referencia interna o evidencia asociada."
+                                      required></textarea>
+                        </div>
+
+                    </div>
+
+
+                    <div class="kme-warning">
+                        <strong>Operación irreversible desde esta pantalla:</strong>
+                        la merma genera un movimiento de egreso.
+                        Si se registró por error debe utilizarse el proceso de reversión,
+                        nunca eliminar el movimiento.
+                    </div>
+
+
+                    <div class="kme-form-actions">
+
+                        <button type="submit"
+                                class="kme-btn kme-btn-red"
+                                data-confirm="¿Registrar la merma? Se descontará stock del producto.">
+                            <span uk-icon="icon: warning; ratio: .8"></span>
+                            Registrar Merma
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <section class="kme-card">
+
+            <header class="kme-card-head">
+
+                <div>
+                    <span>ANÁLISIS</span>
+
+                    <h2>
+                        Impacto de mermas
+                    </h2>
+
+                    <p>
+                        Resumen del historial actualmente cargado.
+                    </p>
+                </div>
+
+            </header>
+
+
+            <div class="kme-analysis">
+
+                <article>
+                    <span>Mayor merma</span>
+
+                    <strong class="kme-neg">
+                        -@mayorMerma.ToString("N2")
+                    </strong>
+                </article>
+
+                <article>
+                    <span>Total retirado</span>
+
+                    <strong class="kme-neg">
+                        -@Model.CantidadTotal.ToString("N2")
+                    </strong>
+                </article>
+
+                <article>
+                    <span>Daño + vencimiento</span>
+
+                    <strong>
+                        @(Model.Danos + Model.Vencimientos)
+                    </strong>
+                </article>
+
+                <article>
+                    <span>Otros eventos</span>
+
+                    <strong>
+                        @(Model.Items.Count - Model.Danos - Model.Vencimientos)
+                    </strong>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <section class="kme-card">
+
+            <header class="kme-card-head">
+
+                <div>
+                    <span>TRAZABILIDAD</span>
+
+                    <h2>
+                        Historial de mermas
+                    </h2>
+
+                    <p>
+                        Cada registro mantiene causa, motivo y movimiento asociado.
+                    </p>
+                </div>
+
+                <span class="kme-pill">
+                    @Model.Items.Count registros
+                </span>
+
+            </header>
+
+
+            <div class="kme-table-wrap">
+
+                <table class="kme-table">
+
+                    <thead>
+                        <tr>
+                            <th>NÚMERO</th>
+                            <th>FECHA / HORA</th>
+                            <th>PRODUCTO</th>
+                            <th>ALMACÉN</th>
+                            <th>CANTIDAD</th>
+                            <th>CAUSA</th>
+                            <th>MOTIVO</th>
+                            <th>MOVIMIENTO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8">
+
+                                <div class="kme-empty">
+                                    No existen mermas registradas.
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Items)
+                        {
+                            string causa =
+                                item.Causa
+                                    ?.Trim()
+                                    .ToLowerInvariant()
+                                ?? string.Empty;
+
+                            string clase =
+                                causa switch
+                                {
+                                    "daño" => "red",
+                                    "vencimiento" => "gold",
+                                    "robo" => "red",
+                                    "pérdida" => "violet",
+                                    "destrucción" => "red",
+                                    _ => ""
+                                };
+
+                            <tr>
+
+                                <td>
+                                    <strong class="kme-number">
+                                        @item.NumeroMerma
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.FechaRegistro.ToString("dd/MM/yyyy")
+                                    </strong>
+
+                                    <small>
+                                        @item.FechaRegistro.ToString("HH:mm")
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.Producto
+                                    </strong>
+
+                                    <small>
+                                        @item.CodigoProducto
+                                    </small>
+                                </td>
+
+                                <td>
+                                    @item.Almacen
+                                </td>
+
+                                <td>
+                                    <span class="kme-neg">
+                                        -@item.Cantidad.ToString("N2")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="kme-badge @clase">
+                                        @item.Causa
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @item.Motivo
+                                </td>
+
+                                <td>
+                                    @(item.IdMovimientoInventario?.ToString() ?? "—")
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
+
+<script src="~/js/Inventario/mermas.js"
+        asp-append-version="true"></script>

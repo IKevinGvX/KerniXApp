@@ -1,0 +1,79 @@
+﻿@page "/Inventario/Proveedores/Nuevo"
+@model KerniX.Pages.Inventario.Proveedores.NuevoModel
+@{
+    ViewData["Title"] = "Nuevo proveedor | KerniX ERP";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/proveedores.css")" />
+<main class="pv-shell">
+    <div class="pv-container">
+        <div class="pv-form-shell">
+            <header class="pv-form-heading">
+                <div class="pv-eyebrow">ALTA DE NUEVO PROVEEDOR</div>
+                <h1>Registrar <span>proveedor</span></h1>
+                <p>Registra una empresa proveedora. Los campos marcados como obligatorios se validan en servidor.</p>
+            </header>
+            <form method="post" action="/Inventario/Proveedores/Nuevo" class="pv-form-body pv-form-main">
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(false, "", new { @class = "pv-validation", role = "alert" })
+                <div class="pv-fields">
+                    <div class="pv-field">
+                        <label for="Input_TipoDocumento">Tipo de documento</label>
+                        <select id="Input_TipoDocumento" name="Input.TipoDocumento" required data-document-type>
+                            <option value="ruc" selected="@(string.Equals(Model.Input.TipoDocumento, "ruc", StringComparison.OrdinalIgnoreCase))">RUC</option>
+                            <option value="dni" selected="@(string.Equals(Model.Input.TipoDocumento, "dni", StringComparison.OrdinalIgnoreCase))">DNI</option>
+                            <option value="ce" selected="@(string.Equals(Model.Input.TipoDocumento, "ce", StringComparison.OrdinalIgnoreCase))">Carné de extranjería</option>
+                            @if (!new[] { "ruc", "dni", "ce" }.Contains(Model.Input.TipoDocumento, StringComparer.OrdinalIgnoreCase))
+                            {
+                                <option value="@Model.Input.TipoDocumento" selected>@Model.Input.TipoDocumento</option>
+                            }
+                        </select>
+                        @Html.ValidationMessageFor(m => m.Input.TipoDocumento, "", new { @class = "pv-field-error" })
+                    </div>
+                    <div class="pv-field">
+                        <label for="Input_NumeroDocumento">Número de documento</label>
+                        <input id="Input_NumeroDocumento" name="Input.NumeroDocumento" value="@Model.Input.NumeroDocumento"
+                               type="text" maxlength="20" required data-document-number placeholder="RUC / DNI / CE" />
+                        @Html.ValidationMessageFor(m => m.Input.NumeroDocumento, "", new { @class = "pv-field-error" })
+                    </div>
+                    <div class="pv-field pv-wide">
+                        <label for="Input_RazonSocial">Razón social / nombre</label>
+                        <input id="Input_RazonSocial" name="Input.RazonSocial" value="@Model.Input.RazonSocial"
+                               type="text" maxlength="200" required placeholder="Razón social registrada" />
+                        @Html.ValidationMessageFor(m => m.Input.RazonSocial, "", new { @class = "pv-field-error" })
+                    </div>
+                    <div class="pv-field pv-wide">
+                        <label for="Input_NombreComercial">Nombre comercial</label>
+                        <input id="Input_NombreComercial" name="Input.NombreComercial" value="@Model.Input.NombreComercial"
+                               type="text" maxlength="150" placeholder="Nombre comercial (opcional)" />
+                        @Html.ValidationMessageFor(m => m.Input.NombreComercial, "", new { @class = "pv-field-error" })
+                    </div>
+                    <div class="pv-field">
+                        <label for="Input_Telefono">Teléfono</label>
+                        <input id="Input_Telefono" name="Input.Telefono" value="@Model.Input.Telefono"
+                               type="tel" maxlength="20" placeholder="Ej. 987654321" />
+                        @Html.ValidationMessageFor(m => m.Input.Telefono, "", new { @class = "pv-field-error" })
+                    </div>
+                    <div class="pv-field">
+                        <label for="Input_Correo">Correo electrónico</label>
+                        <input id="Input_Correo" name="Input.Correo" value="@Model.Input.Correo"
+                               type="email" maxlength="150" placeholder="compras@proveedor.com" />
+                        @Html.ValidationMessageFor(m => m.Input.Correo, "", new { @class = "pv-field-error" })
+                    </div>
+                </div>
+                <div class="pv-form-tip">
+                    <span uk-icon="icon: shield; ratio: .75"></span>
+                    RUC: 11 dígitos · DNI: 8 dígitos. La empresa se identifica desde la sesión verificada.
+                    No se modifica desde el navegador.
+                </div>
+                <div class="pv-form-footer">
+                    <a class="pv-secondary" href="/Inventario/Proveedores">Cancelar</a>
+                    <button class="pv-action" type="submit" data-submit-button>
+                        <span uk-icon="check"></span> Registrar proveedor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+<script src="@Url.Content("~/js/proveedores.js")"></script>

@@ -1,0 +1,613 @@
+﻿@page "/Inventario/Salidas"
+@model KerniX.Pages.Inventario.Salidas.IndexModel
+
+@{
+    ViewData["Title"] = "Salidas de Stock";
+
+    var movimientosTop =
+        Model.Resultado.Items
+            .OrderByDescending(x => x.Cantidad)
+            .Take(4)
+            .ToList();
+
+    var productosTop =
+        Model.Resultado.Items
+            .GroupBy(x => new
+            {
+                Codigo = x.CodigoProducto,
+                Nombre = x.Producto
+            })
+            .Select(g => new
+            {
+                g.Key.Codigo,
+                g.Key.Nombre,
+                Cantidad = g.Sum(x => x.Cantidad)
+            })
+            .OrderByDescending(x => x.Cantidad)
+            .Take(5)
+            .ToList();
+
+    decimal promedio =
+        Model.Resultado.Items.Count > 0
+            ? Model.Resultado.Items.Average(x => x.Cantidad)
+            : 0M;
+
+    decimal mayor =
+        Model.Resultado.Items.Count > 0
+            ? Model.Resultado.Items.Max(x => x.Cantidad)
+            : 0M;
+
+    var almacenTop =
+        Model.Resultado.Items
+            .GroupBy(x => x.Almacen ?? "Sin almacén")
+            .Select(g => new
+            {
+                Nombre = g.Key,
+                Cantidad = g.Sum(x => x.Cantidad)
+            })
+            .OrderByDescending(x => x.Cantidad)
+            .FirstOrDefault();
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/stock-movimientos.css"
+      asp-append-version="true" />
+
+<div class="kx-stock-page kx-stock-page--out">
+    <main class="kx-stock-shell">
+
+        <section class="kx-stock-hero">
+
+            <div class="kx-stock-hero-copy">
+
+                <div class="kx-stock-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Salidas</strong>
+                </div>
+
+                <div class="kx-stock-eyebrow">
+                    INVENTARIO · EGRESOS
+                </div>
+
+                <h1>
+                    Salidas de <strong>Stock</strong>
+                </h1>
+
+                <p>
+                    Controla retiros manuales autorizados. Cada operación descuenta existencias y genera automáticamente su movimiento de Kardex.
+                </p>
+
+            </div>
+
+            <div class="kx-stock-hero-actions">
+
+                <a href="/Inventario"
+                   class="kx-stock-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="/Inventario/Salidas/Nueva"
+                   class="kx-stock-btn kx-stock-btn-primary">
+                    <span uk-icon="icon: plus-circle; ratio: .8"></span>
+                    Nueva Salida
+                </a>
+
+            </div>
+
+        </section>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.SalidaStockExito))
+        {
+            <div class="kx-stock-alert kx-stock-alert-ok">
+                <span uk-icon="icon: check; ratio: .8"></span>
+                @Model.SalidaStockExito
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kx-stock-alert kx-stock-alert-error">
+                <span uk-icon="icon: warning; ratio: .8"></span>
+                @Model.MensajeError
+            </div>
+        }
+
+
+        <section class="kx-stock-kpis">
+
+            <article class="kx-stock-kpi">
+                <span class="kx-stock-kpi-label">
+                    TOTAL SALIDAS
+                </span>
+
+                <strong>
+                    @Model.Resumen.TotalSalidas
+                </strong>
+
+                <small>
+                    Movimientos de egreso manual registrados
+                </small>
+            </article>
+
+
+            <article class="kx-stock-kpi">
+                <span class="kx-stock-kpi-label">
+                    CANTIDAD RETIRADA
+                </span>
+
+                <strong>
+                    @Model.Resumen.CantidadRetirada.ToString("N2")
+                </strong>
+
+                <small>
+                    Unidades acumuladas retiradas
+                </small>
+            </article>
+
+
+            <article class="kx-stock-kpi">
+                <span class="kx-stock-kpi-label">
+                    SALIDAS HOY
+                </span>
+
+                <strong>
+                    @Model.Resumen.SalidasHoy
+                </strong>
+
+                <small>
+                    Operaciones de egreso del día
+                </small>
+            </article>
+
+
+            <article class="kx-stock-kpi">
+                <span class="kx-stock-kpi-label">
+                    CANTIDAD HOY
+                </span>
+
+                <strong>
+                    @Model.Resumen.CantidadHoy.ToString("N2")
+                </strong>
+
+                <small>
+                    Unidades retiradas hoy
+                </small>
+            </article>
+
+        </section>
+
+
+        <section class="kx-stock-analytics">
+
+            <article class="kx-stock-card">
+
+                <header class="kx-stock-card-head">
+                    <div>
+                        <h2>Mayor salida visible</h2>
+                        <p>
+                            Comparación de los registros visibles
+                        </p>
+                    </div>
+
+                    <span class="kx-stock-pill">
+                        @Model.Resultado.Items.Count registros
+                    </span>
+                </header>
+
+                <div class="kx-stock-card-body">
+
+                    @if (movimientosTop.Count == 0)
+                    {
+                        <div class="kx-stock-empty">
+                            Sin datos para analizar.
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var item in movimientosTop)
+                        {
+                            <div class="kx-stock-bar-row">
+
+                                <div class="kx-stock-bar-top">
+                                    <span>
+                                        @item.CodigoProducto
+                                    </span>
+
+                                    <strong>
+                                        -@item.Cantidad.ToString("N2")
+                                    </strong>
+                                </div>
+
+                                <progress class="kx-stock-progress"
+                                          max="@Math.Max(1M, mayor)"
+                                          value="@item.Cantidad">
+                                </progress>
+
+                            </div>
+                        }
+                    }
+
+                </div>
+
+            </article>
+
+
+            <article class="kx-stock-card">
+
+                <header class="kx-stock-card-head">
+                    <div>
+                        <h2>Productos con mayor egreso</h2>
+                        <p>
+                            Agrupación de los registros visibles
+                        </p>
+                    </div>
+
+                    <span class="kx-stock-pill">
+                        TOP 5
+                    </span>
+                </header>
+
+                <div class="kx-stock-card-body">
+
+                    @if (productosTop.Count == 0)
+                    {
+                        <div class="kx-stock-empty">
+                            Sin datos para analizar.
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var item in productosTop)
+                        {
+                            <div class="kx-stock-product-row">
+
+                                <div>
+                                    <strong>
+                                        @item.Nombre
+                                    </strong>
+
+                                    <small>
+                                        @item.Codigo
+                                    </small>
+                                </div>
+
+                                <b>
+                                    -@item.Cantidad.ToString("N2")
+                                </b>
+
+                            </div>
+                        }
+                    }
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <section class="kx-stock-insights">
+
+            <article>
+                <span>Promedio por movimiento</span>
+                <strong>-@promedio.ToString("N2")</strong>
+            </article>
+
+            <article>
+                <span>Mayor movimiento visible</span>
+                <strong>-@mayor.ToString("N2")</strong>
+            </article>
+
+            <article>
+                <span>Almacén con mayor movimiento</span>
+                <strong>@(almacenTop?.Nombre ?? "Sin datos")</strong>
+            </article>
+
+            <article>
+                <span>Registros visibles</span>
+                <strong>@Model.Resultado.Items.Count</strong>
+            </article>
+
+        </section>
+
+
+        <section class="kx-stock-card kx-stock-history">
+
+            <header class="kx-stock-card-head">
+
+                <div>
+                    <h2>Historial de salidas</h2>
+
+                    <p>
+                        Filtros y trazabilidad por producto y almacén
+                    </p>
+                </div>
+
+                <span class="kx-stock-pill">
+                    @Model.Resultado.TotalRegistros total
+                </span>
+
+            </header>
+
+
+            <div class="kx-stock-filter-area">
+
+                <form method="get"
+                      action="/Inventario/Salidas"
+                      class="kx-stock-filters">
+
+                    <div class="kx-stock-field kx-stock-search">
+                        <label>Buscar</label>
+
+                        <input type="text"
+                               name="Filtro.Buscar"
+                               value="@Model.Filtro.Buscar"
+                               maxlength="200"
+                               placeholder="Producto, código, referencia..." />
+                    </div>
+
+
+                    <div class="kx-stock-field">
+                        <label>Almacén</label>
+
+                        <select name="Filtro.IdAlmacen">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            @foreach (var almacen in Model.Catalogos.Almacenes)
+                            {
+                                if (Model.Filtro.IdAlmacen == almacen.IdAlmacen)
+                                {
+                                    <option value="@almacen.IdAlmacen"
+                                            selected>
+                                        @almacen.Nombre
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@almacen.IdAlmacen">
+                                        @almacen.Nombre
+                                    </option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+
+
+                    <div class="kx-stock-field">
+                        <label>Producto</label>
+
+                        <select name="Filtro.IdProducto">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            @foreach (var producto in Model.Catalogos.Productos)
+                            {
+                                if (Model.Filtro.IdProducto == producto.IdProducto)
+                                {
+                                    <option value="@producto.IdProducto"
+                                            selected>
+                                        @producto.Codigo · @producto.Nombre
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@producto.IdProducto">
+                                        @producto.Codigo · @producto.Nombre
+                                    </option>
+                                }
+                            }
+
+                        </select>
+                    </div>
+
+
+                    <div class="kx-stock-field">
+                        <label>Desde</label>
+
+                        <input type="date"
+                               name="Filtro.FechaDesde"
+                               value="@(Model.Filtro.FechaDesde?.ToString("yyyy-MM-dd"))" />
+                    </div>
+
+
+                    <div class="kx-stock-field">
+                        <label>Hasta</label>
+
+                        <input type="date"
+                               name="Filtro.FechaHasta"
+                               value="@(Model.Filtro.FechaHasta?.ToString("yyyy-MM-dd"))" />
+                    </div>
+
+
+                    <div class="kx-stock-filter-actions">
+
+                        <button type="submit"
+                                class="kx-stock-btn kx-stock-btn-filter">
+                            <span uk-icon="icon: search; ratio: .75"></span>
+                            Filtrar
+                        </button>
+
+                        <a href="/Inventario/Salidas"
+                           class="kx-stock-btn">
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <div class="kx-stock-table-wrap">
+
+                <table class="kx-stock-table">
+
+                    <thead>
+                        <tr>
+                            <th>N° SALIDA</th>
+                            <th>FECHA / HORA</th>
+                            <th>PRODUCTO</th>
+                            <th>ALMACÉN</th>
+                            <th>TIPO</th>
+                            <th>CANTIDAD</th>
+                            <th>STOCK</th>
+                            <th>REFERENCIA</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Resultado.Items.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    <div class="kx-stock-empty kx-stock-empty-table">
+                                        No existen salidas para los filtros seleccionados.
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Resultado.Items)
+                            {
+                                <tr>
+
+                                    <td>
+                                        <span class="kx-stock-number">
+                                            @item.NumeroSalida
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.FechaMovimiento.ToString("dd/MM/yyyy")
+                                        </strong>
+
+                                        <small>
+                                            @item.FechaMovimiento.ToString("HH:mm")
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.Producto
+                                        </strong>
+
+                                        <small>
+                                            @item.CodigoProducto
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.Almacen
+                                        </strong>
+
+                                        <small>
+                                            @item.Sucursal
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <span class="kx-stock-type">
+                                            @item.TipoMovimiento
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="kx-stock-qty">
+                                            -@item.Cantidad.ToString("N2")
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="kx-stock-stock">
+                                            @item.StockAnterior.ToString("N2")
+                                            <b>→</b>
+                                            @item.StockNuevo.ToString("N2")
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @(string.IsNullOrWhiteSpace(item.Referencia)
+                                            ? "—"
+                                            : item.Referencia)
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            @if (Model.Resultado.TotalPaginas > 1)
+            {
+                <div class="kx-stock-pagination">
+
+                    <span>
+                        Página
+                        <strong>@Model.Resultado.Pagina</strong>
+                        de
+                        <strong>@Model.Resultado.TotalPaginas</strong>
+                    </span>
+
+                    <div>
+
+                        @{
+                            int inicio =
+                                Math.Max(
+                                    1,
+                                    Model.Resultado.Pagina - 2
+                                );
+
+                            int fin =
+                                Math.Min(
+                                    Model.Resultado.TotalPaginas,
+                                    Model.Resultado.Pagina + 2
+                                );
+                        }
+
+                        @for (int pagina = inicio; pagina <= fin; pagina++)
+                        {
+                            string clase =
+                                pagina == Model.Resultado.Pagina
+                                    ? "kx-stock-page-link active"
+                                    : "kx-stock-page-link";
+
+                            <a class="@clase"
+                               href="/Inventario/Salidas?Filtro.Pagina=@pagina&Filtro.TamanoPagina=@Model.Resultado.TamanoPagina&Filtro.Buscar=@Uri.EscapeDataString(Model.Filtro.Buscar ?? string.Empty)&Filtro.IdAlmacen=@Model.Filtro.IdAlmacen&Filtro.IdProducto=@Model.Filtro.IdProducto&Filtro.FechaDesde=@(Model.Filtro.FechaDesde?.ToString("yyyy-MM-dd"))&Filtro.FechaHasta=@(Model.Filtro.FechaHasta?.ToString("yyyy-MM-dd"))">
+                                @pagina
+                            </a>
+                        }
+
+                    </div>
+
+                </div>
+            }
+
+        </section>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

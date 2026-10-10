@@ -1,0 +1,1141 @@
+﻿@page
+@model KerniX.Pages.Configuracion.Usuarios.NuevoModel
+
+@{
+    ViewData["Title"] = "Nuevo Usuario";
+}
+
+<style>
+    .kx-user-new {
+        --bg: #020b17;
+        --panel: #06182b;
+        --panel2: #082039;
+        --gold: #ffb800;
+        --gold2: #ffdc69;
+        --blue: #149cff;
+        --cyan: #50d2ff;
+        --green: #36e69a;
+        --red: #ff607b;
+        --text: #f5f9ff;
+        --muted: #9fbad3;
+        --border: rgba(62,135,207,.28);
+        min-height: 100vh;
+        padding: 28px;
+        color: var(--text);
+        background: radial-gradient(circle at 88% 0%, rgba(20,156,255,.12), transparent 30%), radial-gradient(circle at 4% 0%, rgba(255,184,0,.07), transparent 24%), linear-gradient(145deg,#020b17,#031426);
+        font-size: 17px;
+        line-height: 1.55;
+    }
+
+        .kx-user-new *,
+        .kx-user-new *::before,
+        .kx-user-new *::after {
+            box-sizing: border-box;
+        }
+
+    .kx-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .kx-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .kx-icon {
+        width: 66px;
+        height: 66px;
+        flex: 0 0 66px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        border: 1px solid rgba(255,184,0,.42);
+        color: var(--gold);
+        background: rgba(255,184,0,.07);
+        font-size: 30px;
+        font-weight: 900;
+    }
+
+    .kx-breadcrumb {
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+        .kx-breadcrumb a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+    .kx-title {
+        margin: 0;
+        color: #fff;
+        font-size: 35px;
+        font-weight: 900;
+    }
+
+    .kx-subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+    }
+
+    .kx-btn {
+        min-height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 19px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: 16px;
+        font-weight: 850;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .kx-btn-dark {
+        color: #eaf5ff !important;
+        background: #071c31;
+    }
+
+    .kx-btn-gold {
+        color: #211600 !important;
+        border-color: #ffe17a;
+        background: linear-gradient(180deg,#ffdc6b,#efa800);
+        box-shadow: 0 9px 25px rgba(255,184,0,.16);
+    }
+
+    .kx-message {
+        margin-bottom: 17px;
+        padding: 16px 18px;
+        border-radius: 13px;
+        color: #ffc6d0;
+        border: 1px solid rgba(255,96,123,.40);
+        background: rgba(255,96,123,.07);
+    }
+
+    .kx-layout {
+        display: grid;
+        grid-template-columns: minmax(0,1.65fr) minmax(320px,.72fr);
+        gap: 18px;
+    }
+
+    .kx-card {
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: linear-gradient(145deg,rgba(7,29,52,.98),rgba(4,18,34,.98));
+        box-shadow: 0 15px 35px rgba(0,0,0,.20);
+    }
+
+    .kx-card-main {
+        padding: 22px;
+    }
+
+    .kx-card-side {
+        padding: 20px;
+        align-self: start;
+    }
+
+    .kx-section {
+        margin-bottom: 24px;
+    }
+
+        .kx-section:last-child {
+            margin-bottom: 0;
+        }
+
+    .kx-section-title {
+        margin: 0 0 5px;
+        color: #fff;
+        font-size: 22px;
+        font-weight: 900;
+    }
+
+    .kx-section-desc {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 15px;
+    }
+
+    .kx-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 16px;
+    }
+
+    .kx-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .kx-field-full {
+        grid-column: 1/-1;
+    }
+
+    .kx-label {
+        color: #eef7ff;
+        font-size: 16px;
+        font-weight: 850;
+    }
+
+    .kx-required {
+        color: var(--gold);
+    }
+
+    .kx-input,
+    .kx-select {
+        width: 100%;
+        min-height: 54px;
+        padding: 0 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(67,137,205,.38);
+        outline: none;
+        color: #fff !important;
+        background: #05182b !important;
+        font-size: 17px;
+    }
+
+        .kx-input:focus,
+        .kx-select:focus {
+            border-color: rgba(20,156,255,.82);
+            box-shadow: 0 0 0 4px rgba(20,156,255,.10);
+        }
+
+        .kx-select option {
+            color: #fff;
+            background: #06182b;
+        }
+
+    .kx-help {
+        color: #82a6c8;
+        font-size: 13px;
+    }
+
+    .kx-check {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(64,132,199,.23);
+        background: rgba(4,20,37,.55);
+    }
+
+        .kx-check input {
+            width: 21px;
+            height: 21px;
+            accent-color: #f5b20a;
+        }
+
+        .kx-check strong {
+            display: block;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .kx-check span {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+    .kx-side-title {
+        margin: 0 0 15px;
+        color: #fff;
+        font-size: 21px;
+        font-weight: 900;
+    }
+
+    .kx-summary {
+        display: grid;
+        gap: 11px;
+    }
+
+    .kx-summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 13px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(56,115,175,.15);
+    }
+
+        .kx-summary-row span {
+            color: #85a8c8;
+            font-size: 13px;
+        }
+
+        .kx-summary-row strong {
+            max-width: 190px;
+            color: #fff;
+            text-align: right;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+    .kx-category-box {
+        margin-top: 17px;
+        padding: 15px;
+        border-radius: 13px;
+        border: 1px solid rgba(255,184,0,.30);
+        background: rgba(255,184,0,.055);
+    }
+
+        .kx-category-box strong {
+            color: var(--gold2);
+            font-size: 15px;
+        }
+
+        .kx-category-box p {
+            margin: 6px 0 0;
+            color: #b4cadf;
+            font-size: 13px;
+        }
+
+    .kx-footer {
+        margin-top: 18px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    @@media(max-width:1000px) {
+        .kx-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media(max-width:720px) {
+        .kx-user-new {
+            padding: 15px;
+        }
+
+        .kx-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .kx-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-title {
+            font-size: 30px;
+        }
+    }
+</style>
+
+
+<div class="kx-user-new">
+
+    <header class="kx-top">
+
+        <div class="kx-title-wrap">
+
+            <div class="kx-icon">
+                +
+            </div>
+
+            <div>
+
+                <div class="kx-breadcrumb">
+                    <a href="/Configuracion/Index">Configuración</a>
+                    <span>›</span>
+                    <a href="/Configuracion/Usuarios/Index">Usuarios</a>
+                    <span>›</span>
+                    <span>Nuevo</span>
+                </div>
+
+                <h1 class="kx-title">
+                    Nuevo Usuario
+                </h1>
+
+                <p class="kx-subtitle">
+                    Crea la cuenta y asigna su categoría funcional.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <a href="/Configuracion/Usuarios/Index"
+           class="kx-btn kx-btn-dark">
+            ← Usuarios
+        </a>
+
+    </header>
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+    {
+        <div class="kx-message">
+            <strong>No se pudo registrar el usuario.</strong>
+            <div>@Model.MensajeError</div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <ul>
+                    @foreach (
+                        var error in
+                        ViewData.ModelState
+                            .Values
+                            .SelectMany(
+                                x => x.Errors
+                            )
+                    )
+                    {
+                        <li>
+                            @(
+                                string.IsNullOrWhiteSpace(
+                                    error.ErrorMessage
+                                )
+                                    ? error.Exception?.Message
+                                    : error.ErrorMessage
+                            )
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+
+
+    <form method="post"
+          action="/Configuracion/Usuarios/Nuevo"
+          id="formNuevoUsuario">
+
+        @Html.AntiForgeryToken()
+
+
+        <div class="kx-layout">
+
+
+            <main class="kx-card kx-card-main">
+
+
+                <!-- =============================================
+                     EMPLEADO
+                     ============================================= -->
+
+                <section class="kx-section">
+
+                    <h2 class="kx-section-title">
+                        1. Empleado
+                    </h2>
+
+                    <p class="kx-section-desc">
+                        Solo se muestran empleados activos de Ventas e Inventario que todavía no tienen cuenta.
+                    </p>
+
+
+                    <div class="kx-field">
+
+                        <label for="IdEmpleado"
+                               class="kx-label">
+
+                            Empleado
+                            <span class="kx-required">*</span>
+
+                        </label>
+
+                        <select id="IdEmpleado"
+                                name="IdEmpleado"
+                                class="kx-select"
+                                required>
+
+                            <option value="">
+                                Seleccionar empleado
+                            </option>
+
+                            @foreach (var empleado in Model.Empleados)
+                            {
+                                if (Model.IdEmpleado == empleado.IdEmpleado)
+                                {
+                                    <option value="@empleado.IdEmpleado"
+                                            data-correo="@empleado.Correo"
+                                            data-nombre="@empleado.Empleado"
+                                            data-cargo="@empleado.Cargo"
+                                            data-documento="@empleado.NumeroDocumento"
+                                            data-sucursal="@empleado.Sucursal"
+                                            selected>
+                                        @empleado.Empleado — @empleado.Cargo
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@empleado.IdEmpleado"
+                                            data-correo="@empleado.Correo"
+                                            data-nombre="@empleado.Empleado"
+                                            data-cargo="@empleado.Cargo"
+                                            data-documento="@empleado.NumeroDocumento"
+                                            data-sucursal="@empleado.Sucursal">
+                                        @empleado.Empleado — @empleado.Cargo
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     CUENTA
+                     ============================================= -->
+
+                <section class="kx-section">
+
+                    <h2 class="kx-section-title">
+                        2. Cuenta
+                    </h2>
+
+                    <p class="kx-section-desc">
+                        Define las credenciales iniciales del empleado.
+                    </p>
+
+
+                    <div class="kx-grid-2">
+
+                        <div class="kx-field">
+
+                            <label for="NombreUsuario"
+                                   class="kx-label">
+
+                                Nombre de usuario
+                                <span class="kx-required">*</span>
+
+                            </label>
+
+                            <input id="NombreUsuario"
+                                   name="NombreUsuario"
+                                   type="text"
+                                   value="@Model.NombreUsuario"
+                                   maxlength="100"
+                                   autocomplete="off"
+                                   class="kx-input"
+                                   required
+                                   placeholder="ej. lucia.mendoza" />
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label for="Correo"
+                                   class="kx-label">
+
+                                Correo
+                                <span class="kx-required">*</span>
+
+                            </label>
+
+                            <input id="Correo"
+                                   name="Correo"
+                                   type="email"
+                                   value="@Model.Correo"
+                                   maxlength="200"
+                                   autocomplete="off"
+                                   class="kx-input"
+                                   required
+                                   placeholder="usuario@kernix.pe" />
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label for="PasswordTemporal"
+                                   class="kx-label">
+
+                                Contraseña temporal
+                                <span class="kx-required">*</span>
+
+                            </label>
+
+                            <input id="PasswordTemporal"
+                                   name="PasswordTemporal"
+                                   type="password"
+                                   maxlength="100"
+                                   autocomplete="new-password"
+                                   class="kx-input"
+                                   required
+                                   placeholder="Mínimo 8 caracteres" />
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label for="ConfirmarPassword"
+                                   class="kx-label">
+
+                                Confirmar contraseña
+                                <span class="kx-required">*</span>
+
+                            </label>
+
+                            <input id="ConfirmarPassword"
+                                   name="ConfirmarPassword"
+                                   type="password"
+                                   maxlength="100"
+                                   autocomplete="new-password"
+                                   class="kx-input"
+                                   required
+                                   placeholder="Repite la contraseña" />
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- =============================================
+                     CATEGORÍA
+                     ============================================= -->
+
+                <section class="kx-section">
+
+                    <h2 class="kx-section-title">
+                        3. Categoría y acceso
+                    </h2>
+
+                    <p class="kx-section-desc">
+                        La categoría proviene de los roles activos de seg.rol.
+                    </p>
+
+
+                    <div class="kx-grid-2">
+
+                        <div class="kx-field">
+
+                            <label for="IdRol"
+                                   class="kx-label">
+
+                                Categoría
+                                <span class="kx-required">*</span>
+
+                            </label>
+
+                            <select id="IdRol"
+                                    name="IdRol"
+                                    class="kx-select"
+                                    required>
+
+                                <option value="">
+                                    Seleccionar categoría
+                                </option>
+
+                                @foreach (var rol in Model.Roles)
+                                {
+                                    if (Model.IdRol == rol.IdRol)
+                                    {
+                                        <option value="@rol.IdRol"
+                                                data-descripcion="@rol.Descripcion"
+                                                selected>
+                                            @rol.Nombre
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@rol.IdRol"
+                                                data-descripcion="@rol.Descripcion">
+                                            @rol.Nombre
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+
+                            <div class="kx-help">
+                                Administrador, Gestión Ventas o Gestión Inventario.
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label class="kx-label">
+                                Estado inicial
+                            </label>
+
+                            <div class="kx-check">
+
+                                <input type="hidden"
+                                       name="Estado"
+                                       value="false" />
+
+                                <input id="Estado"
+                                       name="Estado"
+                                       type="checkbox"
+                                       value="true"
+                                       checked="@(Model.Estado ? "checked" : null)" />
+
+                                <div>
+                                    <strong>Cuenta activa</strong>
+                                    <span>Podrá iniciar sesión cuando tenga permisos válidos.</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-field kx-field-full">
+
+                            <div class="kx-check">
+
+                                <input type="hidden"
+                                       name="RequiereCambioClave"
+                                       value="false" />
+
+                                <input id="RequiereCambioClave"
+                                       name="RequiereCambioClave"
+                                       type="checkbox"
+                                       value="true"
+                                       checked="@(Model.RequiereCambioClave ? "checked" : null)" />
+
+                                <div>
+                                    <strong>Solicitar cambio de contraseña</strong>
+                                    <span>
+                                        Recomendado para contraseñas temporales creadas por el administrador.
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </main>
+
+
+            <!-- =============================================
+                 RESUMEN
+                 ============================================= -->
+
+            <aside class="kx-card kx-card-side">
+
+                <h2 class="kx-side-title">
+                    Resumen de la cuenta
+                </h2>
+
+
+                <div class="kx-summary">
+
+                    <div class="kx-summary-row">
+                        <span>Empleado</span>
+                        <strong id="previewEmpleado">Sin seleccionar</strong>
+                    </div>
+
+                    <div class="kx-summary-row">
+                        <span>Cargo</span>
+                        <strong id="previewCargo">-</strong>
+                    </div>
+
+                    <div class="kx-summary-row">
+                        <span>Documento</span>
+                        <strong id="previewDocumento">-</strong>
+                    </div>
+
+                    <div class="kx-summary-row">
+                        <span>Sucursal</span>
+                        <strong id="previewSucursal">-</strong>
+                    </div>
+
+                    <div class="kx-summary-row">
+                        <span>Usuario</span>
+                        <strong id="previewUsuario">-</strong>
+                    </div>
+
+                    <div class="kx-summary-row">
+                        <span>Correo</span>
+                        <strong id="previewCorreo">-</strong>
+                    </div>
+
+                    <div class="kx-summary-row">
+                        <span>Categoría</span>
+                        <strong id="previewCategoria">-</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="kx-category-box">
+
+                    <strong id="categoriaTitulo">
+                        Categoría sin seleccionar
+                    </strong>
+
+                    <p id="categoriaDescripcion">
+                        Selecciona una categoría para visualizar su alcance.
+                    </p>
+
+                </div>
+
+            </aside>
+
+        </div>
+
+
+        <div class="kx-footer">
+
+            <a href="/Configuracion/Usuarios/Index"
+               class="kx-btn kx-btn-dark">
+                Cancelar
+            </a>
+
+            <button type="submit"
+                    id="btnGuardarUsuario"
+                    class="kx-btn kx-btn-gold">
+                Crear usuario
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<script>
+    (() => {
+
+        "use strict";
+
+        const empleado =
+            document.getElementById(
+                "IdEmpleado"
+            );
+
+        const rol =
+            document.getElementById(
+                "IdRol"
+            );
+
+        const usuario =
+            document.getElementById(
+                "NombreUsuario"
+            );
+
+        const correo =
+            document.getElementById(
+                "Correo"
+            );
+
+        const form =
+            document.getElementById(
+                "formNuevoUsuario"
+            );
+
+        const btnGuardar =
+            document.getElementById(
+                "btnGuardarUsuario"
+            );
+
+
+        function textoOption(
+            select
+        ) {
+
+            if (
+                !select ||
+                select.selectedIndex < 0
+            ) {
+                return null;
+            }
+
+            return select.options[
+                select.selectedIndex
+            ];
+        }
+
+
+        function generarUsuario(
+            nombre
+        ) {
+
+            if (!nombre) {
+                return "";
+            }
+
+            const limpio =
+                nombre
+                    .normalize("NFD")
+                    .replace(
+                        /[\u0300-\u036f]/g,
+                        ""
+                    )
+                    .toLowerCase()
+                    .replace(
+                        /[^a-z0-9 ]/g,
+                        " "
+                    )
+                    .trim()
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+            if (limpio.length === 0) {
+                return "";
+            }
+
+            if (limpio.length === 1) {
+                return limpio[0];
+            }
+
+            return limpio[0] +
+                "." +
+                limpio[1];
+        }
+
+
+        function actualizarEmpleado(
+            autocompletar
+        ) {
+
+            const option =
+                textoOption(
+                    empleado
+                );
+
+            if (
+                !option ||
+                !option.value
+            ) {
+                document.getElementById(
+                    "previewEmpleado"
+                ).textContent =
+                    "Sin seleccionar";
+
+                document.getElementById(
+                    "previewCargo"
+                ).textContent =
+                    "-";
+
+                document.getElementById(
+                    "previewDocumento"
+                ).textContent =
+                    "-";
+
+                document.getElementById(
+                    "previewSucursal"
+                ).textContent =
+                    "-";
+
+                return;
+            }
+
+
+            const nombre =
+                option.dataset.nombre || "";
+
+            const cargo =
+                option.dataset.cargo || "-";
+
+            const documento =
+                option.dataset.documento || "-";
+
+            const sucursal =
+                option.dataset.sucursal || "-";
+
+            const correoEmpleado =
+                option.dataset.correo || "";
+
+
+            document.getElementById(
+                "previewEmpleado"
+            ).textContent =
+                nombre || "-";
+
+            document.getElementById(
+                "previewCargo"
+            ).textContent =
+                cargo;
+
+            document.getElementById(
+                "previewDocumento"
+            ).textContent =
+                documento;
+
+            document.getElementById(
+                "previewSucursal"
+            ).textContent =
+                sucursal;
+
+
+            if (autocompletar) {
+
+                if (
+                    correo &&
+                    correo.value.trim() === ""
+                ) {
+                    correo.value =
+                        correoEmpleado;
+                }
+
+
+                if (
+                    usuario &&
+                    usuario.value.trim() === ""
+                ) {
+                    usuario.value =
+                        generarUsuario(
+                            nombre
+                        );
+                }
+            }
+
+
+            actualizarCuenta();
+        }
+
+
+        function actualizarCategoria() {
+
+            const option =
+                textoOption(
+                    rol
+                );
+
+
+            const titulo =
+                document.getElementById(
+                    "categoriaTitulo"
+                );
+
+            const descripcion =
+                document.getElementById(
+                    "categoriaDescripcion"
+                );
+
+            const preview =
+                document.getElementById(
+                    "previewCategoria"
+                );
+
+
+            if (
+                !option ||
+                !option.value
+            ) {
+                titulo.textContent =
+                    "Categoría sin seleccionar";
+
+                descripcion.textContent =
+                    "Selecciona una categoría para visualizar su alcance.";
+
+                preview.textContent =
+                    "-";
+
+                return;
+            }
+
+
+            const nombre =
+                option.textContent?.trim()
+                || "-";
+
+
+            titulo.textContent =
+                nombre;
+
+            preview.textContent =
+                nombre;
+
+            descripcion.textContent =
+                option.dataset.descripcion
+                || "Categoría activa de KerniX.";
+        }
+
+
+        function actualizarCuenta() {
+
+            document.getElementById(
+                "previewUsuario"
+            ).textContent =
+                usuario?.value?.trim()
+                || "-";
+
+            document.getElementById(
+                "previewCorreo"
+            ).textContent =
+                correo?.value?.trim()
+                || "-";
+        }
+
+
+        empleado?.addEventListener(
+            "change",
+            () =>
+                actualizarEmpleado(
+                    true
+                )
+        );
+
+
+        rol?.addEventListener(
+            "change",
+            actualizarCategoria
+        );
+
+
+        usuario?.addEventListener(
+            "input",
+            actualizarCuenta
+        );
+
+
+        correo?.addEventListener(
+            "input",
+            actualizarCuenta
+        );
+
+
+        form?.addEventListener(
+            "submit",
+            () => {
+
+                setTimeout(
+                    () => {
+
+                        if (!btnGuardar) {
+                            return;
+                        }
+
+                        btnGuardar.disabled =
+                            true;
+
+                        btnGuardar.textContent =
+                            "Creando usuario...";
+
+                    },
+                    50
+                );
+            }
+        );
+
+
+        actualizarEmpleado(
+            false
+        );
+
+        actualizarCategoria();
+        actualizarCuenta();
+
+    })();
+</script>

@@ -1,0 +1,2334 @@
+﻿@page
+@model KerniX.Pages.Inventario.Catalogos.IndexModel
+
+@{
+    ViewData["Title"] = "Catálogos de Inventario";
+}
+
+<style>
+    .kx-cat-page {
+        --bg: #020b17;
+        --panel: #06182b;
+        --panel2: #082039;
+        --gold: #ffb800;
+        --gold2: #ffdc69;
+        --blue: #149cff;
+        --cyan: #50d2ff;
+        --green: #36e69a;
+        --red: #ff607b;
+        --text: #f5f9ff;
+        --muted: #95b5d0;
+        --border: rgba(62,135,207,.28);
+        min-height: 100vh;
+        padding: 26px;
+        color: var(--text);
+        background: radial-gradient(circle at 92% 0%,rgba(20,156,255,.12),transparent 30%), radial-gradient(circle at 5% 0%,rgba(255,184,0,.07),transparent 25%), linear-gradient(145deg,#020b17,#031426);
+        font-size: 16px;
+    }
+
+        .kx-cat-page *,
+        .kx-cat-page *::before,
+        .kx-cat-page *::after {
+            box-sizing: border-box;
+        }
+
+    .kx-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .kx-breadcrumb {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+        .kx-breadcrumb a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+    .kx-title {
+        margin: 0;
+        color: #fff;
+        font-size: 34px;
+        font-weight: 900;
+    }
+
+    .kx-subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+    }
+
+    .kx-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .kx-btn {
+        min-height: 45px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 15px;
+        border-radius: 11px;
+        border: 1px solid var(--border);
+        font-size: 14px;
+        font-weight: 850;
+        cursor: pointer;
+        text-decoration: none !important;
+    }
+
+    .kx-btn-dark {
+        color: #eaf5ff !important;
+        background: #071c31;
+    }
+
+    .kx-btn-gold {
+        color: #211600 !important;
+        border-color: #ffe17a;
+        background: linear-gradient(180deg,#ffdc69,#efa800);
+    }
+
+    .kx-btn-blue {
+        color: #e8f8ff !important;
+        border-color: rgba(80,210,255,.46);
+        background: linear-gradient(180deg,rgba(20,156,255,.20),rgba(6,35,63,.96));
+    }
+
+    .kx-btn-red {
+        color: #ff9aad !important;
+        border-color: rgba(255,96,123,.42);
+        background: rgba(255,96,123,.07);
+    }
+
+    .kx-btn-green {
+        color: #78efb3 !important;
+        border-color: rgba(54,230,154,.40);
+        background: rgba(54,230,154,.07);
+    }
+
+    .kx-message {
+        margin-bottom: 16px;
+        padding: 14px 17px;
+        border-radius: 12px;
+        font-size: 14px;
+    }
+
+        .kx-message.ok {
+            color: #a6f3cd;
+            border: 1px solid rgba(54,230,154,.35);
+            background: rgba(54,230,154,.07);
+        }
+
+        .kx-message.error {
+            color: #ffc3ce;
+            border: 1px solid rgba(255,96,123,.37);
+            background: rgba(255,96,123,.07);
+        }
+
+    .kx-summary {
+        display: grid;
+        grid-template-columns: repeat(6,minmax(0,1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .kx-card {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: linear-gradient(145deg,rgba(7,29,52,.98),rgba(4,18,34,.98));
+        box-shadow: 0 14px 32px rgba(0,0,0,.20);
+    }
+
+    .kx-kpi {
+        padding: 16px;
+    }
+
+        .kx-kpi span {
+            display: block;
+            color: #86a7c5;
+            font-size: 12px;
+        }
+
+        .kx-kpi strong {
+            display: block;
+            margin-top: 6px;
+            color: #fff;
+            font-size: 26px;
+            font-weight: 900;
+        }
+
+        .kx-kpi.gold {
+            border-color: rgba(255,184,0,.34);
+        }
+
+            .kx-kpi.gold strong {
+                color: var(--gold2);
+            }
+
+        .kx-kpi.green strong {
+            color: #75efb1;
+        }
+
+    .kx-grid {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 18px;
+    }
+
+    .kx-panel {
+        padding: 18px;
+    }
+
+    .kx-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+        .kx-panel-head h2 {
+            margin: 0;
+            color: #fff;
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .kx-panel-head p {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+    .kx-filter {
+        display: grid;
+        grid-template-columns: 1fr 150px auto;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+
+    .kx-control {
+        width: 100%;
+        min-height: 43px;
+        padding: 0 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(67,137,205,.34);
+        outline: none;
+        color: #fff !important;
+        background: #05182b !important;
+        font-size: 14px;
+    }
+
+        .kx-control option {
+            background: #06182b;
+            color: #fff;
+        }
+
+    .kx-table-wrap {
+        overflow: auto;
+    }
+
+    .kx-table {
+        width: 100%;
+        min-width: 660px;
+        border-collapse: collapse;
+    }
+
+        .kx-table th {
+            padding: 10px 8px;
+            text-align: left;
+            color: #6ebcff;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 1px solid rgba(65,133,201,.24);
+        }
+
+        .kx-table td {
+            padding: 11px 8px;
+            color: #edf6ff;
+            font-size: 12px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(52,108,162,.14);
+        }
+
+    .kx-name {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 850;
+    }
+
+    .kx-desc {
+        margin-top: 3px;
+        max-width: 240px;
+        color: #82a4c3;
+        font-size: 10px;
+        white-space: normal;
+    }
+
+    .kx-pill {
+        display: inline-flex;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 900;
+    }
+
+        .kx-pill.active {
+            color: #75efb1;
+            border: 1px solid rgba(54,230,154,.35);
+            background: rgba(54,230,154,.07);
+        }
+
+        .kx-pill.inactive {
+            color: #ff91a5;
+            border: 1px solid rgba(255,96,123,.35);
+            background: rgba(255,96,123,.07);
+        }
+
+    .kx-row-actions {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .kx-mini {
+        min-height: 33px;
+        padding: 0 10px;
+        border-radius: 8px;
+        font-size: 11px;
+    }
+
+    .kx-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background: rgba(0,5,12,.78);
+        backdrop-filter: blur(4px);
+    }
+
+        .kx-modal-backdrop.open {
+            display: flex;
+        }
+
+    .kx-modal {
+        width: min(620px,100%);
+        max-height: 90vh;
+        overflow: auto;
+        padding: 22px;
+        border: 1px solid rgba(255,184,0,.35);
+        border-radius: 18px;
+        background: linear-gradient(145deg,#071d34,#041321);
+        box-shadow: 0 30px 90px rgba(0,0,0,.55);
+    }
+
+        .kx-modal h3 {
+            margin: 0 0 4px;
+            color: #fff;
+            font-size: 23px;
+            font-weight: 900;
+        }
+
+        .kx-modal p {
+            margin: 0 0 17px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+    .kx-field {
+        margin-bottom: 14px;
+    }
+
+        .kx-field label {
+            display: block;
+            margin-bottom: 7px;
+            color: #eaf5ff;
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+    .kx-input,
+    .kx-textarea {
+        width: 100%;
+        min-height: 48px;
+        padding: 0 13px;
+        border-radius: 10px;
+        border: 1px solid rgba(65,136,205,.36);
+        outline: none;
+        color: #fff !important;
+        background: #04182b !important;
+        font-size: 15px;
+    }
+
+    .kx-textarea {
+        min-height: 100px;
+        padding-top: 12px;
+        resize: vertical;
+    }
+
+    .kx-check {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #eaf5ff;
+        font-size: 13px;
+    }
+
+        .kx-check input {
+            width: 18px;
+            height: 18px;
+            accent-color: #f4b20b;
+        }
+
+    .kx-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 18px;
+    }
+
+    @@media(max-width:1100px) {
+        .kx-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-summary {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media(max-width:700px) {
+        .kx-cat-page {
+            padding: 14px;
+        }
+
+        .kx-header {
+            flex-direction: column;
+        }
+
+        .kx-summary,
+        .kx-filter {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-title {
+            font-size: 29px;
+        }
+    }
+
+    /* =========================================================
+               KERNIX 3D / PREMIUM OVERRIDES
+               Mantiene toda la lógica actual: crear/editar en modales.
+               ========================================================= */
+
+    .kx-cat-page {
+        position: relative;
+        overflow-x: hidden;
+        background: radial-gradient(circle at 12% 12%, rgba(255,184,0,.08), transparent 22%), radial-gradient(circle at 86% 8%, rgba(20,156,255,.15), transparent 28%), radial-gradient(circle at 50% 100%, rgba(80,210,255,.05), transparent 34%), linear-gradient(145deg,#020813 0%,#03101f 48%,#04172b 100%);
+    }
+
+        .kx-cat-page::before,
+        .kx-cat-page::after {
+            content: "";
+            position: fixed;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 50%;
+            filter: blur(2px);
+            opacity: .38;
+        }
+
+        .kx-cat-page::before {
+            width: 360px;
+            height: 360px;
+            top: -160px;
+            right: -90px;
+            background: radial-gradient(circle,rgba(20,156,255,.28),transparent 67%);
+        }
+
+        .kx-cat-page::after {
+            width: 320px;
+            height: 320px;
+            left: -120px;
+            bottom: -160px;
+            background: radial-gradient(circle,rgba(255,184,0,.19),transparent 68%);
+        }
+
+        .kx-cat-page > * {
+            position: relative;
+            z-index: 1;
+        }
+
+    .kx-header {
+        padding: 18px 20px;
+        border: 1px solid rgba(73,145,215,.19);
+        border-radius: 18px;
+        background: linear-gradient(145deg,rgba(8,32,57,.78),rgba(3,18,34,.72));
+        box-shadow: 0 18px 50px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.025);
+        backdrop-filter: blur(10px);
+    }
+
+    .kx-title {
+        letter-spacing: -.5px;
+        text-shadow: 0 0 24px rgba(20,156,255,.10), 0 4px 12px rgba(0,0,0,.38);
+    }
+
+    .kx-btn {
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(0);
+        transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, filter .18s ease;
+    }
+
+        .kx-btn::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(120deg,transparent 15%,rgba(255,255,255,.13) 48%,transparent 80%);
+            transform: translateX(-130%);
+            transition: transform .42s ease;
+        }
+
+        .kx-btn:hover::before {
+            transform: translateX(130%);
+        }
+
+        .kx-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+    .kx-btn-gold:hover {
+        box-shadow: 0 10px 28px rgba(255,184,0,.22), 0 0 0 1px rgba(255,220,105,.08);
+    }
+
+    .kx-btn-blue:hover {
+        box-shadow: 0 10px 28px rgba(20,156,255,.18), 0 0 0 1px rgba(80,210,255,.08);
+    }
+
+    .kx-summary {
+        perspective: 1100px;
+    }
+
+    .kx-kpi {
+        position: relative;
+        overflow: hidden;
+        min-height: 104px;
+        transform-style: preserve-3d;
+        transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+        .kx-kpi::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            right: -46px;
+            top: -58px;
+            border-radius: 50%;
+            background: radial-gradient(circle,rgba(80,210,255,.12),transparent 68%);
+        }
+
+        .kx-kpi.gold::after {
+            background: radial-gradient(circle,rgba(255,184,0,.16),transparent 68%);
+        }
+
+        .kx-kpi:hover {
+            transform: translateY(-5px) rotateX(2deg) rotateY(-1deg);
+            border-color: rgba(80,210,255,.42);
+            box-shadow: 0 24px 45px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.025);
+        }
+
+    .kx-grid {
+        perspective: 1300px;
+    }
+
+    .kx-panel {
+        position: relative;
+        overflow: hidden;
+        transform-style: preserve-3d;
+        box-shadow: 0 22px 56px rgba(0,0,0,.23), inset 0 1px 0 rgba(255,255,255,.025);
+    }
+
+        .kx-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 2px;
+            background: linear-gradient(90deg,transparent,rgba(80,210,255,.72),rgba(255,184,0,.70),transparent);
+            opacity: .62;
+        }
+
+        .kx-panel:nth-child(2)::before {
+            background: linear-gradient(90deg,transparent,rgba(20,156,255,.78),rgba(80,210,255,.82),transparent);
+        }
+
+    .kx-panel-head {
+        padding: 2px 2px 10px;
+        border-bottom: 1px solid rgba(72,143,211,.11);
+    }
+
+    .kx-table {
+        border-collapse: separate;
+        border-spacing: 0 7px;
+    }
+
+        .kx-table th {
+            border-bottom: 0;
+            padding-bottom: 7px;
+        }
+
+        .kx-table tbody tr {
+            background: linear-gradient(90deg,rgba(7,29,52,.74),rgba(4,20,37,.55));
+            transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+        }
+
+            .kx-table tbody tr:hover {
+                transform: translateY(-2px);
+                background: linear-gradient(90deg,rgba(10,40,70,.96),rgba(5,27,49,.86));
+                box-shadow: 0 9px 24px rgba(0,0,0,.16);
+            }
+
+        .kx-table td {
+            border-bottom: 0;
+        }
+
+            .kx-table td:first-child {
+                border-radius: 10px 0 0 10px;
+            }
+
+            .kx-table td:last-child {
+                border-radius: 0 10px 10px 0;
+            }
+
+    .kx-name {
+        font-size: 14px;
+        letter-spacing: .1px;
+    }
+
+    .kx-pill {
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .kx-mini {
+        min-height: 35px;
+        font-weight: 900;
+    }
+
+    /* MODAL 3D */
+    .kx-modal-backdrop {
+        perspective: 1400px;
+        background: radial-gradient(circle at 50% 34%,rgba(20,156,255,.12),transparent 35%), rgba(0,4,11,.84);
+        backdrop-filter: blur(10px);
+    }
+
+        .kx-modal-backdrop.open .kx-modal {
+            animation: kxModalEntrada .28s ease both;
+        }
+
+    @@keyframes kxModalEntrada {
+        from {
+            opacity: 0;
+            transform: translateY(24px) rotateX(8deg) scale(.965);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0) rotateX(0deg) scale(1);
+        }
+    }
+
+    .kx-modal {
+        position: relative;
+        width: min(760px,100%);
+        padding: 26px;
+        overflow: hidden auto;
+        transform-style: preserve-3d;
+        border: 1px solid rgba(255,184,0,.46);
+        border-radius: 22px;
+        background: radial-gradient(circle at 92% 0%,rgba(20,156,255,.15),transparent 30%), linear-gradient(145deg,#08213b 0%,#05182b 52%,#03101d 100%);
+        box-shadow: 0 40px 110px rgba(0,0,0,.66), 0 0 0 1px rgba(80,210,255,.025), inset 0 1px 0 rgba(255,255,255,.045);
+    }
+
+        .kx-modal::before {
+            content: "";
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 3px;
+            background: linear-gradient(90deg,transparent 4%,var(--gold) 32%,var(--cyan) 68%,transparent 96%);
+            box-shadow: 0 0 18px rgba(80,210,255,.18);
+        }
+
+        .kx-modal::after {
+            content: "";
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            right: -105px;
+            top: -125px;
+            border-radius: 50%;
+            pointer-events: none;
+            background: radial-gradient(circle,rgba(80,210,255,.13),transparent 67%);
+        }
+
+        .kx-modal h3 {
+            position: relative;
+            z-index: 1;
+            font-size: 27px;
+            letter-spacing: -.35px;
+        }
+
+        .kx-modal p {
+            position: relative;
+            z-index: 1;
+            max-width: 540px;
+            font-size: 14px;
+        }
+
+    .kx-field {
+        position: relative;
+        z-index: 1;
+    }
+
+    .kx-input,
+    .kx-textarea {
+        border-color: rgba(75,149,220,.34);
+        background: linear-gradient(180deg,rgba(3,20,37,.96),rgba(4,25,45,.96)) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.022), 0 8px 22px rgba(0,0,0,.08);
+        transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+    }
+
+        .kx-input:focus,
+        .kx-textarea:focus {
+            border-color: rgba(80,210,255,.72);
+            box-shadow: 0 0 0 4px rgba(20,156,255,.09), 0 12px 26px rgba(0,0,0,.13);
+            transform: translateY(-1px);
+        }
+
+    .kx-modal-actions {
+        position: sticky;
+        bottom: -26px;
+        z-index: 3;
+        margin: 22px -26px -26px;
+        padding: 15px 26px 20px;
+        border-top: 1px solid rgba(73,143,211,.16);
+        background: linear-gradient(180deg,rgba(4,18,33,.82),rgba(3,15,27,.98) 38%);
+        backdrop-filter: blur(10px);
+    }
+
+    .kx-modal-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 2px 0 18px;
+        padding: 7px 11px;
+        border-radius: 999px;
+        border: 1px solid rgba(80,210,255,.25);
+        color: #9fddff;
+        background: rgba(20,156,255,.055);
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: .25px;
+    }
+
+        .kx-modal-status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px rgba(54,230,154,.65);
+        }
+
+    @@media(max-width:700px) {
+        .kx-modal {
+            padding: 20px;
+            border-radius: 17px;
+        }
+
+        .kx-modal-actions {
+            margin: 18px -20px -20px;
+            padding: 13px 20px 16px;
+        }
+    }
+
+</style>
+
+
+<div class="kx-cat-page">
+
+    <header class="kx-header">
+
+        <div>
+
+            <div class="kx-breadcrumb">
+                <a href="/Inventario/Index">Inventario</a>
+                <span>›</span>
+                <a href="/Inventario/Productos/Index">Productos</a>
+                <span>›</span>
+                <span>Catálogos</span>
+            </div>
+
+            <h1 class="kx-title">
+                Catálogos de Inventario
+            </h1>
+
+            <p class="kx-subtitle">
+                Administración maestra de categorías, unidades de medida y marcas.
+            </p>
+
+        </div>
+
+
+        <div class="kx-actions">
+
+            <a href="/Inventario/Productos/Index"
+               class="kx-btn kx-btn-dark">
+                ← Productos
+            </a>
+
+            <button type="button"
+                    class="kx-btn kx-btn-gold"
+                    onclick="KerniXCatalogos.abrirNuevaCategoria();">
+                + Nueva categoría
+            </button>
+
+            <button type="button"
+                    class="kx-btn kx-btn-blue"
+                    onclick="KerniXCatalogos.abrirNuevaUnidad();">
+                + Nueva unidad
+            </button>
+
+            <button type="button"
+                    class="kx-btn kx-btn-green"
+                    onclick="KerniXCatalogos.abrirNuevaMarca();">
+                + Nueva marca
+            </button>
+
+        </div>
+
+    </header>
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+    {
+        <div class="kx-message ok">
+            @Model.Mensaje
+        </div>
+    }
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.Error))
+    {
+        <div class="kx-message error">
+            @Model.Error
+        </div>
+    }
+
+
+    <section class="kx-summary">
+
+        <article class="kx-card kx-kpi gold">
+            <span>Categorías</span>
+            <strong>@Model.Categorias.Count</strong>
+        </article>
+
+        <article class="kx-card kx-kpi green">
+            <span>Categorías activas</span>
+            <strong>@Model.Categorias.Count(x => x.Estado)</strong>
+        </article>
+
+        <article class="kx-card kx-kpi">
+            <span>Unidades de medida</span>
+            <strong>@Model.Unidades.Count</strong>
+        </article>
+
+        <article class="kx-card kx-kpi green">
+            <span>Unidades activas</span>
+            <strong>@Model.Unidades.Count(x => x.Estado)</strong>
+        </article>
+
+        <article class="kx-card kx-kpi">
+            <span>Marcas</span>
+            <strong>@Model.Marcas.Count</strong>
+        </article>
+
+        <article class="kx-card kx-kpi green">
+            <span>Marcas activas</span>
+            <strong>@Model.Marcas.Count(x => x.Estado)</strong>
+        </article>
+
+    </section>
+
+
+    <section class="kx-grid">
+
+
+        <!-- =====================================================
+             CATEGORÍAS
+             ===================================================== -->
+
+        <article class="kx-card kx-panel">
+
+            <div class="kx-panel-head">
+
+                <div>
+                    <h2>Categorías de producto</h2>
+                    <p>
+                        Tabla inv.categoria_producto · Empresa @Model.IdEmpresa
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form method="get"
+                  action="/Inventario/Catalogos/Index"
+                  class="kx-filter">
+
+                <input type="search"
+                       name="BuscarCategoria"
+                       value="@Model.BuscarCategoria"
+                       class="kx-control"
+                       placeholder="Buscar categoría..." />
+
+                <select name="EstadoCategoria"
+                        class="kx-control">
+
+                    <option value="">Todos</option>
+
+                    @if (Model.EstadoCategoria == "1")
+                    {
+                        <option value="1" selected>Activas</option>
+                    }
+                    else
+                    {
+                        <option value="1">Activas</option>
+                    }
+
+                    @if (Model.EstadoCategoria == "0")
+                    {
+                        <option value="0" selected>Inactivas</option>
+                    }
+                    else
+                    {
+                        <option value="0">Inactivas</option>
+                    }
+
+                </select>
+
+                <button type="submit"
+                        class="kx-btn kx-btn-gold">
+                    Buscar
+                </button>
+
+                <input type="hidden"
+                       name="BuscarUnidad"
+                       value="@Model.BuscarUnidad" />
+
+                <input type="hidden"
+                       name="EstadoUnidad"
+                       value="@Model.EstadoUnidad" />
+
+                <input type="hidden"
+                       name="BuscarMarca"
+                       value="@Model.BuscarMarca" />
+
+                <input type="hidden"
+                       name="EstadoMarca"
+                       value="@Model.EstadoMarca" />
+
+            </form>
+
+
+            <div class="kx-table-wrap">
+
+                <table class="kx-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Categoría</th>
+                            <th>Productos</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var categoria in Model.Categorias)
+                        {
+                            <tr>
+
+                                <td>
+                                    @categoria.IdCategoriaProducto
+                                </td>
+
+                                <td>
+                                    <div class="kx-name">
+                                        @categoria.Nombre
+                                    </div>
+
+                                    <div class="kx-desc">
+                                        @(string.IsNullOrWhiteSpace(categoria.Descripcion)
+                                            ? "Sin descripción"
+                                            : categoria.Descripcion)
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @categoria.TotalProductos
+                                </td>
+
+                                <td>
+                                    <span class="kx-pill @(categoria.Estado ? "active" : "inactive")">
+                                        @(categoria.Estado ? "Activa" : "Inactiva")
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <div class="kx-row-actions">
+
+                                        <button type="button"
+                                                class="kx-btn kx-btn-gold kx-mini"
+                                                data-id="@categoria.IdCategoriaProducto"
+                                                data-nombre="@categoria.Nombre"
+                                                data-descripcion="@categoria.Descripcion"
+                                                data-estado="@(categoria.Estado ? "1" : "0")"
+                                                onclick="KerniXCatalogos.editarCategoria(this);">
+                                            Editar
+                                        </button>
+
+
+                                        <form method="post"
+                                              action="/Inventario/Catalogos/Index?handler=EstadoCategoria">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="idCategoriaProducto"
+                                                   value="@categoria.IdCategoriaProducto" />
+
+                                            <input type="hidden"
+                                                   name="nuevoEstado"
+                                                   value="@(categoria.Estado ? "false" : "true")" />
+
+                                            <button type="submit"
+                                                    class="kx-btn @(categoria.Estado ? "kx-btn-red" : "kx-btn-green") kx-mini"
+                                                    onclick="return confirm('@(categoria.Estado ? "¿Desactivar esta categoría? Los productos históricos conservarán la relación." : "¿Activar esta categoría?")');">
+                                                @(categoria.Estado ? "Eliminar" : "Activar")
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </article>
+
+
+        <!-- =====================================================
+             UNIDADES
+             ===================================================== -->
+
+        <article class="kx-card kx-panel">
+
+            <div class="kx-panel-head">
+
+                <div>
+                    <h2>Unidades de medida</h2>
+                    <p>
+                        Tabla inv.unidad_medida
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form method="get"
+                  action="/Inventario/Catalogos/Index"
+                  class="kx-filter">
+
+                <input type="search"
+                       name="BuscarUnidad"
+                       value="@Model.BuscarUnidad"
+                       class="kx-control"
+                       placeholder="Código, nombre o abreviatura..." />
+
+                <select name="EstadoUnidad"
+                        class="kx-control">
+
+                    <option value="">Todos</option>
+
+                    @if (Model.EstadoUnidad == "1")
+                    {
+                        <option value="1" selected>Activas</option>
+                    }
+                    else
+                    {
+                        <option value="1">Activas</option>
+                    }
+
+                    @if (Model.EstadoUnidad == "0")
+                    {
+                        <option value="0" selected>Inactivas</option>
+                    }
+                    else
+                    {
+                        <option value="0">Inactivas</option>
+                    }
+
+                </select>
+
+                <button type="submit"
+                        class="kx-btn kx-btn-blue">
+                    Buscar
+                </button>
+
+                <input type="hidden"
+                       name="BuscarCategoria"
+                       value="@Model.BuscarCategoria" />
+
+                <input type="hidden"
+                       name="EstadoCategoria"
+                       value="@Model.EstadoCategoria" />
+
+                <input type="hidden"
+                       name="BuscarMarca"
+                       value="@Model.BuscarMarca" />
+
+                <input type="hidden"
+                       name="EstadoMarca"
+                       value="@Model.EstadoMarca" />
+
+            </form>
+
+
+            <div class="kx-table-wrap">
+
+                <table class="kx-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Código</th>
+                            <th>Unidad</th>
+                            <th>Abrev.</th>
+                            <th>Productos</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var unidad in Model.Unidades)
+                        {
+                            <tr>
+
+                                <td>
+                                    @unidad.IdUnidadMedida
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @unidad.Codigo
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <div class="kx-name">
+                                        @unidad.Nombre
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @unidad.Abreviatura
+                                </td>
+
+                                <td>
+                                    @unidad.TotalProductos
+                                </td>
+
+                                <td>
+                                    <span class="kx-pill @(unidad.Estado ? "active" : "inactive")">
+                                        @(unidad.Estado ? "Activa" : "Inactiva")
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <div class="kx-row-actions">
+
+                                        <button type="button"
+                                                class="kx-btn kx-btn-blue kx-mini"
+                                                data-id="@unidad.IdUnidadMedida"
+                                                data-codigo="@unidad.Codigo"
+                                                data-nombre="@unidad.Nombre"
+                                                data-abreviatura="@unidad.Abreviatura"
+                                                data-estado="@(unidad.Estado ? "1" : "0")"
+                                                onclick="KerniXCatalogos.editarUnidad(this);">
+                                            Editar
+                                        </button>
+
+
+                                        <form method="post"
+                                              action="/Inventario/Catalogos/Index?handler=EstadoUnidad">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="idUnidadMedida"
+                                                   value="@unidad.IdUnidadMedida" />
+
+                                            <input type="hidden"
+                                                   name="nuevoEstado"
+                                                   value="@(unidad.Estado ? "false" : "true")" />
+
+                                            <button type="submit"
+                                                    class="kx-btn @(unidad.Estado ? "kx-btn-red" : "kx-btn-green") kx-mini"
+                                                    onclick="return confirm('@(unidad.Estado ? "¿Desactivar esta unidad de medida?" : "¿Activar esta unidad de medida?")');">
+                                                @(unidad.Estado ? "Eliminar" : "Activar")
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </article>
+
+
+        <!-- =====================================================
+             MARCAS
+             ===================================================== -->
+
+        <article class="kx-card kx-panel">
+
+            <div class="kx-panel-head">
+
+                <div>
+                    <h2>Marcas</h2>
+                    <p>
+                        Tabla inv.marca · Empresa @Model.IdEmpresa
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form method="get"
+                  action="/Inventario/Catalogos/Index"
+                  class="kx-filter">
+
+                <input type="search"
+                       name="BuscarMarca"
+                       value="@Model.BuscarMarca"
+                       class="kx-control"
+                       placeholder="Buscar marca..." />
+
+                <select name="EstadoMarca"
+                        class="kx-control">
+
+                    <option value="">Todos</option>
+
+                    @if (Model.EstadoMarca == "1")
+                    {
+                        <option value="1" selected>Activas</option>
+                    }
+                    else
+                    {
+                        <option value="1">Activas</option>
+                    }
+
+                    @if (Model.EstadoMarca == "0")
+                    {
+                        <option value="0" selected>Inactivas</option>
+                    }
+                    else
+                    {
+                        <option value="0">Inactivas</option>
+                    }
+
+                </select>
+
+                <button type="submit"
+                        class="kx-btn kx-btn-green">
+                    Buscar
+                </button>
+
+                <input type="hidden"
+                       name="BuscarCategoria"
+                       value="@Model.BuscarCategoria" />
+
+                <input type="hidden"
+                       name="EstadoCategoria"
+                       value="@Model.EstadoCategoria" />
+
+                <input type="hidden"
+                       name="BuscarUnidad"
+                       value="@Model.BuscarUnidad" />
+
+                <input type="hidden"
+                       name="EstadoUnidad"
+                       value="@Model.EstadoUnidad" />
+
+            </form>
+
+
+            <div class="kx-table-wrap">
+
+                <table class="kx-table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Marca</th>
+                            <th>Productos</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var marca in Model.Marcas)
+                        {
+                            <tr>
+
+                                <td>
+                                    @marca.IdMarca
+                                </td>
+
+                                <td>
+                                    <div class="kx-name">
+                                        @marca.Nombre
+                                    </div>
+
+                                    <div class="kx-desc">
+                                        @(string.IsNullOrWhiteSpace(marca.Descripcion)
+                                            ? "Sin descripción"
+                                            : marca.Descripcion)
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @marca.TotalProductos
+                                </td>
+
+                                <td>
+                                    <span class="kx-pill @(marca.Estado ? "active" : "inactive")">
+                                        @(marca.Estado ? "Activa" : "Inactiva")
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <div class="kx-row-actions">
+
+                                        <button type="button"
+                                                class="kx-btn kx-btn-green kx-mini"
+                                                data-id="@marca.IdMarca"
+                                                data-nombre="@marca.Nombre"
+                                                data-descripcion="@marca.Descripcion"
+                                                data-estado="@(marca.Estado ? "1" : "0")"
+                                                onclick="KerniXCatalogos.editarMarca(this);">
+                                            Editar
+                                        </button>
+
+
+                                        <form method="post"
+                                              action="/Inventario/Catalogos/Index?handler=EstadoMarca">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="idMarca"
+                                                   value="@marca.IdMarca" />
+
+                                            <input type="hidden"
+                                                   name="nuevoEstado"
+                                                   value="@(marca.Estado ? "false" : "true")" />
+
+                                            <button type="submit"
+                                                    class="kx-btn @(marca.Estado ? "kx-btn-red" : "kx-btn-green") kx-mini"
+                                                    onclick="return confirm('@(marca.Estado ? "¿Desactivar esta marca? Los productos históricos conservarán la relación." : "¿Activar esta marca?")');">
+                                                @(marca.Estado ? "Eliminar" : "Activar")
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </article>
+
+    </section>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL CATEGORÍA
+     ========================================================= -->
+
+<div class="kx-modal-backdrop"
+     id="modalCategoria">
+
+    <div class="kx-modal">
+
+        <h3 id="tituloCategoria">
+            Nueva categoría
+        </h3>
+
+        <p>
+            Clasifica los productos dentro del inventario.
+        </p>
+
+        <div class="kx-modal-status">
+            Edición directa · Sin salir de esta pantalla
+        </div>
+
+
+        <form method="post"
+              id="formCategoria"
+              action="/Inventario/Catalogos/Index?handler=CrearCategoria">
+
+            @Html.AntiForgeryToken()
+
+
+            <input type="hidden"
+                   id="categoriaId"
+                   name="idCategoriaProducto"
+                   value="0" />
+
+
+            <div class="kx-field">
+
+                <label for="categoriaNombre">
+                    Nombre *
+                </label>
+
+                <input id="categoriaNombre"
+                       name="nombre"
+                       type="text"
+                       maxlength="150"
+                       class="kx-input"
+                       required />
+
+            </div>
+
+
+            <div class="kx-field">
+
+                <label for="categoriaDescripcion">
+                    Descripción
+                </label>
+
+                <textarea id="categoriaDescripcion"
+                          name="descripcion"
+                          maxlength="600"
+                          class="kx-textarea"></textarea>
+
+            </div>
+
+
+            <div class="kx-field"
+                 id="grupoEstadoCategoria"
+                 style="display:none;">
+
+                <label class="kx-check">
+
+                    <input id="categoriaEstado"
+                           name="estado"
+                           type="checkbox"
+                           value="true"
+                           checked />
+
+                    <span>
+                        Categoría activa
+                    </span>
+
+                </label>
+
+                <input type="hidden"
+                       name="estado"
+                       value="false" />
+
+            </div>
+
+
+            <div class="kx-modal-actions">
+
+                <button type="button"
+                        class="kx-btn kx-btn-dark"
+                        onclick="KerniXCatalogos.cerrarCategoria();">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="kx-btn kx-btn-gold">
+                    Guardar categoría
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MODAL UNIDAD
+     ========================================================= -->
+
+<div class="kx-modal-backdrop"
+     id="modalUnidad">
+
+    <div class="kx-modal">
+
+        <h3 id="tituloUnidad">
+            Nueva unidad de medida
+        </h3>
+
+        <p>
+            Define código, nombre y abreviatura utilizados por los productos.
+        </p>
+
+        <div class="kx-modal-status">
+            Catálogo maestro · CRUD en modal
+        </div>
+
+
+        <form method="post"
+              id="formUnidad"
+              action="/Inventario/Catalogos/Index?handler=CrearUnidad">
+
+            @Html.AntiForgeryToken()
+
+
+            <input type="hidden"
+                   id="unidadId"
+                   name="idUnidadMedida"
+                   value="0" />
+
+
+            <div class="kx-field">
+
+                <label for="unidadCodigo">
+                    Código *
+                </label>
+
+                <input id="unidadCodigo"
+                       name="codigo"
+                       type="text"
+                       maxlength="40"
+                       class="kx-input"
+                       required
+                       placeholder="ej. und, kg, lt" />
+
+            </div>
+
+
+            <div class="kx-field">
+
+                <label for="unidadNombre">
+                    Nombre *
+                </label>
+
+                <input id="unidadNombre"
+                       name="nombre"
+                       type="text"
+                       maxlength="200"
+                       class="kx-input"
+                       required
+                       placeholder="ej. unidad, kilogramo, litro" />
+
+            </div>
+
+
+            <div class="kx-field">
+
+                <label for="unidadAbreviatura">
+                    Abreviatura *
+                </label>
+
+                <input id="unidadAbreviatura"
+                       name="abreviatura"
+                       type="text"
+                       maxlength="40"
+                       class="kx-input"
+                       required
+                       placeholder="ej. und, kg, l" />
+
+            </div>
+
+
+            <div class="kx-field"
+                 id="grupoEstadoUnidad"
+                 style="display:none;">
+
+                <label class="kx-check">
+
+                    <input id="unidadEstado"
+                           name="estado"
+                           type="checkbox"
+                           value="true"
+                           checked />
+
+                    <span>
+                        Unidad activa
+                    </span>
+
+                </label>
+
+                <input type="hidden"
+                       name="estado"
+                       value="false" />
+
+            </div>
+
+
+            <div class="kx-modal-actions">
+
+                <button type="button"
+                        class="kx-btn kx-btn-dark"
+                        onclick="KerniXCatalogos.cerrarUnidad();">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="kx-btn kx-btn-blue">
+                    Guardar unidad
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MODAL MARCA
+     ========================================================= -->
+
+<div class="kx-modal-backdrop"
+     id="modalMarca">
+
+    <div class="kx-modal">
+
+        <h3 id="tituloMarca">
+            Nueva marca
+        </h3>
+
+        <p>
+            Administra las marcas asociadas a los productos.
+        </p>
+
+        <div class="kx-modal-status">
+            Catálogo maestro · CRUD en modal
+        </div>
+
+
+        <form method="post"
+              id="formMarca"
+              action="/Inventario/Catalogos/Index?handler=CrearMarca">
+
+            @Html.AntiForgeryToken()
+
+
+            <input type="hidden"
+                   id="marcaId"
+                   name="idMarca"
+                   value="0" />
+
+
+            <div class="kx-field">
+
+                <label for="marcaNombre">
+                    Nombre *
+                </label>
+
+                <input id="marcaNombre"
+                       name="nombre"
+                       type="text"
+                       maxlength="150"
+                       class="kx-input"
+                       required />
+
+            </div>
+
+
+            <div class="kx-field">
+
+                <label for="marcaDescripcion">
+                    Descripción
+                </label>
+
+                <textarea id="marcaDescripcion"
+                          name="descripcion"
+                          maxlength="600"
+                          class="kx-textarea"></textarea>
+
+            </div>
+
+
+            <div class="kx-field"
+                 id="grupoEstadoMarca"
+                 style="display:none;">
+
+                <label class="kx-check">
+
+                    <input id="marcaEstado"
+                           name="estado"
+                           type="checkbox"
+                           value="true"
+                           checked />
+
+                    <span>
+                        Marca activa
+                    </span>
+
+                </label>
+
+                <input type="hidden"
+                       name="estado"
+                       value="false" />
+
+            </div>
+
+
+            <div class="kx-modal-actions">
+
+                <button type="button"
+                        class="kx-btn kx-btn-dark"
+                        onclick="KerniXCatalogos.cerrarMarca();">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="kx-btn kx-btn-green">
+                    Guardar marca
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+    const KerniXCatalogos = (() => {
+
+           "use strict";
+
+
+    function bloquearPantalla(
+        activo
+            ) {
+        document.body.style.overflow =
+                    activo
+                ? "hidden"
+                : "";
+            }
+
+
+    function prepararEnvio(
+        form
+            ) {
+        form?.addEventListener(
+                    "submit",
+            () => {
+
+                const boton =
+                    form.querySelector(
+                                'button[type="submit"]'
+                        );
+
+                if (!boton) {
+                    return;
+                    }
+
+                boton.disabled =
+                    true;
+
+                    boton.dataset.textoAnterior =
+                        boton.textContent || "";
+
+                boton.textContent =
+                    "Guardando...";
+                }
+            );
+        }
+
+
+        const modalCategoria =
+                document.getElementById(
+            "modalCategoria"
+        );
+
+        const formCategoria =
+                document.getElementById(
+            "formCategoria"
+        );
+
+         const tituloCategoria =
+                document.getElementById(
+            "tituloCategoria"
+        );
+
+         const categoriaId =
+                document.getElementById(
+            "categoriaId"
+        );
+
+        const categoriaNombre =
+                document.getElementById(
+            "categoriaNombre"
+        );
+
+        const categoriaDescripcion =
+                document.getElementById(
+                "categoriaDescripcion"
+        );
+
+         const categoriaEstado =
+            document.getElementById(
+                "categoriaEstado"
+        );
+
+         const grupoEstadoCategoria =
+            document.getElementById(
+            "grupoEstadoCategoria"
+            );
+
+
+            const modalUnidad =
+        document.getElementById(
+            "modalUnidad"
+                );
+
+            const formUnidad =
+                document.getElementById(
+            "formUnidad"
+            );
+
+         const tituloUnidad =
+            document.getElementById(
+            "tituloUnidad"
+                );
+
+            const unidadId =
+                document.getElementById(
+                "unidadId"
+        );
+
+            const unidadCodigo =
+            document.getElementById(
+            "unidadCodigo"
+            );
+
+               const unidadNombre =
+            document.getElementById(
+            "unidadNombre"
+                );
+
+        const unidadAbreviatura =
+               document.getElementById(
+            "unidadAbreviatura"
+            );
+
+          const unidadEstado =
+             document.getElementById(
+                "unidadEstado"
+        );
+
+            const grupoEstadoUnidad =
+            document.getElementById(
+            "grupoEstadoUnidad"
+            );
+
+
+            const modalMarca =
+            document.getElementById(
+                "modalMarca"
+            );
+
+            const formMarca =
+                document.getElementById(
+                "formMarca"
+                );
+
+            const tituloMarca =
+            document.getElementById(
+                "tituloMarca"
+                );
+
+        const marcaId =
+                document.getElementById(
+                "marcaId"
+            );
+
+        const marcaNombre =
+            document.getElementById(
+                    "marcaNombre"
+            );
+
+            const marcaDescripcion =
+            document.getElementById(
+                "marcaDescripcion"
+                );
+
+            const marcaEstado =
+                document.getElementById(
+                "marcaEstado"
+            );
+
+        const grupoEstadoMarca =
+            document.getElementById(
+                    "grupoEstadoMarca"
+            );
+
+
+        function abrirNuevaCategoria() {
+
+            tituloCategoria.textContent =
+                "Nueva categoría";
+
+            formCategoria.action =
+                "/Inventario/Catalogos/Index?handler=CrearCategoria";
+
+            categoriaId.value =
+            "0";
+
+                categoriaNombre.value =
+            "";
+
+            categoriaDescripcion.value =
+                "";
+
+            categoriaEstado.checked =
+                true;
+
+            grupoEstadoCategoria.style.display =
+                "none";
+
+            modalCategoria.classList.add(
+                "open"
+            );
+
+            bloquearPantalla(
+                true
+            );
+
+        setTimeout(
+            () =>
+                        categoriaNombre.focus(),
+                60
+            );
+            }
+
+
+            function editarCategoria(
+        boton
+            ) {
+
+        tituloCategoria.textContent =
+                "Editar categoría";
+
+        formCategoria.action =
+                "/Inventario/Catalogos/Index?handler=EditarCategoria";
+
+            categoriaId.value =
+            boton.dataset.id || "0";
+
+            categoriaNombre.value =
+                boton.dataset.nombre || "";
+
+        categoriaDescripcion.value =
+            boton.dataset.descripcion || "";
+
+        categoriaEstado.checked =
+                boton.dataset.estado === "1";
+
+             grupoEstadoCategoria.style.display =
+                "block";
+
+                modalCategoria.classList.add(
+            "open"
+            );
+
+             bloquearPantalla(
+                true
+        );
+        }
+
+
+        function cerrarCategoria() {
+
+            modalCategoria.classList.remove(
+                "open"
+                );
+
+            if (
+            !modalUnidad.classList.contains(
+                    "open"
+            )
+                &&
+                !modalMarca.classList.contains(
+                    "open"
+            )
+            ) {
+                bloquearPantalla(
+                false
+                );
+            }
+            }
+
+
+             function abrirNuevaUnidad() {
+
+            tituloUnidad.textContent =
+            "Nueva unidad de medida";
+
+                formUnidad.action =
+                "/Inventario/Catalogos/Index?handler=CrearUnidad";
+
+            unidadId.value =
+            "0";
+
+        unidadCodigo.value =
+            "";
+
+            unidadNombre.value =
+                "";
+
+            unidadAbreviatura.value =
+                "";
+
+            unidadEstado.checked =
+                    true;
+
+            grupoEstadoUnidad.style.display =
+                "none";
+
+               modalUnidad.classList.add(
+                "open"
+                );
+
+                   bloquearPantalla(
+
+                true
+           );
+
+            setTimeout(
+                () =>
+                    unidadCodigo.focus(),
+                    60
+                );
+        }
+
+
+              function editarUnidad(
+            boton
+            ) {
+
+                   tituloUnidad.textContent =
+                  "Editar unidad de medida";
+
+                formUnidad.action =
+                "/Inventario/Catalogos/Index?handler=EditarUnidad";
+
+            unidadId.value =
+                    boton.dataset.id || "0";
+
+            unidadCodigo.value =
+                boton.dataset.codigo || "";
+
+                unidadNombre.value =
+                boton.dataset.nombre || "";
+
+              unidadAbreviatura.value =
+                    boton.dataset.abreviatura || "";
+
+             unidadEstado.checked =
+                    boton.dataset.estado === "1";
+
+             grupoEstadoUnidad.style.display =
+                "block";
+
+                modalUnidad.classList.add(
+                    "open"
+            );
+
+            bloquearPantalla(
+                true
+            );
+            }
+
+
+            function cerrarUnidad() {
+
+                modalUnidad.classList.remove(
+                    "open"
+                );
+
+                if (
+                    !modalCategoria.classList.contains(
+                        "open"
+                    )
+                    &&
+                    !modalMarca.classList.contains(
+                        "open"
+                    )
+                ) {
+                    bloquearPantalla(
+                        false
+                    );
+                }
+            }
+
+
+            function abrirNuevaMarca() {
+
+                tituloMarca.textContent =
+                    "Nueva marca";
+
+                formMarca.action =
+                    "/Inventario/Catalogos/Index?handler=CrearMarca";
+
+                marcaId.value =
+                    "0";
+
+                marcaNombre.value =
+                    "";
+
+                marcaDescripcion.value =
+                    "";
+
+                marcaEstado.checked =
+                    true;
+
+                grupoEstadoMarca.style.display =
+                    "none";
+
+                modalMarca.classList.add(
+                    "open"
+                );
+
+                bloquearPantalla(
+                    true
+                );
+
+                setTimeout(
+                    () =>
+                        marcaNombre.focus(),
+                    60
+                );
+            }
+
+
+            function editarMarca(
+                boton
+            ) {
+
+                tituloMarca.textContent =
+                    "Editar marca";
+
+                formMarca.action =
+                    "/Inventario/Catalogos/Index?handler=EditarMarca";
+
+                marcaId.value =
+                    boton.dataset.id || "0";
+
+                marcaNombre.value =
+                    boton.dataset.nombre || "";
+
+                marcaDescripcion.value =
+                    boton.dataset.descripcion || "";
+
+                marcaEstado.checked =
+                    boton.dataset.estado === "1";
+
+                grupoEstadoMarca.style.display =
+                    "block";
+
+                modalMarca.classList.add(
+                    "open"
+                );
+
+                bloquearPantalla(
+                    true
+                );
+            }
+
+
+            function cerrarMarca() {
+
+                modalMarca.classList.remove(
+                    "open"
+                );
+
+                if (
+                    !modalCategoria.classList.contains(
+                        "open"
+                    )
+                    &&
+                    !modalUnidad.classList.contains(
+                        "open"
+                    )
+                ) {
+                    bloquearPantalla(
+                        false
+                    );
+                }
+            }
+
+
+            modalCategoria?.addEventListener(
+                "click",
+                function(
+                    event
+                ) {
+
+                    if (
+                        event.target ===
+                        modalCategoria
+                    ) {
+                        cerrarCategoria();
+                    }
+                }
+            );
+
+
+            modalUnidad?.addEventListener(
+                "click",
+                function(
+                    event
+                ) {
+
+                    if (
+                        event.target ===
+                        modalUnidad
+                    ) {
+                        cerrarUnidad();
+                    }
+                }
+            );
+
+
+            modalMarca?.addEventListener(
+                "click",
+                function(
+                    event
+                ) {
+
+                    if (
+                        event.target ===
+                        modalMarca
+                    ) {
+                        cerrarMarca();
+                    }
+                }
+            );
+
+
+            document.addEventListener(
+                "keydown",
+                function(
+                    event
+                ) {
+
+                    if (
+                        event.key ===
+                        "Escape"
+                    ) {
+                        cerrarCategoria();
+                        cerrarUnidad();
+                        cerrarMarca();
+                    }
+                }
+            );
+
+
+            prepararEnvio(
+                formCategoria
+            );
+
+            prepararEnvio(
+                formUnidad
+            );
+
+            prepararEnvio(
+                formMarca
+            );
+
+
+            return {
+                abrirNuevaCategoria,
+                editarCategoria,
+                cerrarCategoria,
+                abrirNuevaUnidad,
+                editarUnidad,
+                cerrarUnidad,
+                abrirNuevaMarca,
+                editarMarca,
+                cerrarMarca
+            };
+
+        })();
+</script>

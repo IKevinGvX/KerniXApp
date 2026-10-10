@@ -1,0 +1,237 @@
+﻿@page "/Inventario/Proveedores"
+@model KerniX.Pages.Inventario.Proveedores.IndexModel
+@{
+    ViewData["Title"] = "Proveedores | KerniX ERP";
+}
+<link rel="stylesheet" href="@Url.Content("~/css/proveedores.css")" />
+<style>
+    /* Acceso directo al inicio de KerniX */
+    .pv-top-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .pv-home-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 41px;
+        padding: 0 16px;
+        border: 1px solid rgba(255, 188, 45, .6);
+        border-radius: 10px;
+        background: linear-gradient(135deg, rgba(24, 33, 58, .95), rgba(8, 15, 30, .98));
+        color: #ffd36e;
+        font-weight: 700;
+        font-size: 13px;
+        text-decoration: none;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05), 0 8px 22px rgba(0, 0, 0, .22);
+        transition: border-color .2s, background-color .2s, transform .2s;
+    }
+
+    .pv-home-link:hover,
+    .pv-home-link:focus-visible {
+        color: #fff2c2;
+        border-color: #ffcc45;
+        background: #1d2b46;
+        text-decoration: none;
+        transform: translateY(-1px);
+    }
+</style>
+
+<main class="pv-shell">
+    <div class="pv-container">
+        <header class="pv-hero">
+            <div class="pv-eyebrow"><span class="pv-glow-dot"></span> KERNIX ERP / INVENTARIO / CATÁLOGO MAESTRO</div>
+            <div class="pv-hero-main">
+                <div>
+                    <h1>Gestión de <span>Proveedores</span></h1>
+                    <p>Directorio empresarial de contactos y proveedores vinculados a las operaciones de compras.</p>
+                </div>
+                <div class="pv-hero-emblem" aria-hidden="true"><span uk-icon="icon: users; ratio: 2"></span></div>
+            </div>
+            <div class="pv-hero-line" aria-hidden="true"></div>
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Error))
+        {
+            <div class="pv-alert" role="alert">
+                <span uk-icon="warning"></span>
+                <span>@Model.Error</span>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeOk))
+        {
+            <div class="pv-notice pv-notice-ok" role="status"><span uk-icon="check"></span> @Model.MensajeOk</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="pv-notice pv-notice-error" role="alert"><span uk-icon="warning"></span> @Model.MensajeError</div>
+        }
+
+        <section class="pv-stats" aria-label="Resumen de proveedores">
+            <article class="pv-stat pv-gold">
+                <span class="pv-stat-icon" uk-icon="icon: database; ratio: 1.2"></span>
+                <span class="pv-stat-label">Registrados</span>
+                <strong>@Model.Listado.Total.ToString("N0")</strong>
+                <small>Catálogo general</small>
+            </article>
+            <article class="pv-stat pv-cyan">
+                <span class="pv-stat-icon" uk-icon="icon: check; ratio: 1.2"></span>
+                <span class="pv-stat-label">Activos</span>
+                <strong>@Model.Listado.Activos.ToString("N0")</strong>
+                <small>Habilitados</small>
+            </article>
+            <article class="pv-stat pv-purple">
+                <span class="pv-stat-icon" uk-icon="icon: ban; ratio: 1.2"></span>
+                <span class="pv-stat-label">Inactivos</span>
+                <strong>@Model.Listado.Inactivos.ToString("N0")</strong>
+                <small>No habilitados</small>
+            </article>
+            <article class="pv-stat pv-blue">
+                <span class="pv-stat-icon" uk-icon="icon: search; ratio: 1.2"></span>
+                <span class="pv-stat-label">Coincidencias</span>
+                <strong>@Model.Listado.TotalFiltrado.ToString("N0")</strong>
+                <small>Resultado del filtro</small>
+            </article>
+        </section>
+
+        <section class="pv-workspace" aria-labelledby="pv-table-heading">
+            <div class="pv-workspace-top">
+                <div>
+                    <span class="pv-section-eyebrow">DIRECTORIO</span>
+                    <h2 id="pv-table-heading">Proveedores registrados</h2>
+                    <p>Consulta y filtra los proveedores existentes en SQL Server.</p>
+                </div>
+                <div class="pv-top-actions">
+                    <a href="/Inicio/Index" class="pv-home-link" aria-label="Volver al inicio de KerniX">
+                        <span uk-icon="icon: arrow-left; ratio: .9" aria-hidden="true"></span>
+                        Volver al inicio
+                    </a>
+                    <span class="pv-readonly"><span uk-icon="icon: shield; ratio: .8"></span> Catálogo seguro</span>
+                    @if (Model.PuedeGestionar)
+                    {
+                        <a href="/Inventario/Proveedores/Nuevo" class="pv-action"><span uk-icon="plus"></span> Nuevo proveedor</a>
+                    }
+                </div>
+            </div>
+
+            <form method="get" action="/Inventario/Proveedores" class="pv-toolbar">
+                <label class="pv-search">
+                    <span uk-icon="icon: search"></span>
+                    <input name="Buscar" type="search" maxlength="120"
+                           value="@Model.Buscar"
+                           placeholder="Buscar por documento, empresa, teléfono o correo"
+                           aria-label="Buscar proveedores" />
+                </label>
+                <label class="pv-select-wrap">
+                    <span class="pv-visually-hidden">Estado del proveedor</span>
+                    <select name="Estado" aria-label="Filtrar estado">
+                        <option value="todos" selected="@(Model.Estado == "todos")">Todos los estados</option>
+                        <option value="activos" selected="@(Model.Estado == "activos")">Solo activos</option>
+                        <option value="inactivos" selected="@(Model.Estado == "inactivos")">Solo inactivos</option>
+                    </select>
+                </label>
+                <button class="pv-action" type="submit"><span uk-icon="search"></span> Filtrar</button>
+                <a class="pv-clear" href="/Inventario/Proveedores">Limpiar</a>
+            </form>
+
+            <div class="pv-table-wrap">
+                <table class="pv-table">
+                    <thead>
+                        <tr>
+                            <th>Proveedor</th>
+                            <th>Documento</th>
+                            <th>Teléfono</th>
+                            <th>Correo electrónico</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Listado.Items)
+                        {
+                            var nombre = !string.IsNullOrWhiteSpace(item.RazonSocial)
+                                ? item.RazonSocial
+                                : item.NombreComercial;
+                            <tr>
+                                <td>
+                                    <div class="pv-name">
+                                        <span class="pv-avatar" uk-icon="icon: world; ratio: .9"></span>
+                                        <div><strong>@nombre</strong><small>ID #@item.IdProveedor</small></div>
+                                    </div>
+                                </td>
+                                <td class="pv-mono">@item.TipoDocumento.ToUpperInvariant() · @(string.IsNullOrWhiteSpace(item.NumeroDocumento) ? "—" : item.NumeroDocumento)</td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Telefono) ? "—" : item.Telefono)</td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(item.Correo))
+                                    {
+                                        <a class="pv-email" href="mailto:@item.Correo">@item.Correo</a>
+                                    }
+                                    else
+                                    {
+
+                                        <span>—</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="pv-status @(item.Estado ? "pv-active" : "pv-inactive")">
+                                        <i></i> @(item.Estado ? "Activo" : "Inactivo")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="pv-row-actions">
+                                        <a class="pv-link" href="/Inventario/Proveedores/Detalle/@item.IdProveedor" aria-label="Ver detalles de @nombre" title="Ver detalle"><span uk-icon="info"></span> Ver</a>
+                                        <a class="pv-link" href="/Inventario/Proveedores/Historial/@item.IdProveedor" title="Historial del proveedor"><span uk-icon="history"></span> Historial</a>
+                                        @if (Model.PuedeGestionar)
+                                        {
+                                            <a class="pv-link" href="/Inventario/Proveedores/Editar/@item.IdProveedor" title="Editar proveedor"><span uk-icon="pencil"></span> Editar</a>
+                                            <form method="post" action="/Inventario/Proveedores?handler=Estado" class="pv-state-form"
+                                                  data-confirm="@(item.Estado ? "¿Desactivar este proveedor?" : "¿Activar este proveedor?")">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="idProveedor" value="@item.IdProveedor" />
+                                                <input type="hidden" name="activar" value="@(!item.Estado ? "true" : "false")" />
+                                                <input type="hidden" name="buscar" value="@Model.Buscar" />
+                                                <input type="hidden" name="estado" value="@Model.Estado" />
+                                                <input type="hidden" name="pagina" value="@Model.Pagina" />
+                                                <button type="submit" class="pv-link pv-link-state" title="@(item.Estado ? "Desactivar" : "Activar")">
+                                                    <span uk-icon="@(item.Estado ? "ban" : "check")"></span> @(item.Estado ? "Desactivar" : "Activar")
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (Model.Listado.Items.Count == 0)
+                {
+                    <div class="pv-empty">
+                        <span uk-icon="icon: search; ratio: 2"></span>
+                        <strong>No hay proveedores para mostrar</strong>
+                        <p>Prueba con otros filtros o verifica si existen registros en la tabla <code>com.proveedor</code>.</p>
+                    </div>
+                }
+            </div>
+            <footer class="pv-pagination">
+                <span>Página @Model.Listado.Pagina de @Model.Listado.TotalPaginas · @Model.Listado.TotalFiltrado resultados</span>
+                <div>
+                    @if (Model.Listado.Pagina > 1)
+                    {
+                        <a href="@Model.UrlPagina(Model.Listado.Pagina - 1)"><span uk-icon="chevron-left"></span> Anterior</a>
+                    }
+                    @if (Model.Listado.Pagina < Model.Listado.TotalPaginas)
+                    {
+                        <a href="@Model.UrlPagina(Model.Listado.Pagina + 1)">Siguiente <span uk-icon="chevron-right"></span></a>
+                    }
+                </div>
+            </footer>
+        </section>
+        <script src="@Url.Content("~/js/proveedores.js")"></script>
+        <p class="pv-footnote">KerniX ERP · Módulo de inventario y abastecimiento · Consulta a SQL Server</p>
+    </div>
+</main>

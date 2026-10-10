@@ -2,10 +2,19 @@ using KerniX.Api.Services.Configuracion;
 using KerniX.Middleware;
 using KerniX.Security;
 using KerniX.Services.Auth;
+using KerniX.Services.Configuracion.Usuarios;
 using KerniX.Services.Cotizacion;
 using KerniX.Services.Empleados;
+using KerniX.Services.Inventario;
+using KerniX.Services.Inventario.Catalogos;
+using KerniX.Services.Pedido;
+using KerniX.Services.Security;
+using KerniX.Services.Sesiones;
+using KerniX.Services.Seguridad;
+using KerniX.Services.Sunat;
 using KerniX.Services.Usuarios;
 using KerniX.Services.Ventas;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 namespace KerniX;
 
@@ -40,20 +49,77 @@ public class Program
     ICotizacionDbService,
     CotizacionDbService
 >();
+        builder.Services.AddScoped<
+    IProductoDbService,
+    ProductoDbService
+>();
+
+        builder.Services.AddScoped<
+            KerniX.Services.IA.IAgenteCatalogoService,
+            KerniX.Services.IA.AgenteCatalogoService>();
+
+        builder.Services.AddScoped<
+            KerniX.Services.IA.IKerniXIaService,
+            KerniX.Services.IA.KerniXIaService>();
+
+        builder.Services.AddScoped<
+            KerniX.Services.Ventas.Operaciones.IVentasRegistroService,
+            KerniX.Services.Ventas.Operaciones.VentasRegistroService>();
+
+        builder.Services.AddScoped<
+            KerniX.Services.Ventas.Panel.IVentasPanelService,
+            KerniX.Services.Ventas.Panel.VentasPanelService>();
+
+        builder.Services.AddScoped<
+            KerniX.Services.Proveedores.IProveedorDbService,
+            KerniX.Services.Proveedores.ProveedorDbService>();
+
+        builder.Services.AddScoped<
+            KerniX.Services.Proveedores.ProveedorContextService>();
+        builder.Services.AddHttpClient<
+    KerniX.Services.IA.IConversacionIaService,
+    KerniX.Services.IA.ConversacionIaService>(client =>
+    {
+        var raw = builder.Configuration["IaMotor:BaseUrl"];
+        if (string.IsNullOrWhiteSpace(raw)
+            || !Uri.TryCreate(raw, UriKind.Absolute, out var uri)
+            || (uri.Scheme != Uri.UriSchemeHttps
+                && !(uri.Scheme == Uri.UriSchemeHttp && uri.IsLoopback)))
+        {
+            throw new InvalidOperationException(
+                "Configura IaMotor:BaseUrl. HTTP solo se permite para loopback; usa HTTPS en red.");
+        }
+        client.BaseAddress = new Uri(uri.AbsoluteUri.TrimEnd('/') + "/");
+        client.Timeout = TimeSpan.FromSeconds(115);
+    });
+
+        builder.Services.AddScoped<
+    ICatalogoInventarioDbService,
+    CatalogoInventarioDbService>();
+
+        builder.Services.AddScoped<IEntradaStockDbService, EntradaStockDbService>();
+        builder.Services.AddScoped<ISalidaStockDbService, SalidaStockDbService>();
+        builder.Services.AddScoped<IInventarioEnterpriseDbService, InventarioEnterpriseDbService>();
+
         Uri apiUri =
             new(apiBaseUrl);
-
+        builder.Services.AddScoped<IPedidoService, PedidoService>();
         // =========================================================
         // RAZOR PAGES
         // =========================================================
-
+        builder.Services.AddScoped<
+    IInventarioEnterpriseDbService,
+    InventarioEnterpriseDbService>();
+        builder.Services.AddScoped<
+    IUsuarioAdminDbService,
+    UsuarioAdminDbService>();
         builder.Services
             .AddRazorPages();
         // =========================================================
         // NUEVA VENTA - PRODUCTOS API
         // ENVÍA JWT
         // =========================================================
-
+        builder.Services.AddScoped<IVentaConfirmacionIntegralDbService, VentaConfirmacionIntegralDbService>();
         builder.Services
             .AddHttpClient<
                 IProductoVentaService,
@@ -74,13 +140,82 @@ public class Program
                 })
             .AddHttpMessageHandler<
                 AuthHeaderHandler>();
+        var dataProtectionPath =
+    Path.Combine(
+        builder.Environment.ContentRootPath,
+        "App_Data",
+        "DataProtectionKeys"
+    ); builder.Services.AddScoped<
+    ISunatConfiguracionDbService,
+    SunatConfiguracionDbService
+>();
+        builder.Services.AddScoped<
+    IInventarioEnterpriseDbService,
+    InventarioEnterpriseDbService>();
+        builder.Services.AddScoped<ProductoDbService>();
+        Directory.CreateDirectory(
+            dataProtectionPath
+        );
+        builder.Services.AddScoped<
+    ISalidaStockDbService,
+    SalidaStockDbService>();
+
+        builder.Services.AddScoped<
+    IEntradaStockDbService,
+    EntradaStockDbService>();
+
+        builder.Services
+            .AddDataProtection()
+            .SetApplicationName(
+                "KerniXERP"
+            )
+            .PersistKeysToFileSystem(
+                new DirectoryInfo(
+                    dataProtectionPath
+                )
+            );
+        builder.Services.AddScoped<ProductoDbService>();
+
+        builder.Services.AddSingleton<
+            ISecretProtectionService,
+            SecretProtectionService
+        >();
         // =========================================================
         // HTTP CONTEXT
         // =========================================================
+        builder.Services.AddScoped<
+    IVentaConfirmacionIntegralDbService,
+    VentaConfirmacionIntegralDbService>();
 
+        builder.Services.AddScoped<
+            IPedidoService,
+            PedidoService
+        >();
         builder.Services
             .AddHttpContextAccessor();
+        // ==========================================
+        // CLIENTES - DEPENDENCY INJECTION
+        // ==========================================
 
+        builder.Services.AddHttpClient<
+            KerniX.Services.Clientes.IClienteService,
+            KerniX.Services.Clientes.ClienteService>(
+            (serviceProvider, client) =>
+            {
+                var configuration =
+                    serviceProvider.GetRequiredService<IConfiguration>();
+
+                var baseUrl =
+                    configuration["ApiSettings:BaseUrl"]
+                    ?? throw new InvalidOperationException(
+                        "Falta ApiSettings:BaseUrl.");
+
+                client.BaseAddress =
+                    new Uri(baseUrl);
+
+                client.Timeout =
+                    TimeSpan.FromSeconds(30);
+            });
         // =========================================================
         // SESSION
         // =========================================================
@@ -108,7 +243,9 @@ public class Program
                         SameSiteMode.Lax;
 
                     options.Cookie.SecurePolicy =
-                        CookieSecurePolicy.SameAsRequest;
+                        builder.Environment.IsDevelopment()
+                            ? CookieSecurePolicy.SameAsRequest
+                            : CookieSecurePolicy.Always;
                 });
 
         // =========================================================
@@ -117,6 +254,12 @@ public class Program
 
         builder.Services
             .AddScoped<TokenStorageService>();
+
+        // Sesiones por dispositivo y cierre remoto.
+        builder.Services.AddScoped<ISesionWebDbService, SesionWebDbService>();
+
+        // Fase 4: recuperación de contraseña por correo y token temporal.
+        builder.Services.AddScoped<IRecuperacionClaveService, RecuperacionClaveService>();
 
         builder.Services
             .AddTransient<AuthHeaderHandler>();

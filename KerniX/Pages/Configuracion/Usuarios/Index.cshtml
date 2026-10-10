@@ -1,0 +1,1175 @@
+﻿@page
+@model KerniX.Pages.Configuracion.Usuarios.IndexModel
+
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+}
+
+<style>
+    .kx-users {
+        --bg: #020b17;
+        --panel: #06182b;
+        --panel2: #082039;
+        --gold: #ffb800;
+        --gold2: #ffd866;
+        --blue: #149cff;
+        --cyan: #50d2ff;
+        --green: #36e69a;
+        --red: #ff607b;
+        --orange: #ff9e35;
+        --text: #f4f9ff;
+        --muted: #9bb8d3;
+        --border: rgba(58, 132, 205, .26);
+        min-height: 100vh;
+        padding: 28px;
+        color: var(--text);
+        background: radial-gradient(circle at 88% 0%, rgba(20,156,255,.12), transparent 28%), radial-gradient(circle at 4% 0%, rgba(255,184,0,.07), transparent 24%), linear-gradient(145deg, #020b17, #031426);
+        font-size: 16px;
+    }
+
+        .kx-users *,
+        .kx-users *::before,
+        .kx-users *::after {
+            box-sizing: border-box;
+        }
+
+    .kx-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 22px;
+    }
+
+    .kx-title-wrap {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .kx-logo {
+        width: 64px;
+        height: 64px;
+        flex: 0 0 64px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        font-size: 28px;
+        color: var(--gold);
+        border: 1px solid rgba(255,184,0,.42);
+        background: rgba(255,184,0,.07);
+    }
+
+    .kx-breadcrumb {
+        margin-bottom: 4px;
+        font-size: 14px;
+        color: var(--muted);
+    }
+
+        .kx-breadcrumb a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+    .kx-title {
+        margin: 0;
+        font-size: 34px;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .kx-subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+    }
+
+    .kx-btn {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 17px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: 15px;
+        font-weight: 850;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .kx-btn-dark {
+        color: #edf7ff !important;
+        background: #071d33;
+    }
+
+    .kx-btn-gold {
+        color: #201500 !important;
+        border-color: #ffe07c;
+        background: linear-gradient(180deg,#ffdb68,#efa800);
+        box-shadow: 0 8px 22px rgba(255,184,0,.16);
+    }
+
+    .kx-btn-monitor {
+        color: #dff6ff !important;
+        border-color: rgba(80,210,255,.46);
+        background: linear-gradient( 180deg, rgba(20,156,255,.20), rgba(6,35,63,.96) );
+        box-shadow: 0 8px 22px rgba(20,156,255,.10);
+    }
+
+        .kx-btn-monitor:hover {
+            border-color: rgba(80,210,255,.80);
+            color: #ffffff !important;
+        }
+
+    .kx-btn[disabled] {
+        opacity: .48;
+        cursor: not-allowed;
+    }
+
+    .kx-message {
+        margin-bottom: 16px;
+        padding: 15px 18px;
+        border-radius: 13px;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .kx-message-ok {
+        border: 1px solid rgba(54,230,154,.32);
+        color: #9ff3c8;
+        background: rgba(54,230,154,.07);
+    }
+
+    .kx-message-error {
+        border: 1px solid rgba(255,96,123,.38);
+        color: #ffc0cb;
+        background: rgba(255,96,123,.08);
+    }
+
+    .kx-kpis {
+        display: grid;
+        grid-template-columns: repeat(5,minmax(0,1fr));
+        gap: 13px;
+        margin-bottom: 18px;
+    }
+
+    .kx-card {
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: linear-gradient(145deg,rgba(7,29,52,.98),rgba(4,18,34,.98));
+        box-shadow: 0 14px 34px rgba(0,0,0,.20);
+    }
+
+    .kx-kpi {
+        min-height: 115px;
+        padding: 17px;
+    }
+
+    .kx-kpi-label {
+        color: #8db0d0;
+        font-size: 14px;
+        font-weight: 750;
+    }
+
+    .kx-kpi-value {
+        margin-top: 7px;
+        color: #fff;
+        font-size: 31px;
+        font-weight: 900;
+    }
+
+    .kx-kpi-note {
+        margin-top: 5px;
+        color: #7799ba;
+        font-size: 13px;
+    }
+
+    .kx-kpi.gold {
+        border-color: rgba(255,184,0,.38);
+    }
+
+        .kx-kpi.gold .kx-kpi-value {
+            color: var(--gold2);
+        }
+
+    .kx-kpi.green .kx-kpi-value {
+        color: var(--green);
+    }
+
+    .kx-kpi.red .kx-kpi-value {
+        color: #ff8298;
+    }
+
+    .kx-kpi.orange .kx-kpi-value {
+        color: #ffc06d;
+    }
+
+    .kx-role-section,
+    .kx-filter-section,
+    .kx-table-card {
+        margin-bottom: 18px;
+        padding: 18px;
+    }
+
+    .kx-section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 14px;
+    }
+
+    .kx-section-title {
+        margin: 0;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .kx-section-note {
+        color: #7fa4c7;
+        font-size: 13px;
+    }
+
+    .kx-role-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .kx-role-tab {
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(64,138,213,.27);
+        color: #bcd2e7 !important;
+        background: #06182b;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none !important;
+    }
+
+        .kx-role-tab.active {
+            color: #201500 !important;
+            border-color: #ffcf48;
+            background: linear-gradient(180deg,#ffd55a,#e9a400);
+        }
+
+    .kx-role-count {
+        min-width: 25px;
+        height: 25px;
+        display: inline-grid;
+        place-items: center;
+        padding: 0 7px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.09);
+        font-size: 12px;
+    }
+
+    .kx-filters {
+        display: grid;
+        grid-template-columns: minmax(250px,1.5fr) 220px 250px auto;
+        gap: 11px;
+    }
+
+    .kx-input,
+    .kx-select {
+        width: 100%;
+        min-height: 49px;
+        padding: 0 14px;
+        border-radius: 11px;
+        border: 1px solid rgba(67,135,203,.36);
+        outline: none;
+        color: #fff !important;
+        background: #05182b !important;
+        font-size: 15px;
+    }
+
+        .kx-input:focus,
+        .kx-select:focus {
+            border-color: rgba(20,156,255,.83);
+            box-shadow: 0 0 0 3px rgba(20,156,255,.10);
+        }
+
+        .kx-select option {
+            background: #06182b;
+            color: #fff;
+        }
+
+    .kx-filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .kx-table-wrap {
+        overflow: auto;
+    }
+
+    .kx-table {
+        width: 100%;
+        min-width: 1180px;
+        border-collapse: collapse;
+    }
+
+        .kx-table th {
+            padding: 13px 12px;
+            text-align: left;
+            color: #71bfff;
+            font-size: 12px;
+            font-weight: 850;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 1px solid rgba(71,137,202,.25);
+        }
+
+        .kx-table td {
+            padding: 14px 12px;
+            color: #f0f7ff;
+            font-size: 14px;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(50,104,157,.15);
+        }
+
+        .kx-table tbody tr:hover {
+            background: rgba(20,156,255,.035);
+        }
+
+    .kx-user {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+    }
+
+    .kx-avatar {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--cyan);
+        font-weight: 900;
+        border: 1px solid rgba(80,210,255,.33);
+        background: rgba(80,210,255,.07);
+    }
+
+    .kx-user strong {
+        display: block;
+        color: #fff;
+        font-size: 14px;
+    }
+
+    .kx-user span {
+        display: block;
+        margin-top: 3px;
+        color: #7da2c5;
+        font-size: 12px;
+    }
+
+    .kx-role {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        color: #d8c4ff;
+        border: 1px solid rgba(164,100,255,.32);
+        background: rgba(164,100,255,.08);
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .kx-status {
+        min-width: 90px;
+        display: inline-flex;
+        justify-content: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+    .kx-status-on {
+        color: #72efb0;
+        border: 1px solid rgba(54,230,154,.34);
+        background: rgba(54,230,154,.08);
+    }
+
+    .kx-status-off {
+        color: #ff8da1;
+        border: 1px solid rgba(255,96,123,.34);
+        background: rgba(255,96,123,.08);
+    }
+
+    .kx-status-block {
+        color: #ffc478;
+        border: 1px solid rgba(255,158,53,.36);
+        background: rgba(255,158,53,.08);
+    }
+
+    .kx-warning-mini {
+        margin-top: 5px;
+        color: #ffbf69;
+        font-size: 11px;
+    }
+
+    .kx-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .kx-action {
+        min-height: 34px;
+        padding: 0 10px;
+        border-radius: 9px;
+        border: 1px solid rgba(61,130,198,.30);
+        color: #c9ddf0;
+        background: #071b30;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+        .kx-action.gold {
+            color: #ffdf82;
+            border-color: rgba(255,184,0,.32);
+        }
+
+        .kx-action.red {
+            color: #ff9aaa;
+            border-color: rgba(255,96,123,.30);
+        }
+
+        .kx-action.green {
+            color: #81efba;
+            border-color: rgba(54,230,154,.30);
+        }
+
+    .kx-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .kx-pages {
+        display: flex;
+        gap: 6px;
+    }
+
+    .kx-page {
+        min-width: 37px;
+        height: 37px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        border: 1px solid rgba(62,131,199,.27);
+        color: #bcd3e8 !important;
+        background: #06182b;
+        text-decoration: none !important;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+        .kx-page.active {
+            color: #201500 !important;
+            border-color: #ffcf48;
+            background: #f5b20a;
+        }
+
+    .kx-empty {
+        padding: 40px 20px;
+        text-align: center;
+        color: #91afca;
+        font-size: 15px;
+    }
+
+    .kx-inline-form {
+        display: inline;
+        margin: 0;
+    }
+
+    .kx-role-form {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin-top: 7px;
+    }
+
+        .kx-role-form select {
+            max-width: 160px;
+            min-height: 34px;
+            padding: 0 7px;
+            border-radius: 8px;
+            border: 1px solid rgba(62,131,199,.27);
+            color: #fff;
+            background: #06182b;
+            font-size: 12px;
+        }
+
+    @@media(max-width:1150px) {
+        .kx-kpis {
+            grid-template-columns: repeat(2,minmax(0,1fr));
+        }
+
+        .kx-filters {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media(max-width:700px) {
+        .kx-users {
+            padding: 15px;
+        }
+
+        .kx-top {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .kx-title {
+            font-size: 29px;
+        }
+
+        .kx-kpis,
+        .kx-filters {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+<div class="kx-users">
+
+    <header class="kx-top">
+
+        <div class="kx-title-wrap">
+
+            <div class="kx-logo">
+                U
+            </div>
+
+            <div>
+
+                <div class="kx-breadcrumb">
+                    <a href="/Configuracion/Index">Configuración</a>
+                    <span>›</span>
+                    <span>Usuarios</span>
+                </div>
+
+                <h1 class="kx-title">
+                    Gestión de Usuarios
+                </h1>
+
+                <p class="kx-subtitle">
+                    Administra accesos, roles, bloqueos y sesiones de KerniX.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div style="display:flex;gap:9px;">
+
+            <a href="/Configuracion/Index"
+               class="kx-btn kx-btn-dark">
+                ← Configuración
+            </a>
+
+            <a href="/Configuracion/Usuarios/Nuevo"
+               class="kx-btn kx-btn-gold">
+                + Nuevo Usuario
+            </a>
+
+            <a href="/Configuracion/Usuarios/Monitoreo"
+               class="kx-btn kx-btn-monitor">
+                Monitoreo por usuario
+            </a>
+
+        </div>
+
+    </header>
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+    {
+        <div class="kx-message kx-message-ok">
+            @Model.Mensaje
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Error))
+    {
+        <div class="kx-message kx-message-error">
+            @Model.Error
+        </div>
+    }
+
+
+    <!-- =====================================================
+         KPI
+         ===================================================== -->
+
+    <section class="kx-kpis">
+
+        <article class="kx-card kx-kpi gold">
+            <div class="kx-kpi-label">Total usuarios</div>
+            <div class="kx-kpi-value">@Model.Resumen.TotalUsuarios</div>
+            <div class="kx-kpi-note">Cuentas registradas</div>
+        </article>
+
+        <article class="kx-card kx-kpi green">
+            <div class="kx-kpi-label">Activos</div>
+            <div class="kx-kpi-value">@Model.Resumen.Activos</div>
+            <div class="kx-kpi-note">Con acceso habilitado</div>
+        </article>
+
+        <article class="kx-card kx-kpi red">
+            <div class="kx-kpi-label">Inactivos</div>
+            <div class="kx-kpi-value">@Model.Resumen.Inactivos</div>
+            <div class="kx-kpi-note">Acceso deshabilitado</div>
+        </article>
+
+        <article class="kx-card kx-kpi orange">
+            <div class="kx-kpi-label">Bloqueados</div>
+            <div class="kx-kpi-value">@Model.Resumen.Bloqueados</div>
+            <div class="kx-kpi-note">Bloqueo temporal vigente</div>
+        </article>
+
+        <article class="kx-card kx-kpi">
+            <div class="kx-kpi-label">Cambio de clave</div>
+            <div class="kx-kpi-value">@Model.Resumen.RequierenCambioClave</div>
+            <div class="kx-kpi-note">Deben renovar contraseña</div>
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         CATEGORÍAS / ROLES
+         ===================================================== -->
+
+    <section class="kx-card kx-role-section">
+
+        <div class="kx-section-head">
+
+            <div>
+                <h2 class="kx-section-title">
+                    Categorías por rol
+                </h2>
+
+                <div class="kx-section-note">
+                    Selecciona un rol para visualizar sus usuarios.
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="kx-role-tabs">
+
+            <a href="/Configuracion/Usuarios/Index?Buscar=@Uri.EscapeDataString(Model.Buscar ?? "")&Estado=@Model.Estado"
+               class="kx-role-tab @(Model.IdRol.HasValue ? "" : "active")">
+
+                Todos
+
+                <span class="kx-role-count">
+                    @Model.Resumen.TotalUsuarios
+                </span>
+
+            </a>
+
+
+            @foreach (var rol in Model.Roles)
+            {
+                <a href="/Configuracion/Usuarios/Index?IdRol=@rol.IdRol&Buscar=@Uri.EscapeDataString(Model.Buscar ?? "")&Estado=@Model.Estado"
+                   class="kx-role-tab @(Model.IdRol == rol.IdRol ? "active" : "")">
+
+                    @rol.Nombre
+
+                    <span class="kx-role-count">
+                        @rol.TotalUsuarios
+                    </span>
+
+                </a>
+            }
+
+
+            <a href="/Configuracion/Usuarios/Index?Estado=inactivo"
+               class="kx-role-tab @(string.Equals(Model.Estado, "inactivo", StringComparison.OrdinalIgnoreCase) ? "active" : "")">
+
+                Inactivos
+
+                <span class="kx-role-count">
+                    @Model.Resumen.Inactivos
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FILTROS
+         ===================================================== -->
+
+    <section class="kx-card kx-filter-section">
+
+        <form method="get"
+              action="/Configuracion/Usuarios/Index">
+
+            <input type="hidden"
+                   name="IdRol"
+                   value="@Model.IdRol" />
+
+            <div class="kx-filters">
+
+                <input type="search"
+                       name="Buscar"
+                       value="@Model.Buscar"
+                       class="kx-input"
+                       maxlength="150"
+                       placeholder="Buscar usuario, correo, empleado o documento..." />
+
+
+                <select name="Estado"
+                        class="kx-select">
+
+                    <option value="">
+                        Todos los estados
+                    </option>
+
+                    <option value="activo"
+                            selected="@(string.Equals(Model.Estado, "activo", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">
+                        Activos
+                    </option>
+
+                    <option value="inactivo"
+                            selected="@(string.Equals(Model.Estado, "inactivo", StringComparison.OrdinalIgnoreCase) ? "selected" : null)">
+                        Inactivos
+                    </option>
+
+                </select>
+
+
+                <select name="TamanoPagina"
+                        class="kx-select">
+
+                    <option value="10" selected="@(Model.TamanoPagina == 10 ? "selected" : null)">
+                        10 por página
+                    </option>
+
+                    <option value="20" selected="@(Model.TamanoPagina == 20 ? "selected" : null)">
+                        20 por página
+                    </option>
+
+                    <option value="50" selected="@(Model.TamanoPagina == 50 ? "selected" : null)">
+                        50 por página
+                    </option>
+
+                    <option value="100" selected="@(Model.TamanoPagina == 100 ? "selected" : null)">
+                        100 por página
+                    </option>
+
+                </select>
+
+
+                <div class="kx-filter-actions">
+
+                    <button type="submit"
+                            class="kx-btn kx-btn-gold">
+                        Buscar
+                    </button>
+
+                    <a href="/Configuracion/Usuarios/Index"
+                       class="kx-btn kx-btn-dark">
+                        Limpiar
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =====================================================
+         TABLA
+         ===================================================== -->
+
+    <section class="kx-card kx-table-card">
+
+        <div class="kx-section-head">
+
+            <div>
+                <h2 class="kx-section-title">
+                    Usuarios registrados
+                </h2>
+
+                <div class="kx-section-note">
+                    @Model.Resultado.TotalRegistros resultado(s)
+                </div>
+            </div>
+
+        </div>
+
+
+        @if (Model.Resultado.Items.Count == 0)
+        {
+            <div class="kx-empty">
+                No se encontraron usuarios con los filtros seleccionados.
+            </div>
+        }
+        else
+        {
+            <div class="kx-table-wrap">
+
+                <table class="kx-table">
+
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Empleado</th>
+                            <th>Rol</th>
+                            <th>Sucursal</th>
+                            <th>Estado</th>
+                            <th>Último acceso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var usuario in Model.Resultado.Items)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="kx-user">
+
+                                        <div class="kx-avatar">
+                                            @(
+                                                string.IsNullOrWhiteSpace(usuario.NombreUsuario)
+                                                    ? "U"
+                                                    : usuario.NombreUsuario.Substring(0, 1).ToUpperInvariant()
+                                            )
+                                        </div>
+
+                                        <div>
+
+                                            <strong>
+                                                @usuario.NombreUsuario
+                                            </strong>
+
+                                            <span>
+                                                @usuario.Correo
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <strong>@usuario.Empleado</strong>
+
+                                    <div style="margin-top:3px;color:#789cbe;font-size:12px;">
+                                        ID empleado: @(usuario.IdEmpleado?.ToString() ?? "-")
+                                    </div>
+                                </td>
+
+
+                                <td>
+
+                                    @if (string.IsNullOrWhiteSpace(usuario.Roles))
+                                    {
+                                        <span style="color:#7f9ebb;">
+                                            Sin rol
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="kx-role">
+                                            @usuario.Roles
+                                        </span>
+                                    }
+
+
+                                    <form method="post"
+                                          action="/Configuracion/Usuarios/Index?handler=AsignarRol"
+                                          class="kx-role-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="idUsuario"
+                                               value="@usuario.IdUsuario" />
+
+                                        <input type="hidden"
+                                               name="Buscar"
+                                               value="@Model.Buscar" />
+
+                                        <input type="hidden"
+                                               name="Estado"
+                                               value="@Model.Estado" />
+
+                                        @if (usuario.IdUsuario == Model.IdUsuarioSesion)
+                                        {
+                                            <span style="font-size:12px;color:#7fa4c7;">
+                                                Sesión actual
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <select name="idRolAsignar">
+
+                                                <option value="">
+                                                    Cambiar categoría
+                                                </option>
+
+                                                @foreach (var rol in Model.Roles)
+                                                {
+                                                    <option value="@rol.IdRol">
+                                                        @rol.Nombre
+                                                    </option>
+                                                }
+
+                                            </select>
+
+                                            <button type="submit"
+                                                    class="kx-action gold">
+                                                Asignar
+                                            </button>
+                                        }
+
+                                    </form>
+
+                                </td>
+
+
+                                <td>
+                                    @usuario.Sucursal
+                                </td>
+
+
+                                <td>
+
+                                    <span class="kx-status @Model.EstadoClase(usuario)">
+                                        @Model.EstadoTexto(usuario)
+                                    </span>
+
+                                    @if (usuario.RequiereCambioClave)
+                                    {
+                                        <div class="kx-warning-mini">
+                                            Debe cambiar contraseña
+                                        </div>
+                                    }
+
+                                    @if (usuario.IntentosFallidos > 0)
+                                    {
+                                        <div class="kx-warning-mini">
+                                            Intentos fallidos: @usuario.IntentosFallidos
+                                        </div>
+                                    }
+
+                                </td>
+
+
+                                <td>
+                                    @Model.UltimoAccesoTexto(usuario)
+                                </td>
+
+
+                                <td>
+
+                                    <div class="kx-actions">
+
+                                        <a href="/Configuracion/Usuarios/Editar?idUsuario=@usuario.IdUsuario"
+                                           class="kx-action gold"
+                                           style="display:inline-flex;align-items:center;text-decoration:none;">
+                                            Editar
+                                        </a>
+
+                                        <a href="/Configuracion/Usuarios/Editar?idUsuario=@usuario.IdUsuario#seguridad"
+                                           class="kx-action"
+                                           style="display:inline-flex;align-items:center;text-decoration:none;">
+                                            Clave
+                                        </a>
+
+                                        @if (usuario.Estado)
+                                        {
+                                            <form method="post"
+                                                  action="/Configuracion/Usuarios/Index?handler=CambiarEstado"
+                                                  class="kx-inline-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden" name="idUsuario" value="@usuario.IdUsuario" />
+                                                <input type="hidden" name="nuevoEstado" value="false" />
+
+                                                <button type="submit"
+                                                        class="kx-action red"
+                                                        onclick="return confirm('¿Desactivar el acceso de este usuario?');">
+                                                    Desactivar
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form method="post"
+                                                  action="/Configuracion/Usuarios/Index?handler=CambiarEstado"
+                                                  class="kx-inline-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden" name="idUsuario" value="@usuario.IdUsuario" />
+                                                <input type="hidden" name="nuevoEstado" value="true" />
+
+                                                <button type="submit"
+                                                        class="kx-action green">
+                                                    Activar
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                        @if (usuario.EstaBloqueado)
+                                        {
+                                            <form method="post"
+                                                  action="/Configuracion/Usuarios/Index?handler=Desbloquear"
+                                                  class="kx-inline-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden" name="idUsuario" value="@usuario.IdUsuario" />
+
+                                                <button type="submit"
+                                                        class="kx-action green">
+                                                    Desbloquear
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else if (usuario.Estado)
+                                        {
+                                            <form method="post"
+                                                  action="/Configuracion/Usuarios/Index?handler=Bloquear"
+                                                  class="kx-inline-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden" name="idUsuario" value="@usuario.IdUsuario" />
+                                                <input type="hidden" name="minutos" value="30" />
+
+                                                <button type="submit"
+                                                        class="kx-action gold">
+                                                    Bloquear 30m
+                                                </button>
+
+                                            </form>
+                                        }
+
+
+                                        <form method="post"
+                                              action="/Configuracion/Usuarios/Index?handler=RevocarSesiones"
+                                              class="kx-inline-form">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="idUsuario" value="@usuario.IdUsuario" />
+
+                                            <button type="submit"
+                                                    class="kx-action"
+                                                    onclick="return confirm('¿Cerrar las sesiones activas de este usuario?');">
+                                                Cerrar sesiones
+                                            </button>
+
+                                        </form>
+
+
+                                        @if (
+                                            usuario.IdUsuario !=
+                                            Model.IdUsuarioSesion
+                                        )
+                                        {
+                                            <form method="post"
+                                                  action="/Configuracion/Usuarios/Index?handler=Eliminar"
+                                                  class="kx-inline-form">
+
+                                                @Html.AntiForgeryToken()
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden" name="idUsuario" value="@usuario.IdUsuario" />
+
+                                                <button type="submit"
+                                                        class="kx-action red"
+                                                        onclick="return confirm('KerniX conservará el historial y desactivará el acceso. ¿Continuar?');">
+                                                    Eliminar acceso
+                                                </button>
+
+                                            </form>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="kx-pagination">
+
+                <div style="color:#789cbe;font-size:13px;">
+                    Página @Model.Resultado.Pagina de @Math.Max(1, Model.Resultado.TotalPaginas)
+                </div>
+
+
+                <div class="kx-pages">
+
+                    @for (
+                        int pagina = 1;
+                        pagina <= Model.Resultado.TotalPaginas;
+                        pagina++
+                    )
+                    {
+                        <a href="/Configuracion/Usuarios/Index?Buscar=@Uri.EscapeDataString(Model.Buscar ?? "")&Estado=@Model.Estado&IdRol=@Model.IdRol&Pagina=@pagina&TamanoPagina=@Model.TamanoPagina"
+                           class="kx-page @(pagina == Model.Resultado.Pagina ? "active" : "")">
+
+                            @pagina
+
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+        }
+
+    </section>
+
+</div>

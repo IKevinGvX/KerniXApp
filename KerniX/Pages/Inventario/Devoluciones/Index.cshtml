@@ -1,0 +1,599 @@
+﻿@page "/Inventario/Devoluciones"
+@model KerniX.Pages.Inventario.Devoluciones.IndexModel
+
+@{
+    ViewData["Title"] = "Devoluciones";
+
+    decimal cantidadClientes =
+        Model.Items
+            .Where(x => string.Equals(
+                x.Tipo?.Trim(),
+                "cliente",
+                StringComparison.OrdinalIgnoreCase
+            ))
+            .Sum(x => x.Cantidad);
+
+    decimal cantidadProveedores =
+        Model.Items
+            .Where(x => string.Equals(
+                x.Tipo?.Trim(),
+                "proveedor",
+                StringComparison.OrdinalIgnoreCase
+            ))
+            .Sum(x => x.Cantidad);
+
+    decimal balance =
+        cantidadClientes - cantidadProveedores;
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/devoluciones.css"
+      asp-append-version="true" />
+
+<div class="kdev-page">
+
+    <main class="kdev-shell">
+
+        <section class="kdev-hero">
+
+            <div>
+
+                <div class="kdev-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Devoluciones</strong>
+                </div>
+
+                <div class="kdev-eyebrow">
+                    INVENTARIO · RETORNOS TRAZABLES
+                </div>
+
+                <h1>
+                    Devoluciones de <strong>Stock</strong>
+                </h1>
+
+                <p>
+                    Registra devoluciones de clientes como ingresos
+                    y devoluciones a proveedores como egresos.
+                    Conserva documento de origen, tercero, motivo y movimiento generado.
+                </p>
+
+            </div>
+
+            <div class="kdev-actions">
+
+                <a href="/Inventario"
+                   class="kdev-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="#nueva-devolucion"
+                   class="kdev-btn kdev-btn-gold">
+                    <span uk-icon="icon: plus-circle; ratio: .8"></span>
+                    Nueva Devolución
+                </a>
+
+                <a href="/Inventario/Kardex"
+                   class="kdev-btn kdev-btn-cyan">
+                    <span uk-icon="icon: list; ratio: .8"></span>
+                    Kardex
+                </a>
+
+            </div>
+
+        </section>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeExito))
+        {
+            <div class="kdev-alert kdev-alert-ok">
+                <span uk-icon="icon: check; ratio: .8"></span>
+                @Model.MensajeExito
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kdev-alert kdev-alert-error">
+                <span uk-icon="icon: warning; ratio: .8"></span>
+                @Model.MensajeError
+            </div>
+        }
+
+
+        <section class="kdev-kpis">
+
+            <article>
+                <span>REGISTROS</span>
+                <strong>@Model.Items.Count</strong>
+                <small>Devoluciones cargadas</small>
+            </article>
+
+            <article class="positive">
+                <span>DEVOLUCIONES CLIENTE</span>
+                <strong>@Model.Clientes</strong>
+                <small>+@cantidadClientes.ToString("N2") unidades</small>
+            </article>
+
+            <article class="negative">
+                <span>DEVOLUCIONES PROVEEDOR</span>
+                <strong>@Model.Proveedores</strong>
+                <small>-@cantidadProveedores.ToString("N2") unidades</small>
+            </article>
+
+            <article>
+                <span>BALANCE NETO</span>
+                <strong>@balance.ToString("N2")</strong>
+                <small>Ingresos menos egresos</small>
+            </article>
+
+        </section>
+
+
+        <section class="kdev-direction-grid">
+
+            <article class="customer">
+
+                <div class="kdev-direction-icon">
+                    ↙
+                </div>
+
+                <div>
+                    <strong>Cliente devuelve a la empresa</strong>
+
+                    <p>
+                        La mercadería vuelve al almacén y genera
+                        un movimiento de ingreso.
+                    </p>
+                </div>
+
+                <span class="kdev-badge green">
+                    INGRESO
+                </span>
+
+            </article>
+
+
+            <article class="supplier">
+
+                <div class="kdev-direction-icon">
+                    ↗
+                </div>
+
+                <div>
+                    <strong>Empresa devuelve al proveedor</strong>
+
+                    <p>
+                        La mercadería sale del almacén y genera
+                        un movimiento de egreso.
+                    </p>
+                </div>
+
+                <span class="kdev-badge red">
+                    EGRESO
+                </span>
+
+            </article>
+
+        </section>
+
+
+        <section id="nueva-devolucion"
+                 class="kdev-card">
+
+            <header class="kdev-card-head">
+
+                <div>
+                    <span>NUEVA DEVOLUCIÓN</span>
+
+                    <h2>
+                        Registrar operación
+                    </h2>
+
+                    <p>
+                        Selecciona correctamente el sentido de la devolución.
+                    </p>
+                </div>
+
+            </header>
+
+
+            <div class="kdev-card-body">
+
+                <form method="post"
+                      action="?handler=Registrar">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="kdev-form-grid">
+
+                        <div class="kdev-field">
+                            <label>Tipo</label>
+
+                            <select name="tipo"
+                                    id="kdevTipo"
+                                    required>
+
+                                <option value="cliente">
+                                    Cliente → ingreso
+                                </option>
+
+                                <option value="proveedor">
+                                    Proveedor → egreso
+                                </option>
+
+                            </select>
+                        </div>
+
+
+                        <div class="kdev-field">
+                            <label>Almacén</label>
+
+                            <select name="idAlmacen"
+                                    required>
+
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var almacen in Model.Catalogos.Almacenes)
+                                {
+                                    <option value="@almacen.IdAlmacen">
+                                        @almacen.Codigo · @almacen.Nombre
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kdev-field">
+                            <label>Producto</label>
+
+                            <select name="idProducto"
+                                    required>
+
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var producto in Model.Catalogos.Productos)
+                                {
+                                    <option value="@producto.IdProducto">
+                                        @producto.Codigo · @producto.Nombre
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kdev-field">
+                            <label>Cantidad</label>
+
+                            <input type="number"
+                                   name="cantidad"
+                                   min="0.0001"
+                                   step="0.0001"
+                                   placeholder="0.00"
+                                   required />
+                        </div>
+
+
+                        <div class="kdev-field">
+                            <label>Tipo origen</label>
+
+                            <input type="text"
+                                   name="origenTipo"
+                                   maxlength="50"
+                                   placeholder="VENTA / RECEPCION_COMPRA" />
+                        </div>
+
+
+                        <div class="kdev-field">
+                            <label>ID origen</label>
+
+                            <input type="number"
+                                   name="origenId"
+                                   min="1"
+                                   placeholder="Opcional" />
+                        </div>
+
+
+                        <div class="kdev-field">
+                            <label>Documento origen</label>
+
+                            <input type="text"
+                                   name="documentoOrigen"
+                                   maxlength="100"
+                                   placeholder="BOLETA / FACTURA / OC..." />
+                        </div>
+
+
+                        <div class="kdev-field">
+                            <label>DNI / RUC tercero</label>
+
+                            <input type="text"
+                                   name="terceroDocumento"
+                                   maxlength="30"
+                                   placeholder="Documento" />
+                        </div>
+
+
+                        <div class="kdev-field kdev-field-wide">
+                            <label>Cliente / Proveedor</label>
+
+                            <input type="text"
+                                   name="terceroNombre"
+                                   maxlength="200"
+                                   placeholder="Nombre o razón social" />
+                        </div>
+
+
+                        <div class="kdev-field kdev-field-full">
+                            <label>Motivo obligatorio</label>
+
+                            <textarea name="motivo"
+                                      maxlength="300"
+                                      placeholder="Motivo de devolución, condición de mercadería y observaciones."
+                                      required></textarea>
+                        </div>
+
+                    </div>
+
+
+                    <div id="kdevDirectionMessage"
+                         class="kdev-operation-note customer">
+
+                        <strong>Cliente → ingreso:</strong>
+                        esta operación incrementará el stock del almacén.
+
+                    </div>
+
+
+                    <div class="kdev-form-actions">
+
+                        <button type="submit"
+                                class="kdev-btn kdev-btn-gold"
+                                data-confirm="¿Registrar esta devolución?">
+                            <span uk-icon="icon: check; ratio: .8"></span>
+                            Registrar Devolución
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <section class="kdev-card">
+
+            <header class="kdev-card-head">
+
+                <div>
+                    <span>HISTORIAL</span>
+
+                    <h2>
+                        Devoluciones registradas
+                    </h2>
+
+                    <p>
+                        Consulta el sentido, documento de origen y tercero relacionado.
+                    </p>
+                </div>
+
+
+                <form method="get"
+                      class="kdev-filter">
+
+                    <div class="kdev-field">
+                        <label>Tipo</label>
+
+                        <select name="TipoFiltro">
+
+                            <option value="">
+                                Todos
+                            </option>
+
+                            @if (Model.TipoFiltro == "cliente")
+                            {
+                                <option value="cliente"
+                                        selected>
+                                    Cliente
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="cliente">
+                                    Cliente
+                                </option>
+                            }
+
+                            @if (Model.TipoFiltro == "proveedor")
+                            {
+                                <option value="proveedor"
+                                        selected>
+                                    Proveedor
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="proveedor">
+                                    Proveedor
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="kdev-btn kdev-btn-cyan">
+                        Filtrar
+                    </button>
+
+                </form>
+
+            </header>
+
+
+            <div class="kdev-table-wrap">
+
+                <table class="kdev-table">
+
+                    <thead>
+                        <tr>
+                            <th>NÚMERO</th>
+                            <th>TIPO</th>
+                            <th>FECHA</th>
+                            <th>PRODUCTO</th>
+                            <th>ALMACÉN</th>
+                            <th>CANTIDAD</th>
+                            <th>ORIGEN</th>
+                            <th>TERCERO</th>
+                            <th>MOTIVO</th>
+                            <th>MOVIMIENTO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="10">
+
+                                <div class="kdev-empty">
+                                    No existen devoluciones registradas.
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Items)
+                        {
+                            bool cliente =
+                                string.Equals(
+                                    item.Tipo?.Trim(),
+                                    "cliente",
+                                    StringComparison.OrdinalIgnoreCase
+                                );
+
+                            <tr>
+
+                                <td>
+                                    <strong class="kdev-number">
+                                        @item.NumeroDevolucion
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @if (cliente)
+                                    {
+                                        <span class="kdev-badge green">
+                                            Cliente · ingreso
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="kdev-badge red">
+                                            Proveedor · egreso
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.FechaRegistro.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.Producto
+                                    </strong>
+
+                                    <small>
+                                        @item.CodigoProducto
+                                    </small>
+                                </td>
+
+                                <td>
+                                    @item.Almacen
+                                </td>
+
+                                <td>
+                                    @if (cliente)
+                                    {
+                                        <span class="kdev-pos">
+                                            +@item.Cantidad.ToString("N2")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="kdev-neg">
+                                            -@item.Cantidad.ToString("N2")
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @(item.DocumentoOrigen ?? "—")
+                                    </strong>
+
+                                    <small>
+                                        @(item.OrigenTipo ?? "Sin origen")
+                                        @if (item.OrigenId.HasValue)
+                                        {
+                                            <text> #@item.OrigenId</text>
+                                        }
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @(item.TerceroNombre ?? "—")
+                                    </strong>
+
+                                    <small>
+                                        @(item.TerceroDocumento ?? "—")
+                                    </small>
+                                </td>
+
+                                <td>
+                                    @item.Motivo
+                                </td>
+
+                                <td>
+                                    @(item.IdMovimientoInventario?.ToString() ?? "—")
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
+
+<script src="~/js/Inventario/devoluciones.js"
+        asp-append-version="true"></script>
+ript>

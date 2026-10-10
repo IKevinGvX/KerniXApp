@@ -1,0 +1,677 @@
+﻿/* ==========================================================
+   KERNIX - NUEVA VENTA
+   AJUSTES LIMPIOS DE PRODUCTOS / CARRITO / IGV
+   ========================================================== */
+
+
+/* ==========================================================
+   ESTRUCTURA
+   ========================================================== */
+
+.kxventaizquierda,
+.kxventaderecha,
+.kxventagrid,
+.kxpanelcarrito {
+    min-width: 0;
+}
+
+
+/* ==========================================================
+   VENTA DESDE PEDIDO
+   ========================================================== */
+
+.kxdesdepedido .kxpanelbusqueda {
+    display: none !important;
+}
+
+
+/* ==========================================================
+   BUSCADOR DE PRODUCTOS
+   ========================================================== */
+
+.kxpanelbusqueda .kxbuscadorproducto {
+    margin-bottom: 10px;
+}
+
+.kxpanelbusqueda .kxproductosgrid {
+    min-height: 0 !important;
+}
+
+.kxpanelbusqueda .kxvacioproductos {
+    min-height: 52px !important;
+    padding: 14px 16px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 12px;
+}
+
+
+/* ==========================================================
+   CONTENEDOR DEL CARRITO
+   ========================================================== */
+
+.kxpanelcarrito .kxtablacontenedor {
+    width: 100%;
+    max-width: 100%;
+    display: block;
+    overflow-x: auto !important;
+    overflow-y: visible;
+    padding-bottom: 7px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* ==========================================================
+   TABLA
+   ========================================================== */
+
+.kxpanelcarrito .kxtabla {
+    width: 100% !important;
+    min-width: 900px !important;
+    table-layout: fixed !important;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    .kxpanelcarrito .kxtabla th,
+    .kxpanelcarrito .kxtabla td {
+        box-sizing: border-box;
+        padding: 12px 8px !important;
+        vertical-align: middle;
+        text-align: left;
+        overflow: visible !important;
+    }
+
+
+        /* ==========================================================
+   COLUMNAS
+   ========================================================== */
+
+
+        /* 1 - PRODUCTO */
+
+        .kxpanelcarrito .kxtabla th:nth-child(1),
+        .kxpanelcarrito .kxtabla td:nth-child(1) {
+            width: 23%;
+            min-width: 170px;
+        }
+
+
+        /* 2 - PRECIO */
+
+        .kxpanelcarrito .kxtabla th:nth-child(2),
+        .kxpanelcarrito .kxtabla td:nth-child(2) {
+            width: 12%;
+            min-width: 90px;
+            white-space: nowrap;
+        }
+
+
+        /* 3 - CANTIDAD */
+
+        .kxpanelcarrito .kxtabla th:nth-child(3),
+        .kxpanelcarrito .kxtabla td:nth-child(3) {
+            width: 18%;
+            min-width: 145px;
+        }
+
+
+        /* 4 - DESCUENTO */
+
+        .kxpanelcarrito .kxtabla th:nth-child(4),
+        .kxpanelcarrito .kxtabla td:nth-child(4) {
+            width: 15%;
+            min-width: 105px;
+        }
+
+
+        /* 5 - IGV */
+
+        .kxpanelcarrito .kxtabla th:nth-child(5),
+        .kxpanelcarrito .kxtabla td:nth-child(5) {
+            width: 11%;
+            min-width: 95px;
+            display: table-cell !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            white-space: nowrap;
+        }
+
+
+        /* 6 - TOTAL CON IGV */
+
+        .kxpanelcarrito .kxtabla th:nth-child(6),
+        .kxpanelcarrito .kxtabla td:nth-child(6) {
+            width: 15%;
+            min-width: 115px;
+            display: table-cell !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            white-space: nowrap;
+        }
+
+
+        /* 7 - ELIMINAR */
+
+        .kxpanelcarrito .kxtabla th:nth-child(7),
+        .kxpanelcarrito .kxtabla td:nth-child(7) {
+            width: 6%;
+            min-width: 55px;
+            text-align: center !important;
+        }
+
+
+/* ==========================================================
+   PRODUCTO
+   ========================================================== */
+
+.kxpanelcarrito .kxcarritoproducto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+
+    .kxpanelcarrito .kxcarritoproducto strong {
+        font-size: 13px;
+        line-height: 1.35;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .kxpanelcarrito .kxcarritoproducto span {
+        display: block;
+        margin-top: 3px;
+        font-size: 11px;
+    }
+
+
+/* ==========================================================
+   PRECIO
+   ========================================================== */
+
+.kxpanelcarrito .kxprecioproducto {
+    display: flex !important;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0 !important;
+}
+
+    .kxpanelcarrito .kxprecioproducto strong {
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .kxpanelcarrito .kxprecioproducto small {
+        display: block;
+        margin-top: 2px;
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+
+/* ==========================================================
+   CANTIDAD
+   ========================================================== */
+
+.kxpanelcarrito .kxcantidadcontrol {
+    display: grid !important;
+    grid-template-columns: 28px 42px 28px;
+    gap: 4px;
+    width: max-content !important;
+}
+
+.kxpanelcarrito .kxcantidadboton {
+    width: 28px !important;
+    min-width: 28px !important;
+    height: 32px;
+    padding: 0 !important;
+}
+
+.kxpanelcarrito .kxcantidadinput {
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 32px;
+    padding: 2px !important;
+    text-align: center;
+}
+
+.kxpanelcarrito .kxstockcarrito {
+    display: block;
+    margin-top: 5px;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   DESCUENTO
+   ========================================================== */
+
+.kxpanelcarrito .kxdescuentocontrol {
+    width: max-content !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.kxpanelcarrito .kxdescuentoinput {
+    width: 48px !important;
+    min-width: 48px !important;
+    text-align: center;
+}
+
+.kxpanelcarrito .kxdescuentolimite {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   IGV POR PRODUCTO
+   ========================================================== */
+
+.kxpanelcarrito .kxigvproducto {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    width: auto !important;
+    min-width: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+    .kxpanelcarrito .kxigvproducto strong {
+        display: block !important;
+        color: #9a5b00 !important;
+        font-size: 14px;
+        font-weight: 900;
+        white-space: nowrap;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .kxpanelcarrito .kxigvproducto small {
+        display: block !important;
+        color: #6f7f92 !important;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+
+/* ==========================================================
+   TOTAL CON IGV
+   ========================================================== */
+
+.kxpanelcarrito .kxtotalproducto {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    width: auto !important;
+    min-width: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+    .kxpanelcarrito .kxtotalproducto .kxtotallinea {
+        display: block !important;
+        color: #0c7a65 !important;
+        font-size: 15px;
+        font-weight: 900;
+        white-space: nowrap;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .kxpanelcarrito .kxtotalproducto small {
+        display: block !important;
+        color: #5f7589 !important;
+        font-size: 10px;
+        white-space: nowrap;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+
+/* ==========================================================
+   BOTÓN ELIMINAR
+   ========================================================== */
+
+.kxpanelcarrito .kxquitarproducto {
+    margin: 0 auto;
+}
+
+
+/* ==========================================================
+   CONTADOR
+   ========================================================== */
+
+.kxpanelcarrito .kxcontador {
+    white-space: nowrap;
+}
+
+
+/* ==========================================================
+   ESCRITORIO
+   ========================================================== */
+
+@media (min-width: 1100px) {
+
+    .kxpanelcarrito .kxtabla {
+        min-width: 850px !important;
+    }
+}
+
+
+/* ==========================================================
+   TABLET
+   ========================================================== */
+
+@media (max-width: 1099px) {
+
+    .kxpanelcarrito .kxtabla {
+        min-width: 930px !important;
+    }
+}
+
+
+/* ==========================================================
+   MÓVIL
+   ========================================================== */
+
+@media (max-width: 780px) {
+
+    .kxpanelcarrito .kxtabla {
+        min-width: 900px !important;
+    }
+
+    .kxpanelcarrito .kxpanelcabecera {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+}
+/* ==========================================================
+   FIX FINAL TABLA NUEVA VENTA
+   ========================================================== */
+
+.kxpanelcarrito .kxtablacontenedor {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    box-sizing: border-box !important;
+}
+
+.kxpanelcarrito .kxtabla {
+    width: 100% !important;
+    min-width: 760px !important;
+    table-layout: fixed !important;
+    margin: 0 !important;
+}
+
+    .kxpanelcarrito .kxtabla th,
+    .kxpanelcarrito .kxtabla td {
+        padding: 10px 6px !important;
+        vertical-align: middle !important;
+    }
+
+        /* PRODUCTO */
+        .kxpanelcarrito .kxtabla th:nth-child(1),
+        .kxpanelcarrito .kxtabla td:nth-child(1) {
+            width: 22% !important;
+        }
+
+        /* PRECIO */
+        .kxpanelcarrito .kxtabla th:nth-child(2),
+        .kxpanelcarrito .kxtabla td:nth-child(2) {
+            width: 12% !important;
+        }
+
+        /* CANTIDAD */
+        .kxpanelcarrito .kxtabla th:nth-child(3),
+        .kxpanelcarrito .kxtabla td:nth-child(3) {
+            width: 18% !important;
+        }
+
+        /* DESCUENTO */
+        .kxpanelcarrito .kxtabla th:nth-child(4),
+        .kxpanelcarrito .kxtabla td:nth-child(4) {
+            width: 15% !important;
+        }
+
+        /* IGV */
+        .kxpanelcarrito .kxtabla th:nth-child(5),
+        .kxpanelcarrito .kxtabla td:nth-child(5) {
+            width: 12% !important;
+            display: table-cell !important;
+            visibility: visible !important;
+        }
+
+        /* TOTAL */
+        .kxpanelcarrito .kxtabla th:nth-child(6),
+        .kxpanelcarrito .kxtabla td:nth-child(6) {
+            width: 15% !important;
+            display: table-cell !important;
+            visibility: visible !important;
+        }
+
+        /* ELIMINAR */
+        .kxpanelcarrito .kxtabla th:nth-child(7),
+        .kxpanelcarrito .kxtabla td:nth-child(7) {
+            width: 6% !important;
+            text-align: center !important;
+        }
+
+.kxpanelcarrito .kxigvproducto,
+.kxpanelcarrito .kxtotalproducto {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+    .kxpanelcarrito .kxigvproducto strong {
+        color: #b67500 !important;
+        font-weight: 900 !important;z
+    }
+
+    .kxpanelcarrito .kxtotalproducto strong {
+        color: #087d65 !important;
+        font-weight: 900 !important;
+    }
+/* =========================================================
+   FIX DEFINITIVO - TABLA DETALLE DE VENTA
+   ========================================================= */
+
+.kxpanelcarrito .kxtablacontenedor {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.kxpanelcarrito .kxtabla {
+    width: 100% !important;
+    min-width: 850px !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+}
+
+    /* RESTAURAR COMPORTAMIENTO REAL DE TABLA */
+    .kxpanelcarrito .kxtabla thead {
+        display: table-header-group !important;
+    }
+
+    .kxpanelcarrito .kxtabla tbody {
+        display: table-row-group !important;
+    }
+
+    .kxpanelcarrito .kxtabla tr {
+        display: table-row !important;
+    }
+
+    .kxpanelcarrito .kxtabla th,
+    .kxpanelcarrito .kxtabla td {
+        display: table-cell !important;
+        vertical-align: middle !important;
+        box-sizing: border-box !important;
+        padding: 12px 8px !important;
+    }
+
+/* IMPORTANTE:
+   ESTAS CLASES ESTÁN PUESTAS SOBRE <td>,
+   NO DEBEN SER FLEX
+*/
+.kxpanelcarrito td.kxprecioproducto,
+.kxpanelcarrito td.kxigvproducto,
+.kxpanelcarrito td.kxtotalproducto {
+    display: table-cell !important;
+    flex-direction: initial !important;
+}
+
+/* =========================================================
+   ANCHOS DE LAS 7 COLUMNAS
+   ========================================================= */
+
+/* PRODUCTO */
+.kxpanelcarrito .kxtabla th:nth-child(1),
+.kxpanelcarrito .kxtabla td:nth-child(1) {
+    width: 28% !important;
+    min-width: 200px !important;
+}
+
+/* PRECIO BASE */
+.kxpanelcarrito .kxtabla th:nth-child(2),
+.kxpanelcarrito .kxtabla td:nth-child(2) {
+    width: 12% !important;
+    min-width: 95px !important;
+    text-align: center !important;
+}
+
+/* CANTIDAD */
+.kxpanelcarrito .kxtabla th:nth-child(3),
+.kxpanelcarrito .kxtabla td:nth-child(3) {
+    width: 15% !important;
+    min-width: 125px !important;
+    text-align: center !important;
+}
+
+/* DESCUENTO */
+.kxpanelcarrito .kxtabla th:nth-child(4),
+.kxpanelcarrito .kxtabla td:nth-child(4) {
+    width: 13% !important;
+    min-width: 100px !important;
+    text-align: center !important;
+}
+
+/* IGV */
+.kxpanelcarrito .kxtabla th:nth-child(5),
+.kxpanelcarrito .kxtabla td:nth-child(5) {
+    width: 12% !important;
+    min-width: 90px !important;
+    text-align: right !important;
+}
+
+/* TOTAL C/ IGV */
+.kxpanelcarrito .kxtabla th:nth-child(6),
+.kxpanelcarrito .kxtabla td:nth-child(6) {
+    width: 14% !important;
+    min-width: 110px !important;
+    text-align: right !important;
+}
+
+/* ELIMINAR */
+.kxpanelcarrito .kxtabla th:nth-child(7),
+.kxpanelcarrito .kxtabla td:nth-child(7) {
+    width: 6% !important;
+    min-width: 50px !important;
+    text-align: center !important;
+}
+
+/* =========================================================
+   PRECIO
+   ========================================================= */
+
+.kxpanelcarrito .kxprecioproducto strong {
+    display: block !important;
+    color: #173b5c !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+}
+
+/* =========================================================
+   IGV
+   ========================================================= */
+
+.kxpanelcarrito .kxigvproducto {
+    color: #b37600 !important;
+}
+
+    .kxpanelcarrito .kxigvproducto strong {
+        display: block !important;
+        color: #b37600 !important;
+        font-weight: 900 !important;
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+
+    .kxpanelcarrito .kxigvproducto small {
+        display: block !important;
+        margin-top: 3px !important;
+        color: #8b97a3 !important;
+        font-size: 10px !important;
+    }
+
+/* =========================================================
+   TOTAL CON IGV
+   ========================================================= */
+
+.kxpanelcarrito .kxtotalproducto .kxtotallinea {
+    display: block !important;
+    color: #07846c !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    white-space: nowrap !important;
+}
+
+.kxpanelcarrito .kxtotalproducto small {
+    display: block !important;
+    margin-top: 3px !important;
+    color: #8b97a3 !important;
+    font-size: 10px !important;
+}
+
+/* =========================================================
+   CANTIDAD
+   ========================================================= */
+
+.kxpanelcarrito .kxcantidadcontrol {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+}
+
+/* =========================================================
+   EVITAR QUE EL CONTENIDO SE CORRA
+   ========================================================= */
+
+.kxpanelcarrito .kxtabla td > * {
+    max-width: 100%;
+}
+
+.kxpanelcarrito .kxtabla tbody tr {
+    width: 100% !important;
+}

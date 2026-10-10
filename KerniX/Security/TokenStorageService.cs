@@ -1,145 +1,105 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace KerniX.Security;
 
 public sealed class TokenStorageService
 {
-    private readonly IHttpContextAccessor
-        _httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-    public TokenStorageService(
-        IHttpContextAccessor httpContextAccessor)
+    public TokenStorageService(IHttpContextAccessor httpContextAccessor)
     {
-        _httpContextAccessor =
-            httpContextAccessor;
+        _httpContextAccessor = httpContextAccessor;
     }
 
+    private ISession? Session => _httpContextAccessor.HttpContext?.Session;
 
-    // =========================================================
-    // SESSION
-    // =========================================================
-
-    private ISession? Session =>
-        _httpContextAccessor
-            .HttpContext?
-            .Session;
-
-
-    // =========================================================
-    // GUARDAR ACCESS TOKEN
-    // =========================================================
-
-    public void GuardarToken(
-        string accessToken)
+    public void GuardarToken(string accessToken)
     {
-        if (Session is null)
-        {
+        if (Session is null || string.IsNullOrWhiteSpace(accessToken))
             return;
-        }
 
-        if (string.IsNullOrWhiteSpace(
-            accessToken))
-        {
+        Session.SetString(SessionKeys.AccessToken, accessToken);
+    }
+
+    public void GuardarRefreshToken(string refreshToken)
+    {
+        if (Session is null || string.IsNullOrWhiteSpace(refreshToken))
             return;
-        }
 
-        Session.SetString(
-            SessionKeys.AccessToken,
-            accessToken);
+        Session.SetString(SessionKeys.RefreshToken, refreshToken);
     }
 
+    public string? ObtenerToken() =>
+        Session?.GetString(SessionKeys.AccessToken);
 
-    // =========================================================
-    // GUARDAR REFRESH TOKEN
-    // =========================================================
+    public string? ObtenerRefreshToken() =>
+        Session?.GetString(SessionKeys.RefreshToken);
 
-    public void GuardarRefreshToken(
-        string refreshToken)
+    // Comprueba caducidad de JWT; NO sustituye la validación
+    // criptográfica que debe realizar la API.
+    public bool EstaAutenticado() =>
+        TokenNoExpirado(ObtenerToken());
+
+    private static bool TokenNoExpirado(string? token)
     {
-        if (Session is null)
+        if (string.IsNullOrWhiteSpace(token))
+            return false;
+
+        try
         {
-            return;
-        }
+            string[] partes = token.Split('.');
+            if (partes.Length != 3)
+                return false;
 
-        if (string.IsNullOrWhiteSpace(
-            refreshToken))
+            string payload = partes[1]
+                .Replace('-', '+')
+                .Replace('_', '/');
+
+            int resto = payload.Length % 4;
+            if (resto == 1)
+                return false;
+            if (resto > 0)
+                payload = payload.PadRight(payload.Length + (4 - resto), '=');
+
+            byte[] bytes = Convert.FromBase64String(payload);
+            using JsonDocument documento = JsonDocument.Parse(bytes);
+
+            if (!documento.RootElement.TryGetProperty("exp", out JsonElement exp)
+                || exp.ValueKind != JsonValueKind.Number
+                || !exp.TryGetInt64(out long fechaExpiracion))
+            {
+                return false;
+            }
+
+            return fechaExpiracion > DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        }
+        catch (FormatException)
         {
-            return;
+            return false;
         }
-
-        Session.SetString(
-            SessionKeys.RefreshToken,
-            refreshToken);
+        catch (JsonException)
+        {
+            return false;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
     }
-
-
-    // =========================================================
-    // OBTENER ACCESS TOKEN
-    // =========================================================
-
-    public string? ObtenerToken()
-    {
-        return Session?.GetString(
-            SessionKeys.AccessToken);
-    }
-
-
-    // =========================================================
-    // OBTENER REFRESH TOKEN
-    // =========================================================
-
-    public string? ObtenerRefreshToken()
-    {
-        return Session?.GetString(
-            SessionKeys.RefreshToken);
-    }
-
-
-    // =========================================================
-    // VALIDAR AUTENTICACIÓN
-    // =========================================================
-
-    public bool EstaAutenticado()
-    {
-        string? accessToken =
-            ObtenerToken();
-
-        return !string.IsNullOrWhiteSpace(
-            accessToken);
-    }
-
-
-    // =========================================================
-    // ELIMINAR TOKENS
-    // =========================================================
 
     public void EliminarTokens()
     {
         if (Session is null)
-        {
             return;
-        }
 
-        Session.Remove(
-            SessionKeys.AccessToken);
-
-        Session.Remove(
-            SessionKeys.RefreshToken);
+        Session.Remove(SessionKeys.AccessToken);
+        Session.Remove(SessionKeys.RefreshToken);
     }
-
-
-    // =========================================================
-    // CERRAR SESIÓN COMPLETA
-    // =========================================================
 
     public void LimpiarSesion()
     {
-        if (Session is null)
-        {
-            return;
-        }
-
-        Session.Clear();
+        Session?.Clear();
     }
 }

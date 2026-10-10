@@ -1,0 +1,1 @@
+﻿document.addEventListener("click", function (e) { const x = e.target.closest("[data-confirm]"); if (!x) return; const m = x.getAttribute("data-confirm") || "¿Confirmar la operación?"; if (!window.confirm(m)) { e.preventDefault(); e.stopPropagation(); } });

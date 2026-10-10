@@ -65,976 +65,1077 @@
 
 <body>
 
-<div class="kx-shell">
+    <div class="kx-shell">
 
-    <!-- ===================================================== -->
-    <!-- SIDEBAR -->
-    <!-- ===================================================== -->
+        <!-- ===================================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================================== -->
 
-    <aside class="kx-sidebar">
+        <aside class="kx-sidebar">
 
-        <a href="/Inicio/Index"
-           class="kx-logo">
+            <a href="/Inicio/Index"
+               class="kx-logo">
 
-            <img src="~/images/login/kernix-logo.png"
-                 asp-append-version="true"
-                 alt="KerniX" />
+                <img src="~/images/login/kernix-logo.png"
+                     asp-append-version="true"
+                     alt="KerniX" />
 
-            <div>
-
-                <strong>
-                    Kerni<span>X</span>
-                </strong>
-
-                <small>
-                    Gestión inteligente de ventas e inventario
-                </small>
-
-            </div>
-
-        </a>
-
-
-        <!-- ================================================= -->
-        <!-- MENU -->
-        <!-- ================================================= -->
-
-        <nav class="kx-nav">
-
-            <a href="/Inicio/Index">
-
-                <span uk-icon="icon: home"></span>
-
-                <span>
-                    Inicio
-                </span>
-
-            </a>
-
-
-            <a href="/Ventas/Index">
-
-                <span uk-icon="icon: cart"></span>
-
-                <span>
-                    Ventas
-                </span>
-
-            </a>
-
-
-            <a href="/Inventario/Index">
-
-                <span uk-icon="icon: database"></span>
-
-                <span>
-                    Inventario
-                </span>
-
-            </a>
-
-
-            <a href="/Productos/Index">
-
-                <span uk-icon="icon: grid"></span>
-
-                <span>
-                    Productos
-                </span>
-
-            </a>
-
-
-            <a href="/Clientes/Index">
-
-                <span uk-icon="icon: users"></span>
-
-                <span>
-                    Clientes
-                </span>
-
-            </a>
-
-
-            <a href="/IA/Index">
-
-                <span uk-icon="icon: bolt"></span>
-
-                <span>
-                    KerniX IA
-                </span>
-
-            </a>
-
-
-            <a href="/Configuracion/Index1"
-               class="active">
-
-                <span uk-icon="icon: settings"></span>
-
-                <span>
-                    Configuración
-                </span>
-
-            </a>
-
-        </nav>
-
-
-        <!-- ================================================= -->
-        <!-- IA BOX -->
-        <!-- ================================================= -->
-
-        <div class="kx-ai-box">
-
-            <div class="kx-ai-icon">
-                AI
-            </div>
-
-            <strong>
-                KerniX IA
-            </strong>
-
-            <p>
-                Consulta datos, pronostica ventas
-                y recibe recomendaciones de
-                reposición de inventario.
-            </p>
-
-            <a href="/IA/Index"
-               class="kx-ai-button">
-
-                Abrir asistente
-
-            </a>
-
-        </div>
-
-    </aside>
-
-
-    <!-- ===================================================== -->
-    <!-- MAIN -->
-    <!-- ===================================================== -->
-
-    <main class="kx-main">
-
-        <!-- ================================================= -->
-        <!-- TOPBAR -->
-        <!-- ================================================= -->
-
-        <header class="kx-topbar">
-
-            <div class="kx-search">
-
-                <span uk-icon="icon: search"></span>
-
-                <input id="kxSearch"
-                       type="text"
-                       autocomplete="off"
-                       placeholder="Buscar en configuración..." />
-
-            </div>
-                
-
-            <div class="kx-top-actions">
-
-                <div class="kx-top-icon"
-                     title="Alertas">
-
-                    <span uk-icon="icon: bell"></span>
-
-                    @if (Model.Alertas.Count > 0)
-                    {
-                        <span class="kx-counter">
-                            @Model.Alertas.Count
-                        </span>
-                    }
-
-                </div>
-
-
-                <div class="kx-top-user">
-
-                    <div class="kx-user-circle">
-
-                        <span uk-icon="icon: user"></span>
-
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            @nombreUsuario
-                        </strong>
-
-                        <span>
-                            @rolUsuario
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
-
-
-        <!-- ================================================= -->
-        <!-- TITULO -->
-        <!-- ================================================= -->
-
-        <section class="kx-page-title">
-
-            <div class="kx-title-icon">
-
-                <span uk-icon="icon: settings; ratio: 1.5"></span>
-
-            </div>
-
-            <div>
-
-                <h1>
-                    Configuración
-                </h1>
-
-                <p>
-                    Administra preferencias, inventario,
-                    ventas, comprobantes, seguridad,
-                    inteligencia artificial y mantenimiento.
-                </p>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================================================= -->
-        <!-- GRID -->
-        <!-- ================================================= -->
-
-        <section class="kx-config-grid">
-
-
-            <!-- ================================================= -->
-            <!-- EMPRESA -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="empresa sucursal moneda general">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: location"></span>
-
-                    <h2>
-                        Datos de la Empresa
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-form-grid">
-
-                    <div class="kx-field full">
-
-                        <label>
-                            Empresa
-                        </label>
-
-                        <input type="text"
-                               value="@Model.Perfil.Empresa"
-                               readonly />
-
-                    </div>
-
-
-                    <div class="kx-field full">
-
-                        <label>
-                            Sucursal actual
-                        </label>
-
-                        <input type="text"
-                               value="@Model.Perfil.Sucursal"
-                               readonly />
-
-                    </div>
-
-
-                    <div class="kx-field">
-
-                        <label>
-                            Moneda principal
-                        </label>
-
-                        <input type="text"
-                               value="@(monedaSeleccionada is null
-                                   ? Model.MonedaPrincipal
-                                   : $"{monedaSeleccionada.Nombre} ({monedaSeleccionada.Simbolo})")"
-                               readonly />
-
-                    </div>
-
-
-                    <div class="kx-field">
-
-                        <label>
-                            Zona horaria
-                        </label>
-
-                        <input type="text"
-                               value="@Model.ZonaHoraria"
-                               readonly />
-
-                    </div>
-
-                </div>
-
-
-                <div class="kx-card-actions">
-
-                    <a href="/Configuracion/General"
-                       class="kx-btn-primary">
-
-                        <span uk-icon="icon: settings"></span>
-
-                        Configuración general
-
-                    </a>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- PERFIL -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="perfil usuario correo contraseña rol">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: user"></span>
-
-                    <h2>
-                        Perfil del Usuario
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-profile-box">
-
-                    <div class="kx-profile-avatar">
-
-                        <span uk-icon="icon: user; ratio: 2.1"></span>
-
-                    </div>
-
-
-                    <div class="kx-profile-data">
-
-                        <span>
-                            Nombre
-                        </span>
-
-                        <strong>
-
-                            @(string.IsNullOrWhiteSpace(
-                                Model.Perfil.Empleado)
-                                ? "No disponible"
-                                : Model.Perfil.Empleado)
-
-                        </strong>
-
-
-                        <span>
-                            Usuario
-                        </span>
-
-                        <strong>
-                            @Model.Perfil.NombreUsuario
-                        </strong>
-
-
-                        <span>
-                            Correo
-                        </span>
-
-                        <strong>
-                            @Model.Perfil.Correo
-                        </strong>
-
-
-                        <span>
-                            Rol
-                        </span>
-
-                        <strong>
-                            @rolUsuario
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="kx-card-actions">
-
-                    <a href="/Perfil/Index"
-                       class="kx-btn-primary">
-
-                        <span uk-icon="icon: pencil"></span>
-
-                        Editar perfil
-
-                    </a>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- ESTADO -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="estado sistema base datos configuración">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: shield"></span>
-
-                    <h2>
-                        Estado del Sistema
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-system-list">
-
-                    <div>
-
-                        <span>
-                            Configuración
-                        </span>
-
-                        <strong class="@(configuracionCompleta
-                            ? "ok"
-                            : "warning")">
-
-                            @estadoConfiguracion
-
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Base de datos
-                        </span>
-
-                        <strong class="ok">
-                            Conectada
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Parámetros activos
-                        </span>
-
-                        <strong>
-                            @(Model.Diagnostico?
-                                .ParametrosActivos ?? 0)
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Series activas
-                        </span>
-
-                        <strong>
-                            @(Model.Diagnostico?
-                                .SeriesActivas ?? 0)
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Alertas pendientes
-                        </span>
-
-                        <strong class="@(Model.Alertas.Count > 0
-                            ? "warning"
-                            : "ok")">
-
-                            @Model.Alertas.Count
-
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Último respaldo
-                        </span>
-
-                        <strong>
-
-                            @(Model.UltimaCopia?.FechaFin.HasValue == true
-                                ? Model.UltimaCopia.FechaFin.Value
-                                    .ToString("dd/MM/yyyy HH:mm")
-                                : "Sin respaldo")
-
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- SUCURSAL -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="sucursal empresa">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: thumbnails"></span>
-
-                    <h2>
-                        Sucursal Actual
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-system-list">
-
-                    <div>
-
-                        <span>
-                            Sucursal
-                        </span>
-
-                        <strong>
-                            @Model.Perfil.Sucursal
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Empresa
-                        </span>
-
-                        <strong>
-                            @Model.Perfil.Empresa
-                        </strong>
-
-                    </div>
-
-
-                    <div>
-
-                        <span>
-                            Configuraciones
-                        </span>
-
-                        <strong>
-                            @(Model.Diagnostico?
-                                .ConfiguracionesSucursalActivas ?? 0)
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="kx-card-actions">
-
-                    <a href="/Configuracion/General"
-                       class="kx-btn-primary">
-
-                        Ver configuración
-
-                    </a>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- GENERAL -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="preferencias moneda idioma decimales general">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: cog"></span>
-
-                    <h2>
-                        Preferencias del Sistema
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Moneda en documentos
-                    </span>
+                <div>
 
                     <strong>
-                        @Model.MonedaPrincipal
+                        Kerni<span>X</span>
                     </strong>
 
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Decimales en precios
-                    </span>
-
-                    <strong>
-                        @Model.DecimalesPrecio
-                    </strong>
+                    <small>
+                        Gestión inteligente de ventas e inventario
+                    </small>
 
                 </div>
 
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Decimales en cantidades
-                    </span>
-
-                    <strong>
-                        @Model.DecimalesCantidad
-                    </strong>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Idioma
-                    </span>
-
-                    <strong>
-                        @Model.Idioma
-                    </strong>
-
-                </div>
-
-
-                <div class="kx-card-actions">
-
-                    <a href="/Configuracion/General"
-                       class="kx-btn-primary">
-
-                        Configurar preferencias
-
-                    </a>
-
-                </div>
-
-            </article>
+            </a>
 
 
             <!-- ================================================= -->
-            <!-- INVENTARIO -->
+            <!-- MENU -->
             <!-- ================================================= -->
 
-            <article class="kx-card"
-                     data-search="inventario stock lotes series vencimiento">
+            <nav class="kx-nav">
 
-                <div class="kx-card-title">
+                <a href="/Inicio/Index">
 
-                    <span uk-icon="icon: database"></span>
-
-                    <h2>
-                        Reglas de Inventario
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-option-row">
+                    <span uk-icon="icon: home"></span>
 
                     <span>
-                        Stock mínimo
+                        Inicio
                     </span>
 
-                    <strong>
-                        @Model.StockMinimo
-                    </strong>
-
-                </div>
+                </a>
 
 
-                <div class="kx-option-row">
-
-                    <span>
-                        Stock negativo
-                    </span>
-
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.PermitirStockNegativo"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Alertas de stock bajo
-                    </span>
-
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.AlertasStockActivas"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Alertas de stock agotado
-                    </span>
-
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.AlertasStockAgotado"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Controlar lotes
-                    </span>
-
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.ControlarLotes"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Controlar series
-                    </span>
-
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.ControlarSeries"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Controlar vencimiento
-                    </span>
-
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.ControlarVencimiento"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
-
-
-                <div class="kx-card-actions">
-
-                    <a href="/Configuracion/Inventario"
-                       class="kx-btn-primary">
-
-                        Configurar inventario
-
-                    </a>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- VENTAS -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="ventas crédito descuento precio stock">
-
-                <div class="kx-card-title">
+                <a href="/Ventas/Index">
 
                     <span uk-icon="icon: cart"></span>
 
-                    <h2>
-                        Reglas de Ventas
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
                     <span>
-                        Descuento máximo
+                        Ventas
                     </span>
 
-                    <strong>
-                        @Model.DescuentoMaximo.ToString("0.##") %
-                    </strong>
-
-                </div>
+                </a>
 
 
-                <div class="kx-option-row">
+                <a href="/Inventario/Index">
+
+                    <span uk-icon="icon: database"></span>
 
                     <span>
-                        Venta sin stock
+                        Inventario
                     </span>
 
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.PermitirVentaSinStock"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
+                </a>
 
 
-                <div class="kx-option-row">
+                <a href="/Productos/Index">
+
+                    <span uk-icon="icon: grid"></span>
 
                     <span>
-                        Modificar precio
+                        Productos
                     </span>
 
-                    <label class="kx-switch">
-
-                        <input type="checkbox"
-                               checked="@Model.PermitirCambioPrecio"
-                               disabled />
-
-                        <span></span>
-
-                    </label>
-
-                </div>
+                </a>
 
 
-                <div class="kx-option-row">
+                <a href="/Clientes/Index">
+
+                    <span uk-icon="icon: users"></span>
 
                     <span>
-                        Ventas a crédito
+                        Clientes
                     </span>
 
-                    <label class="kx-switch">
+                </a>
 
-                        <input type="checkbox"
-                               checked="@Model.PermitirVentaCredito"
-                               disabled />
 
-                        <span></span>
+                <a href="/Configuracion/Usuarios/Index">
 
-                    </label>
+                    <span uk-icon="icon: user"></span>
+
+                    <span>
+                        Usuarios
+                    </span>
+
+                </a>
+
+
+                <a href="/IA/Index">
+
+                    <span uk-icon="icon: bolt"></span>
+
+                    <span>
+                        KerniX IA
+                    </span>
+
+                </a>
+
+
+                <a href="/Configuracion/Index1"
+                   class="active">
+
+                    <span uk-icon="icon: settings"></span>
+
+                    <span>
+                        Configuración
+                    </span>
+
+                </a>
+
+            </nav>
+
+
+            <!-- ================================================= -->
+            <!-- IA BOX -->
+            <!-- ================================================= -->
+
+            <div class="kx-ai-box">
+
+                <div class="kx-ai-icon">
+                    AI
+                </div>
+
+                <strong>
+                    KerniX IA
+                </strong>
+
+                <p>
+                    Consulta datos, pronostica ventas
+                    y recibe recomendaciones de
+                    reposición de inventario.
+                </p>
+
+                <a href="/IA/Index"
+                   class="kx-ai-button">
+
+                    Abrir asistente
+
+                </a>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ===================================================== -->
+        <!-- MAIN -->
+        <!-- ===================================================== -->
+
+        <main class="kx-main">
+
+            <!-- ================================================= -->
+            <!-- TOPBAR -->
+            <!-- ================================================= -->
+
+            <header class="kx-topbar">
+
+                <div class="kx-search">
+
+                    <span uk-icon="icon: search"></span>
+
+                    <input id="kxSearch"
+                           type="text"
+                           autocomplete="off"
+                           placeholder="Buscar en configuración..." />
 
                 </div>
 
 
-                <div class="kx-card-actions">
+                <div class="kx-top-actions">
 
-                    <a href="/Configuracion/Venta"
-                       class="kx-btn-primary">
+                    <div class="kx-top-icon"
+                         title="Alertas">
 
-                        Configurar ventas
+                        <span uk-icon="icon: bell"></span>
 
-                    </a>
+                        @if (Model.Alertas.Count > 0)
+                        {
+                            <span class="kx-counter">
+                                @Model.Alertas.Count
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <div class="kx-top-user">
+
+                        <div class="kx-user-circle">
+
+                            <span uk-icon="icon: user"></span>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                @nombreUsuario
+                            </strong>
+
+                            <span>
+                                @rolUsuario
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </article>
+            </header>
+
+
+            <!-- ================================================= -->
+            <!-- TITULO -->
+            <!-- ================================================= -->
+
+            <section class="kx-page-title">
+
+                <div class="kx-title-icon">
+
+                    <span uk-icon="icon: settings; ratio: 1.5"></span>
+
+                </div>
+
+                <div>
+
+                    <h1>
+                        Configuración
+                    </h1>
+
+                    <p>
+                        Administra preferencias, inventario,
+                        ventas, comprobantes, seguridad,
+                        inteligencia artificial y mantenimiento.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================================================= -->
+            <!-- GRID -->
+            <!-- ================================================= -->
+
+            <section class="kx-config-grid">
+
+
+                <!-- ================================================= -->
+                <!-- EMPRESA -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="empresa sucursal moneda general">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: location"></span>
+
+                        <h2>
+                            Datos de la Empresa
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-form-grid">
+
+                        <div class="kx-field full">
+
+                            <label>
+                                Empresa
+                            </label>
+
+                            <input type="text"
+                                   value="@Model.Perfil.Empresa"
+                                   readonly />
+
+                        </div>
+
+
+                        <div class="kx-field full">
+
+                            <label>
+                                Sucursal actual
+                            </label>
+
+                            <input type="text"
+                                   value="@Model.Perfil.Sucursal"
+                                   readonly />
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label>
+                                Moneda principal
+                            </label>
+
+                            <input type="text"
+                                   value="@(monedaSeleccionada is null
+                                       ? Model.MonedaPrincipal
+                                       : $"{monedaSeleccionada.Nombre} ({monedaSeleccionada.Simbolo})")"
+                                   readonly />
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label>
+                                Zona horaria
+                            </label>
+
+                            <input type="text"
+                                   value="@Model.ZonaHoraria"
+                                   readonly />
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Configuracion/General"
+                           class="kx-btn-primary">
+
+                            <span uk-icon="icon: settings"></span>
+
+                            Configuración general
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- PERFIL -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="perfil usuario correo contraseña rol">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: user"></span>
+
+                        <h2>
+                            Perfil del Usuario
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-profile-box">
+
+                        <div class="kx-profile-avatar">
+
+                            <span uk-icon="icon: user; ratio: 2.1"></span>
+
+                        </div>
+
+
+                        <div class="kx-profile-data">
+
+                            <span>
+                                Nombre
+                            </span>
+
+                            <strong>
+
+                                @(string.IsNullOrWhiteSpace(
+                                    Model.Perfil.Empleado)
+                                    ? "No disponible"
+                                    : Model.Perfil.Empleado)
+
+                            </strong>
+
+
+                            <span>
+                                Usuario
+                            </span>
+
+                            <strong>
+                                @Model.Perfil.NombreUsuario
+                            </strong>
+
+
+                            <span>
+                                Correo
+                            </span>
+
+                            <strong>
+                                @Model.Perfil.Correo
+                            </strong>
+
+
+                            <span>
+                                Rol
+                            </span>
+
+                            <strong>
+                                @rolUsuario
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Perfil/Index"
+                           class="kx-btn-primary">
+
+                            <span uk-icon="icon: pencil"></span>
+
+                            Editar perfil
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- USUARIOS -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="usuarios accesos roles permisos seguridad cuentas empleados bloquear desactivar">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: users"></span>
+
+                        <h2>
+                            Usuarios y Accesos
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-system-list">
+
+                        <div>
+
+                            <span>
+                                Gestión de usuarios
+                            </span>
+
+                            <strong class="ok">
+                                Disponible
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Roles y permisos
+                            </span>
+
+                            <strong>
+                                Administrar
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Seguridad de cuentas
+                            </span>
+
+                            <strong>
+                                Controlada
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Sesiones y bloqueos
+                            </span>
+
+                            <strong>
+                                Supervisar
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Configuracion/Usuarios/Index"
+                           class="kx-btn-primary">
+
+                            <span uk-icon="icon: users"></span>
+
+                            Administrar usuarios
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- ESTADO -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="estado sistema base datos configuración">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: shield"></span>
+
+                        <h2>
+                            Estado del Sistema
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-system-list">
+
+                        <div>
+
+                            <span>
+                                Configuración
+                            </span>
+
+                            <strong class="@(configuracionCompleta
+                                    ? "ok"
+                                    : "warning")">
+
+                                @estadoConfiguracion
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Base de datos
+                            </span>
+
+                            <strong class="ok">
+                                Conectada
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Parámetros activos
+                            </span>
+
+                            <strong>
+                                @(Model.Diagnostico?
+                                    .ParametrosActivos ?? 0)
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Series activas
+                            </span>
+
+                            <strong>
+                                @(Model.Diagnostico?
+                                    .SeriesActivas ?? 0)
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Alertas pendientes
+                            </span>
+
+                            <strong class="@(Model.Alertas.Count > 0
+                                    ? "warning"
+                                    : "ok")">
+
+                                @Model.Alertas.Count
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Último respaldo
+                            </span>
+
+                            <strong>
+
+                                @(Model.UltimaCopia?.FechaFin.HasValue == true
+                                    ? Model.UltimaCopia.FechaFin.Value
+                                        .ToString("dd/MM/yyyy HH:mm")
+                                    : "Sin respaldo")
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- SUCURSAL -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="sucursal empresa">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: thumbnails"></span>
+
+                        <h2>
+                            Sucursal Actual
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-system-list">
+
+                        <div>
+
+                            <span>
+                                Sucursal
+                            </span>
+
+                            <strong>
+                                @Model.Perfil.Sucursal
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Empresa
+                            </span>
+
+                            <strong>
+                                @Model.Perfil.Empresa
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Configuraciones
+                            </span>
+
+                            <strong>
+                                @(Model.Diagnostico?
+                                    .ConfiguracionesSucursalActivas ?? 0)
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Configuracion/General"
+                           class="kx-btn-primary">
+
+                            Ver configuración
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- GENERAL -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="preferencias moneda idioma decimales general">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: cog"></span>
+
+                        <h2>
+                            Preferencias del Sistema
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Moneda en documentos
+                        </span>
+
+                        <strong>
+                            @Model.MonedaPrincipal
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Decimales en precios
+                        </span>
+
+                        <strong>
+                            @Model.DecimalesPrecio
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Decimales en cantidades
+                        </span>
+
+                        <strong>
+                            @Model.DecimalesCantidad
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Idioma
+                        </span>
+
+                        <strong>
+                            @Model.Idioma
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Configuracion/General"
+                           class="kx-btn-primary">
+
+                            Configurar preferencias
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- INVENTARIO -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="inventario stock lotes series vencimiento">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: database"></span>
+
+                        <h2>
+                            Reglas de Inventario
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Stock mínimo
+                        </span>
+
+                        <strong>
+                            @Model.StockMinimo
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Stock negativo
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.PermitirStockNegativo"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Alertas de stock bajo
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.AlertasStockActivas"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Alertas de stock agotado
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.AlertasStockAgotado"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Controlar lotes
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.ControlarLotes"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Controlar series
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.ControlarSeries"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Controlar vencimiento
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.ControlarVencimiento"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Configuracion/Inventario"
+                           class="kx-btn-primary">
+
+                            Configurar inventario
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- VENTAS -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="ventas crédito descuento precio stock">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: cart"></span>
+
+                        <h2>
+                            Reglas de Ventas
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Descuento máximo
+                        </span>
+
+                        <strong>
+                            @Model.DescuentoMaximo.ToString("0.##") %
+                        </strong>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Venta sin stock
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.PermitirVentaSinStock"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Modificar precio
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.PermitirCambioPrecio"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Ventas a crédito
+                        </span>
+
+                        <label class="kx-switch">
+
+                            <input type="checkbox"
+                                   checked="@Model.PermitirVentaCredito"
+                                   disabled />
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Configuracion/Venta"
+                           class="kx-btn-primary">
+
+                            Configurar ventas
+
+                        </a>
+
+                    </div>
+
+                </article>
 
                 <!-- ================================================= -->
                 <!-- MONEDAS E IMPUESTOS -->
@@ -1184,664 +1285,765 @@
                     </div>
 
                 </article>
+                <!-- ================================================= -->
+                <!-- SUNAT -->
+                <!-- ================================================= -->
 
+                <article class="kx-card"
+                         data-search="sunat facturacion electronica comprobantes boleta factura certificado sol tributario">
 
-            <!-- ================================================= -->
-            <!-- BACKUPS -->
-            <!-- ================================================= -->
+                    <div class="kx-card-title">
 
-            <article class="kx-card"
-                     data-search="backup respaldo copia seguridad">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: cloud-upload"></span>
-
-                    <h2>
-                        Copias de Seguridad
-                    </h2>
-
-                </div>
-
-
-                @if (Model.UltimaCopia is null)
-                {
-                    <div class="kx-empty-box">
-
-                        <span uk-icon="icon: warning"></span>
-
-                        <strong>
-                            Sin respaldos registrados
-                        </strong>
-
-                        <p>
-                            Todavía no existe una copia
-                            de seguridad registrada.
-                        </p>
-
-                    </div>
-                }
-                else
-                {
-                    <div class="kx-system-list">
-
-                        <div>
-
-                            <span>
-                                Estado
-                            </span>
-
-                            <strong>
-                                @Model.UltimaCopia.Estado
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Tipo
-                            </span>
-
-                            <strong>
-                                @Model.UltimaCopia.TipoCopia
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Archivo
-                            </span>
-
-                            <strong class="kx-text-truncate">
-                                @Model.UltimaCopia.NombreArchivo
-                            </strong>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Fecha
-                            </span>
-
-                            <strong>
-
-                                @(Model.UltimaCopia.FechaFin.HasValue
-                                    ? Model.UltimaCopia.FechaFin.Value
-                                        .ToString("dd/MM/yyyy HH:mm")
-                                    : Model.UltimaCopia.FechaInicio
-                                        .ToString("dd/MM/yyyy HH:mm"))
-
-                            </strong>
-
-                        </div>
-
-                    </div>
-                }
-
-
-                <div class="kx-card-actions">
-
-                    <a href="/Configuracion/Backups"
-                       class="kx-btn-primary">
-
-                        Gestionar respaldos
-
-                    </a>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- MANTENIMIENTO -->
-            <!-- ================================================= -->
-
-            <article class="kx-card kx-card-wide"
-                     data-search="mantenimiento base datos índices estadísticas">
-
-                <div class="kx-card-title row-between">
-
-                    <div>
-
-                        <span uk-icon="icon: settings"></span>
+                        <span uk-icon="icon: file-text"></span>
 
                         <h2>
-                            Mantenimiento de Base de Datos
+                            SUNAT
                         </h2>
 
                     </div>
 
 
-                    <a href="/Configuracion/Mantenimiento"
-                       class="kx-btn-primary">
+                    <div class="kx-system-list">
 
-                        Administrar
+                        <div>
 
-                    </a>
+                            <span>
+                                Facturación electrónica
+                            </span>
 
-                </div>
+                            <strong class="ok">
+                                Disponible
+                            </strong>
 
+                        </div>
 
-                <div class="kx-table-wrap">
 
-                    <table class="kx-table">
+                        <div>
 
-                        <thead>
+                            <span>
+                                Ambiente
+                            </span>
 
-                        <tr>
+                            <strong>
+                                BETA / Producción
+                            </strong>
 
-                            <th>
-                                Proceso
-                            </th>
+                        </div>
 
-                            <th>
-                                Tipo
-                            </th>
 
-                            <th>
-                                Frecuencia
-                            </th>
+                        <div>
 
-                            <th>
-                                Hora
-                            </th>
+                            <span>
+                                Credenciales SOL
+                            </span>
 
-                            <th>
-                                Estado
-                            </th>
+                            <strong class="warning">
+                                Configurar
+                            </strong>
 
-                        </tr>
+                        </div>
 
-                        </thead>
 
+                        <div>
 
-                        <tbody>
+                            <span>
+                                Certificado digital
+                            </span>
 
-                        @if (Model.Planes.Count == 0)
-                        {
-                            <tr>
+                            <strong class="warning">
+                                Configurar
+                            </strong>
 
-                                <td colspan="5"
-                                    class="kx-empty">
+                        </div>
 
-                                    No existen planes activos.
 
-                                </td>
+                        <div>
 
-                            </tr>
-                        }
-                        else
-                        {
-                            @foreach (var plan in Model.Planes)
-                            {
-                                <tr>
+                            <span>
+                                Envío automático
+                            </span>
 
-                                    <td>
-                                        @plan.Nombre
-                                    </td>
+                            <strong>
+                                Opcional
+                            </strong>
 
-                                    <td>
-                                        @plan.TipoTarea
-                                    </td>
-
-                                    <td>
-                                        @plan.Frecuencia
-                                    </td>
-
-                                    <td>
-
-                                        @(plan.HoraEjecucion.HasValue
-                                            ? plan.HoraEjecucion.Value
-                                                .ToString(@"hh\:mm")
-                                            : "Manual")
-
-                                    </td>
-
-                                    <td>
-
-                                        <span class="kx-status active">
-                                            Activo
-                                        </span>
-
-                                    </td>
-
-                                </tr>
-                            }
-                        }
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- CONFIGURACION IA -->
-            <!-- ================================================= -->
-
-            <article class="kx-card kx-ai-card"
-                     data-search="ia inteligencia pronóstico reposición anomalías">
-
-                <div class="kx-card-title">
-
-                    <span class="kx-ai-dot">
-                        AI
-                    </span>
-
-                    <h2>
-                        KerniX IA
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-ai-state">
-
-                    <span>
-                        Inteligencia artificial
-                    </span>
-
-                    <strong class="@(Model.IaActiva
-                        ? "ok"
-                        : "warning")">
-
-                        @(Model.IaActiva
-                            ? "ACTIVA"
-                            : "DESACTIVADA")
-
-                    </strong>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Reposición inteligente
-                    </span>
-
-                    <strong>
-                        @(Model.IaReposicion
-                            ? "Activa"
-                            : "Desactivada")
-                    </strong>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Pronóstico de ventas
-                    </span>
-
-                    <strong>
-                        @(Model.IaPronosticoVentas
-                            ? "Activo"
-                            : "Desactivado")
-                    </strong>
-
-                </div>
-
-
-                <div class="kx-option-row">
-
-                    <span>
-                        Detección de anomalías
-                    </span>
-
-                    <strong>
-                        @(Model.IaAnomalias
-                            ? "Activa"
-                            : "Desactivada")
-                    </strong>
-
-                </div>
-
-
-                <div class="kx-card-actions">
-
-                    <a href="/Configuracion/IA"
-                       class="kx-btn-primary">
-
-                        Configurar IA
-
-                    </a>
-
-                    <a href="/IA/Index"
-                       class="kx-btn-secondary">
-
-                        Abrir IA
-
-                    </a>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- DIAGNOSTICO -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="diagnóstico configuración observaciones">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: check"></span>
-
-                    <h2>
-                        Diagnóstico de Configuración
-                    </h2>
-
-                </div>
-
-
-                <div class="kx-diagnostic-state
-                    @(configuracionCompleta
-                        ? "complete"
-                        : "warning")">
-
-                    <strong>
-                        @estadoConfiguracion
-                    </strong>
-
-                    <span>
-
-                        @(Model.Validacion?
-                            .Estado
-                            .TotalObservaciones ?? 0)
-
-                        observación(es)
-
-                    </span>
-
-                </div>
-
-
-                <div class="kx-system-list">
-
-                    <div>
-
-                        <span>
-                            Críticas
-                        </span>
-
-                        <strong class="danger">
-
-                            @(Model.Validacion?
-                                .Estado
-                                .Criticas ?? 0)
-
-                        </strong>
+                        </div>
 
                     </div>
 
 
-                    <div>
+                    <div class="kx-card-actions">
 
-                        <span>
-                            Altas
-                        </span>
+                        <a href="/Configuracion/Sunat/Index"
+                           class="kx-btn-primary">
 
-                        <strong class="warning">
+                            <span uk-icon="icon: settings"></span>
 
-                            @(Model.Validacion?
-                                .Estado
-                                .Altas ?? 0)
+                            Configurar SUNAT
 
-                        </strong>
+                        </a>
+
+                    </div>
+
+                </article>
+
+                <!-- ================================================= -->
+                <!-- BACKUPS -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="backup respaldo copia seguridad">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: cloud-upload"></span>
+
+                        <h2>
+                            Copias de Seguridad
+                        </h2>
 
                     </div>
 
 
-                    <div>
-
-                        <span>
-                            Medias
-                        </span>
-
-                        <strong>
-
-                            @(Model.Validacion?
-                                .Estado
-                                .Medias ?? 0)
-
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </article>
-
-
-            <!-- ================================================= -->
-            <!-- ALERTAS -->
-            <!-- ================================================= -->
-
-            <article class="kx-card"
-                     data-search="alertas errores mantenimiento">
-
-                <div class="kx-card-title">
-
-                    <span uk-icon="icon: warning"></span>
-
-                    <h2>
-                        Alertas Técnicas
-                    </h2>
-
-                </div>
-
-
-                @if (Model.Alertas.Count == 0)
-                {
-                    <div class="kx-empty-box success">
-
-                        <span uk-icon="icon: check"></span>
-
-                        <strong>
-                            Sin alertas pendientes
-                        </strong>
-
-                        <p>
-                            El módulo técnico no tiene
-                            incidencias pendientes.
-                        </p>
-
-                    </div>
-                }
-                else
-                {
-                    @foreach (var alerta in Model.Alertas.Take(4))
+                    @if (Model.UltimaCopia is null)
                     {
-                        <div class="kx-alert">
+                        <div class="kx-empty-box">
+
+                            <span uk-icon="icon: warning"></span>
+
+                            <strong>
+                                Sin respaldos registrados
+                            </strong>
+
+                            <p>
+                                Todavía no existe una copia
+                                de seguridad registrada.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="kx-system-list">
 
                             <div>
 
-                                <strong>
-                                    @alerta.Titulo
-                                </strong>
-
                                 <span>
-                                    @alerta.TipoAlerta
+                                    Estado
                                 </span>
+
+                                <strong>
+                                    @Model.UltimaCopia.Estado
+                                </strong>
 
                             </div>
 
 
-                            <span class="kx-alert-severity">
-                                @alerta.Severidad
-                            </span>
+                            <div>
+
+                                <span>
+                                    Tipo
+                                </span>
+
+                                <strong>
+                                    @Model.UltimaCopia.TipoCopia
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Archivo
+                                </span>
+
+                                <strong class="kx-text-truncate">
+                                    @Model.UltimaCopia.NombreArchivo
+                                </strong>
+
+                            </div>
+
+
+                            <div>
+
+                                <span>
+                                    Fecha
+                                </span>
+
+                                <strong>
+
+                                    @(Model.UltimaCopia.FechaFin.HasValue
+                                        ? Model.UltimaCopia.FechaFin.Value
+                                            .ToString("dd/MM/yyyy HH:mm")
+                                        : Model.UltimaCopia.FechaInicio
+                                            .ToString("dd/MM/yyyy HH:mm"))
+
+                                </strong>
+
+                            </div>
 
                         </div>
                     }
-                }
-
-            </article>
 
 
-            <!-- ================================================= -->
-            <!-- SEGURIDAD -->
-            <!-- ================================================= -->
+                    <div class="kx-card-actions">
 
-            <article class="kx-card"
-                     data-search="seguridad contraseña sesión intentos">
+                        <a href="/Configuracion/Backups"
+                           class="kx-btn-primary">
 
-                <div class="kx-card-title">
+                            Gestionar respaldos
 
-                    <span uk-icon="icon: lock"></span>
+                        </a>
 
-                    <h2>
-                        Seguridad
-                    </h2>
+                    </div>
 
-                </div>
+                </article>
 
 
-                <div class="kx-system-list">
+                <!-- ================================================= -->
+                <!-- MANTENIMIENTO -->
+                <!-- ================================================= -->
 
-                    <div>
+                <article class="kx-card kx-card-wide"
+                         data-search="mantenimiento base datos índices estadísticas">
 
-                        <span>
-                            Intentos máximos de acceso
+                    <div class="kx-card-title row-between">
+
+                        <div>
+
+                            <span uk-icon="icon: settings"></span>
+
+                            <h2>
+                                Mantenimiento de Base de Datos
+                            </h2>
+
+                        </div>
+
+
+                        <a href="/Configuracion/Mantenimiento"
+                           class="kx-btn-primary">
+
+                            Administrar
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="kx-table-wrap">
+
+                        <table class="kx-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Proceso
+                                    </th>
+
+                                    <th>
+                                        Tipo
+                                    </th>
+
+                                    <th>
+                                        Frecuencia
+                                    </th>
+
+                                    <th>
+                                        Hora
+                                    </th>
+
+                                    <th>
+                                        Estado
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @if (Model.Planes.Count == 0)
+                                {
+                                    <tr>
+
+                                        <td colspan="5"
+                                            class="kx-empty">
+
+                                            No existen planes activos.
+
+                                        </td>
+
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var plan in Model.Planes)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                @plan.Nombre
+                                            </td>
+
+                                            <td>
+                                                @plan.TipoTarea
+                                            </td>
+
+                                            <td>
+                                                @plan.Frecuencia
+                                            </td>
+
+                                            <td>
+
+                                                @(plan.HoraEjecucion.HasValue
+                                                    ? plan.HoraEjecucion.Value
+                                                        .ToString(@"hh\:mm")
+                                                    : "Manual")
+
+                                            </td>
+
+                                            <td>
+
+                                                <span class="kx-status active">
+                                                    Activo
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- CONFIGURACION IA -->
+                <!-- ================================================= -->
+
+                <article class="kx-card kx-ai-card"
+                         data-search="ia inteligencia pronóstico reposición anomalías">
+
+                    <div class="kx-card-title">
+
+                        <span class="kx-ai-dot">
+                            AI
                         </span>
 
-                        <strong>
+                        <h2>
+                            KerniX IA
+                        </h2>
 
-                            @Model.ObtenerValorParametro(
-                                "INTENTOS_LOGIN_MAXIMOS",
-                                "5")
+                    </div>
+
+
+                    <div class="kx-ai-state">
+
+                        <span>
+                            Inteligencia artificial
+                        </span>
+
+                        <strong class="@(Model.IaActiva
+                                ? "ok"
+                                : "warning")">
+
+                            @(Model.IaActiva
+                                ? "ACTIVA"
+                                : "DESACTIVADA")
 
                         </strong>
 
                     </div>
 
 
-                    <div>
+                    <div class="kx-option-row">
 
                         <span>
-                            Expiración de sesión
+                            Reposición inteligente
                         </span>
 
                         <strong>
-
-                            @Model.ObtenerValorParametro(
-                                "MINUTOS_EXPIRACION_SESION",
-                                "30") min
-
+                            @(Model.IaReposicion
+                                ? "Activa"
+                                : "Desactivada")
                         </strong>
 
                     </div>
 
 
-                    <div>
+                    <div class="kx-option-row">
 
                         <span>
-                            Longitud mínima contraseña
+                            Pronóstico de ventas
                         </span>
 
                         <strong>
-
-                            @Model.ObtenerValorParametro(
-                                "LONGITUD_MINIMA_PASSWORD",
-                                "8")
-
+                            @(Model.IaPronosticoVentas
+                                ? "Activo"
+                                : "Desactivado")
                         </strong>
 
                     </div>
 
-                </div>
+
+                    <div class="kx-option-row">
+
+                        <span>
+                            Detección de anomalías
+                        </span>
+
+                        <strong>
+                            @(Model.IaAnomalias
+                                ? "Activa"
+                                : "Desactivada")
+                        </strong>
+
+                    </div>
 
 
-                <div class="kx-card-actions">
+                    <div class="kx-card-actions">
 
-                    <a href="/Configuracion/Seguridad"
-                       class="kx-btn-primary">
+                        <a href="/Configuracion/IA"
+                           class="kx-btn-primary">
 
-                        Configurar seguridad
+                            Configurar IA
 
-                    </a>
+                        </a>
 
-                </div>
+                        <a href="/IA/Index"
+                           class="kx-btn-secondary">
 
-            </article>
+                            Abrir IA
 
-        </section>
+                        </a>
 
-    </main>
+                    </div>
 
-</div>
-
-
-<!-- ========================================================= -->
-<!-- UIKIT -->
-<!-- ========================================================= -->
-
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
-</script>
+                </article>
 
 
-<!-- ========================================================= -->
-<!-- BUSCADOR -->
-<!-- ========================================================= -->
+                <!-- ================================================= -->
+                <!-- DIAGNOSTICO -->
+                <!-- ================================================= -->
 
-<script>
+                <article class="kx-card"
+                         data-search="diagnóstico configuración observaciones">
 
-    const search =
-        document.getElementById(
-            "kxSearch");
+                    <div class="kx-card-title">
 
-    const cards =
-        document.querySelectorAll(
-            "[data-search]");
+                        <span uk-icon="icon: check"></span>
 
-    search?.addEventListener(
-        "input",
-        function () {
+                        <h2>
+                            Diagnóstico de Configuración
+                        </h2>
 
-            const value =
-                this.value
-                    .trim()
-                    .toLowerCase();
+                    </div>
 
-            cards.forEach(
-                card => {
 
-                    const content =
-                        (
-                            card.dataset.search +
-                            " " +
-                            card.innerText
-                        )
+                    <div class="kx-diagnostic-state
+                        @(configuracionCompleta
+        ? "complete"
+        : "warning")">
+
+                        <strong>
+                            @estadoConfiguracion
+                        </strong>
+
+                        <span>
+
+                            @(Model.Validacion?
+                                .Estado
+                                .TotalObservaciones ?? 0)
+
+                            observación(es)
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="kx-system-list">
+
+                        <div>
+
+                            <span>
+                                Críticas
+                            </span>
+
+                            <strong class="danger">
+
+                                @(Model.Validacion?
+                                    .Estado
+                                    .Criticas ?? 0)
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Altas
+                            </span>
+
+                            <strong class="warning">
+
+                                @(Model.Validacion?
+                                    .Estado
+                                    .Altas ?? 0)
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Medias
+                            </span>
+
+                            <strong>
+
+                                @(Model.Validacion?
+                                    .Estado
+                                    .Medias ?? 0)
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- ALERTAS -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="alertas errores mantenimiento">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: warning"></span>
+
+                        <h2>
+                            Alertas Técnicas
+                        </h2>
+
+                    </div>
+
+
+                    @if (Model.Alertas.Count == 0)
+                    {
+                        <div class="kx-empty-box success">
+
+                            <span uk-icon="icon: check"></span>
+
+                            <strong>
+                                Sin alertas pendientes
+                            </strong>
+
+                            <p>
+                                El módulo técnico no tiene
+                                incidencias pendientes.
+                            </p>
+
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var alerta in Model.Alertas.Take(4))
+                        {
+                            <div class="kx-alert">
+
+                                <div>
+
+                                    <strong>
+                                        @alerta.Titulo
+                                    </strong>
+
+                                    <span>
+                                        @alerta.TipoAlerta
+                                    </span>
+
+                                </div>
+
+
+                                <span class="kx-alert-severity">
+                                    @alerta.Severidad
+                                </span>
+
+                            </div>
+                        }
+                    }
+
+                </article>
+
+
+                <!-- ================================================= -->
+                <!-- SEGURIDAD -->
+                <!-- ================================================= -->
+
+                <article class="kx-card"
+                         data-search="seguridad contraseña sesión intentos">
+
+                    <div class="kx-card-title">
+
+                        <span uk-icon="icon: lock"></span>
+
+                        <h2>
+                            Seguridad
+                        </h2>
+
+                    </div>
+
+
+                    <div class="kx-system-list">
+
+                        <div>
+
+                            <span>
+                                Intentos máximos de acceso
+                            </span>
+
+                            <strong>
+
+                                @Model.ObtenerValorParametro(
+                                    "INTENTOS_LOGIN_MAXIMOS",
+                                    "5")
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Expiración de sesión
+                            </span>
+
+                            <strong>
+
+                                @Model.ObtenerValorParametro(
+                                    "MINUTOS_EXPIRACION_SESION",
+                                    "30") min
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                Longitud mínima contraseña
+                            </span>
+
+                            <strong>
+
+                                @Model.ObtenerValorParametro(
+                                    "LONGITUD_MINIMA_PASSWORD",
+                                    "8")
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-card-actions">
+
+                        <a href="/Configuracion/Seguridad"
+                           class="kx-btn-primary">
+
+                            Configurar seguridad
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- UIKIT -->
+    <!-- ========================================================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+
+    <!-- ========================================================= -->
+    <!-- BUSCADOR -->
+    <!-- ========================================================= -->
+
+    <script>
+
+            const search =
+                document.getElementById(
+                    "kxSearch");
+
+            const cards =
+                document.querySelectorAll(
+                    "[data-search]");
+
+            search?.addEventListener(
+                "input",
+                function() {
+
+                    const value =
+                        this.value
+                            .trim()
                             .toLowerCase();
 
-                    card.style.display =
-                        content.includes(value)
-                            ? ""
-                            : "none";
+                    cards.forEach(
+                        card => {
+
+                            const content =
+                                (
+                                    card.dataset.search +
+                                    " " +
+                                    card.innerText
+                                )
+                                    .toLowerCase();
+
+                            card.style.display =
+                                content.includes(value)
+                                    ? ""
+                                    : "none";
+
+                        });
 
                 });
 
-        });
-
-</script>
+    </script>
 
 </body>
+
 
 </html>

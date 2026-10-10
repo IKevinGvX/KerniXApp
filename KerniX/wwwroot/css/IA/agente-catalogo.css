@@ -1,0 +1,579 @@
+﻿/* KerniX IA Fase 2 — Complemento del tema IA existente. */
+.kac-page {
+    --kac-gold: #ffbd1f;
+    --kac-cyan: #24d9ff;
+    --kac-ink: #020811;
+    --kac-bg: #07182b;
+    --kac-line: rgba(86,151,215,.23);
+    font-family: inherit
+}
+
+    .kac-page * {
+        box-sizing: border-box
+    }
+
+.kac-layout {
+    display: grid;
+    grid-template-columns: minmax(0,1.4fr) minmax(300px,.85fr);
+    align-items: start;
+    gap: 14px;
+    margin-bottom: 14px
+}
+
+.kac-page .kai-panel {
+    min-width: 0
+}
+
+.kac-chat {
+    overflow: hidden
+}
+
+.kac-chat-body {
+    padding: 20px 17px;
+    min-height: 230px;
+    max-height: 360px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: radial-gradient(circle at 70% 30%,rgba(36,217,255,.04),transparent 52%)
+}
+
+.kac-bubble {
+    max-width: 92%;
+    line-height: 1.55;
+    font-size: .81rem;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding: 12px 15px;
+    border: 1px solid rgba(112,157,201,.21);
+    border-radius: 14px;
+    color: #d9e8f8;
+    background: rgba(13,34,56,.94)
+}
+
+.kac-assistant {
+    align-self: flex-start;
+    border-radius: 5px 14px 14px 14px;
+    border-left: 2px solid var(--kac-cyan)
+}
+
+.kac-user {
+    align-self: flex-end;
+    border-radius: 14px 5px 14px 14px;
+    border-right: 2px solid var(--kac-gold);
+    color: #ffe9ae;
+    background: rgba(115,72,8,.20)
+}
+
+.kac-search-form {
+    padding: 18px;
+    border-top: 1px solid var(--kac-line)
+}
+
+    .kac-search-form label, .kac-customer label {
+        display: block;
+        font-size: .67rem;
+        font-weight: 850;
+        color: #f7d27c;
+        margin: 0 0 7px
+    }
+
+.kac-search-row {
+    display: flex;
+    gap: 10px;
+    align-items: center
+}
+
+.kac-page input, .kac-page textarea {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid rgba(96,152,222,.34);
+    border-radius: 10px;
+    background: #041121;
+    color: #f3f8ff;
+    outline: none;
+    font-family: inherit;
+    font-size: .83rem;
+    padding: 12px 14px;
+    transition: border-color .2s,box-shadow .2s
+}
+
+    .kac-page input:focus, .kac-page textarea:focus {
+        border-color: var(--kac-gold);
+        box-shadow: 0 0 0 3px rgba(255,189,31,.10)
+    }
+
+    .kac-page input::placeholder, .kac-page textarea::placeholder {
+        color: #66819a
+    }
+
+    .kac-page button:disabled, .kac-page input:disabled {
+        opacity: .48;
+        cursor: not-allowed
+    }
+
+.kac-page .kac-search-row .kai-btn {
+    white-space: nowrap;
+    min-height: 44px
+}
+
+.kac-helper {
+    font-size: .65rem;
+    color: #7893af;
+    margin: 9px 0 0
+}
+
+.kac-summary {
+    overflow: hidden
+}
+
+.kac-customer {
+    padding: 17px 17px 0;
+    display: grid;
+    gap: 7px
+}
+
+    .kac-customer textarea {
+        resize: vertical;
+        min-height: 72px
+    }
+
+.kac-cart {
+    margin: 15px 17px 0;
+    min-height: 85px;
+    max-height: 300px;
+    overflow: auto;
+    display: grid;
+    align-content: start;
+    gap: 9px
+}
+
+.kac-empty {
+    color: #819ab4;
+    font-size: .77rem;
+    line-height: 1.55;
+    padding: 22px 12px;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px dashed rgba(111,150,190,.24)
+}
+
+.kac-cart-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 11px;
+    background: #0a1f35;
+    border: 1px solid var(--kac-line)
+}
+
+    .kac-cart-line strong {
+        display: block;
+        font-size: .74rem;
+        color: #eff7ff;
+        overflow-wrap: anywhere
+    }
+
+    .kac-cart-line small {
+        display: block;
+        font-size: .66rem;
+        color: #8da8c1;
+        margin-top: 4px
+    }
+
+.kac-cart-edit {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0
+}
+
+    .kac-cart-edit input {
+        width: 65px;
+        text-align: center;
+        padding: 7px 6px;
+        font-size: .78rem
+    }
+
+    .kac-cart-edit button {
+        padding: 6px 9px;
+        cursor: pointer;
+        border: 1px solid rgba(255,90,117,.38);
+        color: #ff9ab0;
+        background: rgba(255,90,117,.07);
+        border-radius: 8px
+    }
+
+.kac-subtotal {
+    margin: 16px 17px 0;
+    padding: 15px 0;
+    border-top: 1px solid rgba(255,255,255,.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 9px
+}
+
+    .kac-subtotal span {
+        font-size: .75rem;
+        color: #a3b7cb
+    }
+
+    .kac-subtotal strong {
+        font-size: 1.3rem;
+        color: var(--kac-gold)
+    }
+
+.kac-disclaimer {
+    color: #8299b2;
+    font-size: .66rem;
+    line-height: 1.6;
+    padding: 0 17px;
+    margin: 0
+}
+
+.kac-summary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    padding: 17px
+}
+
+.kac-feedback {
+    min-height: 20px;
+    color: #65e6c2;
+    font-size: .69rem;
+    padding: 0 17px;
+    margin: 0 0 10px
+}
+
+.kac-results {
+    margin-bottom: 14px;
+    overflow: hidden
+}
+
+.kac-result-list {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 10px
+}
+
+.kac-empty-full {
+    grid-column: 1/-1;
+    min-height: 110px;
+    display: grid;
+    place-items: center
+}
+
+.kac-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 172px;
+    gap: 11px;
+    border: 1px solid rgba(58,132,197,.23);
+    border-radius: 13px;
+    background: linear-gradient(142deg,rgba(11,37,63,.96),rgba(4,15,28,.98));
+    padding: 15px;
+    transition: border-color .2s, transform .2s,box-shadow .2s
+}
+
+    .kac-item:hover {
+        border-color: rgba(255,189,31,.4);
+        transform: translateY(-2px);
+        box-shadow: 0 9px 28px rgba(0,0,0,.22)
+    }
+
+.kac-item-head {
+    display: flex;
+    gap: 10px;
+    align-items: start
+}
+
+.kac-item-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 37px;
+    height: 37px;
+    border: 1px solid rgba(255,189,31,.25);
+    border-radius: 10px;
+    color: var(--kac-gold);
+    background: rgba(255,189,31,.06)
+}
+
+.kac-item-name {
+    font-size: .81rem;
+    color: #f8fbff;
+    font-weight: 850;
+    overflow-wrap: anywhere;
+    margin: 0
+}
+
+.kac-item-code {
+    font-size: .65rem;
+    color: #95a9bd;
+    margin: 5px 0 0
+}
+
+.kac-item-description {
+    font-size: .7rem;
+    color: #829bb5;
+    line-height: 1.48;
+    margin: 8px 0 0;
+    overflow-wrap: anywhere
+}
+
+.kac-item-foot {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 10px
+}
+
+.kac-item-price {
+    font-size: 1.02rem;
+    color: #ffdc70;
+    font-weight: 900
+}
+
+.kac-item-stock {
+    font-size: .66rem;
+    color: #5ce4c6;
+    margin-top: 5px
+}
+
+.kac-stock-unknown {
+    color: #8ca7c4
+}
+
+.kac-stock-zero {
+    color: #ff9cae
+}
+
+.kac-add {
+    padding: 9px 12px;
+    border-radius: 9px;
+    font-size: .71rem;
+    font-weight: 850;
+    border: 1px solid rgba(36,217,255,.40);
+    background: rgba(36,217,255,.10);
+    color: #a7f2ff;
+    cursor: pointer
+}
+
+    .kac-add:hover:not(:disabled) {
+        background: rgba(36,217,255,.19)
+    }
+
+    .kac-add:disabled {
+        opacity: .4;
+        cursor: not-allowed
+    }
+
+.kac-next {
+    margin-bottom: 18px
+}
+
+.kac-flow {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 11px;
+    padding: 18px
+}
+
+    .kac-flow > div {
+        min-height: 103px;
+        padding: 15px;
+        background: #091d33;
+        border: 1px solid var(--kac-line);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px
+    }
+
+    .kac-flow span[uk-icon] {
+        color: var(--kac-cyan)
+    }
+
+    .kac-flow strong {
+        color: #f6faff;
+        font-size: .74rem
+    }
+
+    .kac-flow small {
+        color: #849bb1;
+        font-size: .65rem;
+        line-height: 1.5
+    }
+
+@media(max-width:1050px) {
+    .kac-layout {
+        grid-template-columns: 1fr
+    }
+
+    .kac-flow {
+        grid-template-columns: repeat(2,minmax(0,1fr))
+    }
+}
+
+@media(max-width:650px) {
+    .kac-result-list {
+        grid-template-columns: 1fr
+    }
+
+    .kac-flow {
+        grid-template-columns: 1fr
+    }
+
+    .kac-search-row {
+        flex-wrap: wrap
+    }
+
+        .kac-search-row button {
+            width: 100%
+        }
+
+    .kac-page .kai-panel-head {
+        align-items: flex-start
+    }
+
+    .kac-cart-line {
+        flex-wrap: wrap
+    }
+}
+
+/* Fase 3: panel de conversación IA, respetando el tema original. */
+.kac-left {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px
+}
+
+.kac-livechat {
+    overflow: hidden;
+    border-color: rgba(255,189,31,.23)
+}
+
+.kac-ai-messages {
+    min-height: 220px;
+    max-height: 390px;
+    background: radial-gradient(circle at 70% 20%,rgba(154,109,255,.07),transparent 60%),rgba(3,12,23,.72)
+}
+
+.kac-livechat .kac-assistant {
+    border-left-color: #9a6dff
+}
+
+.kac-livechat .kac-user {
+    border-right-color: #ffbd1f
+}
+
+.kac-livechat .kac-search-row {
+    align-items: stretch
+}
+
+    .kac-livechat .kac-search-row .kai-btn {
+        min-width: 150px
+    }
+
+@media(max-width:650px) {
+    .kac-livechat .kac-search-row .kai-btn {
+        min-width: 0;
+        width: 100%
+    }
+}
+
+/* Fase 4: consultas comerciales desde el mismo chat, sin alterar el tema 3D. */
+.kac-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px 3px;
+    border-top: 1px solid rgba(255,189,31,.09)
+}
+
+    .kac-suggestions button {
+        border: 1px solid rgba(255,189,31,.23);
+        background: linear-gradient(130deg,#0d253c,#061324);
+        border-radius: 999px;
+        color: #ffe4a1;
+        padding: 7px 12px;
+        font-size: .68rem;
+        font-weight: 700;
+        cursor: pointer;
+        min-height: 32px;
+        transition: background .15s, transform .15s
+    }
+
+        .kac-suggestions button:hover {
+            background: #16314a;
+            transform: translateY(-1px)
+        }
+
+        .kac-suggestions button:focus-visible {
+            outline: 2px solid #ffbd1f;
+            outline-offset: 2px
+        }
+
+@media(max-width:650px) {
+    .kac-suggestions {
+        gap: 6px
+    }
+
+        .kac-suggestions button {
+            font-size: .63rem
+        }
+}
+
+/* Fase 5 — Revisión comercial 100% controlada por servidor. */
+.kac-review {
+    margin: 14px 17px 0;
+    padding: 12px 14px;
+    border: 1px solid rgba(36,217,255,.22);
+    border-radius: 12px;
+    color: #a8d9ee;
+    background: rgba(36,217,255,.045);
+    font-size: .73rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere
+}
+
+    .kac-review.is-valid {
+        border-color: rgba(56,232,161,.35);
+        color: #afeed6;
+        background: rgba(56,232,161,.045)
+    }
+
+    .kac-review.is-warning {
+        border-color: rgba(255,189,31,.37);
+        color: #ffe0a4;
+        background: rgba(255,189,31,.06)
+    }
+
+    .kac-review.is-error {
+        border-color: rgba(255,90,117,.34);
+        color: #ffb3c0;
+        background: rgba(255,90,117,.07)
+    }
+
+.kac-summary-actions .kai-btn {
+    min-height: 40px
+}
+
+@media(max-width:650px) {
+    .kac-summary-actions {
+        flex-direction: column
+    }
+
+        .kac-summary-actions .kai-btn {
+            width: 100%;
+            justify-content: center
+        }
+}

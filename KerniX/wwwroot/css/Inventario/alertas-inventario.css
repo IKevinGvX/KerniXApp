@@ -1,0 +1,501 @@
+﻿:root {
+    --kal-bg: #020914;
+    --kal-panel: #071a2e;
+    --kal-border: rgba(62,145,219,.23);
+    --kal-text: #f4f8fd;
+    --kal-muted: #8298ad;
+    --kal-cyan: #18d8ff;
+    --kal-gold: #ffbd22;
+    --kal-green: #3be5a3;
+    --kal-red: #ff6078;
+    --kal-orange: #ff9e43;
+    --kal-blue: #4c9cff;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.kal-page {
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    min-height: 100vh;
+    margin-left: -50vw;
+    padding: 18px 20px 42px;
+    color: var(--kal-text);
+    background: radial-gradient(circle at 85% 0,rgba(24,216,255,.10),transparent 28%), radial-gradient(circle at 8% 0,rgba(255,96,120,.055),transparent 24%), linear-gradient(145deg,#020914,#03111f 50%,#06182a);
+}
+
+.kal-shell {
+    width: min(1220px,calc(100% - 8px));
+    margin: 0 auto;
+}
+
+.kal-hero {
+    margin-bottom: 12px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    border: 1px solid var(--kal-border);
+    border-radius: 17px;
+    background: linear-gradient(135deg,rgba(8,28,49,.98),rgba(5,18,33,.98));
+    box-shadow: 0 16px 44px rgba(0,0,0,.20);
+}
+
+.kal-breadcrumb {
+    margin-bottom: 7px;
+    display: flex;
+    gap: 7px;
+    color: #607991;
+    font-size: .61rem;
+}
+
+    .kal-breadcrumb a {
+        color: var(--kal-cyan);
+        text-decoration: none;
+    }
+
+.kal-eyebrow,
+.kal-card-head > div > span {
+    color: var(--kal-cyan);
+    font-size: .60rem;
+    font-weight: 900;
+    letter-spacing: .13em;
+}
+
+.kal-hero h1 {
+    margin: 4px 0 0;
+    color: #fff;
+    font-size: clamp(1.7rem,3vw,2.35rem);
+    font-weight: 850;
+    line-height: 1.05;
+    letter-spacing: -.04em;
+}
+
+    .kal-hero h1 strong {
+        color: var(--kal-gold);
+    }
+
+.kal-hero p {
+    max-width: 720px;
+    margin: 8px 0 0;
+    color: #91a7bb;
+    font-size: .68rem;
+    line-height: 1.55;
+}
+
+.kal-actions,
+.kal-filter-actions,
+.kal-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.kal-actions {
+    justify-content: flex-end;
+}
+
+.kal-btn {
+    min-height: 38px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 9px;
+    color: #e8f2fc;
+    background: rgba(255,255,255,.035);
+    font: inherit;
+    font-size: .62rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .15s ease;
+}
+
+    .kal-btn:hover {
+        color: #fff;
+        border-color: rgba(24,216,255,.36);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+.kal-btn-gold {
+    color: #1c1300;
+    border-color: rgba(255,189,34,.72);
+    background: linear-gradient(135deg,#dc9d00,#ffcf47);
+}
+
+.kal-btn-cyan {
+    color: #00171d;
+    border-color: rgba(24,216,255,.58);
+    background: linear-gradient(135deg,#00acd0,#2ce3ff);
+}
+
+.kal-btn-small {
+    min-height: 30px;
+    padding: 0 8px;
+    font-size: .52rem;
+}
+
+.kal-alert-error {
+    margin-bottom: 11px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,96,120,.20);
+    border-radius: 10px;
+    color: #ffc0ca;
+    background: rgba(255,96,120,.055);
+    font-size: .64rem;
+}
+
+.kal-kpis {
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 9px;
+}
+
+    .kal-kpis article {
+        min-height: 100px;
+        padding: 13px 14px;
+        border: 1px solid var(--kal-border);
+        border-radius: 13px;
+        background: linear-gradient(145deg,rgba(8,27,47,.97),rgba(5,17,31,.98));
+    }
+
+    .kal-kpis span {
+        color: #78a4ca;
+        font-size: .54rem;
+        font-weight: 900;
+        letter-spacing: .08em;
+    }
+
+    .kal-kpis strong {
+        display: block;
+        margin-top: 7px;
+        color: #fff;
+        font-size: 1.42rem;
+        line-height: 1;
+    }
+
+    .kal-kpis small {
+        display: block;
+        margin-top: 7px;
+        color: #5d758d;
+        font-size: .55rem;
+    }
+
+    .kal-kpis .critical strong {
+        color: var(--kal-red);
+    }
+
+    .kal-kpis .warning strong {
+        color: var(--kal-orange);
+    }
+
+    .kal-kpis .info strong {
+        color: var(--kal-blue);
+    }
+
+.kal-priority-grid {
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 9px;
+}
+
+    .kal-priority-grid article {
+        padding: 11px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--kal-border);
+        border-radius: 11px;
+        background: rgba(6,21,37,.88);
+    }
+
+.kal-priority-icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    font-size: 1rem;
+    font-weight: 900;
+}
+
+.kal-priority-grid .critical .kal-priority-icon {
+    color: #fff;
+    background: var(--kal-red);
+}
+
+.kal-priority-grid .warning .kal-priority-icon {
+    color: #171000;
+    background: var(--kal-orange);
+}
+
+.kal-priority-grid .info .kal-priority-icon {
+    color: #fff;
+    background: var(--kal-blue);
+}
+
+.kal-priority-grid strong {
+    display: block;
+    color: #edf4fa;
+    font-size: .62rem;
+}
+
+.kal-priority-grid p {
+    margin: 3px 0 0;
+    color: #657d94;
+    font-size: .51rem;
+    line-height: 1.4;
+}
+
+.kal-card {
+    overflow: hidden;
+    margin-bottom: 12px;
+    border: 1px solid var(--kal-border);
+    border-radius: 14px;
+    background: linear-gradient(145deg,rgba(8,27,48,.98),rgba(5,17,31,.98));
+    box-shadow: 0 12px 30px rgba(0,0,0,.13);
+}
+
+.kal-card-head {
+    min-height: 64px;
+    padding: 11px 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,.055);
+}
+
+    .kal-card-head h2 {
+        margin: 3px 0 0;
+        color: #f5f8fc;
+        font-size: .76rem;
+    }
+
+    .kal-card-head p {
+        margin: 3px 0 0;
+        color: #617990;
+        font-size: .55rem;
+    }
+
+.kal-card-body {
+    padding: 13px;
+}
+
+.kal-filter-grid {
+    display: grid;
+    grid-template-columns: minmax(260px,1.5fr) minmax(190px,.8fr) auto;
+    gap: 9px;
+    align-items: end;
+}
+
+.kal-field label {
+    display: block;
+    margin-bottom: 4px;
+    color: #68839b;
+    font-size: .49rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.kal-field input,
+.kal-field select {
+    width: 100%;
+    height: 36px;
+    padding: 0 9px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    color: #dbe7f2;
+    background: #051422;
+    outline: none;
+    font: inherit;
+    font-size: .57rem;
+}
+
+    .kal-field input:focus,
+    .kal-field select:focus {
+        border-color: rgba(24,216,255,.38);
+    }
+
+.kal-pill {
+    display: inline-flex;
+    padding: 4px 7px;
+    border: 1px solid rgba(24,216,255,.15);
+    border-radius: 999px;
+    color: #8eeeff;
+    background: rgba(24,216,255,.04);
+    font-size: .49rem;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+.kal-table-wrap {
+    overflow-x: auto;
+}
+
+.kal-table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+}
+
+    .kal-table th {
+        padding: 9px 10px;
+        text-align: left;
+        color: #6e8ba6;
+        background: rgba(255,255,255,.012);
+        border-bottom: 1px solid rgba(255,255,255,.055);
+        font-size: .47rem;
+        font-weight: 900;
+        letter-spacing: .07em;
+    }
+
+    .kal-table td {
+        padding: 10px;
+        color: #cbd8e4;
+        border-bottom: 1px solid rgba(255,255,255,.04);
+        font-size: .56rem;
+        vertical-align: middle;
+    }
+
+        .kal-table td strong {
+            display: block;
+            color: #eef4fa;
+            font-size: .57rem;
+        }
+
+        .kal-table td small {
+            display: block;
+            margin-top: 2px;
+            color: #577089;
+            font-size: .48rem;
+        }
+
+.kal-priority,
+.kal-status {
+    display: inline-flex;
+    padding: 4px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: .49rem;
+    font-weight: 850;
+}
+
+    .kal-priority.critical,
+    .kal-status.critical {
+        color: #ffb1be;
+        border: 1px solid rgba(255,96,120,.18);
+        background: rgba(255,96,120,.04);
+    }
+
+    .kal-priority.warning,
+    .kal-status.warning {
+        color: #ffd0a1;
+        border: 1px solid rgba(255,158,67,.18);
+        background: rgba(255,158,67,.04);
+    }
+
+    .kal-priority.info,
+    .kal-status.info {
+        color: #a7caff;
+        border: 1px solid rgba(76,156,255,.18);
+        background: rgba(76,156,255,.04);
+    }
+
+.kal-stock {
+    font-weight: 900;
+}
+
+    .kal-stock.critical {
+        color: var(--kal-red);
+    }
+
+    .kal-stock.warning {
+        color: var(--kal-orange);
+    }
+
+    .kal-stock.info {
+        color: var(--kal-blue);
+    }
+
+.kal-empty {
+    padding: 30px 10px;
+    text-align: center;
+}
+
+    .kal-empty strong {
+        display: block;
+        color: #d9e4ee;
+        font-size: .65rem;
+    }
+
+    .kal-empty span {
+        display: block;
+        margin-top: 4px;
+        color: #607a92;
+        font-size: .55rem;
+    }
+
+@media (max-width:980px) {
+    .kal-kpis {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+
+    .kal-priority-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kal-filter-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+
+    .kal-filter-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width:780px) {
+    .kal-page {
+        padding: 13px 10px 32px;
+    }
+
+    .kal-hero,
+    .kal-card-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .kal-actions {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width:620px) {
+    .kal-kpis,
+    .kal-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kal-filter-actions {
+        grid-column: auto;
+    }
+
+    .kal-shell {
+        width: 100%;
+    }
+}

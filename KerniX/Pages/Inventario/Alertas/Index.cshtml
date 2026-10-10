@@ -1,0 +1,440 @@
+﻿@page "/Inventario/Alertas"
+@model KerniX.Pages.Inventario.Alertas.IndexModel
+
+@{
+    ViewData["Title"] = "Alertas de Inventario";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/alertas-inventario.css"
+      asp-append-version="true" />
+
+<div class="kal-page">
+
+    <main class="kal-shell">
+
+        <section class="kal-hero">
+
+            <div>
+
+                <div class="kal-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Alertas</strong>
+                </div>
+
+                <div class="kal-eyebrow">
+                    INVENTARIO · CONTROL PREVENTIVO
+                </div>
+
+                <h1>
+                    Alertas de <strong>Stock</strong>
+                </h1>
+
+                <p>
+                    Prioriza productos agotados, bajo mínimo o con sobrestock.
+                    Las alertas no modifican existencias: conducen al proceso
+                    correcto para regularizar o reabastecer.
+                </p>
+
+            </div>
+
+
+            <div class="kal-actions">
+
+                <a href="/Inventario"
+                   class="kal-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="/Inventario/Entradas/Nueva"
+                   class="kal-btn kal-btn-gold">
+                    <span uk-icon="icon: plus-circle; ratio: .8"></span>
+                    Nueva Entrada
+                </a>
+
+                <a href="/Inventario/Kardex"
+                   class="kal-btn kal-btn-cyan">
+                    Kardex
+                </a>
+
+            </div>
+
+        </section>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kal-alert-error">
+                <span uk-icon="icon: warning; ratio: .8"></span>
+                @Model.MensajeError
+            </div>
+        }
+
+
+        <section class="kal-kpis">
+
+            <article>
+                <span>TOTAL ALERTAS</span>
+                <strong>@Model.TotalAlertas</strong>
+                <small>Productos que requieren revisión</small>
+            </article>
+
+            <article class="critical">
+                <span>SIN STOCK</span>
+                <strong>@Model.SinStock</strong>
+                <small>Prioridad crítica</small>
+            </article>
+
+            <article class="warning">
+                <span>BAJO STOCK</span>
+                <strong>@Model.BajoStock</strong>
+                <small>Bajo mínimo / stock bajo</small>
+            </article>
+
+            <article class="info">
+                <span>SOBRE STOCK</span>
+                <strong>@Model.SobreStock</strong>
+                <small>Exceso de existencias</small>
+            </article>
+
+        </section>
+
+
+        <section class="kal-priority-grid">
+
+            <article class="critical">
+                <div class="kal-priority-icon">!</div>
+
+                <div>
+                    <strong>Crítica · Sin stock</strong>
+                    <p>
+                        Revisa reposición, transferencia o recepción pendiente.
+                    </p>
+                </div>
+            </article>
+
+            <article class="warning">
+                <div class="kal-priority-icon">↓</div>
+
+                <div>
+                    <strong>Alta · Stock bajo</strong>
+                    <p>
+                        El producto está por debajo del nivel esperado.
+                    </p>
+                </div>
+            </article>
+
+            <article class="info">
+                <div class="kal-priority-icon">↑</div>
+
+                <div>
+                    <strong>Media · Sobrestock</strong>
+                    <p>
+                        Revisa rotación, compras o redistribución interna.
+                    </p>
+                </div>
+            </article>
+
+        </section>
+
+
+        <section class="kal-card">
+
+            <header class="kal-card-head">
+
+                <div>
+                    <span>FILTROS</span>
+
+                    <h2>
+                        Revisar alertas
+                    </h2>
+
+                    <p>
+                        Busca un producto o filtra por nivel de prioridad.
+                    </p>
+                </div>
+
+            </header>
+
+
+            <div class="kal-card-body">
+
+                <form method="get"
+                      action="/Inventario/Alertas"
+                      class="kal-filter-grid">
+
+                    <div class="kal-field">
+                        <label>Buscar</label>
+
+                        <input type="text"
+                               name="Buscar"
+                               value="@Model.Buscar"
+                               maxlength="200"
+                               placeholder="Código, producto, estado..." />
+                    </div>
+
+
+                    <div class="kal-field">
+                        <label>Nivel</label>
+
+                        <select name="Nivel">
+
+                            <option value="">
+                                Todas las alertas
+                            </option>
+
+                            @if (Model.Nivel == "critico")
+                            {
+                                <option value="critico"
+                                        selected>
+                                    Crítica · Sin stock
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="critico">
+                                    Crítica · Sin stock
+                                </option>
+                            }
+
+                            @if (Model.Nivel == "bajo")
+                            {
+                                <option value="bajo"
+                                        selected>
+                                    Alta · Stock bajo
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="bajo">
+                                    Alta · Stock bajo
+                                </option>
+                            }
+
+                            @if (Model.Nivel == "sobre")
+                            {
+                                <option value="sobre"
+                                        selected>
+                                    Media · Sobrestock
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="sobre">
+                                    Media · Sobrestock
+                                </option>
+                            }
+
+                        </select>
+                    </div>
+
+
+                    <div class="kal-filter-actions">
+
+                        <button type="submit"
+                                class="kal-btn kal-btn-cyan">
+                            <span uk-icon="icon: search; ratio: .8"></span>
+                            Filtrar
+                        </button>
+
+                        <a href="/Inventario/Alertas"
+                           class="kal-btn">
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <section class="kal-card">
+
+            <header class="kal-card-head">
+
+                <div>
+                    <span>MONITOREO</span>
+
+                    <h2>
+                        Productos con alerta
+                    </h2>
+
+                    <p>
+                        Ordenados por prioridad y disponibilidad.
+                    </p>
+                </div>
+
+                <span class="kal-pill">
+                    @Model.Items.Count visibles
+                </span>
+
+            </header>
+
+
+            <div class="kal-table-wrap">
+
+                <table class="kal-table">
+
+                    <thead>
+                        <tr>
+                            <th>PRIORIDAD</th>
+                            <th>PRODUCTO</th>
+                            <th>ESTADO</th>
+                            <th>STOCK ACTUAL</th>
+                            <th>RESERVADO</th>
+                            <th>DISPONIBLE</th>
+                            <th>PRECIO COMPRA</th>
+                            <th>PRECIO VENTA</th>
+                            <th>ACCIONES</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Items.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="9">
+
+                                    <div class="kal-empty">
+
+                                        @if (Model.TotalAlertas == 0)
+                                        {
+                                            <strong>
+                                                Inventario sin alertas activas
+                                            </strong>
+
+                                            <span>
+                                                No existen productos agotados,
+                                                bajo mínimo o con sobrestock.
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <strong>
+                                                Sin coincidencias
+                                            </strong>
+
+                                            <span>
+                                                Cambia los filtros para ver otras alertas.
+                                            </span>
+                                        }
+
+                                    </div>
+
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Items)
+                            {
+                                string clase =
+                                    Model.ClaseEstado(
+                                        item.EstadoStock
+                                    );
+
+                                <tr>
+
+                                    <td>
+                                        <span class="kal-priority @clase">
+                                            @Model.TextoPrioridad(
+                                                item.EstadoStock
+                                            )
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.Nombre
+                                        </strong>
+
+                                        <small>
+                                            @item.Codigo
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <span class="kal-status @clase">
+                                            @Model.TextoEstado(
+                                                item.EstadoStock
+                                            )
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @item.StockActual.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        @item.StockReservado.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        <strong class="kal-stock @clase">
+                                            @item.StockDisponible.ToString("N2")
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        S/ @item.PrecioCompra.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        S/ @item.PrecioVenta.ToString("N2")
+                                    </td>
+
+                                    <td>
+
+                                        <div class="kal-row-actions">
+
+                                            <a href="/Inventario/Productos/Editar?id=@item.IdProducto"
+                                               class="kal-btn kal-btn-small">
+                                                Producto
+                                            </a>
+
+                                            <a href="/Inventario/Entradas/Nueva"
+                                               class="kal-btn kal-btn-small kal-btn-gold">
+                                                Entrada
+                                            </a>
+
+                                            <a href="/Inventario/Ajustes"
+                                               class="kal-btn kal-btn-small">
+                                                Ajuste
+                                            </a>
+
+                                            <a href="/Inventario/Kardex?Filtro.IdProducto=@item.IdProducto"
+                                               class="kal-btn kal-btn-small kal-btn-cyan">
+                                                Kardex
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

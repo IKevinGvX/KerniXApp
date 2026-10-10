@@ -1,0 +1,53 @@
+﻿@page "/Inventario/Proveedores/Historial/{id:int}"
+@model KerniX.Pages.Inventario.Proveedores.HistorialModel
+@{
+    ViewData["Title"] = "Historial de proveedor | KerniX ERP";
+}
+<link rel="stylesheet" href="~/css/proveedores.css" asp-append-version="true" />
+<main class="pv-shell">
+    <div class="pv-container">
+        <section class="pv-workspace">
+            <header class="pv-workspace-top">
+                <div>
+                    <span class="pv-section-eyebrow">TRAZABILIDAD · PROVEEDOR #@Model.Proveedor.IdProveedor</span>
+                    <h2>Historial de cambios</h2>
+                    <p>Registro de operaciones nuevas del módulo web. No incluye compras ni cambios anteriores a la instalación.</p>
+                </div>
+                <a class="pv-secondary" href="/Inventario/Proveedores/Detalle/@Model.Proveedor.IdProveedor">
+                    <span uk-icon="arrow-left"></span> Volver a la ficha
+                </a>
+            </header>
+            @if (!string.IsNullOrWhiteSpace(Model.Error))
+            {
+                <div class="pv-notice pv-notice-error" role="alert">@Model.Error</div>
+            }
+            else if (Model.Eventos.Count == 0)
+            {
+                <div class="pv-empty">
+                    <span uk-icon="icon: history; ratio: 1.5"></span>
+                    <strong>Sin movimientos registrados</strong>
+                    <p>Los cambios realizados desde la instalación del módulo aparecerán aquí.</p>
+                </div>
+            }
+            else
+            {
+                <div class="pv-table-wrap">
+                    <table class="pv-table">
+                        <thead><tr><th>Fecha (UTC)</th><th>Operación</th><th>Usuario</th><th>N°</th></tr></thead>
+                        <tbody>
+                            @foreach (var evento in Model.Eventos)
+                            {
+                                <tr>
+                                    <td class="pv-mono">@evento.FechaUtc.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    <td><span class="pv-status pv-active">@evento.Accion</span></td>
+                                    <td>@evento.Usuario</td>
+                                    <td class="pv-mono">#@evento.IdEvento</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+    </div>
+</main>

@@ -288,7 +288,7 @@ public sealed class PagoDbService
                 ISNULL(
                     SUM(
                         CASE
-                            WHEN p.estado <> 'anulado'
+                            WHEN p.estado = 'registrado'
                                 THEN p.monto
                             ELSE 0
                         END
@@ -300,7 +300,7 @@ public sealed class PagoDbService
                 ISNULL(
                     SUM(
                         CASE
-                            WHEN p.estado <> 'anulado'
+                            WHEN p.estado = 'registrado'
                                 THEN p.monto
                             ELSE 0
                         END

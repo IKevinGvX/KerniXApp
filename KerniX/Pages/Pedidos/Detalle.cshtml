@@ -1,0 +1,1019 @@
+﻿@page
+@model KerniX.Pages.Pedidos.DetalleModel
+
+@{
+    Layout = null;
+
+    ViewData["Title"] =
+        "Detalle de pedido | KerniX";
+
+    var pedido = Model.Pedido;
+
+    string estado =
+        pedido.Estado.Trim().ToLowerInvariant();
+
+    string claseEstado = estado switch
+    {
+        "pendiente" => "estado-pendiente",
+        "aprobado" => "estado-aprobado",
+        "parcial" => "estado-parcial",
+        "atendido" => "estado-atendido",
+        "cancelado" => "estado-cancelado",
+        _ => "estado-general"
+    };
+
+    string Moneda(decimal valor) =>
+        $"S/ {valor:N2}";
+
+    string Cantidad(decimal valor) =>
+        valor.ToString("N4").TrimEnd('0').TrimEnd('.');
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+
+    <title>@ViewData["Title"]</title>
+
+    <!-- UIKIT -->
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/css/uikit.min.css" />
+
+    <!-- DISEÑO KERNIX -->
+
+    <link rel="stylesheet"
+          href="/css/pedido/detalle.css?v=20260920-01" />
+
+</head>
+
+<body class="kx-detalle">
+
+    <div class="app-shell">
+
+        <!-- =====================================
+             SIDEBAR
+             ===================================== -->
+
+        <aside class="sidebar">
+
+            <a href="/Inicio/Index"
+               class="brand">
+
+                <span class="brand-symbol">
+                    K
+                </span>
+
+                <span>
+                    Kerni<span class="brand-x">X</span>
+                </span>
+
+            </a>
+
+            <div class="sidebar-section">
+                MÓDULO COMERCIAL
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="/Inicio/Index">
+                    Inicio
+                </a>
+
+                <a href="/Ventas/PrincipalVentas">
+                    Ventas
+                </a>
+
+                <a href="/Cliente/Index">
+                    Clientes
+                </a>
+
+                <a href="/Cotizacion/Index">
+                    Cotizaciones
+                </a>
+
+                <a href="/Pedidos/Index"
+                   class="active">
+
+                    Órdenes de venta
+
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+
+                <span class="connection-dot"></span>
+
+                KerniX ERP
+
+            </div>
+
+        </aside>
+
+        <!-- =====================================
+             CONTENIDO
+             ===================================== -->
+
+        <main class="workspace">
+
+            <!-- BARRA SUPERIOR -->
+
+            <header class="topbar">
+
+                <div class="breadcrumb">
+
+                    VENTAS
+
+                    <span>/</span>
+
+                    PEDIDOS
+
+                    <span>/</span>
+
+                    <strong>DETALLE</strong>
+
+                </div>
+
+                <a href="/Pedidos/Index"
+                   class="back-link">
+
+                    <span uk-icon="arrow-left"></span>
+
+                    Volver al directorio
+
+                </a>
+
+            </header>
+
+            <!-- ENCABEZADO -->
+
+            <section class="page-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        KERNIX · SEGUIMIENTO COMERCIAL
+                    </div>
+
+                    <h1>
+                        Detalle <em>de pedido</em>
+                    </h1>
+
+                    <p>
+                        Consulta la información y el avance
+                        de la orden registrada.
+                    </p>
+
+                </div>
+
+                <span class="estado @claseEstado">
+
+                    <span class="estado-dot"></span>
+
+                    @pedido.Estado
+
+                </span>
+
+            </section>
+
+            <!-- =====================================
+                 PEDIDO PRINCIPAL
+                 ===================================== -->
+
+            <section class="hero-card">
+
+                <div class="hero-info">
+
+                    <span class="hero-label">
+                        NÚMERO DE ORDEN
+                    </span>
+
+                    <h2>
+                        @pedido.NumeroPedido
+                    </h2>
+
+                    <p>
+                        Registrado el
+                        @pedido.FechaPedido.ToString("dd/MM/yyyy HH:mm")
+                    </p>
+
+                </div>
+
+                <div class="hero-total">
+
+                    <span>
+                        IMPORTE TOTAL
+                    </span>
+
+                    <strong>
+                        @Moneda(pedido.Total)
+                    </strong>
+
+                    <small>
+                        Total registrado en SQL Server
+                    </small>
+
+                </div>
+
+            </section>
+
+            <!-- =====================================
+                 INDICADORES
+                 ===================================== -->
+
+            <section class="metrics-grid">
+
+                <article class="metric-card">
+
+                    <div class="metric-icon gold">
+                        <span uk-icon="package"></span>
+                    </div>
+
+                    <div class="metric-label">
+                        Unidades solicitadas
+                    </div>
+
+                    <strong>
+                        @Cantidad(pedido.CantidadSolicitada)
+                    </strong>
+
+                    <small>
+                        Cantidad total del pedido
+                    </small>
+
+                </article>
+
+                <article class="metric-card">
+
+                    <div class="metric-icon green">
+                        <span uk-icon="check"></span>
+                    </div>
+
+                    <div class="metric-label">
+                        Unidades atendidas
+                    </div>
+
+                    <strong>
+                        @Cantidad(pedido.CantidadAtendida)
+                    </strong>
+
+                    <small>
+                        Cantidad procesada
+                    </small>
+
+                </article>
+
+                <article class="metric-card">
+
+                    <div class="metric-icon blue">
+                        <span uk-icon="clock"></span>
+                    </div>
+
+                    <div class="metric-label">
+                        Unidades pendientes
+                    </div>
+
+                    <strong>
+                        @Cantidad(pedido.CantidadPendiente)
+                    </strong>
+
+                    <small>
+                        Por atender
+                    </small>
+
+                </article>
+
+                <article class="metric-card">
+
+                    <div class="metric-icon purple">
+                        <span uk-icon="thumbnails"></span>
+                    </div>
+
+                    <div class="metric-label">
+                        Productos distintos
+                    </div>
+
+                    <strong>
+                        @pedido.Productos.Count
+                    </strong>
+
+                    <small>
+                        Líneas del detalle
+                    </small>
+
+                </article>
+
+            </section>
+
+            <!-- =====================================
+                 GRID PRINCIPAL
+                 ===================================== -->
+
+            <div class="detail-grid">
+
+                <div class="main-column">
+
+                    <!-- SEGUIMIENTO -->
+
+                    <section class="panel">
+
+                        <div class="panel-heading">
+
+                            <div class="heading-icon blue">
+                                <span uk-icon="history"></span>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Seguimiento de atención
+                                </h2>
+
+                                <p>
+                                    Progreso general del pedido
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="progress-header">
+
+                                <span>
+                                    Avance registrado
+                                </span>
+
+                                <strong>
+                                    @pedido.PorcentajeAtencion.ToString("N2") %
+                                </strong>
+
+                            </div>
+
+                            <progress class="uk-progress kx-progress"
+                                      value="@pedido.PorcentajeAtencion.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                      max="100">
+                            </progress>
+
+                            <div class="progress-labels">
+
+                                <span>
+                                    @Cantidad(pedido.CantidadAtendida)
+                                    atendidas
+                                </span>
+
+                                <span>
+                                    @Cantidad(pedido.CantidadPendiente)
+                                    pendientes
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- PRODUCTOS -->
+
+                    <section class="panel">
+
+                        <div class="panel-heading">
+
+                            <div class="heading-icon gold">
+                                <span uk-icon="list"></span>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Productos del pedido
+                                </h2>
+
+                                <p>
+                                    Detalle comercial registrado
+                                </p>
+
+                            </div>
+
+                            <span class="panel-count">
+
+                                @pedido.Productos.Count productos
+
+                            </span>
+
+                        </div>
+
+                        <div class="table-container">
+
+                            <table class="uk-table uk-table-middle items-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>PRODUCTO</th>
+
+                                        <th>SOLICITADO</th>
+
+                                        <th>ATENDIDO</th>
+
+                                        <th>PENDIENTE</th>
+
+                                        <th>PRECIO</th>
+
+                                        <th>IGV</th>
+
+                                        <th>TOTAL</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @if (pedido.Productos.Count == 0)
+                                    {
+                                        <tr>
+
+                                            <td colspan="7"
+                                                class="empty-table">
+
+                                                Este pedido no tiene
+                                                productos registrados.
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        foreach (var producto in pedido.Productos)
+                                        {
+                                            <tr>
+
+                                                <td>
+
+                                                    <strong class="item-name">
+
+                                                        @producto.Producto
+
+                                                    </strong>
+
+                                                    <small class="item-code">
+
+                                                        @producto.Codigo
+
+                                                    </small>
+
+                                                </td>
+
+                                                <td>
+                                                    @Cantidad(producto.CantidadSolicitada)
+                                                </td>
+
+                                                <td class="text-green">
+                                                    @Cantidad(producto.CantidadAtendida)
+                                                </td>
+
+                                                <td class="text-blue">
+                                                    @Cantidad(producto.CantidadPendiente)
+                                                </td>
+
+                                                <td>
+                                                    @Moneda(producto.PrecioUnitario)
+                                                </td>
+
+                                                <td>
+                                                    @Moneda(producto.Impuesto)
+                                                </td>
+
+                                                <td class="item-total">
+                                                    @Moneda(producto.Total)
+                                                </td>
+
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+                    <!-- OBSERVACIONES -->
+
+                    <section class="panel">
+
+                        <div class="panel-heading">
+
+                            <div class="heading-icon purple">
+                                <span uk-icon="comment"></span>
+                            </div>
+
+                            <div>
+
+                                <h2>
+                                    Observaciones
+                                </h2>
+
+                                <p>
+                                    Indicaciones registradas
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <p class="observacion">
+
+                                @(string.IsNullOrWhiteSpace(pedido.Observacion)
+                                    ? "Este pedido no tiene observaciones."
+                                    : pedido.Observacion)
+
+                            </p>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- =================================
+                     COLUMNA DERECHA
+                     ================================= -->
+
+                <aside class="summary-column">
+
+                    <!-- INFORMACIÓN COMERCIAL -->
+
+                    <section class="summary-card">
+
+                        <div class="summary-heading">
+
+                            <span class="summary-symbol">
+                                K
+                            </span>
+
+                            <div>
+
+                                <small>
+                                    KERNIX ERP
+                                </small>
+
+                                <h2>
+                                    Información comercial
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                        <div class="summary-content">
+
+                            <div class="info-item">
+
+                                <span>
+                                    Cliente
+                                </span>
+
+                                <strong>
+                                    @pedido.Cliente
+                                </strong>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Vendedor
+                                </span>
+
+                                <strong>
+                                    @pedido.Vendedor
+                                </strong>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Sucursal
+                                </span>
+
+                                <strong>
+                                    @pedido.Sucursal
+                                </strong>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Fecha de emisión
+                                </span>
+
+                                <strong>
+                                    @pedido.FechaPedido.ToString("dd/MM/yyyy")
+                                </strong>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Entrega estimada
+                                </span>
+
+                                <strong>
+
+                                    @(pedido.FechaEntregaEstimada.HasValue
+                                        ? pedido.FechaEntregaEstimada.Value.ToString("dd/MM/yyyy")
+                                        : "Sin fecha definida")
+
+                                </strong>
+
+                            </div>
+
+                            <div class="info-item">
+
+                                <span>
+                                    Cotización de origen
+                                </span>
+
+                                <strong>
+
+                                    @(pedido.IdCotizacion.HasValue
+                                        ? $"Cotización #{pedido.IdCotizacion.Value}"
+                                        : "Sin cotización")
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- TOTALES -->
+
+                    <section class="summary-card">
+
+                        <div class="summary-heading">
+
+                            <span class="summary-symbol">
+                                S/
+                            </span>
+
+                            <div>
+
+                                <small>
+                                    RESUMEN ECONÓMICO
+                                </small>
+
+                                <h2>
+                                    Importe de la orden
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                        <div class="summary-content">
+
+                            <div class="total-line">
+
+                                <span>
+                                    Subtotal
+                                </span>
+
+                                <strong>
+                                    @Moneda(pedido.Subtotal)
+                                </strong>
+
+                            </div>
+
+                            <div class="total-line">
+
+                                <span>
+                                    Descuentos
+                                </span>
+
+                                <strong class="text-green">
+                                    @Moneda(pedido.Descuento)
+                                </strong>
+
+                            </div>
+
+                            <div class="total-line">
+
+                                <span>
+                                    Impuestos
+                                </span>
+
+                                <strong>
+                                    @Moneda(pedido.Impuesto)
+                                </strong>
+
+                            </div>
+
+                            <div class="summary-divider"></div>
+
+                            <div class="grand-total">
+
+                                <span>
+                                    TOTAL DEL PEDIDO
+                                </span>
+
+                                <strong>
+                                    @Moneda(pedido.Total)
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+             
+                    <!-- =========================================
+     ACCIONES DEL PEDIDO
+     ========================================= -->
+
+                    <section class="summary-card">
+
+                        <div class="summary-heading">
+
+                            <span class="summary-symbol">
+                                <span uk-icon="settings"></span>
+                            </span>
+
+                            <div>
+
+                                <small>
+                                    OPERACIONES
+                                </small>
+
+                                <h2>
+                                    Acciones del pedido
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                       
+                        <div class="actions-content">
+
+                            @{
+                                string estadoActual =
+                                    (pedido.Estado ?? string.Empty)
+                                        .Trim()
+                                        .ToLowerInvariant();
+
+                                bool puedeAprobar =
+                                    estadoActual == "pendiente";
+
+                                bool puedeCancelar =
+                                    estadoActual == "pendiente" ||
+                                    estadoActual == "aprobado";
+
+                                bool puedeGenerarVenta =
+                                    (estadoActual == "aprobado" ||
+                                     estadoActual == "parcial") &&
+                                    pedido.CantidadPendiente > 0;
+                            }
+
+                            <!-- =====================================
+         APROBAR PEDIDO
+         ===================================== -->
+                            @if (puedeAprobar)
+                            {
+                                <form method="post"
+                                      action="/Pedidos/Detalle?handler=CambiarEstado"
+                                      class="kx-state-form"
+                                      data-confirmacion="¿Confirmas que deseas aprobar este pedido?">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@pedido.IdPedido" />
+
+                                    <input type="hidden"
+                                           name="estado"
+                                           value="aprobado" />
+
+                                    <button type="submit"
+                                            class="action-button action-approve">
+
+                                        <span uk-icon="check"></span>
+
+                                        Aprobar pedido
+
+                                    </button>
+
+                                </form>
+                            }
+
+                            <!-- =====================================
+         CANCELAR PEDIDO
+         ===================================== -->
+                            @if (puedeCancelar)
+                            {
+                                <form method="post"
+                                      action="/Pedidos/Detalle?handler=CambiarEstado"
+                                      class="kx-state-form"
+                                      data-confirmacion="¿Confirmas que deseas cancelar este pedido?">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="id"
+                                           value="@pedido.IdPedido" />
+
+                                    <input type="hidden"
+                                           name="estado"
+                                           value="cancelado" />
+
+                                    <button type="submit"
+                                            class="action-button action-cancel">
+
+                                        <span uk-icon="close"></span>
+
+                                        Cancelar pedido
+
+                                    </button>
+
+                                </form>
+                            }
+
+                            <!-- =====================================
+         GENERAR VENTA DESDE EL PEDIDO
+         ===================================== -->
+                            @if (puedeGenerarVenta)
+                            {
+                                <a href="/Ventas/Nueva?idPedido=@pedido.IdPedido"
+                                   class="action-button action-sale"
+                                   title="Generar venta desde el pedido @pedido.NumeroPedido">
+
+                                    <span uk-icon="cart"></span>
+
+                                    Generar venta desde pedido
+
+                                </a>
+                            }
+
+                            <!-- =====================================
+         SIN ACCIONES DISPONIBLES
+         ===================================== -->
+                            @if (!puedeAprobar &&
+                                     !puedeCancelar &&
+                                     !puedeGenerarVenta)
+                            {
+                                <div class="kx-state-info">
+
+                                    <span uk-icon="info"></span>
+
+                                    Este pedido no tiene acciones disponibles
+                                    para su estado actual.
+
+                                </div>
+                            }
+
+                            <!-- =====================================
+         VOLVER AL DIRECTORIO
+         ===================================== -->
+
+                            <a href="/Pedidos/Index"
+                               class="action-button action-secondary">
+
+                                <span uk-icon="arrow-left"></span>
+
+                                Volver al directorio
+
+                            </a>
+
+                            <p class="actions-note">
+
+                                Las operaciones de aprobación y cancelación
+                                son validadas por SQL Server.
+
+                            </p>
+
+                        </div>
+
+                            <!-- SIN ACCIONES DISPONIBLES -->
+                            @if (!puedeAprobar && !puedeCancelar)
+                            {
+                                <div class="kx-state-info">
+
+                                    <span uk-icon="info"></span>
+
+                                    Este pedido no tiene cambios de estado
+                                    disponibles desde esta pantalla.
+
+                                </div>
+                            }
+
+                            <!-- VOLVER -->
+
+                            <a href="/Pedidos/Index"
+                               class="action-button action-secondary">
+
+                                <span uk-icon="arrow-left"></span>
+
+                                Volver al directorio
+
+                            </a>
+
+                            <p class="actions-note">
+
+                                Los cambios son validados por SQL Server.
+                                Los pedidos con ventas vinculadas o cantidades
+                                atendidas pueden tener restricciones adicionales.
+
+                            </p>
+
+                        </div>
+
+                    </section>
+            <!-- PIE -->
+
+            <footer class="page-footer">
+
+                <span>
+                    KerniX ERP · Gestión comercial
+                </span>
+
+                <span>
+                    Pedido #@pedido.IdPedido
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+    <!-- UIKIT -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
+
+            <script>
+
+                    document.querySelectorAll(
+                        ".kx-state-form"
+                    ).forEach(formulario => {
+
+                        formulario.addEventListener(
+                            "submit",
+                            function (evento) {
+
+                                const mensaje =
+                                    formulario.dataset.confirmacion ||
+                                    "¿Confirmar operación?";
+
+                                if (!window.confirm(mensaje)) {
+
+                                    evento.preventDefault();
+
+                                    return;
+                                }
+
+                                const boton =
+                                    formulario.querySelector(
+                                        'button[type="submit"]'
+                                    );
+
+                                if (boton) {
+
+                                    boton.disabled = true;
+
+                                    boton.textContent =
+                                        "Procesando...";
+
+                                }
+
+                            }
+                        );
+
+                    });
+
+            </script>
+</body>
+</html>

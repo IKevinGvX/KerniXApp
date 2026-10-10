@@ -1,0 +1,1089 @@
+﻿@page
+@model KerniX.Pages.Pedidos.IndexModel
+
+@{
+    Layout = null;
+
+    ViewData["Title"] = "Órdenes de venta | KerniX";
+
+    bool filtrado =
+        !string.IsNullOrWhiteSpace(Model.Buscar) ||
+        !string.IsNullOrWhiteSpace(Model.Estado);
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+
+    <title>@ViewData["Title"]</title>
+
+    <!-- UIKIT -->
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/css/uikit.min.css" />
+
+    <!-- CSS DEL DIRECTORIO -->
+
+    <link rel="stylesheet"
+          href="/css/pedido/index.css?v=20260920-06" />
+
+    <!-- ESTILOS NUEVOS -->
+
+    <style>
+
+            /* ID REAL DEL PEDIDO */
+
+            .kx-body .kx-pedido-id {
+                color: #9bb6d2;
+                font-size: 11px;
+                font-weight: 800;
+                font-variant-numeric: tabular-nums;
+            }
+
+            /* NÚMERO CLICABLE */
+
+            .kx-body .kx-detalle-link {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: #ffc857;
+                font-size: 11px;
+                font-weight: 900;
+                text-decoration: none;
+                white-space: nowrap;
+                transition: .2s;
+            }
+
+                .kx-body .kx-detalle-link:hover {
+                    color: #ffe5a5;
+                    text-decoration: none;
+                }
+
+                .kx-body .kx-detalle-link svg {
+                    width: 14px;
+                    height: 14px;
+                    transition: transform .2s;
+                }
+
+                .kx-body .kx-detalle-link:hover svg {
+                    transform: translate(2px, -2px);
+                }
+
+            /* BOTÓN VER DETALLE */
+
+            .kx-body .kx-ver-detalle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                min-height: 35px;
+                padding: 7px 12px;
+                color: #ffc857;
+                background: rgba(255, 200, 87, .06);
+                border: 1px solid rgba(255, 200, 87, .45);
+                border-radius: 9px;
+                font-size: 11px;
+                font-weight: 800;
+                text-decoration: none;
+                white-space: nowrap;
+                transition: .2s;
+            }
+
+                .kx-body .kx-ver-detalle:hover {
+                    background: rgba(255, 200, 87, .14);
+                    border-color: #ffc857;
+                    color: #ffe5a5;
+                    text-decoration: none;
+                }
+
+                .kx-body .kx-ver-detalle svg {
+                    width: 15px;
+                    height: 15px;
+                }
+
+            /* TABLA CON DOS COLUMNAS ADICIONALES */
+
+            .kx-body .kx-table-container {
+                overflow-x: auto;
+            }
+
+            .kx-body .kx-table {
+                min-width: 1120px;
+            }
+
+                .kx-body .kx-table td,
+                .kx-body .kx-table th {
+                    vertical-align: middle;
+                }
+
+                    .kx-body .kx-table td:last-child {
+                        white-space: nowrap;
+                    }
+
+            @@media (max-width: 768px) {
+
+                .kx-body .kx-ver-detalle {
+                    padding: 7px 9px;
+                }
+            }
+
+    </style>
+
+</head>
+
+<body class="kx-body">
+
+    <div class="kx-layout">
+
+        <!-- =====================================
+             SIDEBAR
+             ===================================== -->
+
+        <aside class="kx-sidebar">
+
+            <a href="/Inicio/Index"
+               class="kx-logo">
+
+                <span class="kx-logo-icon">
+                    K
+                </span>
+
+                <span>
+                    Kerni<strong>X</strong>
+                </span>
+
+            </a>
+
+            <div class="kx-nav-title">
+                MÓDULO COMERCIAL
+            </div>
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+
+                    <span uk-icon="home"></span>
+
+                    Inicio
+
+                </a>
+
+                <a href="/Ventas/PrincipalVentas">
+
+                    <span uk-icon="cart"></span>
+
+                    Ventas
+
+                </a>
+
+                <a href="/Cliente/Index">
+
+                    <span uk-icon="users"></span>
+
+                    Clientes
+
+                </a>
+
+                <a href="/Cotizacion/Index">
+
+                    <span uk-icon="file-text"></span>
+
+                    Cotizaciones
+
+                </a>
+
+                <a href="/Pedidos/Index"
+                   class="active"
+                   aria-current="page">
+
+                    <span uk-icon="album"></span>
+
+                    Órdenes de venta
+
+                </a>
+
+            </nav>
+
+            <div class="kx-sidebar-footer">
+
+                <span class="kx-online"></span>
+
+                <div>
+
+                    <strong>
+                        KerniX ERP
+                    </strong>
+
+                    <small>
+                        Gestión comercial
+                    </small>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+        <!-- =====================================
+             CONTENIDO PRINCIPAL
+             ===================================== -->
+
+        <main class="kx-main">
+
+            <!-- TOPBAR -->
+
+            <div class="kx-topbar">
+
+                <div class="kx-breadcrumb">
+
+                    COMERCIAL
+
+                    <span uk-icon="chevron-right"></span>
+
+                    ÓRDENES DE VENTA
+
+                </div>
+
+                <span class="kx-topbar-badge">
+
+                    <span class="kx-online"></span>
+
+                    Panel comercial
+
+                </span>
+
+            </div>
+
+            <!-- =====================================
+                 ENCABEZADO
+                 ===================================== -->
+
+            <header class="kx-header">
+
+                <div>
+
+                    <span class="kx-eyebrow">
+
+                        GESTIÓN COMERCIAL / PEDIDOS
+
+                    </span>
+
+                    <h1>
+
+                        Órdenes
+
+                        <span>
+                            de venta
+                        </span>
+
+                    </h1>
+
+                    <p>
+
+                        Administra, consulta y realiza
+                        el seguimiento de las órdenes
+                        de venta de tu empresa.
+
+                    </p>
+
+                </div>
+
+                <a href="/Pedidos/Nuevo"
+                   class="uk-button kx-btn-primary">
+
+                    <span uk-icon="plus"></span>
+
+                    Nueva orden
+
+                </a>
+
+            </header>
+
+            <!-- =====================================
+                 MENSAJES
+                 ===================================== -->
+
+            <div id="contenedorMensajes">
+
+                @if (!string.IsNullOrWhiteSpace(Model.ErrorMensaje))
+                {
+
+                    <div class="kx-alert">
+
+                        <span uk-icon="warning"></span>
+
+                        @Model.ErrorMensaje
+
+                    </div>
+
+                }
+
+            </div>
+
+            <div id="mensajeAjax"
+                 class="kx-alert"
+                 role="alert"
+                 hidden>
+            </div>
+
+            <!-- =====================================
+                 RESUMEN
+                 ===================================== -->
+
+            <div class="kx-section-heading">
+
+                <div>
+
+                    <span class="kx-eyebrow">
+
+                        VISIÓN GENERAL
+
+                    </span>
+
+                    <h2>
+
+                        Resumen de operaciones
+
+                    </h2>
+
+                </div>
+
+                <small>
+
+                    Resultados de la búsqueda actual
+
+                </small>
+
+            </div>
+
+            <!-- =====================================
+                 INDICADORES AJAX
+                 ===================================== -->
+
+            <section class="kx-stats"
+                     id="contenedorIndicadores">
+
+                <!-- TOTAL -->
+
+                <article class="kx-stat gold">
+
+                    <div class="kx-stat-top">
+
+                        <span>
+                            Pedidos encontrados
+                        </span>
+
+                        <div class="kx-stat-icon">
+
+                            <span uk-icon="database"></span>
+
+                        </div>
+
+                    </div>
+
+                    <strong>
+
+                        @Model.Total
+
+                    </strong>
+
+                    <small>
+
+                        Resultados actuales
+
+                    </small>
+
+                </article>
+
+                <!-- PENDIENTES -->
+
+                <article class="kx-stat orange">
+
+                    <div class="kx-stat-top">
+
+                        <span>
+                            Pendientes
+                        </span>
+
+                        <div class="kx-stat-icon">
+
+                            <span uk-icon="clock"></span>
+
+                        </div>
+
+                    </div>
+
+                    <strong>
+
+                        @Model.Pendientes
+
+                    </strong>
+
+                    <small>
+
+                        Órdenes por gestionar
+
+                    </small>
+
+                </article>
+
+                <!-- APROBADOS -->
+
+                <article class="kx-stat green">
+
+                    <div class="kx-stat-top">
+
+                        <span>
+                            Aprobados
+                        </span>
+
+                        <div class="kx-stat-icon">
+
+                            <span uk-icon="check"></span>
+
+                        </div>
+
+                    </div>
+
+                    <strong>
+
+                        @Model.Aprobados
+
+                    </strong>
+
+                    <small>
+
+                        Órdenes aprobadas
+
+                    </small>
+
+                </article>
+
+                <!-- VINCULADOS -->
+
+                <article class="kx-stat blue">
+
+                    <div class="kx-stat-top">
+
+                        <span>
+                            Con venta vinculada
+                        </span>
+
+                        <div class="kx-stat-icon">
+
+                            <span uk-icon="link"></span>
+
+                        </div>
+
+                    </div>
+
+                    <strong>
+
+                        @Model.ConVenta
+
+                    </strong>
+
+                    <small>
+
+                        Pedidos relacionados con ventas
+
+                    </small>
+
+                </article>
+
+            </section>
+
+            <!-- =====================================
+                 DIRECTORIO
+                 ===================================== -->
+
+            <section class="kx-panel">
+
+                <!-- ENCABEZADO DEL PANEL -->
+
+                <div class="kx-panel-header">
+
+                    <div>
+
+                        <span class="kx-eyebrow">
+
+                            EXPLORADOR COMERCIAL
+
+                        </span>
+
+                        <h2>
+
+                            Directorio de pedidos
+
+                        </h2>
+
+                        <p>
+
+                            Consulta y filtra las órdenes registradas.
+
+                        </p>
+
+                    </div>
+
+                    <span class="kx-count"
+                          id="contadorPedidos">
+
+                        @Model.Total registro(s)
+
+                    </span>
+
+                </div>
+
+                <!-- =====================================
+                     FILTROS
+                     ===================================== -->
+
+                <form method="get"
+                      action="/Pedidos/Index"
+                      id="formBuscarPedidos"
+                      class="kx-filters">
+
+                    <!-- BUSCADOR -->
+
+                    <div class="kx-field kx-search-field">
+
+                        <label for="buscarPedido">
+
+                            Buscar pedido o cliente
+
+                        </label>
+
+                        <div class="uk-inline kx-input-wrapper">
+
+                            <span class="uk-form-icon"
+                                  uk-icon="search"></span>
+
+                            <input type="search"
+                                   id="buscarPedido"
+                                   name="Buscar"
+                                   class="uk-input kx-input"
+                                   value="@Model.Buscar"
+                                   maxlength="100"
+                                   autocomplete="off"
+                                   placeholder="Escribe para buscar en tiempo real..." />
+
+                        </div>
+
+                    </div>
+
+                    <!-- ESTADO -->
+
+                    <div class="kx-field kx-status-field">
+
+                        <label for="estadoPedido">
+
+                            Estado
+
+                        </label>
+
+                        <select id="estadoPedido"
+                                name="Estado"
+                                class="uk-select kx-select">
+
+                            <option value="">
+
+                                Todos los estados
+
+                            </option>
+
+                            @foreach (var estado in new[]
+                            {
+                                "pendiente",
+                                "aprobado",
+                                "parcial",
+                                "atendido",
+                                "cancelado"
+                            })
+                            {
+
+                                <option value="@estado"
+                                        selected="@(Model.Estado == estado)">
+
+                                    @(char.ToUpperInvariant(estado[0]) + estado.Substring(1))
+
+                                </option>
+
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <!-- ACCIONES -->
+
+                    <div class="kx-filter-actions">
+
+                        <button type="submit"
+                                id="btnBuscarPedidos"
+                                class="uk-button kx-btn-search">
+
+                            <span uk-icon="search"></span>
+
+                            Buscar
+
+                        </button>
+
+                        <a href="/Pedidos/Index"
+                           id="btnLimpiarPedidos"
+                           class="uk-button kx-btn-clear">
+
+                            <span uk-icon="refresh"></span>
+
+                            Limpiar
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+                <!-- =====================================
+                     FILTROS ACTIVOS
+                     ===================================== -->
+
+                <div id="contenedorFiltrosActivos">
+
+                    @if (filtrado)
+                    {
+
+                        <div class="kx-active-filters">
+
+                            <strong>
+
+                                Filtros activos:
+
+                            </strong>
+
+                            @if (!string.IsNullOrWhiteSpace(Model.Buscar))
+                            {
+
+                                <span class="kx-filter-tag">
+
+                                    Búsqueda: @Model.Buscar
+
+                                </span>
+
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(Model.Estado))
+                            {
+
+                                <span class="kx-filter-tag">
+
+                                    Estado: @Model.Estado
+
+                                </span>
+
+                            }
+
+                        </div>
+
+                    }
+
+                </div>
+
+                <!-- =====================================
+                     CABECERA TABLA
+                     ===================================== -->
+
+                <div class="kx-table-header"
+                     id="cabeceraTabla">
+
+                    <span>
+
+                        <span class="kx-online"></span>
+
+                        Listado de órdenes
+
+                    </span>
+
+                    <span>
+
+                        @Model.Total resultado(s)
+
+                    </span>
+
+                </div>
+
+                <!-- =====================================
+                     TABLA CON ID REAL Y DETALLE
+                     ===================================== -->
+
+                <div class="kx-table-container"
+                     id="contenedorTabla"
+                     role="region"
+                     aria-label="Tabla de órdenes"
+                     aria-live="polite"
+                     aria-busy="false"
+                     tabindex="0">
+
+                    <table class="uk-table uk-table-middle uk-table-divider kx-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+
+                                <th>N.º PEDIDO</th>
+
+                                <th>FECHA</th>
+
+                                <th>CLIENTE</th>
+
+                                <th>SOLICITADO</th>
+
+                                <th>ATENDIDO</th>
+
+                                <th>TOTAL</th>
+
+                                <th>ESTADO</th>
+
+                                <th>VÍNCULOS</th>
+
+                                <th>ACCIONES</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @if (Model.Pedidos.Count == 0)
+                            {
+
+                                <tr>
+
+                                    <td colspan="10">
+
+                                        <div class="kx-empty">
+
+                                            <div class="kx-empty-icon">
+
+                                                <span uk-icon="icon: search; ratio: 2"></span>
+
+                                            </div>
+
+                                            <h3>
+
+                                                No se encontraron pedidos
+
+                                            </h3>
+
+                                            <p>
+
+                                                @(filtrado
+                                                    ? "No hay órdenes que coincidan con los filtros."
+                                                    : "No existen órdenes registradas para mostrar.")
+
+                                            </p>
+
+                                            @if (filtrado)
+                                            {
+
+                                                <a href="/Pedidos/Index"
+                                                   class="uk-button kx-btn-clear kx-empty-action">
+
+                                                    Limpiar filtros
+
+                                                </a>
+
+                                            }
+                                            else
+                                            {
+
+                                                <a href="/Pedidos/Nuevo"
+                                                   class="uk-button kx-btn-primary">
+
+                                                    Crear orden
+
+                                                </a>
+
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            }
+                            else
+                            {
+
+                                @foreach (var pedido in Model.Pedidos)
+                                {
+
+                                    var estadoNormalizado =
+                                        (pedido.Estado ?? "")
+                                            .Trim()
+                                            .ToLowerInvariant();
+
+                                    var claseEstado = estadoNormalizado switch
+                                    {
+                                        "pendiente" => "pendiente",
+                                        "aprobado" => "aprobado",
+                                        "parcial" => "parcial",
+                                        "atendido" => "atendido",
+                                        "cancelado" => "cancelado",
+                                        _ => "desconocido"
+                                    };
+
+                                    var requiereRevision =
+                                        estadoNormalizado == "pendiente"
+                                        && pedido.VentasVinculadas > 0
+                                        && pedido.CantidadSolicitada > 0
+                                        && pedido.CantidadAtendida
+                                            >= pedido.CantidadSolicitada;
+
+                                    <tr>
+
+                                        <!-- =================================
+                                             ID REAL SQL SERVER
+                                             ================================= -->
+
+                                        <td class="kx-pedido-id">
+
+                                            @pedido.IdPedido
+
+                                        </td>
+
+                                        <!-- =================================
+                                             NÚMERO CLICABLE
+                                             ================================= -->
+
+                                        <td>
+
+                                            <a href="/Pedidos/Detalle?id=@pedido.IdPedido"
+                                               class="kx-order-number kx-detalle-link"
+                                               title="Ver detalle del pedido @pedido.Numero">
+
+                                                @pedido.Numero
+
+                                                <span uk-icon="arrow-up-right"></span>
+
+                                            </a>
+
+                                        </td>
+
+                                        <!-- FECHA -->
+
+                                        <td class="kx-date">
+
+                                            @pedido.Fecha.ToString("dd/MM/yyyy HH:mm")
+
+                                        </td>
+
+                                        <!-- CLIENTE -->
+
+                                        <td>
+
+                                            <span class="kx-customer"
+                                                  title="@pedido.Cliente">
+
+                                                @pedido.Cliente
+
+                                            </span>
+
+                                        </td>
+
+                                        <!-- CANTIDAD SOLICITADA -->
+
+                                        <td class="kx-number">
+
+                                            @pedido.CantidadSolicitada.ToString("N2")
+
+                                        </td>
+
+                                        <!-- CANTIDAD ATENDIDA -->
+
+                                        <td class="kx-number">
+
+                                            @pedido.CantidadAtendida.ToString("N2")
+
+                                        </td>
+
+                                        <!-- TOTAL -->
+
+                                        <td>
+
+                                            <strong class="kx-price">
+
+                                                S/ @pedido.Total.ToString("N2")
+
+                                            </strong>
+
+                                        </td>
+
+                                        <!-- ESTADO -->
+
+                                        <td>
+
+                                            <span class="kx-status @claseEstado">
+
+                                                @pedido.Estado
+
+                                            </span>
+
+                                            @if (requiereRevision)
+                                            {
+
+                                                <span class="kx-review">
+
+                                                    Revisar estado
+
+                                                </span>
+
+                                            }
+
+                                        </td>
+
+                                        <!-- VÍNCULOS -->
+
+                                        <td>
+
+                                            <div class="kx-links">
+
+                                                @if (pedido.IdCotizacion.HasValue)
+                                                {
+
+                                                    <span class="kx-link-tag">
+
+                                                        Cot. #@pedido.IdCotizacion
+
+                                                    </span>
+
+                                                }
+
+                                                @if (pedido.IdVenta.HasValue)
+                                                {
+
+                                                    <span class="kx-link-tag">
+
+                                                        Venta #@pedido.IdVenta
+
+                                                    </span>
+
+                                                }
+
+                                                @if (pedido.VentasVinculadas > 1)
+                                                {
+
+                                                    <span class="kx-review">
+
+                                                        Revisar ventas
+                                                        (@pedido.VentasVinculadas)
+
+                                                    </span>
+
+                                                }
+
+                                                @if (!pedido.IdVenta.HasValue
+                                                    && !pedido.IdCotizacion.HasValue
+                                                    && pedido.VentasVinculadas == 0)
+                                                {
+
+                                                    <span class="kx-muted">
+
+                                                        Sin vínculos
+
+                                                    </span>
+
+                                                }
+
+                                            </div>
+
+                                        </td>
+
+                                        <!-- =================================
+                                             VER DETALLE POR ID
+                                             ================================= -->
+
+                                        <td>
+
+                                            <a href="/Pedidos/Detalle?id=@pedido.IdPedido"
+                                               class="kx-ver-detalle"
+                                               title="Abrir detalle del pedido @pedido.Numero">
+
+                                                <span uk-icon="eye"></span>
+
+                                                Ver detalle
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+
+                                }
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- =====================================
+                     FOOTER TABLA
+                     ===================================== -->
+
+                <footer class="kx-panel-footer"
+                        id="pieTabla">
+
+                    <span>
+
+                        Mostrando @Model.Pedidos.Count órdenes
+
+                    </span>
+
+                    <span>
+
+                        KerniX · Gestión comercial
+
+                    </span>
+
+                </footer>
+
+            </section>
+
+            <!-- NOTA -->
+
+            <div class="kx-note">
+
+                <span uk-icon="info"></span>
+
+                Esta pantalla consulta órdenes.
+                No modifica inventario ni genera ventas.
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- UIKIT JAVASCRIPT -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
+
+    <!-- BÚSQUEDA AJAX EXISTENTE -->
+
+    <script src="/js/pedido/index.js?v=20260920-06"></script>
+
+</body>
+
+</html>

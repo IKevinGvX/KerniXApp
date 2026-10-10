@@ -12,4 +12,8 @@ public interface IComprobanteDbService
 
     Task<ComprobanteResponse?> ObtenerPorIdAsync(
         long idComprobante);
+    Task<ComprobanteDetalleModel?>
+    ObtenerDetalleAsync(
+        long idVenta,
+        CancellationToken cancellationToken);
 }

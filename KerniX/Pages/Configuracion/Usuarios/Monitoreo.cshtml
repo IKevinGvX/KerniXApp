@@ -1,0 +1,1541 @@
+﻿@page
+@model KerniX.Pages.Configuracion.Usuarios.MonitoreoModel
+
+@{
+    ViewData["Title"] = "Monitoreo por Usuario";
+}
+
+<style>
+    .kx-monitor {
+        --bg: #020b17;
+        --panel: #06182b;
+        --panel2: #082039;
+        --gold: #ffb800;
+        --gold2: #ffdd72;
+        --blue: #149cff;
+        --cyan: #50d2ff;
+        --green: #36e69a;
+        --red: #ff607b;
+        --orange: #ff9f43;
+        --purple: #ab72ff;
+        --text: #f5f9ff;
+        --muted: #98b7d2;
+        --border: rgba(62,135,207,.28);
+        min-height: 100vh;
+        padding: 28px;
+        color: var(--text);
+        background: radial-gradient(circle at 92% 0%,rgba(20,156,255,.13),transparent 30%), radial-gradient(circle at 6% 0%,rgba(255,184,0,.07),transparent 25%), linear-gradient(145deg,#020b17,#031426);
+        font-size: 16px;
+    }
+
+        .kx-monitor *,
+        .kx-monitor *::before,
+        .kx-monitor *::after {
+            box-sizing: border-box;
+        }
+
+    .kx-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .kx-top-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .kx-icon {
+        width: 64px;
+        height: 64px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        border: 1px solid rgba(80,210,255,.45);
+        color: var(--cyan);
+        background: rgba(20,156,255,.08);
+        font-size: 27px;
+        font-weight: 900;
+    }
+
+    .kx-breadcrumb {
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+        .kx-breadcrumb a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+    .kx-title {
+        margin: 0;
+        color: #fff;
+        font-size: 34px;
+        font-weight: 900;
+    }
+
+    .kx-subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+    }
+
+    .kx-btn {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 17px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: 15px;
+        font-weight: 850;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .kx-btn-dark {
+        color: #eaf5ff !important;
+        background: #071c31;
+    }
+
+    .kx-btn-gold {
+        color: #201500 !important;
+        border-color: #ffe17a;
+        background: linear-gradient(180deg,#ffdb68,#efa800);
+    }
+
+    .kx-btn-blue {
+        color: #e6f8ff !important;
+        border-color: rgba(80,210,255,.45);
+        background: linear-gradient(180deg,rgba(20,156,255,.24),rgba(6,36,65,.98));
+    }
+
+    .kx-card {
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: linear-gradient(145deg,rgba(7,29,52,.98),rgba(4,18,34,.98));
+        box-shadow: 0 15px 35px rgba(0,0,0,.20);
+    }
+
+    .kx-message {
+        margin-bottom: 16px;
+        padding: 15px 18px;
+        border-radius: 13px;
+        font-size: 15px;
+    }
+
+    .kx-ok {
+        color: #a7f3cc;
+        border: 1px solid rgba(54,230,154,.35);
+        background: rgba(54,230,154,.07);
+    }
+
+    .kx-error {
+        color: #ffc2cd;
+        border: 1px solid rgba(255,96,123,.38);
+        background: rgba(255,96,123,.07);
+    }
+
+    .kx-selector {
+        display: grid;
+        grid-template-columns: minmax(300px,1fr) auto;
+        gap: 10px;
+        padding: 18px;
+        margin-bottom: 18px;
+    }
+
+    .kx-select {
+        width: 100%;
+        min-height: 52px;
+        padding: 0 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(67,137,205,.38);
+        outline: none;
+        color: #fff !important;
+        background: #05182b !important;
+        font-size: 16px;
+    }
+
+        .kx-select option {
+            background: #06182b;
+            color: #fff;
+        }
+
+    .kx-user-strip {
+        display: grid;
+        grid-template-columns: 1.3fr repeat(4,minmax(125px,.45fr));
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .kx-profile,
+    .kx-kpi {
+        min-height: 116px;
+        padding: 17px;
+    }
+
+    .kx-profile {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        border-color: rgba(255,184,0,.34);
+    }
+
+    .kx-avatar {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        color: var(--cyan);
+        border: 1px solid rgba(80,210,255,.40);
+        background: rgba(80,210,255,.08);
+        font-size: 22px;
+        font-weight: 900;
+    }
+
+    .kx-profile strong {
+        display: block;
+        color: #fff;
+        font-size: 19px;
+    }
+
+    .kx-profile span {
+        display: block;
+        margin-top: 3px;
+        color: #8fb2d1;
+        font-size: 13px;
+    }
+
+    .kx-kpi-label {
+        color: #8eafcd;
+        font-size: 13px;
+        font-weight: 760;
+    }
+
+    .kx-kpi-value {
+        margin-top: 7px;
+        color: #fff;
+        font-size: 27px;
+        font-weight: 900;
+    }
+
+    .kx-kpi-note {
+        margin-top: 5px;
+        color: #7899b7;
+        font-size: 12px;
+    }
+
+    .kx-kpi.green .kx-kpi-value {
+        color: var(--green);
+    }
+
+    .kx-kpi.red .kx-kpi-value {
+        color: #ff8ca0;
+    }
+
+    .kx-kpi.gold .kx-kpi-value {
+        color: var(--gold2);
+    }
+
+    .kx-kpi.blue .kx-kpi-value {
+        color: var(--cyan);
+    }
+
+    .kx-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .kx-section {
+        padding: 18px;
+    }
+
+    .kx-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+        .kx-head h2 {
+            margin: 0;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .kx-head span {
+            color: #7fa3c5;
+            font-size: 12px;
+        }
+
+    .kx-table-wrap {
+        overflow: auto;
+    }
+
+    .kx-table {
+        width: 100%;
+        min-width: 700px;
+        border-collapse: collapse;
+    }
+
+        .kx-table th {
+            padding: 11px 10px;
+            text-align: left;
+            color: #73bfff;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .35px;
+            border-bottom: 1px solid rgba(66,133,200,.25);
+        }
+
+        .kx-table td {
+            padding: 12px 10px;
+            color: #eaf4ff;
+            font-size: 13px;
+            vertical-align: top;
+            border-bottom: 1px solid rgba(53,108,162,.14);
+        }
+
+    .kx-pill {
+        display: inline-flex;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 850;
+    }
+
+        .kx-pill.green {
+            color: #7df0b8;
+            border: 1px solid rgba(54,230,154,.34);
+            background: rgba(54,230,154,.07);
+        }
+
+        .kx-pill.red {
+            color: #ff95a7;
+            border: 1px solid rgba(255,96,123,.34);
+            background: rgba(255,96,123,.07);
+        }
+
+        .kx-pill.gold {
+            color: #ffd875;
+            border: 1px solid rgba(255,184,0,.34);
+            background: rgba(255,184,0,.07);
+        }
+
+        .kx-pill.blue {
+            color: #89dcff;
+            border: 1px solid rgba(80,210,255,.34);
+            background: rgba(80,210,255,.07);
+        }
+
+    .kx-empty {
+        padding: 30px 15px;
+        text-align: center;
+        color: #8baac7;
+        font-size: 14px;
+    }
+
+    .kx-json {
+        max-width: 260px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: #91abc4;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .kx-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .kx-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+        padding-top: 13px;
+        border-top: 1px solid rgba(58,117,177,.16);
+    }
+
+    .kx-page-info {
+        color: #8aa9c6;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+        .kx-page-info strong {
+            color: #ffffff;
+        }
+
+    .kx-pages {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .kx-page {
+        min-width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 9px;
+        border-radius: 9px;
+        border: 1px solid rgba(67,137,205,.30);
+        background: #06182b;
+        color: #cce9ff !important;
+        text-decoration: none !important;
+        font-size: 12px;
+        font-weight: 850;
+    }
+
+        .kx-page.active {
+            color: #211600 !important;
+            border-color: #ffe17a;
+            background: linear-gradient(180deg,#ffdc69,#efa800);
+        }
+
+        .kx-page.disabled {
+            opacity: .35;
+            pointer-events: none;
+        }
+
+    .kx-device-grid {
+        display: grid;
+        grid-template-columns: minmax(330px,.95fr) minmax(0,1.55fr);
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .kx-device-card {
+        padding: 19px;
+    }
+
+    .kx-device-main {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 16px;
+    }
+
+    .kx-device-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        display: grid;
+        place-items: center;
+        border-radius: 15px;
+        border: 1px solid rgba(80,210,255,.40);
+        background: rgba(20,156,255,.08);
+        color: var(--cyan);
+        font-size: 23px;
+        font-weight: 900;
+    }
+
+    .kx-device-name {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .kx-device-code {
+        margin-top: 3px;
+        color: var(--cyan);
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .kx-device-sub {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 13px;
+    }
+
+    .kx-device-data {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+    }
+
+        .kx-device-data > div {
+            padding: 11px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(61,128,195,.18);
+            background: rgba(3,17,31,.42);
+        }
+
+        .kx-device-data span {
+            display: block;
+            color: #7fa5c7;
+            font-size: 11px;
+        }
+
+        .kx-device-data strong {
+            display: block;
+            margin-top: 3px;
+            color: #fff;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+    .kx-live-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 15px;
+    }
+
+    .kx-live-title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 900;
+    }
+
+    .kx-live-note {
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 12px;
+    }
+
+    .kx-live-status {
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(54,230,154,.32);
+        color: #7cf0b7;
+        background: rgba(54,230,154,.07);
+        font-size: 11px;
+        font-weight: 900;
+    }
+
+    .kx-metrics {
+        display: grid;
+        grid-template-columns: repeat(6,minmax(90px,1fr));
+        gap: 10px;
+    }
+
+    .kx-metric {
+        min-height: 103px;
+        padding: 13px;
+        border-radius: 12px;
+        border: 1px solid rgba(60,129,197,.22);
+        background: rgba(3,18,34,.56);
+    }
+
+        .kx-metric .label {
+            color: #86a8c8;
+            font-size: 11px;
+            font-weight: 760;
+        }
+
+        .kx-metric .value {
+            margin-top: 8px;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 900;
+        }
+
+        .kx-metric .note {
+            margin-top: 5px;
+            color: #6f93b3;
+            font-size: 10px;
+        }
+
+        .kx-metric.warning {
+            border-color: rgba(255,184,0,.37);
+        }
+
+            .kx-metric.warning .value {
+                color: #ffd36b;
+            }
+
+        .kx-metric.critical {
+            border-color: rgba(255,96,123,.40);
+        }
+
+            .kx-metric.critical .value {
+                color: #ff8da1;
+            }
+
+    .kx-no-device {
+        padding: 24px;
+        text-align: center;
+        color: #91afca;
+    }
+
+    @@media(max-width:1150px) {
+        .kx-user-strip {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .kx-profile {
+            grid-column: 1/-1;
+        }
+
+        .kx-grid,
+        .kx-device-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-metrics {
+            grid-template-columns: repeat(3,minmax(100px,1fr));
+        }
+    }
+
+    @@media(max-width:700px) {
+        .kx-monitor {
+            padding: 15px;
+        }
+
+        .kx-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .kx-selector,
+        .kx-user-strip {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-profile {
+            grid-column: auto;
+        }
+
+        .kx-device-data,
+        .kx-metrics {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .kx-title {
+            font-size: 29px;
+        }
+    }
+</style>
+
+
+<div class="kx-monitor">
+
+    <header class="kx-top">
+
+        <div class="kx-top-left">
+
+            <div class="kx-icon">
+                M
+            </div>
+
+            <div>
+
+                <div class="kx-breadcrumb">
+                    <a href="/Configuracion/Index">Configuración</a>
+                    <span>›</span>
+                    <a href="/Configuracion/Usuarios/Index">Usuarios</a>
+                    <span>›</span>
+                    <span>Monitoreo</span>
+                </div>
+
+                <h1 class="kx-title">
+                    Monitoreo por Usuario
+                </h1>
+
+                <p class="kx-subtitle">
+                    Cuenta, equipo asignado, métricas, sesiones, accesos y auditoría de seguridad.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="kx-actions">
+
+            <a href="/Configuracion/Usuarios/Index"
+               class="kx-btn kx-btn-dark">
+                ← Usuarios
+            </a>
+
+            @if (
+                Model.Monitoreo.Usuario is not null
+            )
+            {
+                <a href="/Configuracion/Usuarios/Editar?idUsuario=@Model.Monitoreo.Usuario.IdUsuario"
+                   class="kx-btn kx-btn-gold">
+                    Editar usuario
+                </a>
+            }
+
+        </div>
+
+    </header>
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+    {
+        <div class="kx-message kx-ok">
+            @Model.Mensaje
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Error))
+    {
+        <div class="kx-message kx-error">
+            @Model.Error
+        </div>
+    }
+
+
+    <section class="kx-card kx-selector">
+
+        <form method="get"
+              action="/Configuracion/Usuarios/Monitoreo"
+              style="display:contents;">
+
+            <select name="IdUsuario"
+                    class="kx-select"
+                    required>
+
+                @foreach (var usuario in Model.Usuarios)
+                {
+                    if (
+                        Model.IdUsuario ==
+                        usuario.IdUsuario
+                    )
+                    {
+                        <option value="@usuario.IdUsuario"
+                                selected>
+                            @usuario.Empleado — @usuario.NombreUsuario — @usuario.Roles
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="@usuario.IdUsuario">
+                            @usuario.Empleado — @usuario.NombreUsuario — @usuario.Roles
+                        </option>
+                    }
+                }
+
+            </select>
+
+            <button type="submit"
+                    class="kx-btn kx-btn-blue">
+                Ver monitoreo
+            </button>
+
+        </form>
+
+    </section>
+
+
+    @if (Model.Monitoreo.Usuario is not null)
+    {
+        var usuario =
+            Model.Monitoreo.Usuario;
+
+
+        <section class="kx-user-strip">
+
+            <article class="kx-card kx-profile">
+
+                <div class="kx-avatar">
+                    @(
+                        string.IsNullOrWhiteSpace(
+                            usuario.NombreUsuario
+                        )
+                            ? "U"
+                            : usuario.NombreUsuario
+                                .Substring(
+                                    0,
+                                    1
+                                )
+                                .ToUpperInvariant()
+                    )
+                </div>
+
+                <div>
+
+                    <strong>
+                        @usuario.Empleado
+                    </strong>
+
+                    <span>
+                        @usuario.NombreUsuario
+                        ·
+                        @usuario.Correo
+                    </span>
+
+                    <span>
+                        @usuario.Cargo
+                        ·
+                        @usuario.Sucursal
+                        ·
+                        @(string.IsNullOrWhiteSpace(usuario.Rol) ? "Sin rol" : usuario.Rol)
+                    </span>
+
+                </div>
+
+            </article>
+
+
+            <article class="kx-card kx-kpi @(usuario.Estado ? "green" : "red")">
+
+                <div class="kx-kpi-label">
+                    Estado de cuenta
+                </div>
+
+                <div class="kx-kpi-value">
+                    @Model.EstadoCuenta
+                </div>
+
+                <div class="kx-kpi-note">
+                    Acceso general
+                </div>
+
+            </article>
+
+
+            <article class="kx-card kx-kpi gold">
+
+                <div class="kx-kpi-label">
+                    Intentos fallidos
+                </div>
+
+                <div class="kx-kpi-value">
+                    @usuario.IntentosFallidos
+                </div>
+
+                <div class="kx-kpi-note">
+                    Riesgo: @Model.EstadoRiesgo
+                </div>
+
+            </article>
+
+
+            <article class="kx-card kx-kpi blue">
+
+                <div class="kx-kpi-label">
+                    Sesiones activas
+                </div>
+
+                <div class="kx-kpi-value">
+                    @Model.Monitoreo.SesionesActivas
+                </div>
+
+                <div class="kx-kpi-note">
+                    @Model.Monitoreo.TotalSesiones registradas
+                </div>
+
+            </article>
+
+
+            <article class="kx-card kx-kpi">
+
+                <div class="kx-kpi-label">
+                    Último acceso
+                </div>
+
+                <div class="kx-kpi-value"
+                     style="font-size:17px;">
+                    @Model.FechaTexto(usuario.UltimoAcceso)
+                </div>
+
+                <div class="kx-kpi-note">
+                    Última actividad registrada
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             EQUIPO ASIGNADO + MÉTRICA ACTUAL
+             ===================================================== -->
+
+        <section class="kx-device-grid">
+
+            @if (Model.Monitoreo.Equipo is not null)
+            {
+                var equipo =
+                    Model.Monitoreo.Equipo;
+
+                var metrica =
+                    Model.Monitoreo.MetricaActual;
+
+                var agente =
+                    Model.Monitoreo.Agente;
+
+
+                <article class="kx-card kx-device-card">
+
+                    <div class="kx-device-main">
+
+                        <div class="kx-device-icon">
+                            PC
+                        </div>
+
+                        <div>
+
+                            <div class="kx-device-name">
+                                @(string.IsNullOrWhiteSpace(equipo.NombreEquipo)
+                                    ? "Equipo asignado"
+                                    : equipo.NombreEquipo)
+                            </div>
+
+                            <div class="kx-device-code">
+                                @(string.IsNullOrWhiteSpace(equipo.CodigoEquipo)
+                                    ? $"Máquina #{equipo.IdMaquina}"
+                                    : equipo.CodigoEquipo)
+                            </div>
+
+                            <div class="kx-device-sub">
+                                @Model.EquipoEstadoTexto
+                                ·
+                                Agente: @Model.AgenteEstadoTexto
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-device-data">
+
+                        <div>
+                            <span>IP actual</span>
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(equipo.DireccionIpActual)
+                                    ? "-"
+                                    : equipo.DireccionIpActual)
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Dirección MAC</span>
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(equipo.DireccionMac)
+                                    ? "-"
+                                    : equipo.DireccionMac)
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Número de serie</span>
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(equipo.NumeroSerie)
+                                    ? "-"
+                                    : equipo.NumeroSerie)
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Sistema operativo</span>
+                            <strong>
+                                @(string.IsNullOrWhiteSpace(equipo.SistemaOperativo)
+                                    ? "-"
+                                    : equipo.SistemaOperativo)
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Agente</span>
+                            <strong>
+                                @(agente is null
+                                    ? "No instalado"
+                                    : $"{agente.CodigoAgente} {agente.VersionAgente}".Trim())
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Última comunicación</span>
+                            <strong>
+                                @Model.FechaTexto(
+                                    agente?.UltimaComunicacion
+                                    ?? equipo.UltimaComunicacion
+                                )
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="kx-card kx-device-card">
+
+                    <div class="kx-live-head">
+
+                        <div>
+
+                            <div class="kx-live-title">
+                                Estado en tiempo real
+                            </div>
+
+                            <div class="kx-live-note">
+                                Última métrica:
+                                @Model.FechaTexto(
+                                    metrica?.FechaHora
+                                )
+                            </div>
+
+                        </div>
+
+                        <span class="kx-live-status">
+                            @(string.IsNullOrWhiteSpace(metrica?.EstadoRed)
+                                ? "Sin dato de red"
+                                : metrica.EstadoRed)
+                        </span>
+
+                    </div>
+
+
+                    @if (metrica is null)
+                    {
+                        <div class="kx-no-device">
+                            La máquina está asignada, pero todavía no registra métricas.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="kx-metrics">
+
+                            <div class="kx-metric @Model.NivelMetrica(metrica.PorcentajeCpu, 70, 90)">
+                                <div class="label">CPU</div>
+                                <div class="value">
+                                    @Model.MetricaTexto(metrica.PorcentajeCpu, "%")
+                                </div>
+                                <div class="note">Uso del procesador</div>
+                            </div>
+
+                            <div class="kx-metric @Model.NivelMetrica(metrica.PorcentajeRam, 75, 90)">
+                                <div class="label">RAM</div>
+                                <div class="value">
+                                    @Model.MetricaTexto(metrica.PorcentajeRam, "%")
+                                </div>
+                                <div class="note">Memoria utilizada</div>
+                            </div>
+
+                            <div class="kx-metric @Model.NivelMetrica(metrica.PorcentajeDisco, 80, 95)">
+                                <div class="label">DISCO</div>
+                                <div class="value">
+                                    @Model.MetricaTexto(metrica.PorcentajeDisco, "%")
+                                </div>
+                                <div class="note">Ocupación</div>
+                            </div>
+
+                            <div class="kx-metric">
+                                <div class="label">LIBRE</div>
+                                <div class="value">
+                                    @Model.MetricaTexto(metrica.EspacioLibreGb, " GB")
+                                </div>
+                                <div class="note">Espacio disponible</div>
+                            </div>
+
+                            <div class="kx-metric @Model.NivelMetrica(metrica.TemperaturaCpu, 70, 85)">
+                                <div class="label">TEMP. CPU</div>
+                                <div class="value">
+                                    @Model.MetricaTexto(metrica.TemperaturaCpu, " °C")
+                                </div>
+                                <div class="note">Temperatura</div>
+                            </div>
+
+                            <div class="kx-metric @Model.NivelMetrica(metrica.LatenciaMs, 100, 250)">
+                                <div class="label">LATENCIA</div>
+                                <div class="value">
+                                    @Model.MetricaTexto(metrica.LatenciaMs, " ms")
+                                </div>
+                                <div class="note">Respuesta de red</div>
+                            </div>
+
+                        </div>
+                    }
+
+                </article>
+            }
+            else
+            {
+                <article class="kx-card kx-device-card"
+                         style="grid-column:1/-1;">
+
+                    <div class="kx-no-device">
+                        Este empleado todavía no tiene una máquina asignada en
+                        <strong>mon.asignacion_maquina</strong>.
+                    </div>
+
+                </article>
+            }
+
+        </section>
+
+
+        <section class="kx-grid">
+
+
+            <!-- =================================================
+                 SESIONES
+                 ================================================= -->
+
+            <article class="kx-card kx-section" id="sesiones">
+
+                <div class="kx-head">
+
+                    <div>
+                        <h2>
+                            Sesiones del usuario
+                        </h2>
+
+                        <span>
+                            Página @Model.PaginaSesiones de @Model.TotalPaginasSesiones ·
+                            @Model.Monitoreo.TotalSesiones registro(s) ·
+                            20 por página
+                        </span>
+                    </div>
+
+
+                    @if (
+                        Model.Monitoreo.SesionesActivas > 0
+                    )
+                    {
+                        <form method="post"
+                              action="/Configuracion/Usuarios/Monitoreo?handler=RevocarSesiones">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="idUsuario"
+                                   value="@usuario.IdUsuario" />
+
+                            <input type="hidden" name="PaginaSesiones" value="@Model.PaginaSesiones" />
+                            <input type="hidden" name="PaginaAccesos" value="@Model.PaginaAccesos" />
+                            <input type="hidden" name="PaginaAuditoria" value="@Model.PaginaAuditoria" />
+
+                            <button type="submit"
+                                    class="kx-btn kx-btn-gold"
+                                    onclick="return confirm('¿Cerrar todas las sesiones activas de este usuario?');">
+                                Cerrar sesiones
+                            </button>
+
+                        </form>
+                    }
+
+                </div>
+
+
+                @if (
+                    Model.Monitoreo.Sesiones.Count == 0
+                )
+                {
+                    <div class="kx-empty">
+                        No existen sesiones registradas.
+                    </div>
+                }
+                else
+                {
+                    <div class="kx-table-wrap">
+
+                        <table class="kx-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    <th>Inicio</th>
+                                    <th>Cierre</th>
+                                    <th>IP</th>
+                                    <th>Dispositivo</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (
+                                    var sesion in
+                                    Model.SesionesPagina
+                                )
+                                {
+                                    <tr>
+
+                                        <td>
+                                            <span class="kx-pill @(string.Equals(sesion.Estado, "activa", StringComparison.OrdinalIgnoreCase) ? "green" : "blue")">
+                                                @(string.IsNullOrWhiteSpace(sesion.Estado) ? "Sin dato" : sesion.Estado)
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            @Model.FechaTexto(sesion.FechaInicio)
+                                        </td>
+
+                                        <td>
+                                            @Model.FechaTexto(sesion.FechaCierre)
+                                        </td>
+
+                                        <td>
+                                            @(string.IsNullOrWhiteSpace(sesion.Ip) ? "-" : sesion.Ip)
+                                        </td>
+
+                                        <td>
+                                            @(string.IsNullOrWhiteSpace(sesion.Dispositivo)
+                                                ? (string.IsNullOrWhiteSpace(sesion.UserAgent) ? "-" : sesion.UserAgent)
+                                                : sesion.Dispositivo)
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="kx-pagination">
+
+                        <div class="kx-page-info">
+                            Mostrando
+                            <strong>@Model.RegistroDesde(Model.PaginaSesiones, Model.Monitoreo.Sesiones.Count)</strong>
+                            -
+                            <strong>@Model.RegistroHasta(Model.PaginaSesiones, Model.Monitoreo.Sesiones.Count)</strong>
+                            de
+                            <strong>Model.Monitoreo.Sesiones.Count</strong>
+                            · Página
+                            <strong>@Model.PaginaSesiones</strong>
+                            de
+                            <strong>@Model.TotalPaginasSesiones</strong>
+                            · 20 por página
+                        </div>
+
+                        <div class="kx-pages">
+
+                            <a class="kx-page @(Model.PaginaSesiones <= 1 ? "disabled" : "")"
+                               href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@(Math.Max(1, Model.PaginaSesiones - 1))&PaginaAccesos=@Model.PaginaAccesos&PaginaAuditoria=@Model.PaginaAuditoria#sesiones">
+                                ‹
+                            </a>
+
+                            @for (int pagina = 1; pagina <= Model.TotalPaginasSesiones; pagina++)
+                            {
+                                <a class="kx-page @(pagina == Model.PaginaSesiones ? "active" : "")"
+                                   href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@pagina&PaginaAccesos=@Model.PaginaAccesos&PaginaAuditoria=@Model.PaginaAuditoria#sesiones">
+                                    @pagina
+                                </a>
+                            }
+
+                            <a class="kx-page @(Model.PaginaSesiones >= Model.TotalPaginasSesiones ? "disabled" : "")"
+                               href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@(Math.Min(Model.TotalPaginasSesiones, Model.PaginaSesiones + 1))&PaginaAccesos=@Model.PaginaAccesos&PaginaAuditoria=@Model.PaginaAuditoria#sesiones">
+                                ›
+                            </a>
+
+                        </div>
+
+                    </div>
+                }
+
+            </article>
+
+
+            <!-- =================================================
+                 ACCESOS
+                 ================================================= -->
+
+            <article class="kx-card kx-section" id="accesos">
+
+                <div class="kx-head">
+
+                    <div>
+                        <h2>
+                            Historial de acceso
+                        </h2>
+
+                        <span>
+                            Página @Model.PaginaAccesos de @Model.TotalPaginasAccesos ·
+                            @Model.Monitoreo.HistorialAcceso.Count registro(s) ·
+                            20 por página
+                        </span>
+                    </div>
+
+                </div>
+
+
+                @if (
+                    Model.Monitoreo.HistorialAcceso.Count == 0
+                )
+                {
+                    <div class="kx-empty">
+                        No existe historial de acceso para este usuario.
+                    </div>
+                }
+                else
+                {
+                    <div class="kx-table-wrap">
+
+                        <table class="kx-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Resultado</th>
+                                    <th>Fecha</th>
+                                    <th>IP</th>
+                                    <th>Detalle</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (
+                                    var acceso in
+                                    Model.AccesosPagina
+                                )
+                                {
+                                    <tr>
+
+                                        <td>
+                                            <span class="kx-pill @(acceso.Exitoso == false ? "red" : acceso.Exitoso == true ? "green" : "blue")">
+                                                @Model.ExitoTexto(acceso.Exitoso)
+                                            </span>
+                                        </td>
+
+                                        <td>
+                                            @Model.FechaTexto(acceso.Fecha)
+                                        </td>
+
+                                        <td>
+                                            @(string.IsNullOrWhiteSpace(acceso.Ip) ? "-" : acceso.Ip)
+                                        </td>
+
+                                        <td>
+                                            @(string.IsNullOrWhiteSpace(acceso.Detalle)
+                                                ? (string.IsNullOrWhiteSpace(acceso.UserAgent) ? "-" : acceso.UserAgent)
+                                                : acceso.Detalle)
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="kx-pagination">
+
+                        <div class="kx-page-info">
+                            Mostrando
+                            <strong>@Model.RegistroDesde(Model.PaginaAccesos, Model.Monitoreo.HistorialAcceso.Count)</strong>
+                            -
+                            <strong>@Model.RegistroHasta(Model.PaginaAccesos, Model.Monitoreo.HistorialAcceso.Count)</strong>
+                            de
+                            <strong>Model.Monitoreo.HistorialAcceso.Count</strong>
+                            · Página
+                            <strong>@Model.PaginaAccesos</strong>
+                            de
+                            <strong>@Model.TotalPaginasAccesos</strong>
+                            · 20 por página
+                        </div>
+
+                        <div class="kx-pages">
+
+                            <a class="kx-page @(Model.PaginaAccesos <= 1 ? "disabled" : "")"
+                               href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@Model.PaginaSesiones&PaginaAccesos=@(Math.Max(1, Model.PaginaAccesos - 1))&PaginaAuditoria=@Model.PaginaAuditoria#accesos">
+                                ‹
+                            </a>
+
+                            @for (int pagina = 1; pagina <= Model.TotalPaginasAccesos; pagina++)
+                            {
+                                <a class="kx-page @(pagina == Model.PaginaAccesos ? "active" : "")"
+                                   href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@Model.PaginaSesiones&PaginaAccesos=@pagina&PaginaAuditoria=@Model.PaginaAuditoria#accesos">
+                                    @pagina
+                                </a>
+                            }
+
+                            <a class="kx-page @(Model.PaginaAccesos >= Model.TotalPaginasAccesos ? "disabled" : "")"
+                               href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@Model.PaginaSesiones&PaginaAccesos=@(Math.Min(Model.TotalPaginasAccesos, Model.PaginaAccesos + 1))&PaginaAuditoria=@Model.PaginaAuditoria#accesos">
+                                ›
+                            </a>
+
+                        </div>
+
+                    </div>
+                }
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             AUDITORÍA
+             ===================================================== -->
+
+        <section class="kx-card kx-section" id="auditoria">
+
+            <div class="kx-head">
+
+                <div>
+                    <h2>
+                        Auditoría del usuario
+                    </h2>
+
+                    <span>
+                        Página @Model.PaginaAuditoria de @Model.TotalPaginasAuditoria ·
+                        @Model.Monitoreo.Auditoria.Count registro(s) ·
+                        20 por página
+                    </span>
+                </div>
+
+            </div>
+
+
+            @if (
+                Model.Monitoreo.Auditoria.Count == 0
+            )
+            {
+                <div class="kx-empty">
+                    No existen eventos de auditoría para este usuario.
+                </div>
+            }
+            else
+            {
+                <div class="kx-table-wrap">
+
+                    <table class="kx-table"
+                           style="min-width:1100px;">
+
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Actor</th>
+                                <th>Módulo</th>
+                                <th>Entidad</th>
+                                <th>Acción</th>
+                                <th>Anterior</th>
+                                <th>Nuevo</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (
+                                var evento in
+                                Model.AuditoriaPagina
+                            )
+                            {
+                                <tr>
+
+                                    <td>
+                                        @Model.FechaTexto(
+                                            evento.FechaRegistro
+                                        )
+                                    </td>
+
+                                    <td>
+                                        @(string.IsNullOrWhiteSpace(evento.UsuarioActor)
+                                            ? "Sistema"
+                                            : evento.UsuarioActor)
+                                    </td>
+
+                                    <td>
+                                        @evento.Modulo
+                                    </td>
+
+                                    <td>
+                                        @evento.Entidad
+                                    </td>
+
+                                    <td>
+                                        <span class="kx-pill gold">
+                                            @evento.Accion
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <div class="kx-json">
+                                            @(string.IsNullOrWhiteSpace(evento.ValorAnterior)
+                                                ? "-"
+                                                : evento.ValorAnterior)
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="kx-json">
+                                            @(string.IsNullOrWhiteSpace(evento.ValorNuevo)
+                                                ? "-"
+                                                : evento.ValorNuevo)
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="kx-pagination">
+
+                    <div class="kx-page-info">
+                        Mostrando
+                        <strong>@Model.RegistroDesde(Model.PaginaAuditoria, Model.Monitoreo.Auditoria.Count)</strong>
+                        -
+                        <strong>@Model.RegistroHasta(Model.PaginaAuditoria, Model.Monitoreo.Auditoria.Count)</strong>
+                        de
+                        <strong>Model.Monitoreo.Auditoria.Count</strong>
+                        · Página
+                        <strong>@Model.PaginaAuditoria</strong>
+                        de
+                        <strong>@Model.TotalPaginasAuditoria</strong>
+                        · 20 por página
+                    </div>
+
+                    <div class="kx-pages">
+
+                        <a class="kx-page @(Model.PaginaAuditoria <= 1 ? "disabled" : "")"
+                           href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@Model.PaginaSesiones&PaginaAccesos=@Model.PaginaAccesos&PaginaAuditoria=@(Math.Max(1, Model.PaginaAuditoria - 1))#auditoria">
+                            ‹
+                        </a>
+
+                        @for (int pagina = 1; pagina <= Model.TotalPaginasAuditoria; pagina++)
+                        {
+                            <a class="kx-page @(pagina == Model.PaginaAuditoria ? "active" : "")"
+                               href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@Model.PaginaSesiones&PaginaAccesos=@Model.PaginaAccesos&PaginaAuditoria=@pagina#auditoria">
+                                @pagina
+                            </a>
+                        }
+
+                        <a class="kx-page @(Model.PaginaAuditoria >= Model.TotalPaginasAuditoria ? "disabled" : "")"
+                           href="/Configuracion/Usuarios/Monitoreo?IdUsuario=@Model.IdUsuario&PaginaSesiones=@Model.PaginaSesiones&PaginaAccesos=@Model.PaginaAccesos&PaginaAuditoria=@(Math.Min(Model.TotalPaginasAuditoria, Model.PaginaAuditoria + 1))#auditoria">
+                            ›
+                        </a>
+
+                    </div>
+
+                </div>
+            }
+
+        </section>
+    }
+    else
+    {
+        <section class="kx-card kx-section">
+            <div class="kx-empty">
+                Selecciona un usuario para comenzar el monitoreo.
+            </div>
+        </section>
+    }
+
+</div>

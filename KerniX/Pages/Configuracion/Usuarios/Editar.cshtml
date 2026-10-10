@@ -1,0 +1,734 @@
+﻿@page
+@model KerniX.Pages.Configuracion.Usuarios.EditarModel
+
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<style>
+    .kx-user-edit {
+        --bg: #020b17;
+        --panel: #06182b;
+        --gold: #ffb800;
+        --gold2: #ffdb69;
+        --blue: #149cff;
+        --cyan: #50d2ff;
+        --green: #36e69a;
+        --red: #ff607b;
+        --text: #f5f9ff;
+        --muted: #9fbad3;
+        --border: rgba(62,135,207,.28);
+        min-height: 100vh;
+        padding: 28px;
+        color: var(--text);
+        background: radial-gradient(circle at 88% 0%,rgba(20,156,255,.12),transparent 30%), radial-gradient(circle at 4% 0%,rgba(255,184,0,.07),transparent 24%), linear-gradient(145deg,#020b17,#031426);
+        font-size: 17px;
+    }
+
+        .kx-user-edit *,
+        .kx-user-edit *::before,
+        .kx-user-edit *::after {
+            box-sizing: border-box;
+        }
+
+    .kx-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .kx-title {
+        margin: 0;
+        font-size: 35px;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .kx-subtitle {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+    }
+
+    .kx-breadcrumb {
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+        .kx-breadcrumb a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+    .kx-btn {
+        min-height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 18px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: 16px;
+        font-weight: 850;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+    .kx-btn-dark {
+        color: #eaf5ff !important;
+        background: #071c31;
+    }
+
+    .kx-btn-gold {
+        color: #211600 !important;
+        border-color: #ffe17a;
+        background: linear-gradient(180deg,#ffdc6b,#efa800);
+    }
+
+    .kx-message {
+        margin-bottom: 17px;
+        padding: 16px 18px;
+        border-radius: 13px;
+        font-size: 15px;
+    }
+
+    .kx-message-ok {
+        color: #a8f3cd;
+        border: 1px solid rgba(54,230,154,.35);
+        background: rgba(54,230,154,.07);
+    }
+
+    .kx-message-error {
+        color: #ffc4ce;
+        border: 1px solid rgba(255,96,123,.40);
+        background: rgba(255,96,123,.07);
+    }
+
+    .kx-layout {
+        display: grid;
+        grid-template-columns: minmax(0,1.55fr) minmax(330px,.75fr);
+        gap: 18px;
+    }
+
+    .kx-card {
+        padding: 22px;
+        border: 1px solid var(--border);
+        border-radius: 17px;
+        background: linear-gradient(145deg,rgba(7,29,52,.98),rgba(4,18,34,.98));
+        box-shadow: 0 15px 35px rgba(0,0,0,.20);
+    }
+
+    .kx-section-title {
+        margin: 0 0 5px;
+        font-size: 22px;
+        font-weight: 900;
+        color: #fff;
+    }
+
+    .kx-section-desc {
+        margin: 0 0 17px;
+        color: var(--muted);
+        font-size: 15px;
+    }
+
+    .kx-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 16px;
+    }
+
+    .kx-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .kx-field-full {
+        grid-column: 1/-1;
+    }
+
+    .kx-label {
+        color: #eef7ff;
+        font-size: 16px;
+        font-weight: 850;
+    }
+
+    .kx-input,
+    .kx-select {
+        width: 100%;
+        min-height: 54px;
+        padding: 0 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(67,137,205,.38);
+        outline: none;
+        color: #fff !important;
+        background: #05182b !important;
+        font-size: 17px;
+    }
+
+        .kx-input[readonly] {
+            color: #aac3da !important;
+            background: #041323 !important;
+        }
+
+        .kx-select option {
+            color: #fff;
+            background: #06182b;
+        }
+
+    .kx-check {
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid rgba(64,132,199,.23);
+        border-radius: 12px;
+        background: rgba(4,20,37,.55);
+    }
+
+        .kx-check input {
+            width: 21px;
+            height: 21px;
+            accent-color: #f5b20a;
+        }
+
+        .kx-check strong {
+            display: block;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .kx-check span {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+    .kx-info {
+        display: grid;
+        gap: 10px;
+    }
+
+    .kx-info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(58,117,177,.15);
+    }
+
+        .kx-info-row span {
+            color: #83a6c7;
+            font-size: 13px;
+        }
+
+        .kx-info-row strong {
+            max-width: 220px;
+            color: #fff;
+            text-align: right;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+    .kx-security {
+        margin-top: 18px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(64,132,199,.20);
+    }
+
+        .kx-security h3 {
+            margin: 0 0 5px;
+            color: #fff;
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+        .kx-security p {
+            margin: 0 0 15px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+    .kx-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 18px;
+    }
+
+    @@media(max-width:1000px) {
+        .kx-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media(max-width:720px) {
+        .kx-user-edit {
+            padding: 15px;
+        }
+
+        .kx-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .kx-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-title {
+            font-size: 30px;
+        }
+    }
+</style>
+
+
+<div class="kx-user-edit">
+
+    <header class="kx-top">
+
+        <div>
+
+            <div class="kx-breadcrumb">
+                <a href="/Configuracion/Index">Configuración</a>
+                <span>›</span>
+                <a href="/Configuracion/Usuarios/Index">Usuarios</a>
+                <span>›</span>
+                <span>Editar</span>
+            </div>
+
+            <h1 class="kx-title">
+                Editar Usuario
+            </h1>
+
+            <p class="kx-subtitle">
+                Modifica la cuenta, categoría, estado y seguridad del usuario.
+            </p>
+
+        </div>
+
+
+        <a href="/Configuracion/Usuarios/Index"
+           class="kx-btn kx-btn-dark">
+            ← Volver a usuarios
+        </a>
+
+    </header>
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+    {
+        <div class="kx-message kx-message-ok">
+            @Model.Mensaje
+        </div>
+    }
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+    {
+        <div class="kx-message kx-message-error">
+            <strong>No se pudo completar la operación.</strong>
+            <div>@Model.MensajeError</div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <ul>
+                    @foreach (
+                        var error in
+                        ViewData.ModelState
+                            .Values
+                            .SelectMany(
+                                x => x.Errors
+                            )
+                    )
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+
+
+    <div class="kx-layout">
+
+        <main class="kx-card">
+
+            <form method="post"
+                  action="/Configuracion/Usuarios/Editar?handler=Guardar">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="IdUsuario"
+                       value="@Model.IdUsuario" />
+
+                <input type="hidden"
+                       name="IdEmpleado"
+                       value="@Model.IdEmpleado" />
+
+
+                <h2 class="kx-section-title">
+                    Datos de la cuenta
+                </h2>
+
+                <p class="kx-section-desc">
+                    El empleado queda vinculado; puedes modificar usuario, correo y categoría.
+                </p>
+
+
+                <div class="kx-grid-2">
+
+                    <div class="kx-field kx-field-full">
+
+                        <label class="kx-label">
+                            Empleado
+                        </label>
+
+                        <input type="text"
+                               class="kx-input"
+                               value="@Model.EmpleadoTexto — @Model.CargoTexto"
+                               readonly />
+
+                    </div>
+
+
+                    <div class="kx-field">
+
+                        <label for="NombreUsuario"
+                               class="kx-label">
+                            Nombre de usuario
+                        </label>
+
+                        <input id="NombreUsuario"
+                               name="NombreUsuario"
+                               type="text"
+                               value="@Model.NombreUsuario"
+                               maxlength="100"
+                               class="kx-input"
+                               required />
+
+                    </div>
+
+
+                    <div class="kx-field">
+
+                        <label for="Correo"
+                               class="kx-label">
+                            Correo
+                        </label>
+
+                        <input id="Correo"
+                               name="Correo"
+                               type="email"
+                               value="@Model.Correo"
+                               maxlength="200"
+                               class="kx-input"
+                               required />
+
+                    </div>
+
+
+                    <div class="kx-field">
+
+                        <label for="IdRol"
+                               class="kx-label">
+                            Categoría
+                        </label>
+
+                        <select id="IdRol"
+                                name="IdRol"
+                                class="kx-select"
+                                required>
+
+                            <option value="">
+                                Seleccionar categoría
+                            </option>
+
+                            @foreach (var rol in Model.Roles)
+                            {
+                                if (Model.IdRol == rol.IdRol)
+                                {
+                                    <option value="@rol.IdRol"
+                                            selected>
+                                        @rol.Nombre
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@rol.IdRol">
+                                        @rol.Nombre
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="kx-field">
+
+                        <label class="kx-label">
+                            Estado
+                        </label>
+
+                        <div class="kx-check">
+
+                            <input type="hidden"
+                                   name="Estado"
+                                   value="false" />
+
+                            <input id="Estado"
+                                   name="Estado"
+                                   type="checkbox"
+                                   value="true"
+                                   checked="@(Model.Estado ? "checked" : null)"
+                                   disabled="@(Model.IdUsuario == Model.IdUsuarioSesion ? "disabled" : null)" />
+
+                            @if (Model.IdUsuario == Model.IdUsuarioSesion)
+                            {
+                                <input type="hidden"
+                                       name="Estado"
+                                       value="true" />
+                            }
+
+                            <div>
+                                <strong>Usuario activo</strong>
+                                <span>
+                                    Un usuario inactivo no podrá iniciar sesión.
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-field kx-field-full">
+
+                        <div class="kx-check">
+
+                            <input type="hidden"
+                                   name="RequiereCambioClave"
+                                   value="false" />
+
+                            <input id="RequiereCambioClave"
+                                   name="RequiereCambioClave"
+                                   type="checkbox"
+                                   value="true"
+                                   checked="@(Model.RequiereCambioClave ? "checked" : null)" />
+
+                            <div>
+                                <strong>Requiere cambio de contraseña</strong>
+                                <span>
+                                    Marca esta opción para forzar la renovación de credenciales.
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="kx-actions">
+
+                    <a href="/Configuracion/Usuarios/Index"
+                       class="kx-btn kx-btn-dark">
+                        Cancelar
+                    </a>
+
+                    <button type="submit"
+                            class="kx-btn kx-btn-gold">
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <section class="kx-security"
+                     id="seguridad">
+
+                <h3>
+                    Restablecer contraseña
+                </h3>
+
+                <p>
+                    Genera una nueva contraseña temporal y revierte bloqueos por intentos fallidos.
+                </p>
+
+
+                <form method="post"
+                      action="/Configuracion/Usuarios/Editar?handler=RestablecerClave">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="IdUsuario"
+                           value="@Model.IdUsuario" />
+
+
+                    <div class="kx-grid-2">
+
+                        <div class="kx-field">
+
+                            <label for="PasswordTemporal"
+                                   class="kx-label">
+                                Nueva contraseña temporal
+                            </label>
+
+                            <input id="PasswordTemporal"
+                                   name="PasswordTemporal"
+                                   type="password"
+                                   minlength="8"
+                                   maxlength="100"
+                                   autocomplete="new-password"
+                                   class="kx-input"
+                                   required />
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label for="ConfirmarPassword"
+                                   class="kx-label">
+                                Confirmar contraseña
+                            </label>
+
+                            <input id="ConfirmarPassword"
+                                   name="ConfirmarPassword"
+                                   type="password"
+                                   minlength="8"
+                                   maxlength="100"
+                                   autocomplete="new-password"
+                                   class="kx-input"
+                                   required />
+
+                        </div>
+
+
+                        <div class="kx-field kx-field-full">
+
+                            <div class="kx-check">
+
+                                <input type="hidden"
+                                       name="ForzarCambioClave"
+                                       value="false" />
+
+                                <input id="ForzarCambioClave"
+                                       name="ForzarCambioClave"
+                                       type="checkbox"
+                                       value="true"
+                                       checked />
+
+                                <div>
+                                    <strong>Forzar cambio al próximo acceso</strong>
+                                    <span>
+                                        Recomendado para toda contraseña restablecida por un administrador.
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-actions">
+
+                        <button type="submit"
+                                class="kx-btn kx-btn-gold"
+                                onclick="return confirm('¿Restablecer la contraseña de este usuario?');">
+                            Restablecer contraseña
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+        </main>
+
+
+        <aside class="kx-card">
+
+            <h2 class="kx-section-title">
+                Información
+            </h2>
+
+            <p class="kx-section-desc">
+                Resumen operativo y de seguridad.
+            </p>
+
+
+            <div class="kx-info">
+
+                <div class="kx-info-row">
+                    <span>ID Usuario</span>
+                    <strong>@Model.IdUsuario</strong>
+                </div>
+
+                <div class="kx-info-row">
+                    <span>Empresa</span>
+                    <strong>@Model.EmpresaTexto</strong>
+                </div>
+
+                <div class="kx-info-row">
+                    <span>Sucursal</span>
+                    <strong>@Model.SucursalTexto</strong>
+                </div>
+
+                <div class="kx-info-row">
+                    <span>Cargo</span>
+                    <strong>@Model.CargoTexto</strong>
+                </div>
+
+                <div class="kx-info-row">
+                    <span>Categoría actual</span>
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.RolTexto)
+                            ? "Sin categoría"
+                            : Model.RolTexto)
+                    </strong>
+                </div>
+
+                <div class="kx-info-row">
+                    <span>Intentos fallidos</span>
+                    <strong>@Model.IntentosFallidosTexto</strong>
+                </div>
+
+                <div class="kx-info-row">
+                    <span>Bloqueado hasta</span>
+                    <strong>
+                        @(Model.BloqueadoHastaTexto?.ToString("dd/MM/yyyy HH:mm")
+                            ?? "No bloqueado")
+                    </strong>
+                </div>
+
+                <div class="kx-info-row">
+                    <span>Último acceso</span>
+                    <strong>
+                        @(Model.UltimoAccesoTexto?.ToString("dd/MM/yyyy HH:mm")
+                            ?? "Sin acceso registrado")
+                    </strong>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>

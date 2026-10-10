@@ -1640,6 +1640,14 @@ const carritoVenta =
 
 const CONFIG_VENTA =
 {
+    porcentajeImpuesto:
+        Number(
+            window
+                .kernixConfiguracionVenta
+                ?.porcentajeImpuesto
+            ?? 0
+        ),
+
     descuentoMaximoPorcentaje:
         Number(
             window
@@ -1891,7 +1899,7 @@ function renderizarCarrito() {
         tbody.innerHTML = `
             <tr id="filaVacia">
 
-                <td colspan="6"
+                <td colspan="7"
                     class="kxvacio">
 
                     No has agregado productos a la venta.
@@ -1913,32 +1921,77 @@ function renderizarCarrito() {
     carritoVenta.forEach(
         function (item) {
 
-            const subtotalLinea =
+            const precioUnitario =
                 Number(
                     item.precioUnitario || 0
-                )
-                *
+                );
+
+
+            const cantidad =
                 Number(
                     item.cantidad || 0
                 );
 
 
+            const descuentoPorcentaje =
+                Number(
+                    item.descuentoPorcentaje || 0
+                );
+
+
+            const subtotalBruto =
+                precioUnitario
+                *
+                cantidad;
+
+
             const descuentoMonto =
-                subtotalLinea
+                subtotalBruto
                 *
                 (
-                    Number(
-                        item.descuentoPorcentaje || 0
-                    )
+                    descuentoPorcentaje
                     /
                     100
                 );
 
 
+            const subtotalNeto =
+                Math.max(
+                    0,
+                    subtotalBruto
+                    -
+                    descuentoMonto
+                );
+
+
+            const porcentajeIGV =
+                Number(
+                    CONFIG_VENTA
+                        .porcentajeImpuesto
+                    || 0
+                );
+
+
+            // Misma lógica funcional que SQL:
+            // (cantidad * precio_unitario - descuento) * IGV
+            const igvLinea =
+                porcentajeIGV > 0
+                    ?
+                    subtotalNeto
+                    *
+                    (
+                        porcentajeIGV
+                        /
+                        100
+                    )
+                    :
+                    0;
+
+
             const totalLinea =
-                subtotalLinea
-                -
-                descuentoMonto;
+                subtotalNeto
+                +
+                igvLinea;
 
 
             const tr =
@@ -1972,12 +2025,20 @@ function renderizarCarrito() {
 
                 <td>
 
-                    <strong>
-                        S/
-                        ${formatearNumeroVenta(
-                item.precioUnitario
+                    <div class="kxprecioproducto">
+
+                        <strong>
+                            S/
+                            ${formatearNumeroVenta(
+                precioUnitario
             )}
-                    </strong>
+                        </strong>
+
+                        <small>
+                            Sin IGV
+                        </small>
+
+                    </div>
 
                 </td>
 
@@ -1999,7 +2060,7 @@ function renderizarCarrito() {
                                data-id="${item.idProducto}"
                                min="1"
                                step="1"
-                               value="${item.cantidad}" />
+                               value="${cantidad}" />
 
 
                         <button type="button"
@@ -2039,7 +2100,7 @@ function renderizarCarrito() {
                                min="0"
                                max="${CONFIG_VENTA.descuentoMaximoPorcentaje}"
                                step="0.01"
-                               value="${item.descuentoPorcentaje}" />
+                               value="${descuentoPorcentaje}" />
 
                         <span>
                             %
@@ -2050,8 +2111,10 @@ function renderizarCarrito() {
 
                     <small class="kxdescuentolimite">
 
-                        Máx.
-                        ${CONFIG_VENTA.descuentoMaximoPorcentaje}%
+                        - S/
+                        ${formatearNumeroVenta(
+                descuentoMonto
+            )}
 
                     </small>
 
@@ -2060,14 +2123,44 @@ function renderizarCarrito() {
 
                 <td>
 
-                    <strong class="kxtotallinea">
+                    <div class="kxigvproducto">
 
-                        S/
-                        ${formatearNumeroVenta(
+                        <strong>
+                            S/
+                            ${formatearNumeroVenta(
+                igvLinea
+            )}
+                        </strong>
+
+                        <small>
+                            ${formatearNumeroVenta(
+                porcentajeIGV
+            )}%
+                        </small>
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div class="kxtotalproducto">
+
+                        <strong class="kxtotallinea">
+
+                            S/
+                            ${formatearNumeroVenta(
                 totalLinea
             )}
 
-                    </strong>
+                        </strong>
+
+                        <small>
+                            Incluye IGV
+                        </small>
+
+                    </div>
 
                 </td>
 
@@ -2546,6 +2639,20 @@ function calcularVenta() {
     let descuentoTotal =
         0;
 
+    let impuestoTotal =
+        0;
+
+    let totalGeneral =
+        0;
+
+
+    const porcentajeImpuesto =
+        Number(
+            CONFIG_VENTA
+                .porcentajeImpuesto
+            || 0
+        );
+
 
     carritoVenta.forEach(
         function (item) {
@@ -2584,63 +2691,51 @@ function calcularVenta() {
                 );
 
 
+            const baseLinea =
+                Math.max(
+                    0,
+                    subtotalLinea
+                    -
+                    descuentoLinea
+                );
+
+
+            const impuestoLinea =
+                porcentajeImpuesto > 0
+                    ?
+                    baseLinea
+                    *
+                    (
+                        porcentajeImpuesto
+                        /
+                        100
+                    )
+                    :
+                    0;
+
+
+            const totalLinea =
+                baseLinea
+                +
+                impuestoLinea;
+
+
             subtotalBruto +=
                 subtotalLinea;
 
 
             descuentoTotal +=
                 descuentoLinea;
+
+
+            impuestoTotal +=
+                impuestoLinea;
+
+
+            totalGeneral +=
+                totalLinea;
         }
     );
-
-
-    const totalConImpuesto =
-        Math.max(
-            0,
-            subtotalBruto
-            -
-            descuentoTotal
-        );
-
-
-    const porcentajeImpuesto =
-        Number(
-            window
-                .kernixConfiguracionVenta
-                ?.porcentajeImpuesto
-            || 0
-        );
-
-
-    let subtotalSinImpuesto =
-        totalConImpuesto;
-
-
-    let impuesto =
-        0;
-
-
-    if (
-        porcentajeImpuesto > 0
-    ) {
-
-        subtotalSinImpuesto =
-            totalConImpuesto
-            /
-            (
-                1
-                +
-                porcentajeImpuesto
-                /
-                100
-            );
-
-
-        impuesto =
-            totalConImpuesto
-            -
-            subtotalSinImpuesto;
-    }
 
 
     return {
@@ -2652,13 +2747,18 @@ function calcularVenta() {
             descuentoTotal,
 
         subtotal:
-            subtotalSinImpuesto,
+            Math.max(
+                0,
+                subtotalBruto
+                -
+                descuentoTotal
+            ),
 
         impuesto:
-            impuesto,
+            impuestoTotal,
 
         total:
-            totalConImpuesto
+            totalGeneral
     };
 }
 
@@ -4268,8 +4368,17 @@ async function confirmarVentaServidor() {
 
         return;
     }
+    // URL sólo identifica el pedido; el servidor/SQL deben validarlo.
+    const parametroPedido = new URLSearchParams(window.location.search).get("idPedido");
+    const idPedido = parametroPedido === null ? null : Number(parametroPedido);
+    if (parametroPedido !== null && (!Number.isSafeInteger(idPedido) || idPedido <= 0)) {
+        mostrarAvisoVenta("El identificador del pedido no es válido.", "warning");
+        return;
+    }
+
     const request =
     {
+        idPedido: idPedido,
         idCliente:
             idCliente,
 
@@ -4278,6 +4387,11 @@ async function confirmarVentaServidor() {
 
         tipoComprobante:
             tipoComprobante,
+
+        montoRecibido:
+            metodoPago.toUpperCase() === "EFECTIVO"
+                ? montoRecibido
+                : 0,
 
         observacion:
             null,

@@ -1,0 +1,985 @@
+﻿/* KerniX ERP | Recuperación 3D - sin frameworks adicionales, compatible con UIkit */
+:root {
+    color-scheme: dark;
+    --kxrp-night: #040816;
+    --kxrp-night-2: #090e20;
+    --kxrp-card: #090f20;
+    --kxrp-white: #f5f7ff;
+    --kxrp-muted: #a8b6d3;
+    --kxrp-gold: #ffc431;
+    --kxrp-gold-2: #e79500;
+    --kxrp-blue: #168dff;
+    --kxrp-border: rgba(255,196,49,.37)
+}
+
+*, *::before, *::after {
+    box-sizing: border-box
+}
+
+html {
+    min-height: 100%;
+    background: var(--kxrp-night)
+}
+
+body.kxrp-body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--kxrp-white);
+    background: var(--kxrp-night);
+    font-family: 'Segoe UI',Inter,Arial,sans-serif;
+    font-size: 15px;
+    line-height: 1.5
+}
+
+    body.kxrp-body a {
+        text-decoration: none
+    }
+
+    body.kxrp-body button, body.kxrp-body input {
+        font-family: inherit
+    }
+
+.kxrp-stage {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at 12% 52%,rgba(5,73,158,.29),transparent 39%),radial-gradient(circle at 86% 18%,rgba(76,42,154,.21),transparent 35%),radial-gradient(circle at 77% 94%,rgba(194,118,0,.18),transparent 32%),#040815
+}
+
+    .kxrp-stage::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        opacity: .38;
+        background-image: linear-gradient(rgba(52,113,224,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(52,113,224,.06) 1px,transparent 1px);
+        background-size: 66px 66px;
+        mask-image: linear-gradient(to bottom,transparent 8%,black 75%)
+    }
+
+.kxrp-ambient {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    opacity: .19
+}
+
+.kxrp-ambient-one {
+    background: #166dfb;
+    left: -120px;
+    top: 19%
+}
+
+.kxrp-ambient-two {
+    background: #f2a409;
+    right: -140px;
+    bottom: 4%
+}
+
+.kxrp-wrap {
+    position: relative;
+    z-index: 1;
+    width: min(1230px,calc(100% - 72px));
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column
+}
+
+.kxrp-topbar {
+    min-height: 105px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px
+}
+
+.kxrp-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    color: var(--kxrp-white)
+}
+
+    .kxrp-brand:hover {
+        color: #fff
+    }
+
+.kxrp-brand-logo {
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid rgba(255,195,53,.6);
+    box-shadow: 0 0 21px rgba(255,168,0,.16)
+}
+
+.kxrp-brand-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0
+}
+
+    .kxrp-brand-text strong {
+        font-size: 23px;
+        line-height: 1.15;
+        letter-spacing: -.8px;
+        font-weight: 800;
+        color: #fff
+    }
+
+    .kxrp-brand-text em {
+        font-style: normal;
+        color: var(--kxrp-gold)
+    }
+
+    .kxrp-brand-text small {
+        margin-top: 4px;
+        font-size: 10px;
+        color: #a6b5d1;
+        letter-spacing: .12px;
+        white-space: normal
+    }
+
+.kxrp-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 1.45px;
+    color: #c0cce1;
+    white-space: nowrap
+}
+
+.kxrp-status-led, .kxrp-footer-dot {
+    width: 7px;
+    height: 7px;
+    display: inline-block;
+    border-radius: 50%;
+    background: #20d3ad;
+    box-shadow: 0 0 10px rgba(30,255,204,.7)
+}
+
+.kxrp-topbar-line {
+    height: 16px;
+    width: 1px;
+    background: #39465f;
+    margin: 0 10px
+}
+
+.kxrp-topbar-version {
+    color: var(--kxrp-gold)
+}
+
+.kxrp-layout {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0,1fr) minmax(0,1.08fr);
+    gap: 22px;
+    align-items: stretch;
+    flex: 1;
+    min-height: 615px;
+    margin: 6px 0 14px
+}
+
+.kxrp-card, .kxrp-visual {
+    min-width: 0;
+    border-radius: 23px;
+    position: relative;
+    overflow: hidden
+}
+
+.kxrp-card {
+    background: linear-gradient(140deg,rgba(12,19,42,.98),rgba(5,11,24,.98) 69%);
+    border: 1px solid var(--kxrp-border);
+    box-shadow: 0 24px 70px rgba(0,0,0,.47),inset 0 1px 0 rgba(255,228,149,.10);
+    display: flex;
+    align-items: center
+}
+
+    .kxrp-card::before {
+        content: "";
+        height: 3px;
+        width: 116px;
+        position: absolute;
+        left: 35px;
+        top: 0;
+        background: linear-gradient(90deg,#ffef9b,#e8a300,transparent);
+        box-shadow: 0 0 18px rgba(255,187,30,.7)
+    }
+
+    .kxrp-card::after {
+        content: "";
+        position: absolute;
+        pointer-events: none;
+        inset: 10px;
+        border: 1px solid rgba(254,194,41,.08);
+        border-radius: 15px
+    }
+
+.kxrp-card-aura {
+    position: absolute;
+    pointer-events: none;
+    inset: -18%;
+    background: radial-gradient(ellipse at 35% 0,rgba(33,72,167,.22),transparent 45%),radial-gradient(ellipse at 92% 100%,rgba(239,156,6,.13),transparent 40%)
+}
+
+.kxrp-card-content {
+    position: relative;
+    z-index: 1;
+    padding: clamp(30px,4vw,56px);
+    width: 100%;
+    max-width: 700px;
+    margin: auto
+}
+
+.kxrp-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 10px;
+    font-weight: 750;
+    color: #b5c4dd;
+    letter-spacing: 1.15px;
+    margin-bottom: 26px
+}
+
+.kxrp-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--kxrp-gold);
+    box-shadow: 0 0 0 4px rgba(255,186,43,.13),0 0 13px rgba(255,186,43,.75)
+}
+
+.kxrp-slash {
+    color: #da9e2c
+}
+
+.kxrp-emblem {
+    width: 78px;
+    height: 78px;
+    display: grid;
+    place-items: center;
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--kxrp-gold);
+    margin-bottom: 22px;
+    border-radius: 23px;
+    position: relative;
+    background: linear-gradient(145deg,rgba(255,199,73,.18),rgba(11,34,85,.56));
+    border: 1px solid rgba(255,193,38,.62);
+    box-shadow: 0 14px 28px rgba(0,0,0,.25),0 0 27px rgba(239,164,2,.16),inset 0 0 12px rgba(255,199,52,.06);
+    transform: perspective(320px) rotateY(-10deg) rotateX(8deg)
+}
+
+    .kxrp-emblem svg {
+        width: 35px;
+        height: 35px
+    }
+
+.kxrp-emblem-success {
+    color: #7fffe0;
+    border-color: #49caa8;
+    background: linear-gradient(145deg,rgba(7,118,96,.22),rgba(6,36,40,.7))
+}
+
+.kxrp-heading {
+    color: #fff !important;
+    font-size: clamp(29px,3.05vw,42px);
+    font-weight: 850;
+    letter-spacing: -1.5px;
+    line-height: 1.13;
+    margin: 0 0 14px !important
+}
+
+    .kxrp-heading span {
+        background: linear-gradient(110deg,#ffe496 10%,#ffc431 60%,#eaa500);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent
+    }
+
+.kxrp-lead {
+    color: var(--kxrp-muted);
+    font-size: 14px;
+    line-height: 1.75;
+    max-width: 440px;
+    margin: 0 0 27px !important
+}
+
+.kxrp-form {
+    margin: 0
+}
+
+.kxrp-label {
+    color: #f5f6ff;
+    display: block;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .22px;
+    margin-bottom: 10px;
+    margin-top: 19px
+}
+
+.kxrp-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    isolation: isolate
+}
+
+    .kxrp-input-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        background: linear-gradient(90deg,rgba(24,117,224,.05),rgba(243,167,25,.035));
+        pointer-events: none;
+        border-radius: 10px
+    }
+
+.kxrp-input {
+    position: relative;
+    width: 100%;
+    height: 58px;
+    background: #080e1d !important;
+    border: 1px solid rgba(80,127,195,.48) !important;
+    border-radius: 11px;
+    color: #f5f8ff !important;
+    outline: none !important;
+    padding: 12px 52px !important;
+    font: 500 14px 'Segoe UI',Arial,sans-serif !important;
+    transition: border-color .23s,box-shadow .23s
+}
+
+    .kxrp-input::placeholder {
+        color: #7588aa
+    }
+
+    .kxrp-input:focus {
+        border-color: #ffd068 !important;
+        box-shadow: 0 0 0 3px rgba(241,174,27,.13),0 0 19px rgba(32,115,250,.11)
+    }
+
+.kxrp-input-icon {
+    position: absolute;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    left: 16px;
+    color: #e7b646;
+    pointer-events: none
+}
+
+    .kxrp-input-icon svg {
+        width: 22px;
+        height: 22px
+    }
+
+.kxrp-password-input {
+    padding-right: 58px !important
+}
+
+.kxrp-show {
+    z-index: 3;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    background: transparent;
+    color: #9bb0d1;
+    font-size: 23px
+}
+
+    .kxrp-show:hover, .kxrp-show[aria-pressed="true"] {
+        color: var(--kxrp-gold);
+        background: rgba(255,180,35,.10)
+    }
+
+.kxrp-hint {
+    font-size: 11px;
+    color: #9baac9;
+    margin: 10px 0 0;
+    line-height: 1.6
+}
+
+.kxrp-field-error, .kxrp-client-error {
+    display: block;
+    font-size: 12px;
+    color: #ffafbe;
+    margin: 6px 0 0
+}
+
+.kxrp-client-error {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(240,94,124,.35);
+    background: rgba(159,30,66,.13)
+}
+
+.kxrp-button {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 13px;
+    min-height: 57px;
+    width: 100%;
+    padding: 12px 17px;
+    margin-top: 26px;
+    border-radius: 11px;
+    font-weight: 800;
+    font-size: 13.5px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform .18s,filter .2s,box-shadow .2s
+}
+
+.kxrp-primary {
+    border: 1px solid #ffe18a !important;
+    background: linear-gradient(180deg,#ffe28c 0%,#ffc133 43%,#eaa002 100%) !important;
+    color: #251400 !important;
+    text-shadow: 0 1px 0 rgba(255,255,255,.19);
+    box-shadow: 0 6px 0 #8b5608,0 15px 23px rgba(237,154,0,.18),inset 0 1px 0 rgba(255,255,255,.58)
+}
+
+    .kxrp-primary:hover {
+        filter: brightness(1.07);
+        color: #251400;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 0 #8b5608,0 20px 27px rgba(237,154,0,.24)
+    }
+
+    .kxrp-primary:active {
+        transform: translateY(3px);
+        box-shadow: 0 2px 0 #8b5608
+    }
+
+.kxrp-button:disabled {
+    opacity: .77;
+    cursor: wait;
+    transform: none
+}
+
+.kxrp-button-icon {
+    width: 19px;
+    height: 19px;
+    flex: none
+}
+
+.kxrp-button-arrow {
+    position: absolute;
+    right: 17px;
+    font-size: 18px
+}
+
+.kxrp-button:focus-visible, .kxrp-secondary-link:focus-visible, .kxrp-brand:focus-visible, .kxrp-show:focus-visible {
+    outline: 2px solid #70bdff;
+    outline-offset: 4px
+}
+
+.kxrp-secondary-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #82c3ff;
+    font-size: 12px;
+    font-weight: 650;
+    margin: 23px auto 0;
+    width: max-content;
+    max-width: 100%;
+    text-align: center
+}
+
+    .kxrp-secondary-link:hover {
+        color: #c9e7ff;
+        text-decoration: underline
+    }
+
+.kxrp-divider {
+    height: 1px;
+    background: linear-gradient(90deg,transparent,rgba(146,166,200,.33),transparent);
+    margin: 27px 0 21px
+}
+
+.kxrp-security-note {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 15px 16px;
+    border: 1px solid rgba(144,106,188,.35);
+    border-radius: 12px;
+    background: linear-gradient(110deg,rgba(39,20,62,.57),rgba(10,20,40,.5));
+    font-size: 11px;
+    line-height: 1.55;
+    color: #acbbd8
+}
+
+    .kxrp-security-note strong {
+        display: block;
+        color: #f5c84f;
+        font-size: 12px;
+        margin-bottom: 2px
+    }
+
+    .kxrp-security-note b {
+        color: #ffd669
+    }
+
+.kxrp-note-icon {
+    flex: 0 0 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #ffcb43;
+    background: rgba(242,172,15,.09);
+    border: 1px solid rgba(253,183,20,.55)
+}
+
+    .kxrp-note-icon svg {
+        width: 19px;
+        height: 19px
+    }
+
+.kxrp-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 15px;
+    margin: 14px 0 22px;
+    border: 1px solid rgba(81,152,214,.5);
+    border-radius: 11px;
+    background: rgba(11,34,66,.58);
+    color: #deebff;
+    font-size: 12px;
+    line-height: 1.6
+}
+
+    .kxrp-info strong {
+        display: block;
+        font-weight: 800;
+        color: #e8faff
+    }
+
+    .kxrp-info span:not(.kxrp-info-icon) {
+        display: block
+    }
+
+.kxrp-info-icon {
+    width: 33px;
+    height: 33px;
+    flex: 0 0 33px;
+    border-radius: 50%;
+    background: rgba(26,209,158,.14);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    color: #78ffd0
+}
+
+.kxrp-info-error {
+    background: rgba(112,21,45,.20);
+    border-color: rgba(240,100,136,.55);
+    color: #ffdfe7
+}
+
+.kxrp-info-success {
+    border-color: rgba(56,198,151,.48);
+    background: rgba(20,115,85,.13)
+}
+
+.kxrp-strength {
+    display: flex;
+    gap: 6px;
+    margin: 14px 0 6px
+}
+
+    .kxrp-strength span {
+        height: 5px;
+        flex: 1;
+        border-radius: 99px;
+        background: #253249;
+        transition: background .2s,box-shadow .2s
+    }
+
+.kxrp-strength-caption {
+    font-size: 11px;
+    color: #a0b0cf
+}
+
+.kxrp-strength[data-score="1"] span:nth-child(-n+1) {
+    background: #ff6d7d
+}
+
+.kxrp-strength[data-score="2"] span:nth-child(-n+2) {
+    background: #f0a83e
+}
+
+.kxrp-strength[data-score="3"] span:nth-child(-n+3) {
+    background: #69baff
+}
+
+.kxrp-strength[data-score="4"] span:nth-child(-n+4) {
+    background: #38d6ad
+}
+
+.kxrp-visual {
+    background: linear-gradient(165deg,#060c1e,#070b19);
+    border: 1px solid rgba(51,115,244,.5);
+    box-shadow: 0 27px 60px rgba(0,0,0,.39),inset 0 0 50px rgba(5,23,68,.24)
+}
+
+    .kxrp-visual::before {
+        content: "";
+        position: absolute;
+        inset: 10px;
+        border-radius: 16px;
+        border: 1px solid rgba(249,179,29,.24);
+        pointer-events: none;
+        z-index: 3
+    }
+
+.kxrp-visual-cover {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,rgba(3,9,22,.46) 0%,rgba(2,8,22,.05) 30%,rgba(2,7,21,.18) 59%,rgba(2,7,19,.88) 90%),url('../images/recovery/kernix-portal.webp') center 37%/cover no-repeat;
+    filter: saturate(1.06)
+}
+
+.kxrp-art-halo {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    width: 68%;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    box-shadow: 0 0 45px rgba(234,162,12,.16);
+    pointer-events: none
+}
+
+.kxrp-orbit {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    width: 80%;
+    height: 43%;
+    transform: translate(-50%,-50%) rotate(-17deg);
+    border: 1px solid rgba(255,188,21,.3);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 13px rgba(245,169,22,.18);
+    animation: kxrp-orbit 18s linear infinite
+}
+
+.kxrp-orbit-b {
+    width: 77%;
+    height: 41%;
+    transform: translate(-50%,-50%) rotate(41deg);
+    border-color: rgba(38,133,255,.38);
+    animation-duration: 27s;
+    animation-direction: reverse
+}
+
+.kxrp-visual-top {
+    position: absolute;
+    z-index: 4;
+    left: 30px;
+    right: 30px;
+    top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffd782;
+    font-weight: 850;
+    font-size: 10px;
+    letter-spacing: 1.1px;
+    text-shadow: 0 2px 10px #000
+}
+
+.kxrp-diamond {
+    font-size: 16px
+}
+
+.kxrp-signal {
+    margin-left: auto;
+    font-weight: 650;
+    color: #d3edff;
+    font-size: 9px
+}
+
+.kxrp-visual-caption {
+    z-index: 5;
+    position: absolute;
+    bottom: 89px;
+    left: 43px;
+    right: 32px;
+    text-shadow: 0 2px 16px #000
+}
+
+.kxrp-visual-eyebrow {
+    color: #ffd66b;
+    letter-spacing: 1.2px;
+    font-weight: 800;
+    font-size: 10px
+}
+
+.kxrp-visual-caption h2 {
+    color: #fff !important;
+    font-size: clamp(30px,3.8vw,53px);
+    line-height: 1.05;
+    font-weight: 850;
+    letter-spacing: -1.8px;
+    margin: 12px 0 !important
+}
+
+    .kxrp-visual-caption h2 span {
+        color: #ffcf51
+    }
+
+.kxrp-visual-caption p {
+    max-width: 360px;
+    color: #d1dbeb;
+    font-size: 12px;
+    line-height: 1.65;
+    margin: 12px 0 0
+}
+
+.kxrp-visual-tags {
+    position: absolute;
+    z-index: 5;
+    bottom: 26px;
+    left: 41px;
+    right: 24px;
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap
+}
+
+    .kxrp-visual-tags span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 10px;
+        border: 1px solid rgba(242,179,38,.36);
+        border-radius: 30px;
+        background: rgba(3,10,28,.67);
+        color: #e4eaf6;
+        font-size: 10px;
+        backdrop-filter: blur(8px)
+    }
+
+.kxrp-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fbc347;
+    box-shadow: 0 0 8px #ffd04c
+}
+
+.kxrp-footer {
+    padding: 13px 3px 21px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #8494b0;
+    font-size: 10px
+}
+
+    .kxrp-footer span:last-child {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px
+    }
+
+@keyframes kxrp-orbit {
+    from {
+        transform: translate(-50%,-50%) rotate(-17deg)
+    }
+
+    to {
+        transform: translate(-50%,-50%) rotate(343deg)
+    }
+}
+
+@media(max-width:1070px) {
+    .kxrp-wrap {
+        width: min(1030px,calc(100% - 40px))
+    }
+
+    .kxrp-layout {
+        grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr);
+        min-height: 590px
+    }
+
+    .kxrp-card-content {
+        padding: 33px
+    }
+
+    .kxrp-visual-caption {
+        left: 25px
+    }
+
+    .kxrp-visual-tags {
+        left: 25px
+    }
+
+    .kxrp-visual-caption h2 {
+        font-size: 38px
+    }
+}
+
+@media(max-width:760px) {
+    .kxrp-wrap {
+        width: calc(100% - 28px)
+    }
+
+    .kxrp-topbar {
+        min-height: 88px
+    }
+
+    .kxrp-topbar-right {
+        display: none
+    }
+
+    .kxrp-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        min-height: 0;
+        margin: 0
+    }
+
+    .kxrp-card {
+        order: 1
+    }
+
+    .kxrp-card-content {
+        padding: 35px 30px
+    }
+
+    .kxrp-visual {
+        order: 2;
+        height: 245px
+    }
+
+    .kxrp-visual-cover {
+        background-position: center 41%
+    }
+
+    .kxrp-orbit, .kxrp-art-halo {
+        display: none
+    }
+
+    .kxrp-visual-top {
+        top: 20px;
+        left: 23px
+    }
+
+    .kxrp-visual-caption {
+        bottom: 58px;
+        left: 25px
+    }
+
+        .kxrp-visual-caption h2 {
+            font-size: 26px;
+            margin: 4px 0 !important
+        }
+
+        .kxrp-visual-caption p {
+            font-size: 10px;
+            max-width: 260px;
+            margin: 4px 0 0
+        }
+
+    .kxrp-visual-tags {
+        left: 25px;
+        bottom: 16px
+    }
+
+        .kxrp-visual-tags span {
+            font-size: 9px;
+            padding: 4px 8px
+        }
+
+    .kxrp-footer {
+        padding-bottom: 18px
+    }
+}
+
+@media(max-width:480px) {
+    .kxrp-card-content {
+        padding: 29px 22px
+    }
+
+    .kxrp-brand-logo {
+        width: 45px;
+        height: 45px
+    }
+
+    .kxrp-brand-text strong {
+        font-size: 20px
+    }
+
+    .kxrp-brand-text small {
+        font-size: 9px
+    }
+
+    .kxrp-heading {
+        font-size: 32px
+    }
+
+    .kxrp-lead {
+        font-size: 13px
+    }
+
+    .kxrp-breadcrumb {
+        font-size: 9px;
+        letter-spacing: .55px;
+        gap: 7px;
+        flex-wrap: wrap
+    }
+
+    .kxrp-button {
+        font-size: 12px
+    }
+
+    .kxrp-visual {
+        height: 200px
+    }
+
+    .kxrp-visual-caption p, .kxrp-visual-tags {
+        display: none
+    }
+
+    .kxrp-visual-caption {
+        bottom: 20px
+    }
+
+    .kxrp-security-note {
+        font-size: 10.5px
+    }
+
+    .kxrp-footer {
+        font-size: 9px
+    }
+}
+
+@media(prefers-reduced-motion:reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important
+    }
+}

@@ -1,0 +1,1055 @@
+﻿@page
+@model KerniX.Pages.Configuracion.Sunat.IndexModel
+
+@{
+    ViewData["Title"] =
+        "Configuración SUNAT";
+}
+
+<style>
+    :root {
+        --kx-bg: #08111f;
+        --kx-panel: #0d1a2d;
+        --kx-panel-2: #102039;
+        --kx-border: rgba(255,191,61,.22);
+        --kx-gold: #ffbf3d;
+        --kx-orange: #ff7b2f;
+        --kx-blue: #2fa9ff;
+        --kx-blue-soft: rgba(47,169,255,.14);
+        --kx-text: #eef6ff;
+        --kx-muted: #8da3bb;
+        --kx-ok: #42d392;
+        --kx-danger: #ff627d;
+        --kx-warning: #ffc857;
+    }
+
+
+    body {
+        background: radial-gradient( circle at top right, rgba(47,169,255,.14), transparent 30% ), var(--kx-bg);
+        color: var(--kx-text);
+    }
+
+
+    .kx-wrap {
+        max-width: 1180px;
+        margin: auto;
+        padding: 32px 18px 60px;
+    }
+
+
+    .kx-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: flex-start;
+        margin-bottom: 22px;
+    }
+
+
+    .kx-title {
+        margin: 0;
+        color: var(--kx-text);
+        font-size: 38px;
+        font-weight: 800;
+    }
+
+
+    .kx-subtitle {
+        color: var(--kx-muted);
+        margin-top: 6px;
+    }
+
+
+    .kx-badge {
+        border: 1px solid var(--kx-border);
+        color: var(--kx-gold);
+        padding: 8px 13px;
+        border-radius: 999px;
+        background: rgba(255,191,61,.04);
+    }
+
+
+    .kx-grid {
+        display: grid;
+        grid-template-columns: minmax(0,1fr) 340px;
+        gap: 20px;
+    }
+
+
+    .kx-card {
+        background: linear-gradient( 145deg, #0a1526, #102039 );
+        border: 1px solid var(--kx-border);
+        border-radius: 22px;
+        box-shadow: 0 18px 60px rgba(0,0,0,.32);
+    }
+
+
+    .kx-body {
+        padding: 24px;
+    }
+
+
+    .kx-form-grid {
+        display: grid;
+        grid-template-columns: repeat( 2, minmax(0,1fr) );
+        gap: 17px;
+    }
+
+
+    .kx-full {
+        grid-column: 1 / -1;
+    }
+
+
+    .kx-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #cfe0f2;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+
+    .kx-input,
+    .kx-select {
+        width: 100%;
+        height: 46px;
+        padding: 0 13px;
+        border-radius: 12px;
+        border: 1px solid rgba( 141, 163, 187, .24 );
+        background: rgba( 1, 8, 18, .55 );
+        color: var(--kx-text);
+        outline: none;
+        transition: .2s ease;
+    }
+
+
+        .kx-input:focus,
+        .kx-select:focus {
+            border-color: var(--kx-blue);
+            box-shadow: 0 0 0 3px rgba( 47, 169, 255, .12 );
+        }
+
+
+    .kx-file {
+        padding: 15px;
+        border-radius: 14px;
+        border: 1px dashed rgba( 47, 169, 255, .4 );
+        background: rgba( 47, 169, 255, .06 );
+        color: var(--kx-muted);
+    }
+
+
+        .kx-file input {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+
+    .kx-btn {
+        min-height: 44px;
+        border-radius: 12px;
+        padding: 0 18px;
+        border: 0;
+        font-weight: 750;
+        cursor: pointer;
+        transition: .2s ease;
+    }
+
+
+        .kx-btn:hover {
+            transform: translateY(-1px);
+        }
+
+
+    .kx-primary {
+        background: linear-gradient( 135deg, var(--kx-gold), var(--kx-orange) );
+        color: #07111d;
+    }
+
+
+    .kx-secondary {
+        background: rgba( 47, 169, 255, .14 );
+        color: #e9f5ff;
+        border: 1px solid rgba( 47, 169, 255, .36 );
+    }
+
+
+    .kx-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 14px;
+        border: 1px solid rgba( 141, 163, 187, .15 );
+        border-radius: 12px;
+        margin-bottom: 10px;
+        background: rgba( 255, 255, 255, .015 );
+    }
+
+
+    .kx-ok {
+        color: var(--kx-ok);
+        font-weight: 700;
+    }
+
+
+    .kx-pending {
+        color: var(--kx-warning);
+        font-weight: 700;
+    }
+
+
+    .kx-alert {
+        padding: 14px 16px;
+        border-radius: 13px;
+        margin-bottom: 18px;
+        border: 1px solid transparent;
+        line-height: 1.5;
+    }
+
+
+    .kx-alert-ok {
+        background: rgba( 66, 211, 146, .08 );
+        color: #bdf7db;
+        border-color: rgba( 66, 211, 146, .18 );
+    }
+
+
+    .kx-alert-error {
+        background: rgba( 255, 98, 125, .08 );
+        color: #ffc3cd;
+        border-color: rgba( 255, 98, 125, .18 );
+    }
+
+
+    .kx-help {
+        color: var(--kx-muted);
+        font-size: 12px;
+        margin-top: 7px;
+        line-height: 1.45;
+    }
+
+
+    .kx-test-note {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba( 47, 169, 255, .07 );
+        border: 1px solid rgba( 47, 169, 255, .18 );
+        color: var(--kx-muted);
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+
+    .kx-divider {
+        height: 1px;
+        background: rgba( 141, 163, 187, .12 );
+        margin: 23px 0;
+    }
+
+
+    .kx-checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+
+
+        .kx-checkbox-row label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #dbeaff;
+            cursor: pointer;
+        }
+
+
+        .kx-checkbox-row input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--kx-gold);
+        }
+
+
+    .kx-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+
+    .kx-cert-title {
+        margin: 0 0 5px;
+        font-size: 18px;
+    }
+
+
+    .kx-side-title {
+        margin-top: 0;
+        margin-bottom: 18px;
+    }
+
+
+    @@media(max-width:900px) {
+
+        .kx-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+
+    @@media(max-width:640px) {
+
+        .kx-head {
+            flex-direction: column;
+        }
+
+
+        .kx-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+
+        .kx-full {
+            grid-column: auto;
+        }
+
+
+        .kx-title {
+            font-size: 30px;
+        }
+    }
+
+</style>
+
+
+<div class="kx-wrap">
+
+    <!-- ===================================================== -->
+    <!-- ENCABEZADO -->
+    <!-- ===================================================== -->
+
+    <div class="kx-head">
+
+        <div>
+
+            <h1 class="kx-title">
+                Configuración SUNAT
+            </h1>
+
+            <div class="kx-subtitle">
+                Credenciales y certificado electrónico de la empresa actual.
+            </div>
+
+        </div>
+
+
+        <div class="kx-badge">
+            KerniX · SUNAT
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MENSAJES -->
+    <!-- ===================================================== -->
+    @if (
+            !string.IsNullOrWhiteSpace(
+                Model.MensajeExito
+            )
+        )
+    {
+        <div class="kx-alert kx-alert-ok">
+
+            @Model.MensajeExito
+
+        </div>
+    }
+
+
+    @if (
+        !string.IsNullOrWhiteSpace(
+            Model.MensajeError
+        )
+    )
+    {
+        <div class="kx-alert kx-alert-error">
+
+            @Model.MensajeError
+
+        </div>
+    }
+
+
+    @if (
+        !string.IsNullOrWhiteSpace(
+            Model.ResultadoPrueba
+        )
+    )
+    {
+        <div class="kx-alert kx-alert-ok">
+
+            <strong>
+                Resultado de prueba SUNAT
+            </strong>
+
+            <br />
+            <br />
+
+            @Model.ResultadoPrueba
+
+        </div>
+    }
+
+
+    <div asp-validation-summary="ModelOnly"
+         class="kx-alert kx-alert-error">
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- GRID PRINCIPAL -->
+    <!-- ===================================================== -->
+
+    <div class="kx-grid">
+
+
+        <!-- ================================================= -->
+        <!-- FORMULARIO -->
+        <!-- ================================================= -->
+
+        <section class="kx-card">
+
+            <div class="kx-body">
+
+                <form method="post"
+                      enctype="multipart/form-data"
+                      asp-page-handler="Guardar">
+
+
+                    <div class="kx-form-grid">
+
+
+                        <!-- ================================= -->
+                        <!-- AMBIENTE -->
+                        <!-- ================================= -->
+
+                        <div>
+
+                            <label class="kx-label"
+                                   asp-for="Input.Ambiente">
+
+                                Ambiente
+
+                            </label>
+
+
+                            <select class="kx-select"
+                                    asp-for="Input.Ambiente">
+
+                                <option value="BETA">
+                                    BETA / Pruebas
+                                </option>
+
+                                <option value="PRODUCCION">
+                                    Producción
+                                </option>
+
+                            </select>
+
+
+                            <span asp-validation-for="Input.Ambiente"
+                                  class="kx-alert-error">
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- RUC -->
+                        <!-- ================================= -->
+
+                        <div>
+
+                            <label class="kx-label"
+                                   asp-for="Input.Ruc">
+
+                                RUC
+
+                            </label>
+
+
+                            <input class="kx-input"
+                                   asp-for="Input.Ruc"
+                                   maxlength="11"
+                                   inputmode="numeric"
+                                   autocomplete="off"
+                                   placeholder="11 dígitos" />
+
+
+                            <span asp-validation-for="Input.Ruc"
+                                  class="kx-alert-error">
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- USUARIO SOL -->
+                        <!-- ================================= -->
+
+                        <div>
+
+                            <label class="kx-label"
+                                   asp-for="Input.UsuarioSol">
+
+                                Usuario SOL
+
+                            </label>
+
+
+                            <input class="kx-input"
+                                   asp-for="Input.UsuarioSol"
+                                   autocomplete="off"
+                                   placeholder="Usuario SOL" />
+
+
+                            <span asp-validation-for="Input.UsuarioSol"
+                                  class="kx-alert-error">
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- CLAVE SOL -->
+                        <!-- ================================= -->
+
+                        <div>
+
+                            <label class="kx-label"
+                                   asp-for="Input.ClaveSol">
+
+                                Clave SOL
+
+                            </label>
+
+
+                            <input class="kx-input"
+                                   asp-for="Input.ClaveSol"
+                                   type="password"
+                                   autocomplete="new-password"
+                                   placeholder="@(
+                                   Model.ClaveSolConfigurada
+                                   ?
+                                   "Dejar vacío para conservar"
+                                   :
+                                   "Ingrese la Clave SOL"
+                                                           )" />
+
+
+                            @if (
+                                Model.ClaveSolConfigurada
+                            )
+                            {
+                                <div class="kx-help">
+
+                                    ✓ Clave SOL configurada.
+
+                                </div>
+                            }
+
+
+                            <span asp-validation-for="Input.ClaveSol"
+                                  class="kx-alert-error">
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- DIVISOR CERTIFICADO -->
+                        <!-- ================================= -->
+
+                        <div class="kx-full">
+
+                            <div class="kx-divider">
+                            </div>
+
+
+                            <h3 class="kx-cert-title">
+
+                                Certificado digital
+
+                            </h3>
+
+
+                            <div class="kx-help">
+
+                                Cargue el certificado
+                                .PFX o .P12 de la empresa.
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- CERTIFICADO -->
+                        <!-- ================================= -->
+
+                        <div class="kx-full">
+
+                            <label class="kx-label"
+                                   asp-for="Input.Certificado">
+
+                                Certificado .PFX / .P12
+
+                            </label>
+
+
+                            <div class="kx-file">
+
+                                @if (
+                                    Model.CertificadoConfigurado
+                                )
+                                {
+                                    <div>
+
+                                        Actual:
+                                        <strong>
+                                            @Model.NombreCertificadoActual
+                                        </strong>
+
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+
+                                        Aún no existe certificado.
+
+                                    </div>
+                                }
+
+
+                                <input asp-for="Input.Certificado"
+                                       type="file"
+                                       accept=".pfx,.p12,application/x-pkcs12" />
+
+                            </div>
+
+
+                            <span asp-validation-for="Input.Certificado"
+                                  class="kx-alert-error">
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- PASSWORD PFX -->
+                        <!-- ================================= -->
+
+                        <div>
+
+                            <label class="kx-label"
+                                   asp-for="Input.PasswordCertificado">
+
+                                Password PFX
+
+                            </label>
+
+
+                            <input class="kx-input"
+                                   asp-for="Input.PasswordCertificado"
+                                   type="password"
+                                   autocomplete="new-password"
+                                   placeholder="@(
+                                   Model.PasswordCertificadoConfigurado
+                                   ?
+                                   "Dejar vacío para conservar"
+                                   :
+                                   "Contraseña del PFX"
+                                                           )" />
+
+
+                            @if (
+                                Model.PasswordCertificadoConfigurado
+                            )
+                            {
+                                <div class="kx-help">
+
+                                    ✓ Password configurado.
+
+                                </div>
+                            }
+
+
+                            <span asp-validation-for="Input.PasswordCertificado"
+                                  class="kx-alert-error">
+                            </span>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- CERTIFICADO ACTUAL -->
+                        <!-- ================================= -->
+
+                        <div>
+
+                            <label class="kx-label">
+
+                                Certificado actual
+
+                            </label>
+
+
+                            <div class="kx-status">
+
+                                <span>
+
+                                    @(
+                                        Model.CertificadoTitular
+                                        ??
+                                        "Sin información"
+                                    )
+
+                                </span>
+
+
+                                <span>
+
+                                    @(
+                                        Model.CertificadoVence?
+                                            .ToString(
+                                                "dd/MM/yyyy"
+                                            )
+                                        ??
+                                        "-"
+                                    )
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- CHECKBOX -->
+                        <!-- ================================= -->
+
+                        <div class="kx-full">
+
+                            <div class="kx-checkbox-row">
+
+
+                                <label>
+
+                                    <input asp-for="Input.EnviarAutomaticamente"
+                                           type="checkbox" />
+
+                                    Enviar automáticamente
+
+                                </label>
+
+
+                                <label>
+
+                                    <input asp-for="Input.Estado"
+                                           type="checkbox" />
+
+                                    Configuración activa
+
+                                </label>
+
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- BOTONES -->
+                        <!-- ================================= -->
+
+                        <div class="kx-full">
+
+                            <div class="kx-actions">
+
+
+                                <button class="kx-btn kx-primary"
+                                        type="submit">
+
+                                    Guardar configuración
+
+                                </button>
+
+
+                                <a class="kx-btn kx-secondary"
+                                   href="/Configuracion/General"
+                                   style="
+                                    display:inline-flex;
+                                    align-items:center;
+                                    text-decoration:none;
+                                    ">
+
+                                    Volver
+
+                                </a>
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================================= -->
+        <!-- PANEL LATERAL -->
+        <!-- ================================================= -->
+
+        <aside class="kx-card">
+
+            <div class="kx-body">
+
+
+                <h3 class="kx-side-title">
+
+                    Estado
+
+                </h3>
+
+
+                <!-- ========================================= -->
+                <!-- CLAVE SOL -->
+                <!-- ========================================= -->
+
+                <div class="kx-status">
+
+                    <span>
+                        Clave SOL
+                    </span>
+
+
+                    <span class="@(
+                          Model.ClaveSolConfigurada
+                          ?
+                          "kx-ok"
+                          :
+                          "kx-pending"
+                                        )">
+
+                        @(
+                            Model.ClaveSolConfigurada
+                            ?
+                            "Configurada"
+                            :
+                            "Pendiente"
+                        )
+
+                    </span>
+
+                </div>
+
+
+                <!-- ========================================= -->
+                <!-- CERTIFICADO -->
+                <!-- ========================================= -->
+
+                <div class="kx-status">
+
+                    <span>
+                        Certificado
+                    </span>
+
+
+                    <span class="@(
+                          Model.CertificadoConfigurado
+                          ?
+                          "kx-ok"
+                          :
+                          "kx-pending"
+                                        )">
+
+                        @(
+                            Model.CertificadoConfigurado
+                            ?
+                            "Configurado"
+                            :
+                            "Pendiente"
+                        )
+
+                    </span>
+
+                </div>
+
+
+                <!-- ========================================= -->
+                <!-- PASSWORD PFX -->
+                <!-- ========================================= -->
+
+                <div class="kx-status">
+
+                    <span>
+                        Password PFX
+                    </span>
+
+
+                    <span class="@(
+                          Model.PasswordCertificadoConfigurado
+                          ?
+                          "kx-ok"
+                          :
+                          "kx-pending"
+                                        )">
+
+                        @(
+                            Model.PasswordCertificadoConfigurado
+                            ?
+                            "Configurado"
+                            :
+                            "Pendiente"
+                        )
+
+                    </span>
+
+                </div>
+
+
+                <div class="kx-divider">
+                </div>
+
+
+                <!-- ========================================= -->
+                <!-- PROBAR CERTIFICADO -->
+                <!-- ========================================= -->
+
+                <form method="post"
+                      asp-page-handler="ProbarCertificado">
+
+
+                    <button class="kx-btn kx-secondary"
+                            type="submit"
+                            style="width:100%">
+
+                        Probar certificado guardado
+
+                    </button>
+
+
+                </form>
+
+
+                <!-- ========================================= -->
+                <!-- PROBAR CONFIGURACION -->
+                <!-- ========================================= -->
+
+                <form method="post"
+                      asp-page-handler="ProbarConfiguracion">
+
+
+                    <button class="kx-btn kx-secondary"
+                            type="submit"
+                            style="
+                        width:100%;
+                        margin-top:12px;
+                        ">
+
+                        Probar configuración completa
+
+                    </button>
+
+
+                </form>
+
+
+                <div class="kx-test-note">
+
+                    Esta prueba no envía comprobantes
+                    a SUNAT.
+
+                    <br />
+                    <br />
+
+                    Valida:
+
+                    <br />
+
+                    • RUC
+                    <br />
+
+                    • ambiente
+                    <br />
+
+                    • Usuario SOL
+                    <br />
+
+                    • Clave SOL cifrada
+                    <br />
+
+                    • certificado PFX
+                    <br />
+
+                    • password
+                    <br />
+
+                    • clave privada
+                    <br />
+
+                    • vigencia
+
+                </div>
+
+
+                <div class="kx-divider">
+                </div>
+
+
+                <!-- ========================================= -->
+                <!-- SEGURIDAD -->
+                <!-- ========================================= -->
+
+                <div class="kx-help">
+
+                    Las credenciales se guardan
+                    protegidas con ASP.NET Core
+                    Data Protection.
+
+                    <br />
+                    <br />
+
+                    KerniX no vuelve a mostrar
+                    las contraseñas guardadas.
+
+                </div>
+
+
+            </div>
+
+        </aside>
+
+
+    </div>
+
+</div>
+
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}   

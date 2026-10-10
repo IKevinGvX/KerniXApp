@@ -1,8 +1,11 @@
+using System;
+using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using KerniX.DTOs.Auth;
 using KerniX.Security;
 using KerniX.Services.Auth;
 using KerniX.Services.Empleados;
+using KerniX.Services.Sesiones;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
@@ -13,17 +16,20 @@ public sealed class LoginModel : PageModel
     private readonly IAuthApiService _authService;
     private readonly IEmpleadoDbService _empleadoDbService;
     private readonly TokenStorageService _tokenStorage;
+    private readonly ISesionWebDbService _sesionWeb;
     private readonly ILogger<LoginModel> _logger;
 
     public LoginModel(
         IAuthApiService authService,
         IEmpleadoDbService empleadoDbService,
         TokenStorageService tokenStorage,
+        ISesionWebDbService sesionWeb,
         ILogger<LoginModel> logger)
     {
         _authService = authService;
         _empleadoDbService = empleadoDbService;
         _tokenStorage = tokenStorage;
+        _sesionWeb = sesionWeb;
         _logger = logger;
     }
 
@@ -50,6 +56,19 @@ public sealed class LoginModel : PageModel
             _logger.LogWarning(
                 ex,
                 "No fue posible comprobar la sesión existente.");
+        }
+
+        // Recordar únicamente el usuario, NO tokens ni contraseñas.
+        if (string.IsNullOrWhiteSpace(Input.Usuario)
+            && Request.Cookies.TryGetValue("KerniX.RememberUser", out var cookieUsuario)
+            && !string.IsNullOrWhiteSpace(cookieUsuario))
+        {
+            string recordado = Uri.UnescapeDataString(cookieUsuario);
+            if (recordado.Length <= 100)
+            {
+                Input.Usuario = recordado;
+                Input.Recordarme = true;
+            }
         }
 
         return Page();
@@ -169,20 +188,8 @@ public sealed class LoginModel : PageModel
                 return Page();
             }
 
-            _tokenStorage.GuardarToken(auth.AccessToken);
+            var usuarioAutenticado = usuarioIngresado;
 
-            if (!string.IsNullOrWhiteSpace(auth.RefreshToken))
-            {
-                _tokenStorage.GuardarRefreshToken(
-                    auth.RefreshToken);
-            }
-
-            var usuarioAutenticado =
-               usuarioIngresado;
-
-            HttpContext.Session.SetString(
-                SessionKeys.Usuario,
-                usuarioAutenticado);
             _logger.LogInformation(
                 "Consultando Usuario + Empleado en SQL Server para {Usuario}.",
                 usuarioAutenticado);
@@ -192,30 +199,20 @@ public sealed class LoginModel : PageModel
                     usuarioAutenticado,
                     cancellationToken);
 
-            if (identidad is null)
+            if (identidad is null || identidad.IdUsuario <= 0)
             {
-                HttpContext.Session.SetString(
-                    SessionKeys.Nombre,
-                    usuarioAutenticado);
-
-                HttpContext.Session.SetString(
-                    SessionKeys.NombreCompleto,
-                    usuarioAutenticado);
-
-                HttpContext.Session.SetString(
-                    SessionKeys.Cargo,
-                    string.Empty);
-
-                HttpContext.Session.SetString(
-                    SessionKeys.Correo,
-                    string.Empty);
-
                 _logger.LogWarning(
-                    "Usuario {Usuario} autenticado, pero no se encontró relación Usuario/Empleado en SQL Server.",
+                    "La identidad del usuario {Usuario} no pudo cargarse en SQL Server.",
                     usuarioAutenticado);
 
-                return RedirectToPage("/Inicio/Carga");
+                ErrorMessage =
+                    "No se pudo completar el inicio de sesión: faltan datos de identidad. Contacta al administrador.";
+
+                return Page();
             }
+
+            // No conservar valores de una autenticación previa.
+            HttpContext.Session.Clear();
 
             HttpContext.Session.SetInt32(
                 SessionKeys.IdUsuario,
@@ -290,7 +287,58 @@ public sealed class LoginModel : PageModel
                 identidad.IdEmpleado,
                 nombreCompleto);
 
+            // Recordar SOLO el usuario. Para mantener el inicio
+            // de sesión entre días se necesita renovar JWT con la API.
+            const string cookieNombre = "KerniX.RememberUser";
+            if (Input.Recordarme)
+            {
+                Response.Cookies.Append(
+                    cookieNombre,
+                    Uri.EscapeDataString(usuarioAutenticado),
+                    new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = Request.IsHttps,
+                        SameSite = SameSiteMode.Lax,
+                        IsEssential = true,
+                        Path = "/",
+                        MaxAge = TimeSpan.FromDays(30)
+                    });
+            }
+            else
+            {
+                Response.Cookies.Delete(cookieNombre, new CookieOptions { Path = "/" });
+            }
+
+            // Registrar acceso de este dispositivo antes de permitir
+            // acceder a páginas privadas. Si SQL falla, el catch
+            // externo evita completar el login.
+            var idSesionWeb = Guid.NewGuid();
+            await _sesionWeb.RegistrarAsync(
+                idSesionWeb,
+                identidad.IdUsuario,
+                HttpContext,
+                cancellationToken);
+            HttpContext.Session.SetString(
+                SesionWebKeys.IdSesion,
+                idSesionWeb.ToString("D"));
+
+            // Publicar el token únicamente después de completar
+            // el contexto de usuario y la cookie de preferencia.
+            _tokenStorage.GuardarToken(auth.AccessToken);
+            if (!string.IsNullOrWhiteSpace(auth.RefreshToken))
+            {
+                _tokenStorage.GuardarRefreshToken(auth.RefreshToken);
+            }
+
             return RedirectToPage("/Inicio/Carga");
+        }
+        catch (SqlException ex)
+        {
+            HttpContext.Session.Clear();
+            _logger.LogError(ex, "No se pudo registrar la sesión web en SQL Server.");
+            ErrorMessage = "No se pudo registrar tu sesión. Inténtalo nuevamente.";
+            return Page();
         }
         catch (HttpRequestException ex)
         {

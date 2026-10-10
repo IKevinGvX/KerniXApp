@@ -1,0 +1,1548 @@
+﻿@page "/Inventario/Productos/Editar"
+@model KerniX.Pages.Inventario.Productos.EditarModel
+
+@{
+    ViewData["Title"] = "Editar Producto";
+}
+
+<style>
+    .kx-edit-product {
+        --kx-bg: #020b18;
+        --kx-panel: #06182b;
+        --kx-panel2: #08213b;
+        --kx-gold: #ffb800;
+        --kx-gold-light: #ffdb67;
+        --kx-blue: #009dff;
+        --kx-cyan: #43ceff;
+        --kx-green: #3aefa0;
+        --kx-red: #ff5572;
+        --kx-text: #eef7ff;
+        --kx-muted: #9ab8d7;
+        --kx-muted2: #789bc1;
+        --kx-border: rgba(58,137,218,.30);
+        --kx-border-gold: rgba(255,184,0,.40);
+        min-height: 100vh;
+        padding: 26px;
+        color: var(--kx-text);
+        background: radial-gradient(circle at 90% 0%, rgba(0,157,255,.13), transparent 29%), radial-gradient(circle at 5% 0%, rgba(255,184,0,.07), transparent 24%), linear-gradient(145deg, #020b18, #031426);
+    }
+
+        .kx-edit-product *,
+        .kx-edit-product *::before,
+        .kx-edit-product *::after {
+            box-sizing: border-box;
+        }
+
+    .kx-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 22px;
+        margin-bottom: 18px;
+    }
+
+    .kx-header-main {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .kx-header-icon {
+        width: 66px;
+        height: 66px;
+        flex: 0 0 66px;
+        display: grid;
+        place-items: center;
+        border-radius: 19px;
+        color: var(--kx-gold);
+        font-size: 28px;
+        border: 1px solid var(--kx-border-gold);
+        background: radial-gradient(circle, rgba(255,184,0,.20), rgba(255,184,0,.03));
+        box-shadow: 0 0 28px rgba(255,184,0,.10);
+    }
+
+    .kx-breadcrumb {
+        display: flex;
+        gap: 7px;
+        margin-bottom: 5px;
+        color: var(--kx-muted);
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+        .kx-breadcrumb a {
+            color: var(--kx-cyan) !important;
+            text-decoration: none;
+        }
+
+    .kx-title {
+        margin: 0;
+        color: #fff !important;
+        font-size: 31px;
+        font-weight: 850;
+        line-height: 1.05;
+    }
+
+    .kx-subtitle {
+        margin: 7px 0 0;
+        color: var(--kx-muted) !important;
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .kx-header-actions,
+    .kx-footer-actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .kx-btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 0 16px;
+        border-radius: 11px;
+        border: 1px solid transparent;
+        text-decoration: none !important;
+        font-size: 13px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+
+        .kx-btn:hover {
+            transform: translateY(-2px);
+        }
+
+    .kx-btn-secondary {
+        color: #e8f4ff !important;
+        border-color: var(--kx-border);
+        background: linear-gradient(180deg, #0b2946, #06182c);
+    }
+
+    .kx-btn-primary {
+        color: #181100 !important;
+        border-color: #ffe180;
+        background: linear-gradient(180deg, #ffdb66, #eda700);
+        box-shadow: 0 10px 27px rgba(255,184,0,.17);
+    }
+
+    .kx-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 17px;
+        border: 1px solid var(--kx-border);
+        background: linear-gradient(145deg, rgba(7,29,52,.98), rgba(4,19,36,.98));
+        box-shadow: 0 14px 34px rgba(0,0,0,.24);
+    }
+
+        .kx-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(84,177,255,.26), transparent);
+        }
+
+    .kx-card-gold {
+        border-color: var(--kx-border-gold);
+    }
+
+    .kx-error {
+        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: 13px;
+        border: 1px solid rgba(255,85,114,.35);
+        background: rgba(255,85,114,.08);
+        color: #ffb0be !important;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .kx-validation-summary {
+        margin-bottom: 16px;
+        color: #ff9bad !important;
+        font-size: 13px;
+    }
+
+        .kx-validation-summary:empty {
+            display: none;
+        }
+
+        .kx-validation-summary ul {
+            margin: 0;
+            padding: 14px 20px 14px 38px;
+            border-radius: 13px;
+            border: 1px solid rgba(255,85,114,.35);
+            background: rgba(255,85,114,.08);
+        }
+
+    .kx-notice {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(0,157,255,.30);
+        background: linear-gradient(90deg, rgba(0,157,255,.085), rgba(255,184,0,.03));
+    }
+
+    .kx-notice-icon {
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        color: var(--kx-cyan);
+        border: 1px solid rgba(67,206,255,.28);
+        background: rgba(67,206,255,.07);
+    }
+
+    .kx-notice strong {
+        display: block;
+        color: #fff !important;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .kx-notice p {
+        margin: 0;
+        color: #b7cee5 !important;
+        font-size: 12px;
+        line-height: 1.55;
+    }
+
+    .kx-form-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(300px, .78fr);
+        gap: 15px;
+    }
+
+    .kx-form-main,
+    .kx-sidebar {
+        display: grid;
+        align-content: start;
+        gap: 15px;
+    }
+
+    .kx-section {
+        padding: 19px;
+    }
+
+    .kx-section-header {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 17px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(72,132,194,.18);
+    }
+
+    .kx-section-title {
+        margin: 0;
+        color: #fff !important;
+        font-size: 17px;
+        font-weight: 820;
+    }
+
+    .kx-section-description {
+        margin: 5px 0 0;
+        color: var(--kx-muted) !important;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .kx-section-number {
+        min-width: 33px;
+        height: 33px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        color: var(--kx-gold);
+        font-size: 13px;
+        font-weight: 850;
+        border: 1px solid var(--kx-border-gold);
+        background: rgba(255,184,0,.07);
+    }
+
+    .kx-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 15px;
+    }
+
+    .kx-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 15px;
+    }
+
+    .kx-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+        .kx-field.full {
+            grid-column: 1 / -1;
+        }
+
+    .kx-label {
+        color: #dcecff !important;
+        font-size: 13px;
+        font-weight: 750;
+    }
+
+    .kx-required {
+        color: var(--kx-gold);
+    }
+
+    .kx-help {
+        color: var(--kx-muted2) !important;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    .kx-input,
+    .kx-select,
+    .kx-textarea {
+        width: 100%;
+        border-radius: 11px;
+        border: 1px solid rgba(68,137,207,.32);
+        outline: none;
+        color: #fff !important;
+        background: linear-gradient(180deg, #06192d, #041425) !important;
+        font-size: 15px;
+        transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .kx-input,
+    .kx-select {
+        min-height: 49px;
+        padding: 0 13px;
+    }
+
+    .kx-textarea {
+        min-height: 118px;
+        padding: 13px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+        .kx-input:focus,
+        .kx-select:focus,
+        .kx-textarea:focus {
+            border-color: rgba(0,157,255,.8);
+            box-shadow: 0 0 0 4px rgba(0,157,255,.10);
+        }
+
+    .kx-select option {
+        background: #06182b;
+        color: #fff;
+    }
+
+    .kx-validation {
+        min-height: 16px;
+        color: #ff8398 !important;
+        font-size: 11px;
+        font-weight: 650;
+    }
+
+    .kx-price-preview {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 9px;
+        margin-top: 14px;
+    }
+
+    .kx-price-box {
+        padding: 13px;
+        border-radius: 11px;
+        border: 1px solid rgba(63,127,193,.19);
+        background: rgba(2,17,32,.50);
+    }
+
+    .kx-price-label {
+        color: #7ea6ce !important;
+        font-size: 10px;
+        margin-bottom: 5px;
+    }
+
+    .kx-price-value {
+        color: #fff !important;
+        font-size: 19px;
+        font-weight: 850;
+    }
+
+        .kx-price-value.gold {
+            color: var(--kx-gold-light) !important;
+        }
+
+        .kx-price-value.green {
+            color: var(--kx-green) !important;
+        }
+
+    .kx-switch-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(59,129,199,.22);
+        background: rgba(3,20,37,.58);
+    }
+
+    .kx-switch-title {
+        color: #fff !important;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .kx-switch-description {
+        margin-top: 4px;
+        color: var(--kx-muted) !important;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .kx-switch {
+        position: relative;
+        width: 58px;
+        height: 31px;
+        flex: 0 0 58px;
+    }
+
+        .kx-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .kx-slider {
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+        border-radius: 999px;
+        background: #132c46;
+        border: 1px solid rgba(89,143,197,.35);
+        transition: .2s;
+    }
+
+        .kx-slider::before {
+            content: "";
+            position: absolute;
+            width: 23px;
+            height: 23px;
+            left: 3px;
+            top: 3px;
+            border-radius: 50%;
+            background: #bcd2e7;
+            transition: .2s;
+        }
+
+    .kx-switch input:checked + .kx-slider {
+        background: linear-gradient(90deg, #006fbd, #009dff);
+        border-color: rgba(67,206,255,.60);
+    }
+
+        .kx-switch input:checked + .kx-slider::before {
+            transform: translateX(27px);
+            background: #fff;
+        }
+
+    .kx-summary-card {
+        padding: 18px;
+    }
+
+    .kx-summary-title {
+        color: #fff !important;
+        font-size: 16px;
+        font-weight: 830;
+        margin-bottom: 14px;
+    }
+
+    .kx-summary-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .kx-summary-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 9px;
+        border-bottom: 1px solid rgba(65,121,178,.13);
+    }
+
+    .kx-summary-label {
+        color: #91b0d0 !important;
+        font-size: 12px;
+    }
+
+    .kx-summary-value {
+        max-width: 170px;
+        color: #fff !important;
+        font-size: 13px;
+        font-weight: 750;
+        text-align: right;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .kx-form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-top: 16px;
+        padding: 17px;
+        border-radius: 15px;
+        border: 1px solid var(--kx-border);
+        background: rgba(5,22,40,.90);
+    }
+
+    .kx-footer-text strong {
+        display: block;
+        color: #fff !important;
+        font-size: 13px;
+    }
+
+    .kx-footer-text span {
+        display: block;
+        margin-top: 3px;
+        color: var(--kx-muted) !important;
+        font-size: 11px;
+    }
+
+    @@media(max-width:1100px) {
+        .kx-form-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-sidebar {
+            grid-template-columns: repeat(2,1fr);
+        }
+    }
+
+    @@media(max-width:780px) {
+        .kx-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .kx-grid-3,
+        .kx-price-preview,
+        .kx-sidebar {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media(max-width:650px) {
+        .kx-edit-product {
+            padding: 13px;
+        }
+
+        .kx-title {
+            font-size: 24px;
+        }
+
+        .kx-grid-2 {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-form-footer {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .kx-footer-actions {
+            width: 100%;
+        }
+
+            .kx-footer-actions .kx-btn {
+                flex: 1;
+            }
+    }
+</style>
+
+<div class="kx-edit-product">
+
+    <header class="kx-header">
+
+        <div class="kx-header-main">
+
+            <div class="kx-header-icon">
+                ✎
+            </div>
+
+            <div>
+
+                <div class="kx-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>›</span>
+                    <a href="/Inventario/Productos">Productos</a>
+                    <span>›</span>
+                    <a href="/Inventario/Productos/Detalle?idProducto=@Model.IdProducto">Detalle</a>
+                    <span>›</span>
+                    <span>Editar</span>
+                </div>
+
+                <h1 class="kx-title">
+                    Editar Producto
+                </h1>
+
+                <p class="kx-subtitle">
+                    Actualiza la información maestra del producto sin modificar
+                    directamente las existencias físicas de almacén.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="kx-header-actions">
+
+            <a href="/Inventario/Productos/Detalle?idProducto=@Model.IdProducto"
+               class="kx-btn kx-btn-secondary">
+                ← Detalle
+            </a>
+
+            <a href="/Inventario/Productos"
+               class="kx-btn kx-btn-secondary">
+                ← Productos
+            </a>
+
+        </div>
+
+    </header>
+
+
+    @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+    {
+        <div class="kx-error">
+            <strong>No se pudo actualizar el producto.</strong>
+            <div style="margin-top:4px;">
+                @Model.MensajeError
+            </div>
+        </div>
+    }
+
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="kx-validation-summary">
+            <ul>
+                @foreach (var estado in ViewData.ModelState.Values)
+                {
+                    foreach (var error in estado.Errors)
+                    {
+                        <li>
+                            @(string.IsNullOrWhiteSpace(error.ErrorMessage)
+                                ? error.Exception?.Message
+                                : error.ErrorMessage)
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    }
+
+
+    <div class="kx-notice">
+
+        <div class="kx-notice-icon">
+            ⓘ
+        </div>
+
+        <div>
+            <strong>Edición de datos maestros</strong>
+            <p>
+                Los cambios en código, clasificación, precios y niveles de seguridad
+                no generan entradas ni salidas de inventario.
+            </p>
+        </div>
+
+    </div>
+
+
+    <form method="post"
+          action="/Inventario/Productos/Editar?idProducto=@Model.IdProducto"
+          id="formEditarProducto">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden"
+               name="idProducto"
+               value="@Model.IdProducto" />
+
+
+        <div class="kx-form-layout">
+
+            <div class="kx-form-main">
+
+                <section class="kx-card kx-card-gold kx-section">
+
+                    <div class="kx-section-header">
+
+                        <div>
+                            <h2 class="kx-section-title">
+                                Datos generales
+                            </h2>
+
+                            <p class="kx-section-description">
+                                Identificación comercial principal.
+                            </p>
+                        </div>
+
+                        <div class="kx-section-number">
+                            01
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-grid-2">
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="codigoProducto">
+                                Código
+                                <span class="kx-required">*</span>
+                            </label>
+
+                            <input id="codigoProducto"
+                                   name="Input.Codigo"
+                                   value="@Model.Input.Codigo"
+                                   class="kx-input"
+                                   maxlength="100"
+                                   autocomplete="off" />
+
+                            <div class="kx-help">
+                                Debe continuar siendo único dentro de la empresa.
+                            </div>
+
+                            <span asp-validation-for="Input.Codigo"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="codigoBarras">
+                                Código de barras
+                            </label>
+
+                            <input id="codigoBarras"
+                                   name="Input.CodigoBarras"
+                                   value="@Model.Input.CodigoBarras"
+                                   class="kx-input"
+                                   maxlength="100"
+                                   autocomplete="off" />
+
+                            <span asp-validation-for="Input.CodigoBarras"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-field full">
+
+                            <label class="kx-label"
+                                   for="nombreProducto">
+                                Nombre del producto
+                                <span class="kx-required">*</span>
+                            </label>
+
+                            <input id="nombreProducto"
+                                   name="Input.Nombre"
+                                   value="@Model.Input.Nombre"
+                                   class="kx-input"
+                                   maxlength="200"
+                                   autocomplete="off" />
+
+                            <span asp-validation-for="Input.Nombre"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-field full">
+
+                            <label class="kx-label"
+                                   for="descripcionProducto">
+                                Descripción
+                            </label>
+
+                            <textarea id="descripcionProducto"
+                                      name="Input.Descripcion"
+                                      class="kx-textarea"
+                                      maxlength="500">@Model.Input.Descripcion</textarea>
+
+                            <span asp-validation-for="Input.Descripcion"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="kx-card kx-section">
+
+                    <div class="kx-section-header">
+
+                        <div>
+                            <h2 class="kx-section-title">
+                                Clasificación
+                            </h2>
+
+                            <p class="kx-section-description">
+                                Categoría, marca y unidad de medida.
+                            </p>
+                        </div>
+
+                        <div class="kx-section-number">
+                            02
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-grid-3">
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="categoriaProducto">
+                                Categoría
+                                <span class="kx-required">*</span>
+                            </label>
+
+                            <select id="categoriaProducto"
+                                    name="Input.IdCategoriaProducto"
+                                    class="kx-select">
+
+                                @if (Model.Input.IdCategoriaProducto <= 0)
+                                {
+                                    <option value="0" selected>
+                                        Seleccionar categoría
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="0">
+                                        Seleccionar categoría
+                                    </option>
+                                }
+
+                                @foreach (var categoria in Model.Catalogos.Categorias)
+                                {
+                                    if (categoria.Id == Model.Input.IdCategoriaProducto)
+                                    {
+                                        <option value="@categoria.Id" selected>
+                                            @categoria.Nombre
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@categoria.Id">
+                                            @categoria.Nombre
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+
+                            <span asp-validation-for="Input.IdCategoriaProducto"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="marcaProducto">
+                                Marca
+                            </label>
+
+                            <select id="marcaProducto"
+                                    name="Input.IdMarca"
+                                    class="kx-select">
+
+                                @if (!Model.Input.IdMarca.HasValue)
+                                {
+                                    <option value="" selected>
+                                        Sin marca
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="">
+                                        Sin marca
+                                    </option>
+                                }
+
+                                @foreach (var marca in Model.Catalogos.Marcas)
+                                {
+                                    if (marca.Id == Model.Input.IdMarca)
+                                    {
+                                        <option value="@marca.Id" selected>
+                                            @marca.Nombre
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@marca.Id">
+                                            @marca.Nombre
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+
+                            <span asp-validation-for="Input.IdMarca"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="unidadProducto">
+                                Unidad de medida
+                                <span class="kx-required">*</span>
+                            </label>
+
+                            <select id="unidadProducto"
+                                    name="Input.IdUnidadMedida"
+                                    class="kx-select">
+
+                                @if (Model.Input.IdUnidadMedida <= 0)
+                                {
+                                    <option value="0" selected>
+                                        Seleccionar unidad
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="0">
+                                        Seleccionar unidad
+                                    </option>
+                                }
+
+                                @foreach (var unidad in Model.Catalogos.UnidadesMedida)
+                                {
+                                    if (unidad.Id == Model.Input.IdUnidadMedida)
+                                    {
+                                        <option value="@unidad.Id" selected>
+                                            @unidad.Nombre
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@unidad.Id">
+                                            @unidad.Nombre
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+
+                            <span asp-validation-for="Input.IdUnidadMedida"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="kx-card kx-section">
+
+                    <div class="kx-section-header">
+
+                        <div>
+                            <h2 class="kx-section-title">
+                                Precios y margen
+                            </h2>
+
+                            <p class="kx-section-description">
+                                Modifica costo y precio comercial.
+                            </p>
+                        </div>
+
+                        <div class="kx-section-number">
+                            03
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-grid-2">
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="precioCompra">
+                                Precio de compra
+                            </label>
+
+                            <input id="precioCompra"
+                                   name="Input.PrecioCompra"
+                                   value="@Model.DecimalHtml(Model.Input.PrecioCompra)"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="kx-input" />
+
+                            <span asp-validation-for="Input.PrecioCompra"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="precioVenta">
+                                Precio de venta
+                            </label>
+
+                            <input id="precioVenta"
+                                   name="Input.PrecioVenta"
+                                   value="@Model.DecimalHtml(Model.Input.PrecioVenta)"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="kx-input" />
+
+                            <span asp-validation-for="Input.PrecioVenta"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-price-preview">
+
+                        <div class="kx-price-box">
+                            <div class="kx-price-label">Compra</div>
+                            <div id="previewCompra"
+                                 class="kx-price-value">
+                                S/ 0.00
+                            </div>
+                        </div>
+
+                        <div class="kx-price-box">
+                            <div class="kx-price-label">Ganancia por unidad</div>
+                            <div id="previewGanancia"
+                                 class="kx-price-value gold">
+                                S/ 0.00
+                            </div>
+                        </div>
+
+                        <div class="kx-price-box">
+                            <div class="kx-price-label">Margen estimado</div>
+                            <div id="previewMargen"
+                                 class="kx-price-value green">
+                                0.00%
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="kx-card kx-section">
+
+                    <div class="kx-section-header">
+
+                        <div>
+                            <h2 class="kx-section-title">
+                                Control de inventario
+                            </h2>
+
+                            <p class="kx-section-description">
+                                Niveles utilizados por alertas y abastecimiento.
+                            </p>
+                        </div>
+
+                        <div class="kx-section-number">
+                            04
+                        </div>
+
+                    </div>
+
+
+                    <div class="kx-switch-card">
+
+                        <div>
+                            <div class="kx-switch-title">
+                                Controlar existencias
+                            </div>
+
+                            <div class="kx-switch-description">
+                                Habilita las validaciones de stock mínimo y máximo.
+                            </div>
+                        </div>
+
+                        <label class="kx-switch">
+
+                            <input type="hidden"
+                                   name="Input.ControlaStock"
+                                   value="false" />
+
+                            @if (Model.Input.ControlaStock)
+                            {
+                                <input id="controlaStock"
+                                       name="Input.ControlaStock"
+                                       type="checkbox"
+                                       value="true"
+                                       checked />
+                            }
+                            else
+                            {
+                                <input id="controlaStock"
+                                       name="Input.ControlaStock"
+                                       type="checkbox"
+                                       value="true" />
+                            }
+
+                            <span class="kx-slider"></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div id="bloqueStock"
+                         class="kx-grid-2"
+                         style="margin-top:15px;">
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="stockMinimo">
+                                Stock mínimo
+                            </label>
+
+                            <input id="stockMinimo"
+                                   name="Input.StockMinimo"
+                                   value="@Model.DecimalHtml(Model.Input.StockMinimo)"
+                                   type="number"
+                                   min="0"
+                                   step="0.0001"
+                                   class="kx-input" />
+
+                            <span asp-validation-for="Input.StockMinimo"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+
+                        <div class="kx-field">
+
+                            <label class="kx-label"
+                                   for="stockMaximo">
+                                Stock máximo
+                            </label>
+
+                            <input id="stockMaximo"
+                                   name="Input.StockMaximo"
+                                   value="@Model.DecimalNullableHtml(Model.Input.StockMaximo)"
+                                   type="number"
+                                   min="0"
+                                   step="0.0001"
+                                   class="kx-input"
+                                   placeholder="Opcional" />
+
+                            <span asp-validation-for="Input.StockMaximo"
+                                  class="kx-validation">
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <aside class="kx-sidebar">
+
+                <section class="kx-card kx-card-gold kx-summary-card">
+
+                    <div class="kx-summary-title">
+                        Vista previa
+                    </div>
+
+                    <div class="kx-summary-list">
+
+                        <div class="kx-summary-item">
+                            <span class="kx-summary-label">ID</span>
+                            <span class="kx-summary-value">
+                                @Model.IdProducto
+                            </span>
+                        </div>
+
+                        <div class="kx-summary-item">
+                            <span class="kx-summary-label">Producto</span>
+                            <span id="resumenNombre"
+                                  class="kx-summary-value">
+                                @Model.Input.Nombre
+                            </span>
+                        </div>
+
+                        <div class="kx-summary-item">
+                            <span class="kx-summary-label">Código</span>
+                            <span id="resumenCodigo"
+                                  class="kx-summary-value">
+                                @Model.Input.Codigo
+                            </span>
+                        </div>
+
+                        <div class="kx-summary-item">
+                            <span class="kx-summary-label">Categoría</span>
+                            <span id="resumenCategoria"
+                                  class="kx-summary-value">
+                                -
+                            </span>
+                        </div>
+
+                        <div class="kx-summary-item">
+                            <span class="kx-summary-label">Marca</span>
+                            <span id="resumenMarca"
+                                  class="kx-summary-value">
+                                Sin marca
+                            </span>
+                        </div>
+
+                        <div class="kx-summary-item">
+                            <span class="kx-summary-label">Unidad</span>
+                            <span id="resumenUnidad"
+                                  class="kx-summary-value">
+                                -
+                            </span>
+                        </div>
+
+                        <div class="kx-summary-item">
+                            <span class="kx-summary-label">Precio venta</span>
+                            <span id="resumenPrecio"
+                                  class="kx-summary-value">
+                                S/ 0.00
+                            </span>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <section class="kx-card kx-summary-card">
+
+                    <div class="kx-summary-title">
+                        Importante
+                    </div>
+
+                    <div class="kx-help"
+                         style="font-size:12px;line-height:1.65;">
+                        • La edición no altera cantidades existentes.<br /><br />
+                        • El Kardex debe modificarse mediante movimientos de inventario.<br /><br />
+                        • Revisa precios y clasificación antes de guardar.
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+
+        <div class="kx-form-footer">
+
+            <div class="kx-footer-text">
+                <strong>Confirma los cambios antes de actualizar</strong>
+                <span>
+                    Al guardar regresarás al detalle del producto.
+                </span>
+            </div>
+
+            <div class="kx-footer-actions">
+
+                <a href="/Inventario/Productos/Detalle?idProducto=@Model.IdProducto"
+                   class="kx-btn kx-btn-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        id="btnGuardarProducto"
+                        class="kx-btn kx-btn-primary">
+                    ✓ Guardar Cambios
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+@section Scripts
+{
+    <script>
+        (() => {
+
+            "use strict";
+
+            const compra = document.getElementById("precioCompra");
+            const venta = document.getElementById("precioVenta");
+
+            const nombre = document.getElementById("nombreProducto");
+            const codigo = document.getElementById("codigoProducto");
+
+            const categoria = document.getElementById("categoriaProducto");
+            const marca = document.getElementById("marcaProducto");
+            const unidad = document.getElementById("unidadProducto");
+
+            const controlaStock = document.getElementById("controlaStock");
+            const bloqueStock = document.getElementById("bloqueStock");
+
+            const previewCompra = document.getElementById("previewCompra");
+            const previewGanancia = document.getElementById("previewGanancia");
+            const previewMargen = document.getElementById("previewMargen");
+
+            const resumenNombre = document.getElementById("resumenNombre");
+            const resumenCodigo = document.getElementById("resumenCodigo");
+            const resumenCategoria = document.getElementById("resumenCategoria");
+            const resumenMarca = document.getElementById("resumenMarca");
+            const resumenUnidad = document.getElementById("resumenUnidad");
+            const resumenPrecio = document.getElementById("resumenPrecio");
+
+            const form = document.getElementById("formEditarProducto");
+            const btn = document.getElementById("btnGuardarProducto");
+
+
+            function numero(valor) {
+
+                const n = Number.parseFloat(valor);
+
+                return Number.isFinite(n)
+                    ? n
+                    : 0;
+            }
+
+
+            function moneda(valor) {
+
+                return "S/ " +
+                    numero(valor).toLocaleString(
+                        "es-PE",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    );
+            }
+
+
+            function textoSelect(select) {
+
+                if (!select || select.selectedIndex < 0) {
+                    return "-";
+                }
+
+                const option =
+                    select.options[select.selectedIndex];
+
+                if (!option || !option.value || option.value === "0") {
+                    return "-";
+                }
+
+                return option.textContent?.trim() || "-";
+            }
+
+
+            function actualizarPrecios() {
+
+                const c = numero(compra?.value);
+                const v = numero(venta?.value);
+                const ganancia = v - c;
+
+                let margen = 0;
+
+                if (c > 0) {
+                    margen = (ganancia / c) * 100;
+                }
+
+                if (previewCompra) {
+                    previewCompra.textContent = moneda(c);
+                }
+
+                if (previewGanancia) {
+                    previewGanancia.textContent = moneda(ganancia);
+                }
+
+                if (previewMargen) {
+                    previewMargen.textContent =
+                        margen.toLocaleString(
+                            "es-PE",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }
+                        ) + "%";
+                }
+
+                if (resumenPrecio) {
+                    resumenPrecio.textContent = moneda(v);
+                }
+            }
+
+
+            function actualizarResumen() {
+
+                if (resumenNombre) {
+                    resumenNombre.textContent =
+                        nombre?.value?.trim() || "Sin definir";
+                }
+
+                if (resumenCodigo) {
+                    resumenCodigo.textContent =
+                        codigo?.value?.trim() || "-";
+                }
+
+                if (resumenCategoria) {
+                    resumenCategoria.textContent =
+                        textoSelect(categoria);
+                }
+
+                if (resumenMarca) {
+
+                    const texto =
+                        textoSelect(marca);
+
+                    resumenMarca.textContent =
+                        texto === "-"
+                            ? "Sin marca"
+                            : texto;
+                }
+
+                if (resumenUnidad) {
+                    resumenUnidad.textContent =
+                        textoSelect(unidad);
+                }
+
+                actualizarPrecios();
+            }
+
+
+            function actualizarStock() {
+
+                if (!controlaStock || !bloqueStock) {
+                    return;
+                }
+
+                bloqueStock.style.opacity =
+                    controlaStock.checked
+                        ? "1"
+                        : ".45";
+
+                // No deshabilitamos los inputs.
+                    // Un input disabled no viaja en el POST.
+                    }
+
+
+                [
+                    nombre,
+                        codigo,
+                        compra,
+                venta
+                ]
+                    .filter(Boolean)
+                .forEach(elemento => {
+
+                    elemento.addEventListener(
+                        "input",
+                        actualizarResumen
+                            );
+                        });
+
+
+                [
+                    categoria,
+                        marca,
+                        unidad
+            ]
+                .filter(Boolean)
+                .forEach(elemento => {
+
+                    elemento.addEventListener(
+                        "change",
+                        actualizarResumen
+                            );
+                        });
+
+
+                    controlaStock?.addEventListener(
+                "change",
+                        actualizarStock
+                    );
+
+
+                form?.addEventListener(
+                "submit",
+                        () => {
+
+                    if (!btn) {
+                        return;
+                    }
+
+                    setTimeout(
+                        () => {
+                            btn.disabled = true;
+                                    btn.textContent = "Guardando...";
+                        },
+                            50
+                        );
+                        }
+                    );
+
+
+                actualizarResumen();
+            actualizarStock();
+
+                })();
+    </script>
+}

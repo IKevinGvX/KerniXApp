@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.30" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.30" NoWarn="NU1605" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.2" />
@@ -20,37 +22,12 @@
 
   <ItemGroup>
     <Folder Include="DTOs\Almacenes\" />
-    <Folder Include="DTOs\Clientes\" />
     <Folder Include="DTOs\Inventario\" />
     <Folder Include="DTOs\Compras\" />
     <Folder Include="DTOs\IA\" />
     <Folder Include="DTOs\Ventas\" />
     <Folder Include="DTOs\Proveedores\" />
     <Folder Include="DTOs\Productos\" />
-    <Folder Include="Pages\Compras\" />
-    <Folder Include="Pages\IA\Anomalias\" />
-    <Folder Include="Pages\IA\Alertas\" />
-    <Folder Include="Pages\IA\Rotacion\" />
-    <Folder Include="Pages\IA\PronosticoVentas\" />
-    <Folder Include="Pages\IA\Reposicion\" />
-    <Folder Include="Pages\Inventario\Categorias\" />
-    <Folder Include="Pages\Inventario\Almacenes\" />
-    <Folder Include="Pages\Inventario\Entradas\" />
-    <Folder Include="Pages\Inventario\Ajustes\" />
-    <Folder Include="Pages\Inventario\InventarioFisico\" />
-    <Folder Include="Pages\Inventario\Kardex\" />
-    <Folder Include="Pages\Inventario\Alertas\" />
-    <Folder Include="Pages\Inventario\Transferencias\" />
-    <Folder Include="Pages\Inventario\Salidas\" />
-    <Folder Include="Pages\Inventario\UnidadesMedida\" />
-    <Folder Include="Pages\Inventario\Productos\" />
-    <Folder Include="Pages\Pedido\" />
-    <Folder Include="Pages\Proveedores\" />
-    <Folder Include="Services\Clientes\" />
-    <Folder Include="Services\Inventario\" />
-    <Folder Include="Services\IA\" />
-    <Folder Include="Services\Proveedores\" />
-    <Folder Include="Services\Productos\" />
   </ItemGroup>
 
 </Project>

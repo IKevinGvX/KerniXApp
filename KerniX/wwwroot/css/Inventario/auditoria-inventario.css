@@ -1,0 +1,598 @@
+﻿:root {
+    --kai-bg: #020914;
+    --kai-panel: #071a2e;
+    --kai-border: rgba(62,145,219,.23);
+    --kai-text: #f4f8fd;
+    --kai-muted: #8298ad;
+    --kai-cyan: #18d8ff;
+    --kai-gold: #ffbd22;
+    --kai-green: #3be5a3;
+    --kai-red: #ff6078;
+    --kai-violet: #9a70ff;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.kai-page {
+    position: relative;
+    left: 50%;
+    width: 100vw;
+    min-height: 100vh;
+    margin-left: -50vw;
+    padding: 18px 20px 42px;
+    color: var(--kai-text);
+    background: radial-gradient(circle at 85% 0,rgba(24,216,255,.10),transparent 28%), radial-gradient(circle at 8% 0,rgba(154,112,255,.06),transparent 24%), linear-gradient(145deg,#020914,#03111f 50%,#06182a);
+}
+
+.kai-shell {
+    width: min(1220px,calc(100% - 8px));
+    margin: 0 auto;
+}
+
+.kai-hero {
+    margin-bottom: 12px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    border: 1px solid var(--kai-border);
+    border-radius: 17px;
+    background: linear-gradient(135deg,rgba(8,28,49,.98),rgba(5,18,33,.98));
+    box-shadow: 0 16px 44px rgba(0,0,0,.20);
+}
+
+.kai-breadcrumb {
+    margin-bottom: 7px;
+    display: flex;
+    gap: 7px;
+    color: #607991;
+    font-size: .61rem;
+}
+
+    .kai-breadcrumb a {
+        color: var(--kai-cyan);
+        text-decoration: none;
+    }
+
+.kai-eyebrow,
+.kai-card-head > div > span {
+    color: var(--kai-cyan);
+    font-size: .60rem;
+    font-weight: 900;
+    letter-spacing: .13em;
+}
+
+.kai-hero h1 {
+    margin: 4px 0 0;
+    color: #fff;
+    font-size: clamp(1.7rem,3vw,2.35rem);
+    font-weight: 850;
+    line-height: 1.05;
+    letter-spacing: -.04em;
+}
+
+    .kai-hero h1 strong {
+        color: var(--kai-violet);
+    }
+
+.kai-page--kardex .kai-hero h1 strong {
+    color: var(--kai-gold);
+}
+
+.kai-hero p {
+    max-width: 720px;
+    margin: 8px 0 0;
+    color: #91a7bb;
+    font-size: .68rem;
+    line-height: 1.55;
+}
+
+.kai-actions,
+.kai-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.kai-actions {
+    justify-content: flex-end;
+}
+
+.kai-btn {
+    min-height: 38px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 9px;
+    color: #e8f2fc;
+    background: rgba(255,255,255,.035);
+    font: inherit;
+    font-size: .62rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .15s ease;
+}
+
+    .kai-btn:hover {
+        color: #fff;
+        border-color: rgba(24,216,255,.36);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+.kai-btn-cyan {
+    color: #00171d;
+    border-color: rgba(24,216,255,.58);
+    background: linear-gradient(135deg,#00acd0,#2ce3ff);
+}
+
+.kai-btn-violet {
+    color: #fff;
+    border-color: rgba(154,112,255,.50);
+    background: linear-gradient(135deg,#6744cf,#9a70ff);
+}
+
+.kai-btn-red {
+    color: #fff;
+    border-color: rgba(255,96,120,.50);
+    background: linear-gradient(135deg,#c93450,#ff647b);
+}
+
+.kai-btn-small {
+    min-height: 31px;
+    padding: 0 9px;
+    font-size: .54rem;
+}
+
+.kai-alert {
+    margin-bottom: 11px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: .64rem;
+}
+
+.kai-alert-ok {
+    color: #a9f2ce;
+    border: 1px solid rgba(59,229,163,.18);
+    background: rgba(59,229,163,.05);
+}
+
+.kai-alert-error {
+    color: #ffc0ca;
+    border: 1px solid rgba(255,96,120,.20);
+    background: rgba(255,96,120,.055);
+}
+
+.kai-kpis {
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 9px;
+}
+
+    .kai-kpis article {
+        min-height: 100px;
+        padding: 13px 14px;
+        border: 1px solid var(--kai-border);
+        border-radius: 13px;
+        background: linear-gradient(145deg,rgba(8,27,47,.97),rgba(5,17,31,.98));
+    }
+
+    .kai-kpis span {
+        color: #78a4ca;
+        font-size: .54rem;
+        font-weight: 900;
+        letter-spacing: .08em;
+    }
+
+    .kai-kpis strong {
+        display: block;
+        margin-top: 7px;
+        color: #fff;
+        font-size: 1.42rem;
+        line-height: 1;
+    }
+
+    .kai-kpis small {
+        display: block;
+        margin-top: 7px;
+        color: #5d758d;
+        font-size: .55rem;
+    }
+
+    .kai-kpis .positive strong {
+        color: var(--kai-green);
+    }
+
+    .kai-kpis .negative strong {
+        color: var(--kai-red);
+    }
+
+    .kai-kpis .protected strong {
+        color: var(--kai-violet);
+    }
+
+.kai-rule-grid {
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 10px;
+}
+
+    .kai-rule-grid article {
+        padding: 12px 13px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border: 1px solid var(--kai-border);
+        border-radius: 12px;
+        background: rgba(6,21,37,.88);
+    }
+
+.kai-rule-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 900;
+}
+
+.kai-rule-grid .safe .kai-rule-icon {
+    color: #fff;
+    background: var(--kai-violet);
+}
+
+.kai-rule-grid .locked .kai-rule-icon {
+    color: #161000;
+    background: var(--kai-gold);
+}
+
+.kai-rule-grid strong {
+    display: block;
+    color: #edf4fa;
+    font-size: .63rem;
+}
+
+.kai-rule-grid p {
+    margin: 3px 0 0;
+    color: #657d94;
+    font-size: .52rem;
+    line-height: 1.45;
+}
+
+.kai-summary-grid {
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 8px;
+}
+
+    .kai-summary-grid article {
+        padding: 10px 11px;
+        border: 1px solid rgba(255,255,255,.05);
+        border-radius: 9px;
+        background: rgba(255,255,255,.015);
+    }
+
+    .kai-summary-grid span {
+        display: block;
+        color: #647e95;
+        font-size: .50rem;
+    }
+
+    .kai-summary-grid strong {
+        display: block;
+        margin-top: 3px;
+        color: #edf4fa;
+        font-size: .67rem;
+    }
+
+.kai-card {
+    overflow: hidden;
+    margin-bottom: 12px;
+    border: 1px solid var(--kai-border);
+    border-radius: 14px;
+    background: linear-gradient(145deg,rgba(8,27,48,.98),rgba(5,17,31,.98));
+    box-shadow: 0 12px 30px rgba(0,0,0,.13);
+}
+
+.kai-card-head {
+    min-height: 64px;
+    padding: 11px 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,.055);
+}
+
+    .kai-card-head h2 {
+        margin: 3px 0 0;
+        color: #f5f8fc;
+        font-size: .76rem;
+    }
+
+    .kai-card-head p {
+        margin: 3px 0 0;
+        color: #617990;
+        font-size: .55rem;
+    }
+
+.kai-card-body {
+    padding: 13px;
+}
+
+.kai-toolbar {
+    display: flex;
+    align-items: end;
+    gap: 7px;
+}
+
+    .kai-toolbar .kai-field {
+        min-width: 230px;
+    }
+
+.kai-filter-grid {
+    display: grid;
+    grid-template-columns: 1.25fr repeat(5,minmax(0,1fr));
+    gap: 9px;
+}
+
+.kai-field-wide {
+    min-width: 0;
+}
+
+.kai-field label {
+    display: block;
+    margin-bottom: 4px;
+    color: #68839b;
+    font-size: .49rem;
+    font-weight: 850;
+    text-transform: uppercase;
+}
+
+.kai-field input,
+.kai-field select,
+.kai-reverse-form input {
+    width: 100%;
+    height: 36px;
+    padding: 0 9px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 8px;
+    color: #dbe7f2;
+    background: #051422;
+    outline: none;
+    font: inherit;
+    font-size: .57rem;
+}
+
+    .kai-field input:focus,
+    .kai-field select:focus,
+    .kai-reverse-form input:focus {
+        border-color: rgba(24,216,255,.38);
+    }
+
+.kai-form-actions {
+    margin-top: 10px;
+}
+
+.kai-table-wrap {
+    overflow-x: auto;
+}
+
+.kai-table {
+    width: 100%;
+    min-width: 1120px;
+    border-collapse: collapse;
+}
+
+.kai-table-kardex {
+    min-width: 1300px;
+}
+
+.kai-table th {
+    padding: 9px 10px;
+    text-align: left;
+    color: #6e8ba6;
+    background: rgba(255,255,255,.012);
+    border-bottom: 1px solid rgba(255,255,255,.055);
+    font-size: .47rem;
+    font-weight: 900;
+    letter-spacing: .07em;
+}
+
+.kai-table td {
+    padding: 10px;
+    color: #cbd8e4;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: .56rem;
+    vertical-align: middle;
+}
+
+    .kai-table td strong {
+        display: block;
+        color: #eef4fa;
+        font-size: .57rem;
+    }
+
+    .kai-table td small {
+        display: block;
+        margin-top: 2px;
+        color: #577089;
+        font-size: .48rem;
+    }
+
+.kai-number {
+    color: var(--kai-gold) !important;
+    font-weight: 900;
+}
+
+.kai-stock-flow {
+    white-space: nowrap;
+    color: #9bb0c3;
+}
+
+    .kai-stock-flow b {
+        margin: 0 3px;
+        color: #506b84;
+    }
+
+.kai-pill,
+.kai-badge {
+    display: inline-flex;
+    padding: 4px 7px;
+    border: 1px solid rgba(24,216,255,.15);
+    border-radius: 999px;
+    color: #8eeeff;
+    background: rgba(24,216,255,.04);
+    font-size: .49rem;
+    font-weight: 850;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+    .kai-badge.green {
+        color: #a8f2cf;
+        border-color: rgba(59,229,163,.18);
+        background: rgba(59,229,163,.04);
+    }
+
+    .kai-badge.red {
+        color: #ffb1be;
+        border-color: rgba(255,96,120,.18);
+        background: rgba(255,96,120,.04);
+    }
+
+    .kai-badge.violet {
+        color: #c5b3ff;
+        border-color: rgba(154,112,255,.18);
+        background: rgba(154,112,255,.04);
+    }
+
+    .kai-badge.gold {
+        color: #ffe29a;
+        border-color: rgba(255,189,34,.18);
+        background: rgba(255,189,34,.04);
+    }
+
+.kai-pos {
+    color: var(--kai-green) !important;
+    font-weight: 900;
+}
+
+.kai-neg {
+    color: var(--kai-red) !important;
+    font-weight: 900;
+}
+
+.kai-reverse-form {
+    min-width: 260px;
+    display: grid;
+    grid-template-columns: minmax(130px,1fr) auto;
+    gap: 6px;
+    align-items: center;
+}
+
+    .kai-reverse-form input {
+        height: 31px;
+    }
+
+.kai-empty {
+    padding: 26px 10px;
+    text-align: center;
+    color: #607a92;
+    font-size: .58rem;
+}
+
+.kai-pagination {
+    padding: 11px 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-top: 1px solid rgba(255,255,255,.05);
+}
+
+    .kai-pagination > span {
+        color: #617a91;
+        font-size: .54rem;
+    }
+
+@media (max-width:1100px) {
+    .kai-filter-grid {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+    }
+}
+
+@media (max-width:900px) {
+    .kai-kpis,
+    .kai-summary-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+
+    .kai-rule-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width:780px) {
+    .kai-page {
+        padding: 13px 10px 32px;
+    }
+
+    .kai-hero,
+    .kai-card-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .kai-actions {
+        justify-content: flex-start;
+    }
+
+    .kai-toolbar {
+        width: 100%;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+        .kai-toolbar .kai-field {
+            width: 100%;
+            min-width: 0;
+        }
+
+    .kai-filter-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+}
+
+@media (max-width:620px) {
+    .kai-kpis,
+    .kai-summary-grid,
+    .kai-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .kai-shell {
+        width: 100%;
+    }
+
+    .kai-reverse-form {
+        min-width: 210px;
+        grid-template-columns: 1fr;
+    }
+}

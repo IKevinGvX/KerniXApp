@@ -13,7 +13,8 @@ public static class SessionKeys
 
     public const string Usuario =
         "KerniX.Usuario";
-
+    public const string IdEmpresa =
+    "KerniX.IdEmpresa";
     public const string IdEmpleado =
         "KerniX.IdEmpleado";
 

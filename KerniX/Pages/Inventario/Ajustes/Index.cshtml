@@ -1,0 +1,511 @@
+﻿@page "/Inventario/Ajustes"
+@model KerniX.Pages.Inventario.Ajustes.IndexModel
+
+@{
+    ViewData["Title"] = "Ajustes de Inventario";
+
+    decimal totalPositivo =
+        Model.Items
+            .Where(x => x.Diferencia > 0)
+            .Sum(x => x.Diferencia);
+
+    decimal totalNegativo =
+        Model.Items
+            .Where(x => x.Diferencia < 0)
+            .Sum(x => Math.Abs(x.Diferencia));
+
+    decimal mayorAjuste =
+        Model.Items.Count > 0
+            ? Model.Items.Max(x => Math.Abs(x.Diferencia))
+            : 0M;
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/ajustes.css"
+      asp-append-version="true" />
+
+<div class="kaj-page">
+
+    <main class="kaj-shell">
+
+        <section class="kaj-hero">
+
+            <div>
+
+                <div class="kaj-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Ajustes</strong>
+                </div>
+
+                <div class="kaj-eyebrow">
+                    INVENTARIO · REGULARIZACIÓN CONTROLADA
+                </div>
+
+                <h1>
+                    Ajustes de <strong>Stock</strong>
+                </h1>
+
+                <p>
+                    Corrige diferencias justificadas de inventario.
+                    Un valor positivo incrementa existencias y un valor negativo
+                    las reduce mediante movimientos trazables de Kardex.
+                </p>
+
+            </div>
+
+
+            <div class="kaj-actions">
+
+                <a href="/Inventario"
+                   class="kaj-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="#nuevo-ajuste"
+                   class="kaj-btn kaj-btn-gold">
+                    <span uk-icon="icon: plus-circle; ratio: .8"></span>
+                    Nuevo Ajuste
+                </a>
+
+                <a href="/Inventario/InventarioFisico"
+                   class="kaj-btn kaj-btn-cyan">
+                    Inventario Físico
+                </a>
+
+                <a href="/Inventario/Kardex"
+                   class="kaj-btn">
+                    Kardex
+                </a>
+
+            </div>
+
+        </section>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeExito))
+        {
+            <div class="kaj-alert kaj-alert-ok">
+                <span uk-icon="icon: check; ratio: .8"></span>
+                @Model.MensajeExito
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kaj-alert kaj-alert-error">
+                <span uk-icon="icon: warning; ratio: .8"></span>
+                @Model.MensajeError
+            </div>
+        }
+
+
+        <section class="kaj-kpis">
+
+            <article>
+                <span>AJUSTES REGISTRADOS</span>
+                <strong>@Model.Items.Count</strong>
+                <small>Movimientos del historial cargado</small>
+            </article>
+
+            <article class="positive">
+                <span>AJUSTES POSITIVOS</span>
+                <strong>@Model.Positivos</strong>
+                <small>+@totalPositivo.ToString("N2") unidades</small>
+            </article>
+
+            <article class="negative">
+                <span>AJUSTES NEGATIVOS</span>
+                <strong>@Model.Negativos</strong>
+                <small>-@totalNegativo.ToString("N2") unidades</small>
+            </article>
+
+            <article>
+                <span>BALANCE NETO</span>
+                <strong>@Model.Neto.ToString("N2")</strong>
+                <small>Suma algebraica de ajustes</small>
+            </article>
+
+        </section>
+
+
+        <section class="kaj-info-grid">
+
+            <article class="kaj-info positive">
+                <div class="kaj-info-icon">
+                    +
+                </div>
+
+                <div>
+                    <strong>Ajuste positivo</strong>
+                    <p>
+                        Incrementa el stock cuando el conteo físico es mayor al sistema.
+                    </p>
+                </div>
+            </article>
+
+
+            <article class="kaj-info negative">
+                <div class="kaj-info-icon">
+                    −
+                </div>
+
+                <div>
+                    <strong>Ajuste negativo</strong>
+                    <p>
+                        Reduce el stock cuando existe una diferencia física justificada.
+                    </p>
+                </div>
+            </article>
+
+        </section>
+
+
+        <section id="nuevo-ajuste"
+                 class="kaj-card">
+
+            <header class="kaj-card-head">
+
+                <div>
+                    <span>NUEVO AJUSTE</span>
+
+                    <h2>
+                        Registrar diferencia
+                    </h2>
+
+                    <p>
+                        Ejemplo: +5 incrementa cinco unidades; -3 descuenta tres.
+                    </p>
+                </div>
+
+            </header>
+
+
+            <div class="kaj-card-body">
+
+                <form method="post"
+                      action="?handler=Registrar">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="kaj-form-grid">
+
+                        <div class="kaj-field">
+                            <label>Almacén</label>
+
+                            <select name="idAlmacen"
+                                    required>
+
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var almacen in Model.Catalogos.Almacenes)
+                                {
+                                    <option value="@almacen.IdAlmacen">
+                                        @almacen.Codigo · @almacen.Nombre
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kaj-field">
+                            <label>Producto</label>
+
+                            <select name="idProducto"
+                                    required>
+
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var producto in Model.Catalogos.Productos)
+                                {
+                                    <option value="@producto.IdProducto">
+                                        @producto.Codigo · @producto.Nombre
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kaj-field">
+                            <label>Diferencia</label>
+
+                            <input type="number"
+                                   name="diferencia"
+                                   step="0.0001"
+                                   placeholder="+5 / -3"
+                                   required />
+                        </div>
+
+
+                        <div class="kaj-field kaj-field-full">
+                            <label>Motivo obligatorio</label>
+
+                            <textarea name="motivo"
+                                      maxlength="300"
+                                      placeholder="Explica por qué se regulariza el stock."
+                                      required></textarea>
+                        </div>
+
+                    </div>
+
+
+                    <div class="kaj-warning">
+                        <strong>Importante:</strong>
+                        el ajuste genera un movimiento real de inventario.
+                        No se modifica ni elimina el Kardex manualmente.
+                    </div>
+
+
+                    <div class="kaj-form-actions">
+
+                        <button type="submit"
+                                class="kaj-btn kaj-btn-gold"
+                                data-confirm="¿Registrar este ajuste de inventario?">
+                            <span uk-icon="icon: check; ratio: .8"></span>
+                            Registrar Ajuste
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <section class="kaj-card">
+
+            <header class="kaj-card-head">
+
+                <div>
+                    <span>ANÁLISIS</span>
+
+                    <h2>
+                        Resumen de regularizaciones
+                    </h2>
+
+                    <p>
+                        Comportamiento de los ajustes cargados.
+                    </p>
+                </div>
+
+            </header>
+
+
+            <div class="kaj-analysis">
+
+                <article>
+                    <span>Mayor ajuste visible</span>
+
+                    <strong>
+                        @mayorAjuste.ToString("N2")
+                    </strong>
+                </article>
+
+                <article>
+                    <span>Total incrementado</span>
+
+                    <strong class="kaj-pos">
+                        +@totalPositivo.ToString("N2")
+                    </strong>
+                </article>
+
+                <article>
+                    <span>Total descontado</span>
+
+                    <strong class="kaj-neg">
+                        -@totalNegativo.ToString("N2")
+                    </strong>
+                </article>
+
+                <article>
+                    <span>Balance</span>
+
+                    @if (Model.Neto > 0)
+                    {
+                        <strong class="kaj-pos">
+                            +@Model.Neto.ToString("N2")
+                        </strong>
+                    }
+                    else if (Model.Neto < 0)
+                    {
+                        <strong class="kaj-neg">
+                            @Model.Neto.ToString("N2")
+                        </strong>
+                    }
+                    else
+                    {
+                        <strong>
+                            0.00
+                        </strong>
+                    }
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <section class="kaj-card">
+
+            <header class="kaj-card-head">
+
+                <div>
+                    <span>TRAZABILIDAD</span>
+
+                    <h2>
+                        Historial de ajustes
+                    </h2>
+
+                    <p>
+                        Cada registro conserva su motivo y movimiento de inventario.
+                    </p>
+                </div>
+
+                <span class="kaj-pill">
+                    @Model.Items.Count registros
+                </span>
+
+            </header>
+
+
+            <div class="kaj-table-wrap">
+
+                <table class="kaj-table">
+
+                    <thead>
+                        <tr>
+                            <th>NÚMERO</th>
+                            <th>FECHA / HORA</th>
+                            <th>PRODUCTO</th>
+                            <th>ALMACÉN</th>
+                            <th>TIPO</th>
+                            <th>DIFERENCIA</th>
+                            <th>MOTIVO</th>
+                            <th>MOVIMIENTO</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8">
+
+                                <div class="kaj-empty">
+                                    No existen ajustes registrados.
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Items)
+                        {
+                            bool positivo =
+                                item.Diferencia > 0;
+
+                            <tr>
+
+                                <td>
+                                    <strong class="kaj-number">
+                                        @item.NumeroAjuste
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.FechaRegistro.ToString("dd/MM/yyyy")
+                                    </strong>
+
+                                    <small>
+                                        @item.FechaRegistro.ToString("HH:mm")
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <strong>
+                                        @item.Producto
+                                    </strong>
+
+                                    <small>
+                                        @item.CodigoProducto
+                                    </small>
+                                </td>
+
+                                <td>
+                                    @item.Almacen
+                                </td>
+
+                                <td>
+                                    @if (positivo)
+                                    {
+                                        <span class="kaj-badge positive">
+                                            Positivo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="kaj-badge negative">
+                                            Negativo
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (positivo)
+                                    {
+                                        <span class="kaj-pos">
+                                            +@item.Diferencia.ToString("N2")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="kaj-neg">
+                                            @item.Diferencia.ToString("N2")
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.Motivo
+                                </td>
+
+                                <td>
+                                    @(item.IdMovimientoInventario?.ToString() ?? "—")
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
+
+<script src="~/js/Inventario/ajustes.js"
+        asp-append-version="true"></script>

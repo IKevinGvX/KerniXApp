@@ -1,0 +1,56 @@
+﻿@page "/Inventario/Proveedores/Detalle/{id:int}"
+@model KerniX.Pages.Inventario.Proveedores.DetalleModel
+@{
+    ViewData["Title"] = "Ficha de proveedor | KerniX ERP";
+    var p = Model.Proveedor;
+}
+<link rel="stylesheet" href="~/css/proveedores.css" asp-append-version="true" />
+<main class="pv-shell">
+    <div class="pv-container">
+        <div class="pv-form-shell">
+            <header class="pv-form-heading">
+                <div class="pv-eyebrow">KERNIX ERP / DIRECTORIO DE PROVEEDORES</div>
+                <h1>Ficha del <span>proveedor</span></h1>
+                <p>Consulta detallada de la información registrada y su estado actual.</p>
+                <div class="pv-top-actions" style="margin-top:20px">
+                    <span class="pv-status @(p.Estado ? "pv-active" : "pv-inactive")">
+                        <i></i> @(p.Estado ? "Activo" : "Inactivo")
+                    </span>
+                    <span class="pv-readonly">Código #@p.IdProveedor</span>
+                </div>
+            </header>
+            @if (!string.IsNullOrEmpty(Model.MensajeOk))
+            {
+                <div class="pv-notice pv-notice-ok"><span uk-icon="check"></span>@Model.MensajeOk</div>
+            }
+            <section class="pv-info-panel">
+                <div><b>Razón social</b><span>@p.RazonSocial</span></div>
+                <div><b>Tipo de documento</b><span>@p.TipoDocumento.ToUpperInvariant()</span></div>
+                <div><b>Número de documento</b><span>@p.NumeroDocumento</span></div>
+                <div><b>Nombre comercial</b><span>@(string.IsNullOrWhiteSpace(p.NombreComercial) ? "—" : p.NombreComercial)</span></div>
+                <div><b>Teléfono</b><span>@(string.IsNullOrWhiteSpace(p.Telefono) ? "—" : p.Telefono)</span></div>
+                <div>
+                    <b>Correo</b>
+                    @if (!string.IsNullOrWhiteSpace(p.Correo))
+                    {
+                        <a href="mailto:@p.Correo">@p.Correo</a>
+                    }
+                    else
+                    {
+
+                        <span>—</span>
+                    }
+                </div>
+                <div><b>Fecha de registro</b><span>@p.FechaRegistro.ToString("dd/MM/yyyy HH:mm")</span></div>
+            </section>
+            <footer class="pv-form-footer" style="padding:0 31px 31px">
+                <a class="pv-secondary" href="/Inventario/Proveedores"><span uk-icon="arrow-left"></span> Volver</a>
+                <a class="pv-secondary" href="/Inventario/Proveedores/Historial/@p.IdProveedor"><span uk-icon="history"></span> Historial</a>
+                @if (Model.PuedeGestionar)
+                {
+                    <a class="pv-action" href="/Inventario/Proveedores/Editar/@p.IdProveedor"><span uk-icon="pencil"></span> Editar proveedor</a>
+                }
+            </footer>
+        </div>
+    </div>
+</main>

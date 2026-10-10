@@ -7,7 +7,6 @@
     ViewData["Title"] = "Nueva Venta";
 }
 
-
 <!DOCTYPE html>
 
 <html lang="es">
@@ -23,21 +22,34 @@
         @ViewData["Title"] | KerniX
     </title>
 
+
     <!-- UIKIT -->
+
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
-    <!-- CSS NUEVA VENTA -->
-    <link rel="stylesheet"
-          href="~/css/ventas/nueva.css" asp-append-version="true" />
 
-    
+    <!-- ESTILOS -->
+
+    <link rel="stylesheet"
+          href="~/css/ventas/nueva.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/css/ventas/nueva-ajustes.css"
+          asp-append-version="true" />
+
+
 </head>
 
-<body>
-    <!-- ========================================================= -->
-    <!-- MODAL NUEVO CLIENTE -->
-    <!-- ========================================================= -->
+
+<body class="@(Model.PedidoOrigen is not null ? "kxdesdepedido" : "")">
+
+
+    <!-- =========================================================
+         MODAL NUEVO CLIENTE
+         ========================================================= -->
+
     <div id="modalNuevoCliente"
          class="kxcliente-modal"
          hidden>
@@ -46,14 +58,17 @@
              class="kxcliente-modal-fondo">
         </div>
 
+
         <section class="kxcliente-modal-dialogo"
                  role="dialog"
                  aria-modal="true"
                  aria-labelledby="tituloNuevoCliente">
 
+
             <header class="kxcliente-modal-cabecera">
 
                 <div>
+
                     <span class="kxcliente-modal-mini">
                         CLIENTES
                     </span>
@@ -65,7 +80,9 @@
                     <p>
                         Registra un cliente sin salir de la venta.
                     </p>
+
                 </div>
+
 
                 <button type="button"
                         id="cerrarModalNuevoCliente"
@@ -81,7 +98,9 @@
 
             <div class="kxcliente-modal-cuerpo">
 
+
                 <div class="kxcliente-form-grid">
+
 
                     <div class="kxcliente-campo">
 
@@ -220,6 +239,7 @@
 
 
                     <div class="kxcliente-subtitulo kxcliente-campo-ancho">
+
                         <strong>
                             Contacto principal
                         </strong>
@@ -227,6 +247,7 @@
                         <span>
                             Datos opcionales del contacto del cliente.
                         </span>
+
                     </div>
 
 
@@ -271,13 +292,11 @@
 
 
                     <div class="kxcliente-subtitulo kxcliente-campo-ancho">
+
                         <strong>
                             Dirección
                         </strong>
 
-                        <span>
-                            Puedes dejarla vacía si todavía no la registrarás.
-                        </span>
                     </div>
 
 
@@ -350,8 +369,8 @@
                         <input type="text"
                                id="nuevoUbigeo"
                                maxlength="6"
-                               autocomplete="off"
                                inputmode="numeric"
+                               autocomplete="off"
                                placeholder="150110" />
 
                     </div>
@@ -409,20 +428,31 @@
 
     </div>
 
-    <!-- Token para POST del handler Razor -->
+
+
+    <!-- =========================================================
+         TOKEN POST
+         ========================================================= -->
+
     <form method="post"
           id="formTokenNuevaVenta"
           hidden>
+
         @Html.AntiForgeryToken()
+
     </form>
+
+
 
     <div class="kxventa">
 
-        <!-- ================================================= -->
-        <!-- SIDEBAR -->
-        <!-- ================================================= -->
+
+        <!-- =========================================================
+             SIDEBAR
+             ========================================================= -->
 
         <aside class="kxsidebar">
+
 
             <div class="kxmarca">
 
@@ -446,6 +476,7 @@
 
 
             <nav class="kxmenu">
+
 
                 <a href="/Ventas/PrincipalVentas"
                    class="kxmenuitem">
@@ -483,7 +514,7 @@
                 </a>
 
 
-                <a href="/Ventas/Pedidos"
+                <a href="/Pedidos/Index"
                    class="kxmenuitem">
 
                     <span uk-icon="icon: list"></span>
@@ -547,15 +578,41 @@
         </aside>
 
 
-        <!-- ================================================= -->
-        <!-- CONTENIDO -->
-        <!-- ================================================= -->
+
+        <!-- =========================================================
+             CONTENIDO
+             ========================================================= -->
 
         <main class="kxcontenido">
 
-            <!-- ================================================= -->
-            <!-- CABECERA -->
-            <!-- ================================================= -->
+
+            <!-- =====================================================
+                 DATOS PEDIDO
+                 ===================================================== -->
+            @if (Model.PedidoOrigen is not null)
+            {
+                <script id="kernixPedidoOrigenJson"
+                        type="application/json">
+
+                                @Html.Raw(
+                                        System.Text.Json.JsonSerializer.Serialize(
+                                                Model.PedidoOrigen,
+                                                new System.Text.Json.JsonSerializerOptions
+                                                {
+                                                        PropertyNamingPolicy =
+                                                                System.Text.Json.JsonNamingPolicy.CamelCase
+                                                }
+                                        )
+                                )
+
+                </script>
+            }
+
+
+
+            <!-- =====================================================
+                 CABECERA
+                 ===================================================== -->
 
             <header class="kxcabecera">
 
@@ -592,23 +649,27 @@
             </header>
 
 
-            <!-- ================================================= -->
-            <!-- CONTENEDOR PRINCIPAL -->
-            <!-- ================================================= -->
+
+            <!-- =====================================================
+                 GRID
+                 ===================================================== -->
 
             <div class="kxventagrid">
 
-                <!-- ================================================= -->
-                <!-- IZQUIERDA -->
-                <!-- ================================================= -->
+
+                <!-- =================================================
+                     IZQUIERDA
+                     ================================================= -->
 
                 <section class="kxventaizquierda">
 
-                    <!-- ================================================= -->
-                    <!-- 01 - CLIENTE -->
-                    <!-- ================================================= -->
+
+                    <!-- =============================================
+                         CLIENTE
+                         ============================================= -->
 
                     <article class="kxpanel">
+
 
                         <div class="kxpanelcabecera">
 
@@ -633,6 +694,8 @@
                             </div>
 
                         </div>
+
+
                         <div class="kxpanelacciones">
 
                             <button type="button"
@@ -647,9 +710,9 @@
 
                         </div>
 
+
                         <div class="kxclientegrid">
 
-                            <!-- BUSCADOR -->
 
                             <div class="kxcampo kxcampogrande">
 
@@ -657,7 +720,9 @@
                                     Buscar cliente
                                 </label>
 
+
                                 <div class="kxclientebuscador">
+
 
                                     <div class="kxinputicono">
 
@@ -671,31 +736,47 @@
                                     </div>
 
 
-                                    <!-- RESULTADOS -->
-
                                     <div id="resultadosClientes"
                                          class="kxresultadosclientes"
                                          hidden>
                                     </div>
+
 
                                 </div>
 
                             </div>
 
 
-                            <!-- ID REAL DEL CLIENTE -->
 
                             <input type="hidden"
                                    id="idClienteSeleccionado"
+                                   value="@(Model.PedidoOrigen is not null
+                                       ? Model.PedidoClienteId
+                                       : 0)" />
+
+
+                            <input type="hidden"
+                                   id="tipoDocumentoCliente"
+                                   value="@(Model.PedidoOrigen is not null
+                                       ? Model.PedidoClienteTipoDocumento
+                                       : "")" />
+
+
+                            <input type="hidden"
+                                   id="codigoDocumentoCliente"
                                    value="" />
 
 
-                            <input type="hidden" id="tipoDocumentoCliente" value="" />
-                            <input type="hidden" id="codigoDocumentoCliente" value="" />
-                            <input type="hidden" id="direccionCliente" value="" />
-                            <input type="hidden" id="comprobanteCliente" value="BOLETA" />
+                            <input type="hidden"
+                                   id="direccionCliente"
+                                   value="" />
 
-                            <!-- DOCUMENTO -->
+
+                            <input type="hidden"
+                                   id="comprobanteCliente"
+                                   value="BOLETA" />
+
+
 
                             <div class="kxcampo">
 
@@ -705,13 +786,15 @@
 
                                 <input type="text"
                                        id="documentoCliente"
+                                       value="@(Model.PedidoOrigen is not null
+                                           ? Model.PedidoClienteNumeroDocumento
+                                           : "")"
                                        placeholder="DNI / RUC"
                                        readonly />
 
                             </div>
 
 
-                            <!-- TELÉFONO -->
 
                             <div class="kxcampo">
 
@@ -721,6 +804,9 @@
 
                                 <input type="text"
                                        id="telefonoCliente"
+                                       value="@(Model.PedidoOrigen is not null
+                                           ? Model.PedidoClienteTelefono
+                                           : "")"
                                        placeholder="+51..."
                                        readonly />
 
@@ -729,16 +815,21 @@
                         </div>
 
 
-                        <!-- CLIENTE SELECCIONADO -->
 
                         <div class="kxclienteseleccionado"
                              id="clienteSeleccionado"
-                             hidden>
+                            @(Model.PedidoOrigen is null ? "hidden" : "")>
+
 
                             <div class="kxclienteavatar"
                                  id="clienteAvatar">
 
-                                C
+                                @(string.IsNullOrWhiteSpace(
+                                    Model.PedidoClienteNombre)
+                                    ? "C"
+                                    : Model.PedidoClienteNombre
+                                        .Substring(0, 1)
+                                        .ToUpperInvariant())
 
                             </div>
 
@@ -746,12 +837,29 @@
                             <div class="kxclienteprincipal">
 
                                 <strong id="clienteNombre">
+
+                                    @(Model.PedidoOrigen is not null
+                                        ? Model.PedidoClienteNombre
+                                        : "")
+
                                 </strong>
 
+
                                 <span id="clienteDocumentoTexto">
+
+                                    @(Model.PedidoOrigen is not null
+                                        ? $"{Model.PedidoClienteTipoDocumento} {Model.PedidoClienteNumeroDocumento}".Trim()
+                                        : "")
+
                                 </span>
 
+
                                 <small id="clienteCorreo">
+
+                                    @(Model.PedidoOrigen is not null
+                                        ? Model.PedidoClienteCorreo
+                                        : "")
+
                                 </small>
 
                             </div>
@@ -760,27 +868,29 @@
                             <button type="button"
                                     id="quitarCliente"
                                     class="kxbotonicono"
-                                    title="Quitar cliente">
+                                    title="Quitar cliente"
+                                @(Model.PedidoOrigen is not null
+    ? "disabled"
+    : "")>
 
                                 <span uk-icon="icon: close"></span>
 
                             </button>
 
+
                         </div>
 
+
                     </article>
-                    <article class="kxpanel" aria-labelledby="tituloTipoComprobante">
-                        <div class="kxpanelcabecera"><div class="kxpaneltitulo"><span class="kxnumero">02</span><h2 id="tituloTipoComprobante">Tipo de comprobante</h2></div></div>
-                        <div class="kxmetodospago" role="radiogroup" aria-label="Tipo de comprobante">
-                            <label class="kxmetodopago"><input type="radio" name="TipoComprobante" value="BOLETA" checked /><span>Boleta</span></label>
-                            <label class="kxmetodopago"><input type="radio" name="TipoComprobante" value="FACTURA" /><span>Factura</span></label>
-                            <label class="kxmetodopago"><input type="radio" name="TipoComprobante" value="NOTA_VENTA" /><span>Nota de venta</span></label>
-                            <label class="kxmetodopago"><input type="radio" name="TipoComprobante" value="SIN_COMPROBANTE" /><span>Sin comprobante</span></label>
-                        </div>
-                    </article>
-                    <!-- PRODUCTOS -->
+
+
+
+                    <!-- =============================================
+                         TIPO COMPROBANTE
+                         ============================================= -->
 
                     <article class="kxpanel">
+
 
                         <div class="kxpanelcabecera">
 
@@ -788,6 +898,101 @@
 
                                 <span class="kxnumero">
                                     02
+                                </span>
+
+                                <div>
+
+                                    <span class="kxpanelmini">
+                                        Comprobante
+                                    </span>
+
+                                    <h2>
+                                        Tipo de comprobante
+                                    </h2>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxmetodospago">
+
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="TipoComprobante"
+                                       value="BOLETA"
+                                       checked />
+
+                                <span>
+                                    Boleta
+                                </span>
+
+                            </label>
+
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="TipoComprobante"
+                                       value="FACTURA" />
+
+                                <span>
+                                    Factura
+                                </span>
+
+                            </label>
+
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="TipoComprobante"
+                                       value="NOTA_VENTA" />
+
+                                <span>
+                                    Nota de venta
+                                </span>
+
+                            </label>
+
+
+                            <label class="kxmetodopago">
+
+                                <input type="radio"
+                                       name="TipoComprobante"
+                                       value="SIN_COMPROBANTE" />
+
+                                <span>
+                                    Sin comprobante
+                                </span>
+
+                            </label>
+
+
+                        </div>
+
+
+                    </article>
+
+
+
+                    <!-- =============================================
+                         PRODUCTOS
+                         ============================================= -->
+
+                    <article class="kxpanel kxpanelbusqueda">
+
+
+                        <div class="kxpanelcabecera">
+
+                            <div class="kxpaneltitulo">
+
+                                <span class="kxnumero">
+                                    03
                                 </span>
 
                                 <div>
@@ -831,19 +1036,25 @@
 
                         </div>
 
+
                     </article>
 
 
-                    <!-- CARRITO -->
 
-                    <article class="kxpanel">
+                    <!-- =============================================
+                         CARRITO
+                         ============================================= -->
+
+                    <article class="kxpanel kxpanelcarrito">
+
 
                         <div class="kxpanelcabecera">
+
 
                             <div class="kxpaneltitulo">
 
                                 <span class="kxnumero">
-                                    03
+                                    04
                                 </span>
 
                                 <div>
@@ -860,17 +1071,24 @@
 
                             </div>
 
+
                             <span class="kxcontador"
                                   id="cantidadProductos">
+
                                 0 productos
+
                             </span>
+
 
                         </div>
 
 
+
                         <div class="kxtablacontenedor">
 
+
                             <table class="kxtabla">
+
 
                                 <thead>
 
@@ -881,7 +1099,7 @@
                                         </th>
 
                                         <th>
-                                            Precio
+                                            Precio base
                                         </th>
 
                                         <th>
@@ -893,10 +1111,15 @@
                                         </th>
 
                                         <th>
-                                            Total
+                                            IGV
                                         </th>
 
-                                        <th></th>
+                                        <th>
+                                            Total c/ IGV
+                                        </th>
+
+                                        <th>
+                                        </th>
 
                                     </tr>
 
@@ -907,7 +1130,7 @@
 
                                     <tr id="filaVacia">
 
-                                        <td colspan="6"
+                                        <td colspan="7"
                                             class="kxvacio">
 
                                             No has agregado productos a la venta.
@@ -918,31 +1141,40 @@
 
                                 </tbody>
 
+
                             </table>
+
 
                         </div>
 
+
                     </article>
+
 
                 </section>
 
 
-                <!-- ================================================= -->
-                <!-- DERECHA -->
-                <!-- ================================================= -->
+
+                <!-- =================================================
+                     DERECHA
+                     ================================================= -->
 
                 <aside class="kxventaderecha">
 
-                    <!-- RESUMEN -->
+
+                    <!-- =============================================
+                         RESUMEN
+                         ============================================= -->
 
                     <article class="kxpanel kxresumen">
+
 
                         <div class="kxpanelcabecera">
 
                             <div class="kxpaneltitulo">
 
                                 <span class="kxnumero">
-                                    04
+                                    05
                                 </span>
 
                                 <div>
@@ -962,6 +1194,7 @@
                         </div>
 
 
+
                         <div class="kxresumenlinea">
 
                             <span>
@@ -973,6 +1206,7 @@
                             </strong>
 
                         </div>
+
 
 
                         <div class="kxresumenlinea">
@@ -988,11 +1222,14 @@
                         </div>
 
 
+
                         <div class="kxresumenlinea">
 
                             <span>
+
                                 @Model.CodigoImpuesto
                                 (@Model.PorcentajeImpuesto.ToString("0.##")%)
+
                             </span>
 
                             <strong id="igvVenta">
@@ -1000,6 +1237,7 @@
                             </strong>
 
                         </div>
+
 
 
                         <div class="kxresumentotal">
@@ -1014,19 +1252,24 @@
 
                         </div>
 
+
                     </article>
 
 
-                    <!-- PAGO -->
+
+                    <!-- =============================================
+                         MÉTODO PAGO
+                         ============================================= -->
 
                     <article class="kxpanel">
+
 
                         <div class="kxpanelcabecera">
 
                             <div class="kxpaneltitulo">
 
                                 <span class="kxnumero">
-                                    05
+                                    06
                                 </span>
 
                                 <div>
@@ -1046,7 +1289,9 @@
                         </div>
 
 
+
                         <div class="kxmetodospago">
+
 
                             <label class="kxmetodopago">
 
@@ -1066,6 +1311,7 @@
                             </label>
 
 
+
                             <label class="kxmetodopago">
 
                                 <input type="radio"
@@ -1083,6 +1329,7 @@
                             </label>
 
 
+
                             <label class="kxmetodopago">
 
                                 <input type="radio"
@@ -1098,6 +1345,7 @@
                                 </span>
 
                             </label>
+
 
 
                             <label class="kxmetodopago">
@@ -1118,7 +1366,9 @@
 
                             </label>
 
+
                         </div>
+
 
 
                         <div class="kxcampo">
@@ -1126,6 +1376,7 @@
                             <label>
                                 Monto recibido
                             </label>
+
 
                             <div class="kxinputmoneda">
 
@@ -1144,6 +1395,7 @@
                         </div>
 
 
+
                         <div class="kxvuelto">
 
                             <span>
@@ -1156,12 +1408,18 @@
 
                         </div>
 
+
                     </article>
 
 
-                    <!-- ACCIONES -->
+
+                    <!-- =============================================
+                         ACCIONES
+                         ============================================= -->
 
                     <div class="kxaccionesventa">
+
+
                         <button type="button"
                                 id="limpiarVenta"
                                 class="kxbotonsecundario kxbotongrande">
@@ -1171,6 +1429,7 @@
                             Limpiar venta
 
                         </button>
+
 
 
                         <button type="button"
@@ -1183,37 +1442,193 @@
 
                         </button>
 
+
                     </div>
 
 
-                    <section id="comprobanteEmitido" class="kxpanel kxcomprobante" hidden aria-live="polite">
-                        <div class="kxpanelcabecera"><div class="kxpaneltitulo"><h2>Comprobante registrado</h2></div></div>
-                        <div class="kxresumenlinea"><span>Tipo</span><strong id="comprobanteEmitidoTipo"></strong></div>
-                        <div class="kxresumenlinea"><span>Número</span><strong id="comprobanteEmitidoNumero"></strong></div>
-                        <div class="kxpanelacciones"><button id="enviarBoleta" type="button" class="kxbotonsecundario" hidden>Copiar datos del comprobante</button></div>
+
+                    <!-- =============================================
+                         COMPROBANTE EMITIDO
+                         ============================================= -->
+
+                    <section id="comprobanteEmitido"
+                             class="kxpanel kxcomprobante"
+                             hidden
+                             aria-live="polite">
+
+
+                        <div class="kxpanelcabecera">
+
+                            <div class="kxpaneltitulo">
+
+                                <h2>
+                                    Comprobante registrado
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kxresumenlinea">
+
+                            <span>
+                                Tipo
+                            </span>
+
+                            <strong id="comprobanteEmitidoTipo">
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kxresumenlinea">
+
+                            <span>
+                                Número
+                            </span>
+
+                            <strong id="comprobanteEmitidoNumero">
+                            </strong>
+
+                        </div>
+
+
+                        <div class="kxpanelacciones">
+
+                            <button id="enviarBoleta"
+                                    type="button"
+                                    class="kxbotonsecundario"
+                                    hidden>
+
+                                Copiar datos del comprobante
+
+                            </button>
+
+                        </div>
+
+
                     </section>
+
+
                 </aside>
+
 
             </div>
 
+
         </main>
+
 
     </div>
 
+
+
+    <!-- =========================================================
+         UIKIT JS
+         ========================================================= -->
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
     </script>
-    <script>
-            window.kernixConfiguracionVenta = { porcentajeImpuesto: @Model.PorcentajeImpuesto.ToString(System.Globalization.CultureInfo.InvariantCulture) };
-    </script>
 
+
+
+    <!-- =========================================================
+         CONFIGURACIÓN VENTA
+         IMPORTANTE: DEBE IR ANTES DE nueva.js
+         ========================================================= -->
+    <script>
+           window.kernixConfiguracionVenta = {
+                porcentajeImpuesto: Number("@Model.PorcentajeImpuesto.ToString(CultureInfo.InvariantCulture)"),
+            descuentoMaximo: Number("@Model.DescuentoMaximo.ToString(CultureInfo.InvariantCulture)"),
+
+             permitirVentaSinStock:
+                @Model.PermitirVentaSinStock.ToString().ToLowerInvariant(),
+
+              validarStockAntesVenta:
+                @Model.ValidarStockAntesVenta.ToString().ToLowerInvariant(),
+
+                    permitirCambioPrecio:
+                        @Model.PermitirCambioPrecio.ToString().ToLowerInvariant(),
+
+                    permitirVentaCredito:
+                        @Model.PermitirVentaCredito.ToString().ToLowerInvariant(),
+
+               idEmpresa: @Model.IdEmpresa,
+                    idSucursal: @Model.IdSucursal,
+                    idAlmacen: @Model.IdAlmacen
+                };
+
+                console.log(
+                    "[KerniX] CONFIGURACION:",
+              window.kernixConfiguracionVenta
+                );
+    </script>
 
     <script src="~/js/ventas/nueva.js"
             asp-append-version="true">
     </script>
+
+
+
+    <!-- =========================================================
+         JS PRINCIPAL
+         SOLO ESTE ARCHIVO POR AHORA
+         ========================================================= -->
+
+    <script src="~/js/ventas/nueva.js"
+            asp-append-version="true">
+    </script>
+
+
+
+    <!-- =========================================================
+         DIAGNÓSTICO TEMPORAL
+         ========================================================= -->
+
+    <script>
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                function () {
+
+                    console.log(
+                        "[KerniX] nueva.js cargado"
+                    );
+
+                    console.log(
+                        "[KerniX] IGV:",
+                        window
+                            .kernixConfiguracionVenta
+                            ?.porcentajeImpuesto
+                    );
+
+
+                    if (
+                        typeof renderizarCarrito ===
+                        "function"
+                    ) {
+
+                        console.log(
+                            "[KerniX] renderizarCarrito disponible"
+                        );
+
+                    }
+                    else {
+
+                        console.error(
+                            "[KerniX] renderizarCarrito NO disponible"
+                        );
+                    }
+
+                }
+            );
+
+    </script>
+
 
 </body>
 

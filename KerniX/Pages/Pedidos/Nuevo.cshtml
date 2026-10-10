@@ -1,0 +1,2235 @@
+﻿
+@page
+@model KerniX.Pages.Pedidos.NuevoModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Nueva orden de venta | KerniX";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/css/uikit.min.css" />
+
+    <link rel="stylesheet"
+          href="/css/pedido/nuevo.css?v=20260920-final-04" />
+
+    <style>
+        .kx-nueva .kx-search-wrap {
+            position: relative;
+            width: 100%;
+        }
+
+        .kx-nueva .kx-search-results {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            z-index: 100;
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 6px;
+            background: #102337;
+            border: 1px solid #35516c;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,.35);
+        }
+
+        .kx-nueva .kx-search-results:empty,
+        .kx-nueva .kx-search-results[hidden] {
+            display: none;
+        }
+
+        .kx-nueva .kx-search-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 0;
+            border-radius: 8px;
+            color: #fff;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .kx-nueva .kx-search-item:hover,
+        .kx-nueva .kx-search-item:focus {
+            background: #203b56;
+            outline: 1px solid #ffc857;
+        }
+
+        .kx-nueva .kx-search-item small {
+            color: #93b4d1;
+            font-size: 11px;
+        }
+
+        .kx-nueva .kx-search-info {
+            padding: 13px;
+            color: #a9bfd3;
+            font-size: 12px;
+        }
+
+        .kx-nueva .kx-selected {
+            margin-top: 10px;
+            padding: 12px 14px;
+            background: rgba(48,211,156,.08);
+            border: 1px solid rgba(48,211,156,.4);
+            border-radius: 10px;
+            color: #77edbc;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .kx-nueva .kx-selected[hidden] {
+            display: none;
+        }
+
+        .kx-nueva .kx-auto-number {
+            background: rgba(255,196,79,.07) !important;
+            color: #ffdc83 !important;
+            border-color: rgba(255,196,79,.4) !important;
+            font-weight: 800;
+        }
+
+        .kx-nueva .kx-field-help {
+            display: block;
+            margin-top: 7px;
+            color: #91abc4;
+            font-size: 11px;
+        }
+
+        .kx-nueva .kx-product-search {
+            grid-column: 1 / -1;
+        }
+
+        .kx-nueva .kx-message-error {
+            color: #ff8c8c;
+        }
+
+        .kx-nueva .kx-message-success {
+            color: #77edbc;
+        }
+
+        .kx-nueva .kx-cantidad-editable {
+            width: 82px;
+            min-width: 70px;
+            height: 38px;
+            padding: 0 6px;
+            background: #0c1c2e;
+            border: 1px solid #3d5672;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 800;
+            text-align: center;
+            outline: none;
+        }
+
+        .kx-nueva .kx-cantidad-editable:focus {
+            border-color: #ffc44f;
+            box-shadow: 0 0 0 3px rgba(255,196,79,.12);
+        }
+
+        .kx-nueva .kx-cantidad-editable:disabled {
+            opacity: .5;
+        }
+
+        .kx-nueva #productoImpuesto[readonly] {
+            background: rgba(255,196,79,.06);
+            border-color: rgba(255,196,79,.3);
+            color: #ffc857;
+            font-weight: 800;
+        }
+
+        .kx-nueva #registrarPedido:disabled {
+            opacity: .65;
+            cursor: wait;
+        }
+
+        .kx-nueva .items-table td {
+            vertical-align: middle;
+        }
+
+        .kx-nueva .items-table .item-total {
+            color: #ffc857;
+            font-weight: 900;
+        }
+
+        @@media (max-width: 650px) {
+            .kx-nueva .kx-product-search {
+                grid-column: auto;
+            }
+
+            .kx-nueva .table-container {
+                overflow-x: auto;
+            }
+
+            .kx-nueva .items-table {
+                min-width: 690px;
+            }
+        }
+    </style>
+</head>
+
+<body class="kx-nueva">
+
+    <div hidden>
+        @Html.AntiForgeryToken()
+    </div>
+
+    <div class="app-shell">
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <a href="/Inicio/Index" class="brand">
+                <span class="brand-symbol">K</span>
+                <span>Kerni<span class="brand-x">X</span></span>
+            </a>
+
+            <div class="sidebar-section">
+                MÓDULO COMERCIAL
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="/Ventas/PrincipalVentas">
+                    Ventas
+                </a>
+
+                <a href="/Cliente/Index">
+                    Clientes
+                </a>
+
+                <a href="/Cotizacion/Index">
+                    Cotizaciones
+                </a>
+
+                <a href="/Pedidos/Index" class="active">
+                    Órdenes de venta
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <span class="connection-dot"></span>
+                KerniX ERP
+            </div>
+
+        </aside>
+
+        <!-- CONTENIDO -->
+
+        <main class="workspace">
+
+            <header class="topbar">
+
+                <div class="breadcrumb">
+                    VENTAS
+                    <span>/</span>
+                    ÓRDENES
+                    <span>/</span>
+                    <strong>NUEVA ORDEN</strong>
+                </div>
+
+                <a href="/Pedidos/Index" class="back-link">
+                    <span uk-icon="arrow-left"></span>
+                    Volver al directorio
+                </a>
+
+            </header>
+
+            <section class="page-heading">
+
+                <div>
+                    <div class="eyebrow">
+                        NUEVA OPERACIÓN COMERCIAL
+                    </div>
+
+                    <h1>
+                        Nueva orden <em>de venta</em>
+                    </h1>
+
+                    <p>
+                        Selecciona clientes y productos,
+                        verifica los importes y registra la orden.
+                    </p>
+                </div>
+
+                <div class="heading-status">
+                    <span class="pulse-dot"></span>
+
+                    <div>
+                        <strong>Orden en preparación</strong>
+                        <small id="estadoRegistro">Sin registrar</small>
+                    </div>
+                </div>
+
+            </section>
+
+            <div class="workspace-grid">
+
+                <div class="main-column">
+
+                    <!-- 01. INFORMACIÓN -->
+
+                    <section class="panel">
+
+                        <div class="panel-heading">
+
+                            <div class="heading-icon gold">
+                                01
+                            </div>
+
+                            <div>
+                                <h2>Información de la orden</h2>
+                                <p>Datos generales de la operación</p>
+                            </div>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="form-grid">
+
+                                <div class="field">
+                                    <label for="numeroPedido">
+                                        Número de orden
+                                    </label>
+
+                                    <input id="numeroPedido"
+                                           class="uk-input kx-auto-number"
+                                           type="text"
+                                           value="Automático al registrar"
+                                           readonly />
+
+                                    <small class="kx-field-help">
+                                        SQL Server asigna el número definitivo.
+                                    </small>
+                                </div>
+
+                                <div class="field">
+                                    <label for="fechaPedido">
+                                        Fecha de emisión
+                                    </label>
+
+                                    <input id="fechaPedido"
+                                           class="uk-input"
+                                           type="date"
+                                           readonly />
+
+                                    <small class="kx-field-help">
+                                        La fecha definitiva la registra SQL Server.
+                                    </small>
+                                </div>
+
+                                <div class="field">
+                                    <label for="fechaEntrega">
+                                        Entrega estimada
+                                    </label>
+
+                                    <input id="fechaEntrega"
+                                           class="uk-input"
+                                           type="date" />
+                                </div>
+
+                                <div class="field">
+                                    <label for="cotizacionInformacion">
+                                        Cotización vinculada
+                                    </label>
+
+                                    <input id="cotizacionInformacion"
+                                           class="uk-input"
+                                           type="text"
+                                           value="Sin cotización"
+                                           readonly />
+
+                                    <input id="idCotizacion"
+                                           type="hidden"
+                                           value="" />
+
+                                    <small class="kx-field-help">
+                                        Registro independiente sin cotización.
+                                    </small>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- 02. CLIENTE -->
+
+                    <section class="panel">
+
+                        <div class="panel-heading">
+
+                            <div class="heading-icon blue">
+                                02
+                            </div>
+
+                            <div>
+                                <h2>Cliente</h2>
+                                <p>Identificación del comprador</p>
+                            </div>
+
+                            <span class="panel-badge">
+                                OBLIGATORIO
+                            </span>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="client-card">
+
+                                <div class="client-avatar">
+                                    CL
+                                </div>
+
+                                <div class="client-info">
+
+                                    <label for="buscarCliente">
+                                        Buscar cliente
+                                    </label>
+
+                                    <div class="kx-search-wrap">
+
+                                        <input id="buscarCliente"
+                                               class="uk-input"
+                                               type="search"
+                                               autocomplete="off"
+                                               placeholder="Buscar por nombre o razón social..." />
+
+                                        <div id="resultadosClientes"
+                                             class="kx-search-results"
+                                             role="listbox"
+                                             hidden>
+                                        </div>
+
+                                    </div>
+
+                                    <input id="idCliente"
+                                           type="hidden" />
+
+                                    <div id="clienteSeleccionado"
+                                         class="kx-selected"
+                                         hidden>
+                                    </div>
+
+                                    <small class="kx-field-help">
+                                        Escribe al menos dos caracteres
+                                        y selecciona un cliente.
+                                    </small>
+
+                                </div>
+
+                                <span class="client-tag">
+                                    CLIENTE
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- 03. PRODUCTOS -->
+
+                    <section class="panel">
+
+                        <div class="panel-heading">
+
+                            <div class="heading-icon orange">
+                                03
+                            </div>
+
+                            <div>
+                                <h2>Productos de la orden</h2>
+                                <p>Busca artículos y define cantidades</p>
+                            </div>
+
+                            <span id="contadorProductos"
+                                  class="panel-badge">
+                                0 PRODUCTOS
+                            </span>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="product-editor">
+
+                                <!-- BUSCADOR -->
+
+                                <div class="field kx-product-search">
+
+                                    <label for="buscarProducto">
+                                        Buscar producto
+                                    </label>
+
+                                    <div class="kx-search-wrap">
+
+                                        <input id="buscarProducto"
+                                               class="uk-input"
+                                               type="search"
+                                               autocomplete="off"
+                                               placeholder="Buscar por código o nombre..." />
+
+                                        <div id="resultadosProductos"
+                                             class="kx-search-results"
+                                             role="listbox"
+                                             hidden>
+                                        </div>
+
+                                    </div>
+
+                                    <input id="productoId" type="hidden" />
+                                    <input id="productoNombre" type="hidden" />
+
+                                    <div id="productoSeleccionado"
+                                         class="kx-selected"
+                                         hidden>
+                                    </div>
+
+                                </div>
+
+                                <!-- CANTIDAD -->
+
+                                <div class="field">
+
+                                    <label for="productoCantidad">
+                                        Cantidad
+                                    </label>
+
+                                    <input id="productoCantidad"
+                                           class="uk-input"
+                                           type="number"
+                                           value="1"
+                                           min="0.0001"
+                                           step="0.0001" />
+
+                                </div>
+
+                                <!-- PRECIO REAL -->
+
+                                <div class="field">
+
+                                    <label for="productoPrecio">
+                                        Precio unitario
+                                    </label>
+
+                                    <input id="productoPrecio"
+                                           class="uk-input"
+                                           type="number"
+                                           min="0"
+                                           step="0.0001"
+                                           placeholder="Selecciona un producto"
+                                           readonly />
+
+                                    <small class="kx-field-help">
+                                        Precio obtenido desde SQL Server.
+                                    </small>
+
+                                </div>
+
+                                <!-- DESCUENTO -->
+
+                                <div class="field">
+
+                                    <label for="productoDescuento">
+                                        Descuento
+                                    </label>
+
+                                    <input id="productoDescuento"
+                                           class="uk-input"
+                                           type="number"
+                                           value="0"
+                                           min="0"
+                                           step="0.0001" />
+
+                                </div>
+
+                                <!-- IGV AUTOMÁTICO -->
+
+                                <div class="field">
+
+                                    <label for="productoImpuesto">
+                                        IGV (18 %)
+                                    </label>
+
+                                    <input id="productoImpuesto"
+                                           class="uk-input"
+                                           type="number"
+                                           value="0.0000"
+                                           min="0"
+                                           step="0.0001"
+                                           readonly />
+
+                                    <small class="kx-field-help">
+                                        Calculado automáticamente sobre
+                                        el importe después del descuento.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <button id="agregarProducto"
+                                    type="button"
+                                    class="uk-button add-product">
+
+                                <span uk-icon="plus"></span>
+                                Agregar producto a la orden
+
+                            </button>
+
+                            <p id="mensajeProducto"
+                               class="form-message"
+                               role="status"
+                               aria-live="polite">
+                            </p>
+
+                        </div>
+
+                        <!-- CARRITO -->
+
+                        <div class="cart-heading">
+
+                            <div>
+                                <h3>Detalle comercial</h3>
+                                <span>
+                                    Edita cantidades o elimina artículos
+                                </span>
+                            </div>
+
+                            <span class="cart-icon">
+                                ▦
+                            </span>
+
+                        </div>
+
+                        <div class="table-container">
+
+                            <table class="uk-table uk-table-middle items-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>PRODUCTO</th>
+                                        <th>CANT.</th>
+                                        <th>P. UNITARIO</th>
+                                        <th>DESCUENTO</th>
+                                        <th>IGV</th>
+                                        <th>TOTAL</th>
+                                        <th>ACCIÓN</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="detalleProductos">
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </section>
+
+                    <!-- 04. OBSERVACIONES -->
+
+                    <section class="panel">
+
+                        <div class="panel-heading">
+
+                            <div class="heading-icon purple">
+                                04
+                            </div>
+
+                            <div>
+                                <h2>Observaciones</h2>
+                                <p>Indicaciones de la operación</p>
+                            </div>
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <label class="textarea-label"
+                                   for="observacion">
+                                Notas de la orden
+                            </label>
+
+                            <textarea id="observacion"
+                                      class="uk-textarea"
+                                      maxlength="500"
+                                      rows="4"
+                                      placeholder="Indicaciones de entrega u observaciones adicionales..."></textarea>
+
+                            <div class="character-count">
+                                <span id="contadorCaracteres">0</span>/500
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+                <!-- RESUMEN -->
+
+                <aside class="summary-column">
+
+                    <section class="summary-card">
+
+                        <div class="summary-header">
+
+                            <div class="summary-mark">
+                                K
+                            </div>
+
+                            <div>
+                                <small>RESUMEN COMERCIAL</small>
+                                <h2>Tu orden</h2>
+                            </div>
+
+                        </div>
+
+                        <div class="summary-content">
+
+                            <div class="summary-line">
+                                <span>Productos distintos</span>
+                                <strong id="resumenProductos">0</strong>
+                            </div>
+
+                            <div class="summary-line">
+                                <span>Unidades solicitadas</span>
+                                <strong id="resumenUnidades">0</strong>
+                            </div>
+
+                            <div class="summary-divider"></div>
+
+                            <div class="summary-line">
+                                <span>Subtotal</span>
+                                <strong id="resumenSubtotal">S/ 0.00</strong>
+                            </div>
+
+                            <div class="summary-line discount">
+                                <span>Descuentos</span>
+                                <strong id="resumenDescuento">S/ 0.00</strong>
+                            </div>
+
+                            <div class="summary-line">
+                                <span>IGV (18 %)</span>
+                                <strong id="resumenImpuesto">S/ 0.00</strong>
+                            </div>
+
+                            <div class="summary-divider"></div>
+
+                            <div class="grand-total">
+
+                                <span>TOTAL DE LA ORDEN</span>
+
+                                <strong id="resumenTotal">
+                                    S/ 0.00
+                                </strong>
+
+                                <small>
+                                    Importe calculado del detalle
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <div class="summary-actions">
+
+                            <button id="registrarPedido"
+                                    type="button"
+                                    class="uk-button primary-action">
+
+                                <span uk-icon="check"></span>
+                                Registrar orden
+
+                            </button>
+
+                            <p id="mensajeRegistro"
+                               class="form-message"
+                               role="status"
+                               aria-live="polite">
+                            </p>
+
+                            <a href="/Pedidos/Index"
+                               class="uk-button secondary-action">
+
+                                Cancelar y volver
+
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                    <div class="security-note">
+
+                        <span class="security-icon">
+                            ◇
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Contexto comercial
+                            </strong>
+
+                            <p>
+                                Empresa 1 · Sucursal 1.
+                                Numeración asignada por SQL Server.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- UIKIT -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.0/dist/js/uikit-icons.min.js"></script>
+
+    <!-- JAVASCRIPT COMPLETO -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            "use strict";
+
+            // =====================================
+            // ELEMENTOS Y ESTADO
+            // =====================================
+
+            const $ = id => document.getElementById(id);
+
+            const productos = [];
+
+            let clienteActual = null;
+            let productoActual = null;
+
+            let timerCliente = null;
+            let timerProducto = null;
+
+            let controladorCliente = null;
+            let controladorProducto = null;
+
+            let versionCliente = 0;
+            let versionProducto = 0;
+
+            let registrando = false;
+
+            // =====================================
+            // REGLAS DE CÁLCULO
+            // =====================================
+
+            // Configuración solicitada:
+            // precio_venta es una base SIN IGV.
+            // Si en tu BD el precio YA incluye IGV,
+            // la fórmula debe cambiarse para desglosarlo.
+
+            const TASA_IGV = 0.18;
+
+            const MAXIMO_SQL = 99999999999999.9999;
+
+            const dinero = valor =>
+                new Intl.NumberFormat("es-PE", {
+                    style: "currency",
+                    currency: "PEN"
+                }).format(valor);
+
+            const redondear = valor =>
+                Math.round(
+                    (valor + Number.EPSILON) * 10000
+                ) / 10000;
+
+            const numero = valor => {
+
+                if (valor === "" || valor == null) {
+                    return NaN;
+                }
+
+                const convertido = Number(valor);
+
+                return Number.isFinite(convertido)
+                    ? convertido
+                    : NaN;
+            };
+
+            const decimalValido = valor =>
+                Number.isFinite(valor) &&
+                valor >= 0 &&
+                valor <= MAXIMO_SQL &&
+                Math.abs(valor - redondear(valor)) < 0.00000001;
+
+            // =====================================
+            // MENSAJES
+            // =====================================
+
+            function mensajeProducto(texto) {
+
+                const elemento = $("mensajeProducto");
+
+                elemento.textContent = texto;
+
+                elemento.classList.toggle(
+                    "kx-message-error",
+                    Boolean(texto)
+                );
+            }
+
+            function mensajeRegistro(
+                texto,
+                correcto = false
+            ) {
+
+                const elemento = $("mensajeRegistro");
+
+                elemento.textContent = texto;
+
+                elemento.classList.toggle(
+                    "kx-message-error",
+                    Boolean(texto) && !correcto
+                );
+
+                elemento.classList.toggle(
+                    "kx-message-success",
+                    Boolean(texto) && correcto
+                );
+            }
+
+            function mostrarResultados(
+                contenedor,
+                texto
+            ) {
+
+                contenedor.replaceChildren();
+
+                const elemento =
+                    document.createElement("div");
+
+                elemento.className = "kx-search-info";
+
+                elemento.textContent = texto;
+
+                contenedor.appendChild(elemento);
+
+                contenedor.hidden = false;
+            }
+
+            // =====================================
+            // FECHAS Y OBSERVACIONES
+            // =====================================
+
+            const hoy = new Date();
+
+            const fechaLocal = [
+                hoy.getFullYear(),
+                String(hoy.getMonth() + 1).padStart(2, "0"),
+                String(hoy.getDate()).padStart(2, "0")
+            ].join("-");
+
+            $("fechaPedido").value = fechaLocal;
+
+            $("fechaEntrega").min = fechaLocal;
+
+            $("observacion").addEventListener(
+                "input",
+                () => {
+
+                    $("contadorCaracteres").textContent =
+                        $("observacion").value.length;
+                }
+            );
+
+            // =====================================
+            // CONSULTAS AJAX
+            // =====================================
+
+            async function obtenerJson(url, signal) {
+
+                const respuesta = await fetch(url, {
+
+                    method: "GET",
+
+                    credentials: "same-origin",
+
+                    signal
+                });
+
+                if (respuesta.status === 401) {
+
+                    window.location.href =
+                        "/Account/Login";
+
+                    throw new Error(
+                        "Tu sesión ha expirado."
+                    );
+                }
+
+                if (!respuesta.ok) {
+
+                    throw new Error(
+                        `Error al consultar datos: HTTP ${respuesta.status}.`
+                    );
+                }
+
+                return await respuesta.json();
+            }
+
+            // =====================================
+            // BUSCAR CLIENTES
+            // =====================================
+
+            $("buscarCliente").addEventListener(
+                "input",
+                () => {
+
+                    clienteActual = null;
+
+                    $("idCliente").value = "";
+
+                    $("clienteSeleccionado").hidden = true;
+
+                    clearTimeout(timerCliente);
+
+                    versionCliente++;
+
+                    if (controladorCliente) {
+                        controladorCliente.abort();
+                    }
+
+                    const texto =
+                        $("buscarCliente").value.trim();
+
+                    const contenedor =
+                        $("resultadosClientes");
+
+                    contenedor.replaceChildren();
+
+                    contenedor.hidden = true;
+
+                    if (texto.length < 2) {
+                        return;
+                    }
+
+                    const version = versionCliente;
+
+                    timerCliente = setTimeout(
+                        async () => {
+
+                            controladorCliente =
+                                new AbortController();
+
+                            mostrarResultados(
+                                contenedor,
+                                "Buscando clientes..."
+                            );
+
+                            try {
+
+                                const url =
+                                    "?handler=Clientes&buscar=" +
+                                    encodeURIComponent(texto);
+
+                                const clientes = await obtenerJson(
+                                    url,
+                                    controladorCliente.signal
+                                );
+
+                                if (version !== versionCliente) {
+                                    return;
+                                }
+
+                                contenedor.replaceChildren();
+
+                                if (
+                                    !Array.isArray(clientes) ||
+                                    clientes.length === 0
+                                ) {
+
+                                    mostrarResultados(
+                                        contenedor,
+                                        "No se encontraron clientes."
+                                    );
+
+                                    return;
+                                }
+
+                                clientes.forEach(cliente => {
+
+                                    const boton =
+                                        document.createElement("button");
+
+                                    boton.type = "button";
+
+                                    boton.className =
+                                        "kx-search-item";
+
+                                    boton.setAttribute(
+                                        "role",
+                                        "option"
+                                    );
+
+                                    const nombre =
+                                        document.createElement("strong");
+
+                                    nombre.textContent =
+                                        cliente.nombre;
+
+                                    const informacion =
+                                        document.createElement("small");
+
+                                    informacion.textContent =
+                                        "Cliente registrado en KerniX";
+
+                                    boton.append(
+                                        nombre,
+                                        informacion
+                                    );
+
+                                    boton.addEventListener(
+                                        "click",
+                                        () => {
+
+                                            clienteActual = cliente;
+
+                                            $("idCliente").value =
+                                                cliente.idCliente;
+
+                                            $("buscarCliente").value =
+                                                cliente.nombre;
+
+                                            contenedor.replaceChildren();
+
+                                            contenedor.hidden = true;
+
+                                            $("clienteSeleccionado").textContent =
+                                                "Cliente seleccionado: " +
+                                                cliente.nombre;
+
+                                            $("clienteSeleccionado").hidden =
+                                                false;
+
+                                            mensajeRegistro("");
+                                        }
+                                    );
+
+                                    contenedor.appendChild(boton);
+                                });
+
+                                contenedor.hidden = false;
+                            }
+                            catch (error) {
+
+                                if (error.name === "AbortError") {
+                                    return;
+                                }
+
+                                console.error(
+                                    "[PEDIDOS] Clientes:",
+                                    error
+                                );
+
+                                if (version === versionCliente) {
+
+                                    mostrarResultados(
+                                        contenedor,
+                                        "No se pudo consultar los clientes."
+                                    );
+                                }
+                            }
+                        },
+                        300
+                    );
+                }
+            );
+
+            // =====================================
+            // CALCULAR IGV AUTOMÁTICO
+            // =====================================
+
+            function calcularDetalle(producto) {
+
+                const subtotal = redondear(
+                    producto.cantidad *
+                    producto.precio
+                );
+
+                const baseImponible = redondear(
+                    subtotal - producto.descuento
+                );
+
+                const impuesto = redondear(
+                    baseImponible * TASA_IGV
+                );
+
+                const total = redondear(
+                    baseImponible + impuesto
+                );
+
+                return {
+                    subtotal,
+                    baseImponible,
+                    impuesto,
+                    total
+                };
+            }
+
+            // =====================================
+            // IGV DEL EDITOR
+            // =====================================
+
+            function actualizarIgvEditor() {
+
+                const cantidad =
+                    numero($("productoCantidad").value);
+
+                const precio =
+                    numero($("productoPrecio").value);
+
+                const descuento =
+                    numero($("productoDescuento").value);
+
+                if (
+                    !decimalValido(cantidad) ||
+                    cantidad <= 0 ||
+                    !decimalValido(precio) ||
+                    !decimalValido(descuento) ||
+                    descuento > cantidad * precio
+                ) {
+
+                    $("productoImpuesto").value =
+                        "0.0000";
+
+                    return;
+                }
+
+                const calculo = calcularDetalle({
+                    cantidad,
+                    precio,
+                    descuento
+                });
+
+                $("productoImpuesto").value =
+                    decimalValido(calculo.impuesto)
+                        ? calculo.impuesto.toFixed(4)
+                        : "0.0000";
+            }
+
+            [
+                "productoCantidad",
+                "productoPrecio",
+                "productoDescuento"
+            ].forEach(id => {
+
+                $(id).addEventListener(
+                    "input",
+                    actualizarIgvEditor
+                );
+            });
+
+            // =====================================
+            // BUSCAR PRODUCTOS CON PRECIO SQL
+            // =====================================
+
+            $("buscarProducto").addEventListener(
+                "input",
+                () => {
+
+                    // Todavía no existe producto seleccionado.
+                    productoActual = null;
+
+                    $("productoId").value = "";
+                    $("productoNombre").value = "";
+                    $("productoPrecio").value = "";
+                    $("productoImpuesto").value = "0.0000";
+
+                    $("productoSeleccionado").hidden = true;
+
+                    clearTimeout(timerProducto);
+
+                    versionProducto++;
+
+                    if (controladorProducto) {
+                        controladorProducto.abort();
+                    }
+
+                    const texto =
+                        $("buscarProducto").value.trim();
+
+                    const contenedor =
+                        $("resultadosProductos");
+
+                    contenedor.replaceChildren();
+
+                    contenedor.hidden = true;
+
+                    if (texto.length < 2) {
+                        return;
+                    }
+
+                    const version = versionProducto;
+
+                    timerProducto = setTimeout(
+                        async () => {
+
+                            controladorProducto =
+                                new AbortController();
+
+                            mostrarResultados(
+                                contenedor,
+                                "Buscando productos..."
+                            );
+
+                            try {
+
+                                const url =
+                                    "?handler=Productos&buscar=" +
+                                    encodeURIComponent(texto);
+
+                                const resultados =
+                                    await obtenerJson(
+                                        url,
+                                        controladorProducto.signal
+                                    );
+
+                                if (version !== versionProducto) {
+                                    return;
+                                }
+
+                                contenedor.replaceChildren();
+
+                                if (
+                                    !Array.isArray(resultados) ||
+                                    resultados.length === 0
+                                ) {
+
+                                    mostrarResultados(
+                                        contenedor,
+                                        "No se encontraron productos."
+                                    );
+
+                                    return;
+                                }
+
+                                resultados.forEach(producto => {
+
+                                    const boton =
+                                        document.createElement("button");
+
+                                    boton.type = "button";
+
+                                    boton.className =
+                                        "kx-search-item";
+
+                                    boton.setAttribute(
+                                        "role",
+                                        "option"
+                                    );
+
+                                    const nombre =
+                                        document.createElement("strong");
+
+                                    nombre.textContent =
+                                        producto.nombre;
+
+                                    const codigo =
+                                        document.createElement("small");
+
+                                    const precioLista =
+                                        producto.precioUnitario == null
+                                            ? NaN
+                                            : Number(producto.precioUnitario);
+
+                                    codigo.textContent =
+                                        `${producto.codigo || "Sin código"} · ` +
+                                        (
+                                            decimalValido(precioLista)
+                                                ? dinero(precioLista)
+                                                : "Sin precio válido"
+                                        );
+
+                                    boton.append(nombre, codigo);
+
+                                    // SELECCIONAR
+
+                                    boton.addEventListener(
+                                        "click",
+                                        () => {
+
+                                            const precio =
+                                                producto.precioUnitario == null
+                                                    ? NaN
+                                                    : Number(
+                                                        producto.precioUnitario
+                                                    );
+
+                                            if (!decimalValido(precio)) {
+
+                                                productoActual = null;
+
+                                                $("productoId").value = "";
+                                                $("productoNombre").value = "";
+                                                $("productoPrecio").value = "";
+
+                                                $("productoSeleccionado").hidden =
+                                                    true;
+
+                                                mensajeProducto(
+                                                    "El producto no tiene un precio válido."
+                                                );
+
+                                                return;
+                                            }
+
+                                            productoActual = producto;
+
+                                            $("productoId").value =
+                                                producto.idProducto;
+
+                                            $("productoNombre").value =
+                                                producto.nombre;
+
+                                            $("buscarProducto").value =
+                                                producto.nombre;
+
+                                            // PRECIO REAL DE SQL SERVER
+
+                                            $("productoPrecio").value =
+                                                precio.toFixed(4);
+
+                                            // REINICIAR EDITOR
+
+                                            $("productoCantidad").value =
+                                                "1";
+
+                                            $("productoDescuento").value =
+                                                "0";
+
+                                            // CALCULAR IGV AUTOMÁTICO
+
+                                            actualizarIgvEditor();
+
+                                            // MOSTRAR SELECCIÓN
+
+                                            $("productoSeleccionado").textContent =
+                                                `${producto.codigo || "Producto"} · ` +
+                                                `${producto.nombre} · ` +
+                                                `${dinero(precio)}`;
+
+                                            $("productoSeleccionado").hidden =
+                                                false;
+
+                                            contenedor.replaceChildren();
+
+                                            contenedor.hidden = true;
+
+                                            mensajeProducto("");
+
+                                            $("productoCantidad").focus();
+                                        }
+                                    );
+
+                                    contenedor.appendChild(boton);
+                                });
+
+                                contenedor.hidden = false;
+                            }
+                            catch (error) {
+
+                                if (error.name === "AbortError") {
+                                    return;
+                                }
+
+                                console.error(
+                                    "[PEDIDOS] Productos:",
+                                    error
+                                );
+
+                                if (version === versionProducto) {
+
+                                    mostrarResultados(
+                                        contenedor,
+                                        "No se pudo consultar los productos."
+                                    );
+                                }
+                            }
+                        },
+                        300
+                    );
+                }
+            );
+
+            // =====================================
+            // VALIDAR PRODUCTO
+            // =====================================
+
+            function validarProducto(producto) {
+
+                if (
+                    !Number.isSafeInteger(producto.id) ||
+                    producto.id <= 0
+                ) {
+                    return "El producto seleccionado no es válido.";
+                }
+
+                if (
+                    !decimalValido(producto.cantidad) ||
+                    producto.cantidad <= 0
+                ) {
+                    return "Ingresa una cantidad válida.";
+                }
+
+                if (
+                    !decimalValido(producto.precio) ||
+                    !decimalValido(producto.descuento)
+                ) {
+                    return "Revisa el precio y el descuento.";
+                }
+
+                const calculo =
+                    calcularDetalle(producto);
+
+                if (
+                    !decimalValido(calculo.subtotal) ||
+                    producto.descuento > calculo.subtotal
+                ) {
+                    return "El descuento supera el subtotal.";
+                }
+
+                if (
+                    !decimalValido(calculo.impuesto) ||
+                    !decimalValido(calculo.total)
+                ) {
+                    return "El importe calculado supera el límite permitido.";
+                }
+
+                return "";
+            }
+
+            // =====================================
+            // RENDERIZAR CARRITO EDITABLE
+            // =====================================
+
+            function renderizar() {
+
+                const cuerpo =
+                    $("detalleProductos");
+
+                cuerpo.replaceChildren();
+
+                let subtotalGeneral = 0;
+                let descuentoGeneral = 0;
+                let impuestoGeneral = 0;
+                let totalGeneral = 0;
+                let unidadesGeneral = 0;
+
+                if (productos.length === 0) {
+
+                    const fila =
+                        document.createElement("tr");
+
+                    const celda =
+                        document.createElement("td");
+
+                    celda.colSpan = 7;
+
+                    const vacio =
+                        document.createElement("div");
+
+                    vacio.className = "empty-cart";
+
+                    vacio.textContent =
+                        "La orden aún no tiene productos. " +
+                        "Busca y agrega un artículo.";
+
+                    celda.appendChild(vacio);
+
+                    fila.appendChild(celda);
+
+                    cuerpo.appendChild(fila);
+                }
+
+                productos.forEach((producto, indice) => {
+
+                    const calculo =
+                        calcularDetalle(producto);
+
+                    // Nunca conservar un impuesto desactualizado.
+                    producto.impuesto = calculo.impuesto;
+
+                    subtotalGeneral += calculo.subtotal;
+
+                    descuentoGeneral += producto.descuento;
+
+                    impuestoGeneral += calculo.impuesto;
+
+                    totalGeneral += calculo.total;
+
+                    unidadesGeneral += producto.cantidad;
+
+                    const fila =
+                        document.createElement("tr");
+
+                    // PRODUCTO
+
+                    const celdaProducto =
+                        document.createElement("td");
+
+                    const nombre =
+                        document.createElement("strong");
+
+                    nombre.className = "item-name";
+
+                    nombre.textContent =
+                        producto.nombre;
+
+                    const codigo =
+                        document.createElement("small");
+
+                    codigo.className = "item-code";
+
+                    codigo.textContent =
+                        producto.codigo || "";
+
+                    celdaProducto.append(nombre, codigo);
+
+                    fila.appendChild(celdaProducto);
+
+                    // CANTIDAD EDITABLE
+
+                    const celdaCantidad =
+                        document.createElement("td");
+
+                    const inputCantidad =
+                        document.createElement("input");
+
+                    inputCantidad.type = "number";
+
+                    inputCantidad.className =
+                        "kx-cantidad-editable";
+
+                    inputCantidad.min = "0.0001";
+
+                    inputCantidad.step = "0.0001";
+
+                    inputCantidad.value =
+                        producto.cantidad.toString();
+
+                    inputCantidad.disabled = registrando;
+
+                    inputCantidad.setAttribute(
+                        "aria-label",
+                        `Cantidad de ${producto.nombre}`
+                    );
+
+                    inputCantidad.addEventListener(
+                        "change",
+                        () => {
+
+                            if (registrando) {
+                                return;
+                            }
+
+                            const nuevaCantidad =
+                                numero(inputCantidad.value);
+
+                            const actualizado = {
+
+                                ...producto,
+
+                                cantidad: nuevaCantidad
+                            };
+
+                            const error =
+                                validarProducto(actualizado);
+
+                            if (error) {
+
+                                mensajeProducto(error);
+
+                                inputCantidad.value =
+                                    producto.cantidad.toString();
+
+                                return;
+                            }
+
+                            // ACTUALIZAR CANTIDAD
+
+                            producto.cantidad =
+                                nuevaCantidad;
+
+                            // RECALCULAR IGV
+
+                            producto.impuesto =
+                                calcularDetalle(producto).impuesto;
+
+                            mensajeProducto("");
+
+                            renderizar();
+                        }
+                    );
+
+                    celdaCantidad.appendChild(
+                        inputCantidad
+                    );
+
+                    fila.appendChild(celdaCantidad);
+
+                    // CELDAS DE IMPORTES
+
+                    function agregarCelda(
+                        texto,
+                        clase = ""
+                    ) {
+
+                        const celda =
+                            document.createElement("td");
+
+                        celda.textContent = texto;
+
+                        if (clase) {
+                            celda.className = clase;
+                        }
+
+                        fila.appendChild(celda);
+                    }
+
+                    agregarCelda(
+                        dinero(producto.precio)
+                    );
+
+                    agregarCelda(
+                        dinero(producto.descuento)
+                    );
+
+                    agregarCelda(
+                        dinero(calculo.impuesto)
+                    );
+
+                    agregarCelda(
+                        dinero(calculo.total),
+                        "item-total"
+                    );
+
+                    // ELIMINAR
+
+                    const celdaAccion =
+                        document.createElement("td");
+
+                    const eliminar =
+                        document.createElement("button");
+
+                    eliminar.type = "button";
+
+                    eliminar.className = "remove-item";
+
+                    eliminar.textContent = "×";
+
+                    eliminar.title = "Eliminar producto";
+
+                    eliminar.disabled = registrando;
+
+                    eliminar.setAttribute(
+                        "aria-label",
+                        `Eliminar ${producto.nombre}`
+                    );
+
+                    eliminar.addEventListener(
+                        "click",
+                        () => {
+
+                            if (registrando) {
+                                return;
+                            }
+
+                            productos.splice(indice, 1);
+
+                            mensajeProducto("");
+
+                            renderizar();
+                        }
+                    );
+
+                    celdaAccion.appendChild(eliminar);
+
+                    fila.appendChild(celdaAccion);
+
+                    cuerpo.appendChild(fila);
+                });
+
+                // RESUMEN
+
+                $("contadorProductos").textContent =
+                    `${productos.length} PRODUCTOS`;
+
+                $("resumenProductos").textContent =
+                    productos.length;
+
+                $("resumenUnidades").textContent =
+                    unidadesGeneral.toLocaleString(
+                        "es-PE",
+                        {
+                            maximumFractionDigits: 4
+                        }
+                    );
+
+                $("resumenSubtotal").textContent =
+                    dinero(subtotalGeneral);
+
+                $("resumenDescuento").textContent =
+                    dinero(descuentoGeneral);
+
+                $("resumenImpuesto").textContent =
+                    dinero(impuestoGeneral);
+
+                $("resumenTotal").textContent =
+                    dinero(totalGeneral);
+            }
+
+            // =====================================
+            // AGREGAR PRODUCTO
+            // =====================================
+
+            $("agregarProducto").addEventListener(
+                "click",
+                () => {
+
+                    mensajeProducto("");
+
+                    if (registrando) {
+                        return;
+                    }
+
+                    if (!productoActual) {
+
+                        mensajeProducto(
+                            "Selecciona un producto desde el buscador."
+                        );
+
+                        $("buscarProducto").focus();
+
+                        return;
+                    }
+
+                    const precioReal =
+                        productoActual.precioUnitario == null
+                            ? NaN
+                            : Number(productoActual.precioUnitario);
+
+                    const producto = {
+
+                        id: productoActual.idProducto,
+
+                        codigo: productoActual.codigo || "",
+
+                        nombre: productoActual.nombre,
+
+                        cantidad: numero(
+                            $("productoCantidad").value
+                        ),
+
+                        // No tomar un precio escrito manualmente.
+                        precio: precioReal,
+
+                        descuento: numero(
+                            $("productoDescuento").value
+                        ),
+
+                        impuesto: 0
+                    };
+
+                    const error =
+                        validarProducto(producto);
+
+                    if (error) {
+
+                        mensajeProducto(error);
+
+                        return;
+                    }
+
+                    if (
+                        productos.some(
+                            p => p.id === producto.id
+                        )
+                    ) {
+
+                        mensajeProducto(
+                            "Este producto ya existe en la orden. " +
+                            "Modifica su cantidad en el carrito."
+                        );
+
+                        return;
+                    }
+
+                    // IGV AUTOMÁTICO
+
+                    producto.impuesto =
+                        calcularDetalle(producto).impuesto;
+
+                    productos.push(producto);
+
+                    // LIMPIAR EDITOR
+
+                    productoActual = null;
+
+                    $("productoId").value = "";
+                    $("productoNombre").value = "";
+                    $("buscarProducto").value = "";
+
+                    $("productoCantidad").value = "1";
+                    $("productoPrecio").value = "";
+                    $("productoDescuento").value = "0";
+                    $("productoImpuesto").value = "0.0000";
+
+                    $("productoSeleccionado").hidden = true;
+
+                    renderizar();
+
+                    $("buscarProducto").focus();
+                }
+            );
+
+            // =====================================
+            // REGISTRAR ORDEN
+            // =====================================
+
+            $("registrarPedido").addEventListener(
+                "click",
+                async () => {
+
+                    if (registrando) {
+                        return;
+                    }
+
+                    mensajeRegistro("");
+
+                    // VALIDAR CLIENTE
+
+                    if (
+                        !clienteActual ||
+                        !Number.isSafeInteger(
+                            clienteActual.idCliente
+                        ) ||
+                        clienteActual.idCliente <= 0
+                    ) {
+
+                        mensajeRegistro(
+                            "Selecciona un cliente desde el buscador."
+                        );
+
+                        $("buscarCliente").focus();
+
+                        return;
+                    }
+
+                    // VALIDAR PRODUCTOS
+
+                    if (productos.length === 0) {
+
+                        mensajeRegistro(
+                            "Agrega al menos un producto."
+                        );
+
+                        return;
+                    }
+
+                    // VALIDAR DETALLE Y RECALCULAR IGV
+
+                    for (const producto of productos) {
+
+                        const error =
+                            validarProducto(producto);
+
+                        if (error) {
+
+                            mensajeRegistro(
+                                `${producto.nombre}: ${error}`
+                            );
+
+                            return;
+                        }
+
+                        producto.impuesto =
+                            calcularDetalle(producto).impuesto;
+                    }
+
+                    renderizar();
+
+                    // VALIDAR FECHA
+
+                    const fechaEntrega =
+                        $("fechaEntrega").value;
+
+                    if (
+                        fechaEntrega &&
+                        fechaEntrega < $("fechaPedido").value
+                    ) {
+
+                        mensajeRegistro(
+                            "La fecha de entrega no puede " +
+                            "ser anterior a la emisión."
+                        );
+
+                        return;
+                    }
+
+                    // ANTIFORGERY
+
+                    const token =
+                        document.querySelector(
+                            'input[name="__RequestVerificationToken"]'
+                        );
+
+                    if (!token) {
+
+                        mensajeRegistro(
+                            "No se encontró el token de seguridad."
+                        );
+
+                        return;
+                    }
+
+                    // PREPARAR SOLICITUD
+
+                    const request = {
+
+                        // SQL Server genera el número.
+                        numeroPedido: null,
+
+                        idCliente:
+                            clienteActual.idCliente,
+
+                        // Sin cotización vinculada.
+                        idCotizacion: null,
+
+                        fechaEntregaEstimada:
+                            fechaEntrega || null,
+
+                        observacion:
+                            $("observacion").value.trim(),
+
+                        detalles: productos.map(
+                            producto => ({
+
+                                idProducto:
+                                    producto.id,
+
+                                cantidadSolicitada:
+                                    producto.cantidad,
+
+                                precioUnitario:
+                                    producto.precio,
+
+                                descuento:
+                                    producto.descuento,
+
+                                impuesto:
+                                    calcularDetalle(producto).impuesto
+
+                            })
+                        )
+                    };
+
+                    console.log(
+                        "[PEDIDOS] Enviando registro:",
+                        request
+                    );
+
+                    // BLOQUEAR DOBLE REGISTRO
+
+                    registrando = true;
+
+                    const boton =
+                        $("registrarPedido");
+
+                    boton.disabled = true;
+
+                    boton.textContent =
+                        "Registrando orden...";
+
+                    $("estadoRegistro").textContent =
+                        "Procesando registro";
+
+                    renderizar();
+
+                    try {
+
+                        const respuesta = await fetch(
+                            "?handler=Registrar",
+                            {
+
+                                method: "POST",
+
+                                credentials: "same-origin",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json",
+
+                                    "RequestVerificationToken":
+                                        token.value
+                                },
+
+                                body: JSON.stringify(request)
+                            }
+                        );
+
+                        let resultado;
+
+                        try {
+
+                            resultado =
+                                await respuesta.json();
+                        }
+                        catch {
+
+                            throw new Error(
+                                `El servidor devolvió HTTP ${respuesta.status} ` +
+                                "sin una respuesta JSON válida."
+                            );
+                        }
+
+                        // SESIÓN EXPIRADA
+
+                        if (
+                            respuesta.status === 401 ||
+                            resultado.sesionExpirada
+                        ) {
+
+                            window.location.href =
+                                "/Account/Login";
+
+                            return;
+                        }
+
+                        // MOSTRAR ERRORES DE MODELSTATE
+
+                        if (
+                            !respuesta.ok ||
+                            !resultado.correcto
+                        ) {
+
+                            console.error(
+                                "[PEDIDOS] Error del servidor:",
+                                resultado
+                            );
+
+                            const detalles =
+                                Array.isArray(resultado.errores)
+                                    ? resultado.errores
+                                        .map(error =>
+                                            `${error.campo}: ${error.error}`
+                                        )
+                                        .join(" | ")
+                                    : "";
+
+                            throw new Error(
+                                detalles ||
+                                resultado.mensaje ||
+                                "No se pudo registrar la orden."
+                            );
+                        }
+
+                        // REGISTRO CORRECTO
+
+                        mensajeRegistro(
+                            "Orden registrada correctamente. ID: " +
+                            resultado.idPedido,
+                            true
+                        );
+
+                        $("estadoRegistro").textContent =
+                            "Orden registrada";
+
+                        $("numeroPedido").value =
+                            resultado.numeroPedido ||
+                            `Pedido registrado #${resultado.idPedido}`;
+
+                        if (window.UIkit) {
+
+                            UIkit.notification({
+
+                                message:
+                                    "Orden registrada correctamente.",
+
+                                status: "success",
+
+                                pos: "top-right",
+
+                                timeout: 3000
+                            });
+                        }
+
+                        // REGRESAR AL DIRECTORIO
+
+                        window.location.replace(
+                            "/Pedidos/Index"
+                        );
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "[PEDIDOS] Registro:",
+                            error
+                        );
+
+                        mensajeRegistro(
+                            error.message ||
+                            "No fue posible registrar la orden."
+                        );
+
+                        $("estadoRegistro").textContent =
+                            "Sin registrar";
+
+                        registrando = false;
+
+                        boton.disabled = false;
+
+                        boton.textContent =
+                            "Registrar orden";
+
+                        renderizar();
+                    }
+                }
+            );
+
+            // =====================================
+            // INICIALIZACIÓN
+            // =====================================
+
+            actualizarIgvEditor();
+
+            renderizar();
+
+        });
+
+    </script>
+
+</body>
+</html>

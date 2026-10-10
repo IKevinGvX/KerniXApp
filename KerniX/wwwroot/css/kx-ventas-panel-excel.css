@@ -1,0 +1,11 @@
+﻿.kx-venta-num {
+    color: #e4b550;
+    font-weight: 700;
+    letter-spacing: .02em;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums
+}
+
+.kx-heading-actions .kx-gold-btn[href*="handler=Exportar"] {
+    box-shadow: 0 0 0 1px rgba(255,220,140,.25),0 10px 28px rgba(185,113,6,.2)
+}

@@ -1,0 +1,403 @@
+﻿@page "/Inventario/Transferencias"
+@model KerniX.Pages.Inventario.Transferencias.IndexModel
+
+@{
+    ViewData["Title"] = "Transferencias";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/transferencias.css"
+      asp-append-version="true" />
+
+<div class="ktr-page">
+    <main class="ktr-shell">
+
+        <section class="ktr-hero">
+            <div>
+                <div class="ktr-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Transferencias</strong>
+                </div>
+
+                <div class="ktr-eyebrow">
+                    INVENTARIO · LOGÍSTICA INTERNA
+                </div>
+
+                <h1>
+                    Transferencias entre <strong>almacenes</strong>
+                </h1>
+
+                <p>
+                    Gestiona el traslado interno mediante borrador, aprobación,
+                    despacho y recepción. El stock solo cambia cuando el flujo
+                    alcanza despacho o recepción.
+                </p>
+            </div>
+
+            <div class="ktr-actions">
+                <a href="/Inventario"
+                   class="ktr-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="#nueva-transferencia"
+                   class="ktr-btn ktr-btn-gold">
+                    <span uk-icon="icon: plus-circle; ratio: .8"></span>
+                    Nueva Transferencia
+                </a>
+
+                <a href="/Inventario/Kardex"
+                   class="ktr-btn ktr-btn-cyan">
+                    <span uk-icon="icon: list; ratio: .8"></span>
+                    Kardex
+                </a>
+            </div>
+        </section>
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeExito))
+        {
+            <div class="ktr-alert ktr-alert-ok">
+                @Model.MensajeExito
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="ktr-alert ktr-alert-error">
+                @Model.MensajeError
+            </div>
+        }
+
+        <section class="ktr-kpis">
+            <article>
+                <span>BORRADORES</span>
+                <strong>@Model.Borradores</strong>
+                <small>Pendientes de aprobación</small>
+            </article>
+
+            <article>
+                <span>APROBADAS</span>
+                <strong>@Model.Aprobadas</strong>
+                <small>Listas para despacho</small>
+            </article>
+
+            <article>
+                <span>EN TRÁNSITO</span>
+                <strong>@Model.Despachadas</strong>
+                <small>Despachadas sin recepción</small>
+            </article>
+
+            <article>
+                <span>RECIBIDAS</span>
+                <strong>@Model.Recibidas</strong>
+                <small>Proceso completado</small>
+            </article>
+        </section>
+
+        <section class="ktr-flow">
+            <div>
+                <b>01</b>
+                <strong>Borrador</strong>
+                <small>No afecta stock</small>
+            </div>
+
+            <i>→</i>
+
+            <div>
+                <b>02</b>
+                <strong>Aprobada</strong>
+                <small>Autorizada</small>
+            </div>
+
+            <i>→</i>
+
+            <div>
+                <b>03</b>
+                <strong>Despachada</strong>
+                <small>Sale del origen</small>
+            </div>
+
+            <i>→</i>
+
+            <div>
+                <b>04</b>
+                <strong>Recibida</strong>
+                <small>Entra al destino</small>
+            </div>
+        </section>
+
+        <section id="nueva-transferencia"
+                 class="ktr-card">
+
+            <header class="ktr-card-head">
+                <div>
+                    <span>NUEVO DOCUMENTO</span>
+                    <h2>Crear transferencia</h2>
+                    <p>
+                        El documento se crea en borrador.
+                    </p>
+                </div>
+            </header>
+
+            <div class="ktr-card-body">
+                <form method="post"
+                      action="?handler=Crear">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="ktr-form-grid">
+
+                        <div class="ktr-field">
+                            <label>Almacén origen</label>
+
+                            <select name="idAlmacenOrigen"
+                                    required>
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var almacen in Model.Catalogos.Almacenes)
+                                {
+                                    <option value="@almacen.IdAlmacen">
+                                        @almacen.Codigo · @almacen.Nombre
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="ktr-field">
+                            <label>Almacén destino</label>
+
+                            <select name="idAlmacenDestino"
+                                    required>
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var almacen in Model.Catalogos.Almacenes)
+                                {
+                                    <option value="@almacen.IdAlmacen">
+                                        @almacen.Codigo · @almacen.Nombre
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="ktr-field">
+                            <label>Producto</label>
+
+                            <select name="idProducto"
+                                    required>
+                                <option value="">
+                                    Seleccionar...
+                                </option>
+
+                                @foreach (var producto in Model.Catalogos.Productos)
+                                {
+                                    <option value="@producto.IdProducto">
+                                        @producto.Codigo · @producto.Nombre
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="ktr-field">
+                            <label>Cantidad</label>
+
+                            <input type="number"
+                                   name="cantidad"
+                                   min="0.0001"
+                                   step="0.0001"
+                                   required />
+                        </div>
+
+                        <div class="ktr-field ktr-field-full">
+                            <label>Observación</label>
+
+                            <textarea name="observacion"
+                                      maxlength="500"
+                                      placeholder="Motivo o referencia del traslado."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="ktr-form-actions">
+                        <button type="submit"
+                                class="ktr-btn ktr-btn-gold">
+                            Crear borrador
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="ktr-card">
+
+            <header class="ktr-card-head">
+                <div>
+                    <span>HISTORIAL</span>
+                    <h2>Transferencias registradas</h2>
+                    <p>
+                        Abre un documento para continuar su flujo.
+                    </p>
+                </div>
+
+                <form method="get"
+                      class="ktr-filter">
+
+                    <div class="ktr-field">
+                        <label>Estado</label>
+
+                        <select name="Estado">
+                            <option value="">
+                                Todos
+                            </option>
+
+                            @foreach (var estado in new[]
+                            {
+                                "borrador",
+                                "aprobada",
+                                "despachada",
+                                "recibida",
+                                "cancelada"
+                            })
+                            {
+                                if (
+                                    string.Equals(
+                                        Model.Estado,
+                                        estado,
+                                        StringComparison.OrdinalIgnoreCase
+                                    )
+                                )
+                                {
+                                    <option value="@estado"
+                                            selected>
+                                        @estado
+                                    </option>
+                                }
+                                else
+                                {
+                                    <option value="@estado">
+                                        @estado
+                                    </option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="ktr-btn ktr-btn-cyan">
+                        Filtrar
+                    </button>
+                </form>
+            </header>
+
+            <div class="ktr-table-wrap">
+                <table class="ktr-table">
+
+                    <thead>
+                        <tr>
+                            <th>NÚMERO</th>
+                            <th>ORIGEN</th>
+                            <th>DESTINO</th>
+                            <th>ESTADO</th>
+                            <th>LÍNEAS</th>
+                            <th>CANTIDAD</th>
+                            <th>SOLICITUD</th>
+                            <th>DESPACHO</th>
+                            <th>RECEPCIÓN</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Items.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="10">
+                                    <div class="ktr-empty">
+                                        No hay transferencias para el filtro seleccionado.
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Items)
+                            {
+                                string estado =
+                                    item.Estado
+                                        ?.Trim()
+                                        .ToLowerInvariant()
+                                    ?? string.Empty;
+
+                                string clase =
+                                    estado switch
+                                    {
+                                        "borrador" => "draft",
+                                        "aprobada" => "approved",
+                                        "despachada" => "transit",
+                                        "recibida" => "received",
+                                        "cancelada" => "cancelled",
+                                        _ => ""
+                                    };
+
+                                <tr>
+                                    <td>
+                                        <strong class="ktr-number">
+                                            @item.NumeroTransferencia
+                                        </strong>
+                                    </td>
+
+                                    <td>@item.AlmacenOrigen</td>
+                                    <td>@item.AlmacenDestino</td>
+
+                                    <td>
+                                        <span class="ktr-badge @clase">
+                                            @item.Estado
+                                        </span>
+                                    </td>
+
+                                    <td>@item.Lineas</td>
+
+                                    <td>
+                                        @item.CantidadTotal.ToString("N2")
+                                    </td>
+
+                                    <td>
+                                        @item.FechaSolicitud.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+
+                                    <td>
+                                        @(item.FechaDespacho?.ToString("dd/MM/yyyy HH:mm") ?? "—")
+                                    </td>
+
+                                    <td>
+                                        @(item.FechaRecepcion?.ToString("dd/MM/yyyy HH:mm") ?? "—")
+                                    </td>
+
+                                    <td>
+                                        <a href="/Inventario/Transferencias/Detalle?id=@item.IdTransferencia"
+                                           class="ktr-btn ktr-btn-small">
+                                            Abrir
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

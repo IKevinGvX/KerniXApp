@@ -7,7 +7,6 @@
 }
 
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
@@ -21,30 +20,819 @@
         @ViewData["Title"] - KerniX
     </title>
 
+
+    <!-- ====================================================== -->
+    <!-- UIKIT -->
+    <!-- ====================================================== -->
+
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
-    <link rel="stylesheet"
-          href="~/css/configuracion.css"
-          asp-append-version="true" />
 
-    <link rel="stylesheet"
-          href="~/css/general.css"
-          asp-append-version="true" />
+    <style>
+
+            /* ==========================================================
+                       VARIABLES
+                    ========================================================== */
+
+            :root {
+                --kx-bg: #050d17;
+                --kx-sidebar: #07131f;
+                --kx-card: #0b1b2b;
+                --kx-card-soft: #0f2236;
+                --kx-border: rgba( 120, 160, 190, .18 );
+                --kx-gold: #e3b72f;
+                --kx-gold-light: #f3cf65;
+                --kx-blue: #3f9fe8;
+                --kx-cyan: #58d4ff;
+                --kx-text: #f4f7fb;
+                --kx-muted: #8fa2b5;
+                --kx-success: #4fd39a;
+                --kx-danger: #ff6c6c;
+                --kx-sidebar-width: 230px;
+            }
+
+
+
+            /* ==========================================================
+                       RESET
+                    ========================================================== */
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+
+            html,
+            body {
+                margin: 0;
+                min-height: 100%;
+                background: var(--kx-bg);
+                color: var(--kx-text);
+                font-family: "Segoe UI", Arial, sans-serif;
+            }
+
+
+            body {
+                overflow-x: hidden;
+            }
+
+
+            a {
+                text-decoration: none !important;
+            }
+
+
+
+            /* ==========================================================
+                       ESTRUCTURA
+                    ========================================================== */
+
+            .kx-app {
+                min-height: 100vh;
+                display: grid;
+                grid-template-columns: var(--kx-sidebar-width) minmax( 0, 1fr );
+                background: radial-gradient( circle at 90% 0%, rgba( 63, 159, 232, .08 ), transparent 34% ), radial-gradient( circle at 35% 0%, rgba( 227, 183, 47, .05 ), transparent 30% ), var(--kx-bg);
+            }
+
+
+
+            /* ==========================================================
+                       SIDEBAR
+                    ========================================================== */
+
+            .kx-sidebar {
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                padding: 18px 14px;
+                overflow-y: auto;
+                border-right: 1px solid rgba( 255, 255, 255, .06 );
+                background: linear-gradient( 180deg, #06101c, #071522 );
+                z-index: 20;
+            }
+
+
+            .kx-logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 4px 6px 18px;
+                border-bottom: 1px solid rgba( 255, 255, 255, .07 );
+            }
+
+
+            .kx-logo-icon {
+                width: 38px;
+                height: 38px;
+                display: grid;
+                place-items: center;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 900;
+                color: #08111c;
+                background: linear-gradient( 135deg, var(--kx-gold), var(--kx-gold-light) );
+            }
+
+
+            .kx-logo strong {
+                display: block;
+                color: white;
+                font-size: 17px;
+            }
+
+
+            .kx-logo small {
+                display: block;
+                margin-top: 3px;
+                color: #6f8397;
+                font-size: 9px;
+            }
+
+
+
+            /* ==========================================================
+                       MENU
+                    ========================================================== */
+
+            .kx-nav {
+                display: grid;
+                gap: 7px;
+                margin-top: 18px;
+            }
+
+
+                .kx-nav a {
+                    min-height: 42px;
+                    display: flex;
+                    align-items: center;
+                    gap: 11px;
+                    padding: 0 12px;
+                    border-radius: 11px;
+                    color: #aebccb;
+                    font-size: 13px;
+                    font-weight: 700;
+                    transition: .2s ease;
+                }
+
+
+                    .kx-nav a:hover {
+                        color: white;
+                        background: rgba( 255, 255, 255, .04 );
+                    }
+
+
+                    .kx-nav a.active {
+                        color: white;
+                        border: 1px solid rgba( 227, 183, 47, .65 );
+                        background: linear-gradient( 90deg, rgba( 227, 183, 47, .12 ), rgba( 63, 159, 232, .05 ) );
+                    }
+
+
+                        .kx-nav a.active
+                        [uk-icon] {
+                            color: var(--kx-gold);
+                        }
+
+
+
+            /* ==========================================================
+                       MAIN
+                    ========================================================== */
+
+            .kx-main {
+                min-width: 0;
+                padding: 28px;
+            }
+
+
+            .kx-container {
+                width: 100%;
+                max-width: 1500px;
+                margin: 0 auto;
+            }
+
+
+
+            /* ==========================================================
+                       HEADER
+                    ========================================================== */
+
+            .kx-header {
+                position: relative;
+                overflow: hidden;
+                padding: 26px 28px;
+                margin-bottom: 22px;
+                border: 1px solid var(--kx-border);
+                border-radius: 20px;
+                background: linear-gradient( 135deg, rgba( 227, 183, 47, .055 ), transparent 40% ), linear-gradient( 120deg, rgba( 63, 159, 232, .08 ), transparent 65% ), rgba( 8, 22, 36, .88 );
+            }
+
+
+                .kx-header::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 1px;
+                    background: linear-gradient( 90deg, var(--kx-gold), rgba( 227, 183, 47, .1 ), var(--kx-blue) );
+                }
+
+
+            .kx-back {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: #8fa4b8;
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+
+                .kx-back:hover {
+                    color: white;
+                }
+
+
+            .kx-header h1 {
+                margin: 12px 0 5px;
+                color: white;
+                font-size: clamp( 27px, 3vw, 42px );
+                font-weight: 800;
+            }
+
+
+            .kx-header p {
+                margin: 0;
+                color: var(--kx-muted);
+                font-size: 14px;
+            }
+
+
+            .kx-header-badge {
+                position: absolute;
+                top: 24px;
+                right: 24px;
+                min-height: 36px;
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                padding: 0 13px;
+                border: 1px solid rgba( 88, 212, 255, .25 );
+                border-radius: 999px;
+                background: rgba( 88, 212, 255, .07 );
+                color: #c4f1ff;
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+
+
+            /* ==========================================================
+                       ALERTAS
+                    ========================================================== */
+
+            .kx-alert {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 18px;
+                padding: 13px 15px;
+                border-radius: 13px;
+                font-size: 13px;
+            }
+
+
+                .kx-alert.success {
+                    color: #baf4d9;
+                    border: 1px solid rgba( 79, 211, 154, .26 );
+                    background: rgba( 79, 211, 154, .08 );
+                }
+
+
+                .kx-alert.error {
+                    color: #ffc3c3;
+                    border: 1px solid rgba( 255, 108, 108, .26 );
+                    background: rgba( 255, 108, 108, .08 );
+                }
+
+
+
+            /* ==========================================================
+                       GRID
+                    ========================================================== */
+
+            .kx-grid {
+                display: grid;
+                grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+                gap: 20px;
+                align-items: stretch;
+            }
+
+
+
+            /* ==========================================================
+                       CARDS
+                    ========================================================== */
+
+            .kx-card {
+                min-width: 0;
+                overflow: hidden;
+                border: 1px solid var(--kx-border);
+                border-radius: 18px;
+                background: linear-gradient( 135deg, rgba( 255, 255, 255, .015 ), transparent 45% ), var(--kx-card);
+            }
+
+
+            .kx-card-header {
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 20px 21px 15px;
+                border-bottom: 1px solid rgba( 255, 255, 255, .05 );
+            }
+
+
+            .kx-card-icon {
+                flex: 0 0 42px;
+                width: 42px;
+                height: 42px;
+                display: grid;
+                place-items: center;
+                border-radius: 13px;
+                color: var(--kx-gold);
+                border: 1px solid rgba( 227, 183, 47, .25 );
+                background: rgba( 227, 183, 47, .06 );
+            }
+
+
+            .kx-card-header h2 {
+                margin: 0;
+                color: white;
+                font-size: 17px;
+                font-weight: 800;
+            }
+
+
+            .kx-card-header p {
+                margin: 3px 0 0;
+                color: #7f93a6;
+                font-size: 12px;
+            }
+
+
+            .kx-card-body {
+                padding: 20px 21px 22px;
+            }
+
+
+
+            /* ==========================================================
+                       RESUMEN
+                    ========================================================== */
+
+            .kx-summary {
+                display: grid;
+                gap: 0;
+            }
+
+
+            .kx-summary-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                min-width: 0;
+                padding: 13px 0;
+                border-bottom: 1px solid rgba( 255, 255, 255, .05 );
+            }
+
+
+                .kx-summary-row:last-child {
+                    border-bottom: none;
+                }
+
+
+                .kx-summary-row span {
+                    min-width: 0;
+                    color: #879bad;
+                    font-size: 12px;
+                }
+
+
+                .kx-summary-row strong {
+                    min-width: 0;
+                    max-width: 65%;
+                    color: white;
+                    font-size: 13px;
+                    text-align: right;
+                    overflow-wrap: anywhere;
+                }
+
+
+
+            /* ==========================================================
+                       BACKUP MANUAL
+                    ========================================================== */
+
+            .kx-backup-box {
+                padding: 17px;
+                border: 1px solid rgba( 255, 255, 255, .055 );
+                border-radius: 14px;
+                background: rgba( 255, 255, 255, .018 );
+            }
+
+
+                .kx-backup-box strong {
+                    display: block;
+                    color: white;
+                    font-size: 14px;
+                }
+
+
+                .kx-backup-box small {
+                    display: block;
+                    margin-top: 6px;
+                    color: #8295a8;
+                    font-size: 11px;
+                    line-height: 1.5;
+                }
+
+
+
+            /* ==========================================================
+                       BOTONES
+                    ========================================================== */
+
+            .kx-actions {
+                display: flex;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 18px;
+            }
+
+
+            .kx-btn {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 16px;
+                border-radius: 11px;
+                border: 1px solid transparent;
+                font-size: 12px;
+                font-weight: 800;
+                cursor: pointer;
+                transition: .2s ease;
+            }
+
+
+            .kx-btn-primary {
+                color: #08111c;
+                background: linear-gradient( 135deg, var(--kx-gold), var(--kx-gold-light) );
+            }
+
+
+                .kx-btn-primary:hover {
+                    filter: brightness( 1.06 );
+                    transform: translateY( -1px );
+                }
+
+
+            .kx-btn-secondary {
+                color: #c7d2dd;
+                border-color: rgba( 132, 157, 180, .22 );
+                background: rgba( 255, 255, 255, .025 );
+            }
+
+
+                .kx-btn-secondary:hover {
+                    color: white;
+                    border-color: rgba( 227, 183, 47, .35 );
+                }
+
+
+
+            /* ==========================================================
+                       ARCHIVO
+                    ========================================================== */
+
+            .kx-field {
+                min-width: 0;
+            }
+
+
+                .kx-field label {
+                    display: block;
+                    margin-bottom: 7px;
+                    color: #b9c6d3;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+
+
+            .kx-input {
+                width: 100%;
+                min-width: 0;
+                height: 44px;
+                padding: 0 13px;
+                color: #dbe4ec;
+                border: 1px solid rgba( 132, 157, 180, .2 );
+                border-radius: 11px;
+                outline: none;
+                background: rgba( 3, 12, 21, .72 );
+                font-size: 12px;
+            }
+
+
+            .kx-file-box {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+                border: 1px solid rgba( 63, 159, 232, .16 );
+                border-radius: 14px;
+                background: rgba( 63, 159, 232, .04 );
+            }
+
+
+            .kx-file-icon {
+                flex: 0 0 42px;
+                width: 42px;
+                height: 42px;
+                display: grid;
+                place-items: center;
+                border-radius: 12px;
+                color: var(--kx-cyan);
+                background: rgba( 88, 212, 255, .07 );
+            }
+
+
+            .kx-file-content {
+                min-width: 0;
+                flex: 1;
+            }
+
+
+                .kx-file-content strong {
+                    display: block;
+                    color: white;
+                    font-size: 12px;
+                }
+
+
+            .kx-file-path {
+                margin-top: 5px;
+                color: #87a0b5;
+                font-size: 11px;
+                line-height: 1.45;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+
+
+            /* ==========================================================
+                       EMPTY
+                    ========================================================== */
+
+            .kx-empty {
+                min-height: 150px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 7px;
+                padding: 24px;
+                text-align: center;
+                border: 1px dashed rgba( 132, 157, 180, .18 );
+                border-radius: 14px;
+                background: rgba( 255, 255, 255, .012 );
+            }
+
+
+                .kx-empty [uk-icon] {
+                    color: var(--gold);
+                }
+
+
+                .kx-empty strong {
+                    color: white;
+                    font-size: 13px;
+                }
+
+
+                .kx-empty p {
+                    margin: 0;
+                    color: #7c8fa1;
+                    font-size: 11px;
+                }
+
+
+
+            /* ==========================================================
+                       INFO GRID
+                    ========================================================== */
+
+            .kx-info-grid {
+                display: grid;
+                grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+                gap: 12px;
+            }
+
+
+            .kx-info-item {
+                padding: 15px;
+                border: 1px solid rgba( 255, 255, 255, .055 );
+                border-radius: 13px;
+                background: rgba( 255, 255, 255, .018 );
+            }
+
+
+                .kx-info-item span {
+                    display: block;
+                    color: #8195a8;
+                    font-size: 10px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                }
+
+
+                .kx-info-item strong {
+                    display: block;
+                    margin-top: 5px;
+                    color: white;
+                    font-size: 13px;
+                }
+
+
+
+            /* ==========================================================
+                       RESPONSIVE
+                    ========================================================== */
+
+            @@media (
+                        max-width:
+                        1100px
+                    ) {
+
+                :root {
+                    --kx-sidebar-width: 205px;
+                }
+
+
+                .kx-main {
+                    padding: 22px;
+                }
+            }
+
+
+            @@media (
+                        max-width:
+                        900px
+                    ) {
+
+                .kx-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+
+            @@media (
+                        max-width:
+                        760px
+                    ) {
+
+                .kx-app {
+                    display: block;
+                }
+
+
+                .kx-sidebar {
+                    position: relative;
+                    height: auto;
+                    border-right: none;
+                    border-bottom: 1px solid rgba( 255, 255, 255, .06 );
+                }
+
+
+                .kx-nav {
+                    display: flex;
+                    overflow-x: auto;
+                }
+
+
+                    .kx-nav a {
+                        flex: 0 0 auto;
+                        white-space: nowrap;
+                    }
+
+
+                .kx-main {
+                    padding: 14px;
+                }
+
+
+                .kx-header {
+                    padding: 20px 18px;
+                }
+
+
+                .kx-header-badge {
+                    position: static;
+                    width: fit-content;
+                    margin-top: 14px;
+                }
+
+
+                .kx-actions {
+                    flex-direction: column-reverse;
+                    align-items: stretch;
+                }
+
+
+                .kx-btn {
+                    width: 100%;
+                }
+            }
+
+
+            @@media (
+                        max-width:
+                        480px
+                    ) {
+
+                .kx-main {
+                    padding: 10px;
+                }
+
+
+                .kx-header,
+                .kx-card {
+                    border-radius: 14px;
+                }
+
+
+                .kx-card-header {
+                    padding: 16px 15px 13px;
+                }
+
+
+                .kx-card-body {
+                    padding: 16px 15px 18px;
+                }
+
+
+                .kx-summary-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 4px;
+                }
+
+
+                    .kx-summary-row strong {
+                        max-width: 100%;
+                        text-align: left;
+                    }
+
+
+                .kx-info-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+    </style>
 
 </head>
 
-<body class="kx-body">
+
+<body>
+
 
     <div class="kx-app">
 
+
+        <!-- ===================================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================================== -->
+
         <aside class="kx-sidebar">
+
 
             <div class="kx-logo">
 
+
                 <div class="kx-logo-icon">
+
                     KX
+
                 </div>
+
 
                 <div>
 
@@ -58,449 +846,697 @@
 
                 </div>
 
+
             </div>
+
 
 
             <nav class="kx-nav">
 
+
                 <a href="/Inicio/Index">
-                    <span uk-icon="icon: home"></span>
-                    <span>Inicio</span>
+
+                    <span uk-icon="icon: home; ratio: .85">
+                    </span>
+
+                    Inicio
+
                 </a>
+
 
                 <a href="/Ventas/Index">
-                    <span uk-icon="icon: cart"></span>
-                    <span>Ventas</span>
+
+                    <span uk-icon="icon: cart; ratio: .85">
+                    </span>
+
+                    Ventas
+
                 </a>
+
 
                 <a href="/Inventario/Index">
-                    <span uk-icon="icon: database"></span>
-                    <span>Inventario</span>
+
+                    <span uk-icon="icon: database; ratio: .85">
+                    </span>
+
+                    Inventario
+
                 </a>
+
 
                 <a href="/Productos/Index">
-                    <span uk-icon="icon: thumbnails"></span>
-                    <span>Productos</span>
+
+                    <span uk-icon="icon: grid; ratio: .85">
+                    </span>
+
+                    Productos
+
                 </a>
+
 
                 <a href="/Clientes/Index">
-                    <span uk-icon="icon: users"></span>
-                    <span>Clientes</span>
+
+                    <span uk-icon="icon: users; ratio: .85">
+                    </span>
+
+                    Clientes
+
                 </a>
 
+
                 <a href="/IA/Index">
-                    <span uk-icon="icon: bolt"></span>
-                    <span>KerniX IA</span>
+
+                    <span uk-icon="icon: bolt; ratio: .85">
+                    </span>
+
+                    KerniX IA
+
                 </a>
+
 
                 <a href="/Configuracion/Index1"
                    class="active">
 
-                    <span uk-icon="icon: settings"></span>
-
-                    <span>
-                        Configuración
+                    <span uk-icon="icon: settings; ratio: .85">
                     </span>
+
+                    Configuración
 
                 </a>
 
+
             </nav>
+
 
         </aside>
 
 
-        <main class="kx-content">
 
-            <header class="kx-topbar">
+        <!-- ===================================================== -->
+        <!-- MAIN -->
+        <!-- ===================================================== -->
 
-                <div>
+        <main class="kx-main">
+
+
+            <div class="kx-container">
+
+
+                <!-- ================================================= -->
+                <!-- HEADER -->
+                <!-- ================================================= -->
+
+                <header class="kx-header">
+
 
                     <a href="/Configuracion/Index1"
                        class="kx-back">
 
-                        <span uk-icon="icon: arrow-left"></span>
+                        <span uk-icon="icon: arrow-left; ratio: .8">
+                        </span>
 
                         Volver a configuración
 
                     </a>
 
+
                     <h1>
                         Copias de Seguridad
                     </h1>
 
+
                     <p>
-                        Genera y consulta los respaldos
-                        de la base de datos KerniX.
+                        Genera, controla y consulta
+                        los respaldos de la base de datos KerniX.
                     </p>
 
+
+                    <div class="kx-header-badge">
+
+                        <span uk-icon="icon: database; ratio: .75">
+                        </span>
+
+                        SQL Server Backup
+
+                    </div>
+
+
+                </header>
+
+
+
+                <!-- ================================================= -->
+                <!-- MENSAJES -->
+                <!-- ================================================= -->
+                @if (!string.IsNullOrWhiteSpace(
+                                    Model.MensajeExito))
+                {
+
+                    <div class="kx-alert success">
+
+                        <span uk-icon="icon: check">
+                        </span>
+
+                        <span>
+                            @Model.MensajeExito
+                        </span>
+
+                    </div>
+
+                }
+
+
+                @if (!string.IsNullOrWhiteSpace(
+                    Model.MensajeError))
+                {
+
+                    <div class="kx-alert error">
+
+                        <span uk-icon="icon: warning">
+                        </span>
+
+                        <span>
+                            @Model.MensajeError
+                        </span>
+
+                    </div>
+
+                }
+
+
+
+                <!-- ================================================= -->
+                <!-- GRID -->
+                <!-- ================================================= -->
+
+                <div class="kx-grid">
+
+
+                    <!-- ============================================= -->
+                    <!-- ESTADO -->
+                    <!-- ============================================= -->
+
+                    <section class="kx-card">
+
+
+                        <div class="kx-card-header">
+
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: database">
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Estado del respaldo
+                                </h2>
+
+                                <p>
+                                    Información del último backup completo.
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="kx-card-body">
+
+
+                            <div class="kx-summary">
+
+
+                                <div class="kx-summary-row">
+
+                                    <span>
+                                        Empresa
+                                    </span>
+
+                                    <strong>
+                                        #@Model.IdEmpresa
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-summary-row">
+
+                                    <span>
+                                        Base de datos
+                                    </span>
+
+                                    <strong>
+                                        kernixerp
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-summary-row">
+
+                                    <span>
+                                        Tipo
+                                    </span>
+
+                                    <strong>
+                                        Completo
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-summary-row">
+
+                                    <span>
+                                        Destino
+                                    </span>
+
+                                    <strong>
+                                        C:\Backup
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-summary-row">
+
+                                    <span>
+                                        Último respaldo
+                                    </span>
+
+                                    <strong>
+
+                                        @(Model.UltimaFecha.HasValue
+
+                                            ? Model.UltimaFecha.Value
+                                                .ToString(
+                                                    "dd/MM/yyyy HH:mm:ss"
+                                                )
+
+                                            : "Sin información")
+
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
+
+                    <!-- ============================================= -->
+                    <!-- BACKUP MANUAL -->
+                    <!-- ============================================= -->
+
+                    <section class="kx-card">
+
+
+                        <div class="kx-card-header">
+
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: cloud-upload">
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Backup manual
+                                </h2>
+
+                                <p>
+                                    Genera una copia completa inmediatamente.
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="kx-card-body">
+
+
+                            <div class="kx-backup-box">
+
+
+                                <strong>
+                                    Ejecutar copia completa
+                                </strong>
+
+
+                                <small>
+
+                                    SQL Server generará un archivo
+                                    <b>.bak</b>
+                                    dentro de:
+
+                                    <br />
+
+                                    <b>
+                                        C:\Backup
+                                    </b>
+
+                                </small>
+
+
+                            </div>
+
+
+
+                            <form method="post"
+                                  action="/Configuracion/Backups?handler=EjecutarBackup">
+
+
+                                @Html.AntiForgeryToken()
+
+
+                                <div class="kx-actions">
+
+
+                                    <button type="submit"
+                                            class="kx-btn kx-btn-primary"
+                                            onclick="return confirm('¿Desea generar una copia de seguridad completa ahora?');">
+
+
+                                        <span uk-icon="icon: cloud-upload; ratio: .85">
+                                        </span>
+
+
+                                        Generar backup
+
+
+                                    </button>
+
+
+                                </div>
+
+
+                            </form>
+
+
+                        </div>
+
+
+                    </section>
+
+
+
+                    <!-- ============================================= -->
+                    <!-- ARCHIVO -->
+                    <!-- ============================================= -->
+
+                    <section class="kx-card">
+
+
+                        <div class="kx-card-header">
+
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: file-text">
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Último archivo
+                                </h2>
+
+                                <p>
+                                    Ubicación detectada desde SQL Server.
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="kx-card-body">
+
+
+                            @if (string.IsNullOrWhiteSpace(
+                                Model.UltimoArchivo))
+                            {
+
+                                <div class="kx-empty">
+
+
+                                    <span uk-icon="icon: warning; ratio: 1.3">
+                                    </span>
+
+
+                                    <strong>
+                                        Sin respaldo detectado
+                                    </strong>
+
+
+                                    <p>
+
+                                        Todavía no se encontró
+                                        un backup completo.
+
+                                    </p>
+
+
+                                </div>
+
+                            }
+                            else
+                            {
+
+                                <div class="kx-file-box">
+
+
+                                    <div class="kx-file-icon">
+
+                                        <span uk-icon="icon: file-text">
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="kx-file-content">
+
+
+                                        <strong>
+                                            Archivo más reciente
+                                        </strong>
+
+
+                                        <div class="kx-file-path">
+
+                                            @Model.UltimoArchivo
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <div class="kx-field"
+                                     style="margin-top:14px;">
+
+
+                                    <label>
+                                        Ruta completa
+                                    </label>
+
+
+                                    <input type="text"
+                                           value="@Model.UltimoArchivo"
+                                           class="kx-input"
+                                           readonly />
+
+
+                                </div>
+
+                            }
+
+
+                        </div>
+
+
+                    </section>
+
+
+
+                    <!-- ============================================= -->
+                    <!-- INFORMACIÓN -->
+                    <!-- ============================================= -->
+
+                    <section class="kx-card">
+
+
+                        <div class="kx-card-header">
+
+
+                            <div class="kx-card-icon">
+
+                                <span uk-icon="icon: info">
+                                </span>
+
+                            </div>
+
+
+                            <div>
+
+                                <h2>
+                                    Información técnica
+                                </h2>
+
+                                <p>
+                                    Configuración utilizada para el respaldo.
+                                </p>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="kx-card-body">
+
+
+                            <div class="kx-info-grid">
+
+
+                                <div class="kx-info-item">
+
+                                    <span>
+                                        Formato
+                                    </span>
+
+                                    <strong>
+                                        .bak
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-info-item">
+
+                                    <span>
+                                        Compresión
+                                    </span>
+
+                                    <strong>
+                                        Activada
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-info-item">
+
+                                    <span>
+                                        Checksum
+                                    </span>
+
+                                    <strong>
+                                        Activado
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-info-item">
+
+                                    <span>
+                                        Tipo
+                                    </span>
+
+                                    <strong>
+                                        BACKUP DATABASE
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </section>
+
+
                 </div>
 
-            </header>
 
 
-            @if (!string.IsNullOrWhiteSpace(
-                Model.MensajeExito))
-            {
-                <div class="kx-alert-success">
+                <!-- ================================================= -->
+                <!-- VOLVER -->
+                <!-- ================================================= -->
 
-                    <span uk-icon="icon: check"></span>
+                <div class="kx-actions">
 
-                    <span>
-                        @Model.MensajeExito
-                    </span>
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-btn kx-btn-secondary">
+
+
+                        <span uk-icon="icon: arrow-left; ratio: .8">
+                        </span>
+
+
+                        Volver
+
+
+                    </a>
+
 
                 </div>
-            }
 
-
-            @if (!string.IsNullOrWhiteSpace(
-                Model.MensajeError))
-            {
-                <div class="kx-alert-error">
-
-                    <span uk-icon="icon: warning"></span>
-
-                    <span>
-                        @Model.MensajeError
-                    </span>
-
-                </div>
-            }
-
-
-            <div class="kx-settings-layout">
-
-                <!-- ============================================= -->
-                <!-- ESTADO -->
-                <!-- ============================================= -->
-
-                <section class="kx-card">
-
-                    <div class="kx-card-header">
-
-                        <div class="kx-card-icon">
-                            <span uk-icon="icon: database"></span>
-                        </div>
-
-                        <div>
-
-                            <h2>
-                                Estado del respaldo
-                            </h2>
-
-                            <p>
-                                Información del último backup completo.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Empresa
-                        </span>
-
-                        <strong>
-                            #@Model.IdEmpresa
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Base de datos
-                        </span>
-
-                        <strong>
-                            kernixerp
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Tipo
-                        </span>
-
-                        <strong>
-                            Completo
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Destino
-                        </span>
-
-                        <strong>
-                            C:\Backup
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Último respaldo
-                        </span>
-
-                        <strong>
-
-                            @(Model.UltimaFecha.HasValue
-                                ? Model.UltimaFecha.Value
-                                    .ToString("dd/MM/yyyy HH:mm:ss")
-                                : "Sin información")
-
-                        </strong>
-
-                    </div>
-
-                </section>
-
-
-                <!-- ============================================= -->
-                <!-- EJECUTAR -->
-                <!-- ============================================= -->
-
-                <section class="kx-card">
-
-                    <div class="kx-card-header">
-
-                        <div class="kx-card-icon">
-                            <span uk-icon="icon: cloud-upload"></span>
-                        </div>
-
-                        <div>
-
-                            <h2>
-                                Backup manual
-                            </h2>
-
-                            <p>
-                                Genera una copia completa inmediatamente.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="kx-option">
-
-                        <div>
-
-                            <strong>
-                                Ejecutar copia completa
-                            </strong>
-
-                            <small>
-                                SQL Server generará un archivo .bak
-                                dentro de C:\Backup.
-                            </small>
-
-                        </div>
-
-                    </div>
-
-
-                    <form method="post"
-                          action="/Configuracion/Backups?handler=EjecutarBackup">
-
-                        @Html.AntiForgeryToken()
-
-                        <button type="submit"
-                                class="kx-btn-primary"
-                                onclick="return confirm('¿Desea generar una copia de seguridad completa ahora?');">
-
-                            <span uk-icon="icon: cloud-upload"></span>
-
-                            Generar backup
-
-                        </button>
-
-                    </form>
-
-                </section>
-
-
-                <!-- ============================================= -->
-                <!-- ARCHIVO -->
-                <!-- ============================================= -->
-
-                <section class="kx-card">
-
-                    <div class="kx-card-header">
-
-                        <div class="kx-card-icon">
-                            <span uk-icon="icon: file-text"></span>
-                        </div>
-
-                        <div>
-
-                            <h2>
-                                Último archivo
-                            </h2>
-
-                            <p>
-                                Ubicación detectada desde SQL Server.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    @if (string.IsNullOrWhiteSpace(
-                        Model.UltimoArchivo))
-                    {
-                        <div class="kx-empty-box">
-
-                            <span uk-icon="icon: warning"></span>
-
-                            <strong>
-                                Sin respaldo detectado
-                            </strong>
-
-                            <p>
-                                Todavía no se encontró un backup completo.
-                            </p>
-
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="kx-form-group">
-
-                            <label>
-                                Archivo
-                            </label>
-
-                            <input type="text"
-                                   value="@Model.UltimoArchivo"
-                                   class="kx-input"
-                                   readonly />
-
-                        </div>
-                    }
-
-                </section>
-
-
-                <!-- ============================================= -->
-                <!-- INFORMACION -->
-                <!-- ============================================= -->
-
-                <section class="kx-card">
-
-                    <div class="kx-card-header">
-
-                        <div class="kx-card-icon">
-                            <span uk-icon="icon: info"></span>
-                        </div>
-
-                        <div>
-
-                            <h2>
-                                Información
-                            </h2>
-
-                            <p>
-                                Consideraciones para los respaldos.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Formato
-                        </span>
-
-                        <strong>
-                            .bak
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Compresión
-                        </span>
-
-                        <strong>
-                            Activada
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Checksum
-                        </span>
-
-                        <strong>
-                            Activado
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Tipo de respaldo
-                        </span>
-
-                        <strong>
-                            BACKUP DATABASE
-                        </strong>
-
-                    </div>
-
-                </section>
 
             </div>
 
-
-            <div class="kx-form-actions">
-
-                <a href="/Configuracion/Index1"
-                   class="kx-btn-secondary">
-
-                    Volver
-
-                </a>
-
-            </div>
 
         </main>
 
+
     </div>
 
+
+
+    <!-- ========================================================= -->
+    <!-- UIKIT JS -->
+    <!-- ========================================================= -->
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
     </script>
+
 
 </body>
 

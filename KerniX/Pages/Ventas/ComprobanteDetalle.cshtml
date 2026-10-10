@@ -1,0 +1,689 @@
+﻿@page
+@model KerniX.Pages.Ventas.ComprobanteDetallePageModel
+@using System.Globalization
+
+@{
+    Layout = null;
+
+    var comprobante = Model.Comprobante!;
+    var c = comprobante.Cabecera;
+
+    string tipo =
+        string.IsNullOrWhiteSpace(c.TipoComprobante)
+            ? "COMPROBANTE"
+            : c.TipoComprobante
+                .Replace("_", " ")
+                .ToUpperInvariant();
+
+    string numero =
+        string.IsNullOrWhiteSpace(c.NumeroComprobante)
+            ? $"{c.Serie}-{c.Numero}".ToUpperInvariant()
+            : c.NumeroComprobante.ToUpperInvariant();
+
+    decimal subtotal =
+        c.ComprobanteSubtotal > 0
+            ? c.ComprobanteSubtotal
+            : c.VentaSubtotal;
+
+    decimal descuento =
+        c.VentaDescuento;
+
+    decimal igv =
+        c.ComprobanteImpuesto > 0
+            ? c.ComprobanteImpuesto
+            : c.VentaImpuesto;
+
+    decimal total =
+        c.ComprobanteTotal > 0
+            ? c.ComprobanteTotal
+            : c.VentaTotal;
+}
+
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1" />
+
+    <title>@tipo @numero | KerniX</title>
+
+    <style>
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                padding: 30px;
+                background: #eef2f6;
+                color: #17212b;
+                font-family: "Segoe UI", Arial, sans-serif;
+            }
+
+            .documento {
+                width: min(980px, 100%);
+                margin: 0 auto;
+                background: #ffffff;
+                border-radius: 18px;
+                box-shadow: 0 20px 60px rgba(15, 35, 55, .12);
+                overflow: hidden;
+            }
+
+            .cabecera {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 320px;
+                gap: 28px;
+                padding: 30px;
+                border-bottom: 1px solid #e6ebf0;
+            }
+
+            .empresa h1 {
+                margin: 0;
+                font-size: 25px;
+                color: #142d46;
+            }
+
+            .empresa p {
+                margin: 6px 0 0;
+                color: #607284;
+                font-size: 13px;
+                line-height: 1.45;
+            }
+
+            .tipo-box {
+                border: 2px solid #d4a72c;
+                border-radius: 15px;
+                padding: 22px;
+                text-align: center;
+                background: #fffaf0;
+            }
+
+                .tipo-box span {
+                    display: block;
+                    font-size: 12px;
+                    color: #806620;
+                    font-weight: 800;
+                    letter-spacing: .6px;
+                }
+
+                .tipo-box strong {
+                    display: block;
+                    margin-top: 8px;
+                    font-size: 25px;
+                    color: #203a54;
+                }
+
+                .tipo-box small {
+                    display: block;
+                    margin-top: 8px;
+                    font-size: 14px;
+                    color: #6e7780;
+                    font-weight: 700;
+                }
+
+            .datos {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 18px;
+                padding: 24px 30px;
+                border-bottom: 1px solid #edf0f3;
+            }
+
+            .bloque {
+                padding: 16px;
+                border: 1px solid #e4e9ee;
+                border-radius: 12px;
+                background: #fafcfd;
+            }
+
+                .bloque h3 {
+                    margin: 0 0 10px;
+                    font-size: 12px;
+                    color: #78899a;
+                    text-transform: uppercase;
+                    letter-spacing: .6px;
+                }
+
+                .bloque p {
+                    margin: 4px 0;
+                    font-size: 13px;
+                    line-height: 1.45;
+                }
+
+            .tabla-wrap {
+                padding: 24px 30px;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            th {
+                padding: 12px 10px;
+                text-align: left;
+                background: #183a58;
+                color: #ffffff;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: .5px;
+            }
+
+            td {
+                padding: 14px 10px;
+                border-bottom: 1px solid #edf0f3;
+                vertical-align: top;
+                font-size: 13px;
+            }
+
+            .num {
+                text-align: right;
+                white-space: nowrap;
+            }
+
+            .producto strong {
+                display: block;
+                font-size: 14px;
+                color: #172b3d;
+            }
+
+            .producto small {
+                display: block;
+                margin-top: 3px;
+                color: #758595;
+                line-height: 1.35;
+            }
+
+            .totales {
+                width: min(420px, 100%);
+                margin-left: auto;
+                padding: 0 30px 28px;
+            }
+
+            .linea {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                padding: 8px 0;
+                font-size: 14px;
+            }
+
+                .linea.total {
+                    margin-top: 7px;
+                    padding: 14px 16px;
+                    border: 1px solid #d4a72c;
+                    border-radius: 10px;
+                    background: #fffaf0;
+                    font-size: 18px;
+                    font-weight: 900;
+                }
+
+            .pie {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+                padding: 22px 30px 30px;
+                border-top: 1px solid #edf0f3;
+                background: #fbfcfd;
+            }
+
+            .estado {
+                display: inline-flex;
+                padding: 6px 10px;
+                border-radius: 999px;
+                background: #eef4f9;
+                color: #3d617e;
+                font-size: 12px;
+                font-weight: 800;
+            }
+
+            .acciones {
+                max-width: 980px;
+                margin: 18px auto 0;
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+            }
+
+                .acciones button,
+                .acciones a {
+                    min-height: 42px;
+                    padding: 0 16px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 0;
+                    border-radius: 9px;
+                    text-decoration: none;
+                    font-family: inherit;
+                    font-size: 13px;
+                    font-weight: 800;
+                    cursor: pointer;
+                }
+
+            .volver {
+                background: #ffffff;
+                color: #314b62;
+            }
+
+            .imprimir {
+                background: #d4a72c;
+                color: #17212b;
+            }
+
+            @@media print {
+
+                body {
+                    padding: 0;
+                    background: white;
+                }
+
+                .documento {
+                    width: 100%;
+                    box-shadow: none;
+                    border-radius: 0;
+                }
+
+                .acciones {
+                    display: none;
+                }
+            }
+
+            @@media (max-width: 720px) {
+
+                body {
+                    padding: 10px;
+                }
+
+                .cabecera,
+                .datos,
+                .pie {
+                    grid-template-columns: 1fr;
+                }
+
+                .tabla-wrap {
+                    overflow-x: auto;
+                }
+
+                table {
+                    min-width: 780px;
+                }
+            }
+
+    </style>
+
+</head>
+
+<body>
+
+
+    <section class="documento">
+
+
+        <header class="cabecera">
+
+            <div class="empresa">
+
+                <h1>
+                    @c.EmpresaRazonSocial
+                </h1>
+
+                @if (!string.IsNullOrWhiteSpace(c.EmpresaNombreComercial))
+                {
+                    <p>
+                        <strong>@c.EmpresaNombreComercial</strong>
+                    </p>
+                }
+
+                <p>
+                    RUC:
+                    <strong>@c.EmpresaRuc</strong>
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(c.EmpresaDireccionFiscal))
+                {
+                    <p>
+                        @c.EmpresaDireccionFiscal
+                    </p>
+                }
+
+                <p>
+                    @c.SucursalNombre
+                </p>
+
+            </div>
+
+
+            <div class="tipo-box">
+
+                <span>
+                    @tipo
+                </span>
+
+                <strong>
+                    @numero
+                </strong>
+
+                <small>
+                    RUC @c.EmpresaRuc
+                </small>
+
+            </div>
+
+        </header>
+
+
+        <section class="datos">
+
+
+            <div class="bloque">
+
+                <h3>
+                    Cliente
+                </h3>
+
+                <p>
+                    <strong>@c.ClienteNombre</strong>
+                </p>
+
+                <p>
+                    @c.ClienteTipoDocumento:
+                    @c.ClienteNumeroDocumento
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(c.ClienteCorreo))
+                {
+                    <p>
+                        @c.ClienteCorreo
+                    </p>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(c.ClienteTelefono))
+                {
+                    <p>
+                        @c.ClienteTelefono
+                    </p>
+                }
+
+            </div>
+
+
+            <div class="bloque">
+
+                <h3>
+                    Operación
+                </h3>
+
+                <p>
+                    Fecha:
+                    <strong>
+                        @(c.FechaEmision ?? c.FechaVenta)
+                        .ToString("dd/MM/yyyy HH:mm")
+                    </strong>
+                </p>
+
+                <p>
+                    Venta:
+                    <strong>@c.NumeroVenta</strong>
+                </p>
+
+                <p>
+                    Pago:
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(c.MetodoPago)
+                            ? "-"
+                            : c.MetodoPago)
+                    </strong>
+                </p>
+
+                <p>
+                    Moneda:
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(c.Moneda)
+                            ? "PEN"
+                            : c.Moneda)
+                    </strong>
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+        <div class="tabla-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:75px;">
+                            Cant.
+                        </th>
+
+                        <th style="width:70px;">
+                            Und.
+                        </th>
+
+                        <th>
+                            Descripción
+                        </th>
+
+                        <th class="num"
+                            style="width:110px;">
+                            P. Unit.
+                        </th>
+
+                        <th class="num"
+                            style="width:105px;">
+                            IGV
+                        </th>
+
+                        <th class="num"
+                            style="width:120px;">
+                            Total
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @foreach (var item in comprobante.Productos)
+                    {
+                        <tr>
+
+                            <td>
+                                @item.Cantidad.ToString("0.##")
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrWhiteSpace(item.UnidadAbreviatura)
+                                    ? "UND"
+                                    : item.UnidadAbreviatura.ToUpperInvariant())
+                            </td>
+
+                            <td class="producto">
+
+                                <strong>
+                                    @item.ProductoNombre
+                                </strong>
+
+                                <small>
+                                    Cód.: @item.CodigoProducto
+                                </small>
+
+                                @if (!string.IsNullOrWhiteSpace(item.ProductoDescripcion))
+                                {
+                                    <small>
+                                        @item.ProductoDescripcion
+                                    </small>
+                                }
+
+                                @if (!string.IsNullOrWhiteSpace(item.Marca))
+                                {
+                                    <small>
+                                        Marca: @item.Marca
+                                    </small>
+                                }
+
+                            </td>
+
+                            <td class="num">
+                                S/ @item.PrecioUnitario.ToString("N2")
+                            </td>
+
+                            <td class="num">
+                                S/ @item.Impuesto.ToString("N2")
+                            </td>
+
+                            <td class="num">
+                                <strong>
+                                    S/ @item.Total.ToString("N2")
+                                </strong>
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+
+            </table>
+
+        </div>
+
+
+        <div class="totales">
+
+            <div class="linea">
+
+                <span>
+                    Op. gravada / Subtotal
+                </span>
+
+                <strong>
+                    S/ @subtotal.ToString("N2")
+                </strong>
+
+            </div>
+
+
+            <div class="linea">
+
+                <span>
+                    Descuento
+                </span>
+
+                <strong>
+                    S/ @descuento.ToString("N2")
+                </strong>
+
+            </div>
+
+
+            <div class="linea">
+
+                <span>
+                    IGV
+                </span>
+
+                <strong>
+                    S/ @igv.ToString("N2")
+                </strong>
+
+            </div>
+
+
+            <div class="linea total">
+
+                <span>
+                    TOTAL
+                </span>
+
+                <strong>
+                    S/ @total.ToString("N2")
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <footer class="pie">
+
+
+            <div>
+
+                <strong>
+                    Estado del comprobante
+                </strong>
+
+                <p>
+                    <span class="estado">
+                        @(string.IsNullOrWhiteSpace(c.EstadoSunat)
+                            ? "PENDIENTE"
+                            : c.EstadoSunat.ToUpperInvariant())
+                    </span>
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    Información de pago
+                </strong>
+
+                <p>
+                    Monto:
+                    S/ @c.PagoMonto.ToString("N2")
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(c.NumeroOperacion))
+                {
+                    <p>
+                        Operación:
+                        @c.NumeroOperacion
+                    </p>
+                }
+
+            </div>
+
+
+        </footer>
+
+
+    </section>
+
+
+    <div class="acciones">
+
+        <a href="/Ventas/PrincipalVentas"
+           class="volver">
+            Volver
+        </a>
+
+        <button type="button"
+                class="imprimir"
+                onclick="window.print();">
+            Imprimir
+        </button>
+
+    </div>
+
+
+</body>
+
+</html>

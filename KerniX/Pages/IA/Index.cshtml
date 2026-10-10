@@ -1,0 +1,84 @@
+﻿@page "/IA/Index"
+@model KerniX.Pages.IA.IndexModel
+@{
+    ViewData["Title"] = "Centro de Inteligencia Artificial | KerniX";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+<link rel="stylesheet" href="~/css/IA/kernix-ia.css" asp-append-version="true" />
+<div class="kx-ai-page">
+    <main class="kai-wrap">
+        <nav class="kai-breadcrumb"><a href="/Inicio/Index">Inicio</a><span>/</span><b>Inteligencia Artificial</b></nav>
+        <header class="kai-hero">
+            <div class="kai-hero-copy">
+                <div class="kai-eyebrow"><span class="kai-dot"></span> KERNIX · CENTRO DE INTELIGENCIA ARTIFICIAL</div>
+                <h1>Control <em>inteligente</em> de operaciones</h1>
+                <p>Supervisión de ventas, señales estadísticas y preparación del agente comercial desde un solo entorno.</p>
+                <div class="kai-actions">
+                    <a class="kai-btn kai-btn-gold" href="/IA/AgenteVentas"><span uk-icon="commenting"></span> Abrir agente comercial</a>
+                    <a class="kai-btn kai-btn-blue" href="/IA/Anomalias"><span uk-icon="warning"></span> Analizar anomalías</a>
+                    <a class="kai-btn" href="/Inicio/Index"><span uk-icon="arrow-left"></span> Volver al inicio</a>
+                </div>
+            </div>
+            <div class="kai-orb-scene" aria-hidden="true">
+                <div class="kai-orb-ring kai-orb-ring-a"></div><div class="kai-orb-ring kai-orb-ring-b"></div>
+                <div class="kai-orb-core"><span uk-icon="icon: bolt; ratio: 2.4"></span></div>
+                <div class="kai-orb-platform"></div>
+                <span class="kai-orb-mark">KERNIX · IA</span>
+            </div>
+        </header>
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kai-alert" role="alert"><span uk-icon="warning"></span> @Model.MensajeError</div>
+        }
+        <section class="kai-kpis" aria-label="Indicadores IA">
+            <article class="kai-kpi kai-gold"><div><span>Ventas últimos 7 días</span><i uk-icon="cart"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.VentasUltimos7Dias.ToString("N0") : "—")</strong><small>Operaciones comerciales reales</small><div class="kai-spark spark-a"></div></article>
+            <article class="kai-kpi kai-cyan"><div><span>Ingresos últimos 7 días</span><i uk-icon="credit-card"></i></div><strong>@(Model.Analisis.DatosDisponibles ? "S/ " + Model.Analisis.ImporteUltimos7Dias.ToString("N2") : "—")</strong><small>Ventas registradas en SQL Server</small><div class="kai-spark spark-b"></div></article>
+            <article class="kai-kpi kai-red"><div><span>Señales de anomalía</span><i uk-icon="warning"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.TotalAlertas.ToString() : "—")</strong><small>Ventana reciente · análisis bajo demanda</small><div class="kai-spark spark-c"></div></article>
+            <article class="kai-kpi kai-violet"><div><span>Intervenciones del agente</span><i uk-icon="user"></i></div><strong>—</strong><small>Disponible al conectar el orquestador</small><div class="kai-spark spark-d"></div></article>
+        </section>
+        @if (!string.IsNullOrWhiteSpace(Model.Analisis.Aviso))
+        {
+            <div class="kai-info"><span uk-icon="info"></span> @Model.Analisis.Aviso</div>
+        }
+        <div class="kai-two-cols">
+            <section class="kai-panel">
+                <div class="kai-panel-head"><div><span class="kai-kicker">MODELOS</span><h2>Capacidades del sistema</h2><p>Dos flujos independientes, integrados al negocio.</p></div></div>
+                <div class="kai-models">
+                    <a class="kai-model" href="/IA/AgenteVentas"><div class="kai-model-icon kai-glow-gold"><span uk-icon="icon: commenting; ratio: 1.5"></span></div><div><strong>Agente comercial autónomo</strong><p>Prepara solicitudes, pedidos y cotizaciones. Las transacciones requieren validación y conexión con la API.</p><span class="kai-status kai-status-pending">Interfaz preparada · motor pendiente</span></div><span uk-icon="arrow-right"></span></a>
+                    <a class="kai-model" href="/IA/Anomalias"><div class="kai-model-icon kai-glow-blue"><span uk-icon="icon: bolt; ratio: 1.5"></span></div><div><strong>Detección de anomalías</strong><p>Analiza variaciones en ventas con línea base de 28 días y señales explicables.</p><span class="kai-status kai-status-live">Análisis estadístico sobre datos reales</span></div><span uk-icon="arrow-right"></span></a>
+                </div>
+            </section>
+            <section class="kai-panel">
+                <div class="kai-panel-head"><div><span class="kai-kicker">TENDENCIA</span><h2>Actividad comercial reciente</h2><p>Importe diario de ventas · últimos 21 días.</p></div><a href="/IA/Anomalias" class="kai-mini-link">Ver análisis <span uk-icon="arrow-right"></span></a></div>
+                @if (Model.Analisis.DatosDisponibles && Model.Analisis.Serie.Count > 0)
+                {
+                    <div class="kai-bars" aria-label="Gráfico de ventas por día">
+                        @foreach (var d in Model.Analisis.Serie)
+                        {
+                            <div class="kai-bar-slot" title="@d.Fecha.ToString("dd/MM/yyyy"): S/ @d.Total.ToString("N2")">
+                                <div class="kai-bar" style="height: @(Math.Max(3M, d.Intensidad).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div>
+                                <span>@d.Fecha.ToString("dd")</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+
+                    <div class="kai-empty"><span uk-icon="database"></span> Datos pendientes de cargar</div>
+                }
+                <div class="kai-chart-foot"><span><b class="kai-dot"></b> Importe diario</span><small>No es un pronóstico: son ventas registradas</small></div>
+            </section>
+        </div>
+        <section class="kai-panel kai-fullpanel">
+            <div class="kai-panel-head"><div><span class="kai-kicker">CONTROL Y SEGURIDAD</span><h2>Supervisión responsable</h2><p>Ningún modelo modifica ventas, inventarios ni pagos sin reglas autorizadas.</p></div></div>
+            <div class="kai-steps"><div><span uk-icon="database"></span><strong>Datos de origen</strong><small>Empresa validada en sesión y SQL</small></div><div><span uk-icon="settings"></span><strong>Análisis / Orquestación</strong><small>Motor estadístico o modelo externo</small></div><div><span uk-icon="shield"></span><strong>Validación humana</strong><small>Confirmación y permisos antes de ejecutar</small></div><div><span uk-icon="history"></span><strong>Auditoría</strong><small>Se integra con la trazabilidad existente</small></div></div>
+        </section>
+        <footer class="kai-footer">KerniX ERP · Centro IA · @if (Model.Contexto != null) {
+            <span>Empresa @Model.Contexto.IdEmpresa · Usuario @Model.Contexto.Usuario</span>
+        }
+    </footer>
+</main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

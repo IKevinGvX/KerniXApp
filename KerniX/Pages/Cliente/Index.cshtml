@@ -1,0 +1,3151 @@
+﻿@page
+@model KerniX.Pages.Cliente.IndexModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Clientes | KerniX";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Clientes | KerniX</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <style>
+
+            :root {
+                --bg: #07111f;
+                --bg2: #0d1b2c;
+                --panel: #102136;
+                --panel2: #142941;
+                --gold: #f6c75b;
+                --gold2: #dba83c;
+                --blue: #55a7ff;
+                --green: #36d5a5;
+                --red: #ff7185;
+                --text: #edf4fc;
+                --muted: #91a8be;
+                --line: rgba(148, 181, 218, .16);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                background: linear-gradient( 145deg, #07111f, #0a1a2c 60%, #081322 );
+                color: var(--text);
+                font-family: Inter, "Segoe UI", Arial, sans-serif;
+            }
+
+            button,
+            input,
+            select {
+                font: inherit;
+            }
+
+            button {
+                cursor: pointer;
+            }
+
+                button:disabled {
+                    opacity: .55;
+                    cursor: not-allowed;
+                }
+
+            [hidden] {
+                display: none !important;
+            }
+
+            /* =====================================
+                                               ESTRUCTURA
+                                            ===================================== */
+
+            .kx-layout {
+                display: grid;
+                grid-template-columns: 245px minmax(0, 1fr);
+                min-height: 100vh;
+            }
+
+            .kx-sidebar {
+                background: #091625;
+                border-right: 1px solid var(--line);
+                padding: 25px 15px;
+            }
+
+            .kx-brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 35px;
+            }
+
+            .kx-logo {
+                width: 47px;
+                height: 47px;
+                display: grid;
+                place-items: center;
+                border-radius: 13px;
+                background: linear-gradient( 145deg, var(--gold), var(--gold2) );
+                color: #091525;
+                font-size: 23px;
+                font-weight: 900;
+            }
+
+            .kx-brand strong {
+                display: block;
+                color: white;
+                font-size: 19px;
+            }
+
+            .kx-brand small {
+                color: var(--muted);
+            }
+
+            .kx-nav {
+                display: flex;
+                flex-direction: column;
+                gap: 7px;
+            }
+
+                .kx-nav a {
+                    display: flex;
+                    align-items: center;
+                    gap: 11px;
+                    padding: 13px;
+                    border-radius: 11px;
+                    text-decoration: none;
+                    color: #9ab0c5;
+                    font-size: 14px;
+                    font-weight: 700;
+                }
+
+                    .kx-nav a:hover {
+                        background: #14283e;
+                        color: white;
+                        text-decoration: none;
+                    }
+
+                    .kx-nav a.active {
+                        background: rgba(246, 199, 91, .10);
+                        color: var(--gold);
+                        border: 1px solid rgba(246, 199, 91, .20);
+                    }
+
+            .kx-main {
+                min-width: 0;
+                padding: 30px;
+            }
+
+            /* =====================================
+                                               CABECERA
+                                            ===================================== */
+
+            .kx-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 20px;
+                margin-bottom: 28px;
+            }
+
+            .kx-eyebrow {
+                color: var(--gold);
+                font-size: 11px;
+                font-weight: 900;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+            }
+
+            .kx-header h1 {
+                margin: 7px 0;
+                color: white;
+                font-size: 33px;
+                font-weight: 900;
+            }
+
+            .kx-header p {
+                margin: 0;
+                color: var(--muted);
+                font-size: 14px;
+            }
+
+            .kx-actions {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .kx-btn {
+                min-height: 43px;
+                padding: 0 17px;
+                border-radius: 10px;
+                border: 1px solid var(--line);
+                background: #172b42;
+                color: white;
+                font-size: 13px;
+                font-weight: 800;
+            }
+
+                .kx-btn:hover {
+                    filter: brightness(1.15);
+                }
+
+            .kx-btn-primary {
+                border: none;
+                background: linear-gradient( 135deg, #f8d578, #dca638 );
+                color: #091525;
+            }
+
+            .kx-btn-blue {
+                border-color: rgba(85, 167, 255, .35);
+                color: #9dceff;
+            }
+
+            /* =====================================
+                                               INDICADORES
+                                            ===================================== */
+
+            .kx-stats {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 17px;
+                margin-bottom: 25px;
+            }
+
+            .kx-stat {
+                position: relative;
+                min-width: 0;
+                padding: 22px;
+                border-radius: 17px;
+                border: 1px solid var(--line);
+                background: linear-gradient( 145deg, #142941, #0d1d30 );
+                overflow: hidden;
+            }
+
+                .kx-stat::before {
+                    content: "";
+                    position: absolute;
+                    width: 110px;
+                    height: 110px;
+                    top: -60px;
+                    right: -50px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, .04);
+                }
+
+                .kx-stat.gold {
+                    border-color: rgba(246, 199, 91, .30);
+                }
+
+                .kx-stat.green {
+                    border-color: rgba(54, 213, 165, .25);
+                }
+
+                .kx-stat.blue {
+                    border-color: rgba(85, 167, 255, .28);
+                }
+
+                .kx-stat.red {
+                    border-color: rgba(255, 113, 133, .25);
+                }
+
+            .kx-stat-icon {
+                display: grid;
+                place-items: center;
+                width: 42px;
+                height: 42px;
+                border-radius: 11px;
+                margin-bottom: 17px;
+                background: rgba(246, 199, 91, .12);
+                color: var(--gold);
+            }
+
+            .kx-stat.green .kx-stat-icon {
+                background: rgba(54, 213, 165, .10);
+                color: var(--green);
+            }
+
+            .kx-stat.blue .kx-stat-icon {
+                background: rgba(85, 167, 255, .10);
+                color: var(--blue);
+            }
+
+            .kx-stat.red .kx-stat-icon {
+                background: rgba(255, 113, 133, .10);
+                color: var(--red);
+            }
+
+            .kx-stat-label {
+                display: block;
+                color: var(--muted);
+                font-size: 13px;
+            }
+
+            .kx-stat-value {
+                display: block;
+                margin-top: 8px;
+                color: white;
+                font-size: 31px;
+                font-weight: 900;
+            }
+
+            .kx-stat small {
+                display: block;
+                margin-top: 7px;
+                color: #6f8aa2;
+                font-size: 11px;
+            }
+
+            /* =====================================
+                                               PANEL Y FILTROS
+                                            ===================================== */
+
+            .kx-panel {
+                border-radius: 17px;
+                border: 1px solid var(--line);
+                background: #102136;
+                overflow: hidden;
+            }
+
+            .kx-panel-header {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                align-items: center;
+                padding: 23px;
+                border-bottom: 1px solid var(--line);
+            }
+
+                .kx-panel-header h2 {
+                    margin: 0;
+                    color: white;
+                    font-size: 19px;
+                    font-weight: 850;
+                }
+
+                .kx-panel-header p {
+                    margin: 6px 0 0;
+                    color: var(--muted);
+                    font-size: 12px;
+                }
+
+            .kx-count {
+                background: rgba(246, 199, 91, .10);
+                color: var(--gold);
+                padding: 8px 12px;
+                border-radius: 30px;
+                font-size: 12px;
+                font-weight: 800;
+            }
+
+            .kx-filters {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 180px 150px;
+                gap: 12px;
+                padding: 20px 23px;
+            }
+
+            .kx-input,
+            .kx-select {
+                width: 100%;
+                min-width: 0;
+                height: 44px;
+                padding: 0 13px;
+                background: #091a2d;
+                border: 1px solid rgba(126, 174, 218, .19);
+                border-radius: 10px;
+                color: white;
+                outline: none;
+                font-size: 13px;
+            }
+
+                .kx-input:focus,
+                .kx-select:focus {
+                    border-color: var(--gold);
+                }
+
+                .kx-input::placeholder {
+                    color: #69839c;
+                }
+
+                .kx-select option {
+                    background: #102136;
+                    color: white;
+                }
+
+            /* =====================================
+                                               TABLA
+                                            ===================================== */
+
+            .kx-table-wrap {
+                overflow-x: auto;
+            }
+
+            .kx-table {
+                width: 100%;
+                min-width: 900px;
+                border-collapse: collapse;
+            }
+
+                .kx-table thead {
+                    background: #0b1b2c;
+                }
+
+                .kx-table th {
+                    padding: 16px 20px;
+                    color: #829bb3;
+                    text-align: left;
+                    font-size: 11px;
+                    font-weight: 850;
+                    text-transform: uppercase;
+                }
+
+                .kx-table td {
+                    padding: 16px 20px;
+                    border-top: 1px solid var(--line);
+                    color: #dbe7f4;
+                    font-size: 13px;
+                    vertical-align: middle;
+                }
+
+                .kx-table tbody tr:hover {
+                    background: rgba(85, 167, 255, .035);
+                }
+
+            .kx-client {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 210px;
+            }
+
+            .kx-avatar {
+                width: 42px;
+                height: 42px;
+                flex: 0 0 auto;
+                display: grid;
+                place-items: center;
+                border-radius: 12px;
+                background: linear-gradient( 145deg, #244e73, #17334d );
+                color: #a9d7ff;
+                font-size: 15px;
+                font-weight: 900;
+            }
+
+            .kx-client strong {
+                display: block;
+                color: white;
+                font-size: 13px;
+            }
+
+            .kx-client small {
+                display: block;
+                margin-top: 4px;
+                color: var(--muted);
+                font-size: 11px;
+            }
+
+            .kx-badge {
+                display: inline-flex;
+                padding: 6px 10px;
+                border-radius: 30px;
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+                .kx-badge.active {
+                    background: rgba(54, 213, 165, .11);
+                    color: #56ecc0;
+                }
+
+                .kx-badge.inactive {
+                    background: rgba(255, 113, 133, .11);
+                    color: #ff92a2;
+                }
+
+                .kx-badge.type {
+                    background: rgba(85, 167, 255, .11);
+                    color: #91c8ff;
+                }
+
+            .kx-table-actions {
+                display: flex;
+                gap: 6px;
+            }
+
+            .kx-icon-btn {
+                width: 34px;
+                height: 34px;
+                border-radius: 9px;
+                border: 1px solid var(--line);
+                background: #172d45;
+                color: #9ccaff;
+                display: grid;
+                place-items: center;
+            }
+
+                .kx-icon-btn:hover {
+                    color: var(--gold);
+                    border-color: var(--gold);
+                }
+
+            .kx-empty {
+                padding: 48px 20px !important;
+                text-align: center;
+                color: var(--muted) !important;
+            }
+
+            /* =====================================
+                                               PAGINACIÓN
+                                            ===================================== */
+
+            .kx-pagination {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 15px;
+                padding: 19px 23px;
+                border-top: 1px solid var(--line);
+            }
+
+                .kx-pagination span {
+                    color: var(--muted);
+                    font-size: 12px;
+                }
+
+            /* =====================================
+                                               MODALES
+                                            ===================================== */
+
+            .kx-modal {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+                background: rgba(2, 8, 17, .88);
+                backdrop-filter: blur(8px);
+            }
+
+            .kx-modal-dialog {
+                width: 820px;
+                max-width: 100%;
+                max-height: calc(100dvh - 40px);
+                display: flex;
+                flex-direction: column;
+                background: #102238;
+                border: 1px solid rgba(246, 199, 91, .25);
+                border-radius: 17px;
+                overflow: hidden;
+                box-shadow: 0 30px 90px rgba(0,0,0,.5);
+            }
+
+            .kx-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 14px;
+                padding: 20px 24px;
+                background: #0b1b2d;
+                border-bottom: 1px solid var(--line);
+            }
+
+                .kx-modal-header h2 {
+                    margin: 0;
+                    color: white;
+                    font-size: 21px;
+                }
+
+                .kx-modal-header p {
+                    margin: 5px 0 0;
+                    color: var(--muted);
+                    font-size: 12px;
+                }
+
+            .kx-modal-body {
+                overflow-y: auto;
+                padding: 24px;
+                min-height: 0;
+            }
+
+            .kx-modal-footer {
+                display: flex;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 17px 24px;
+                background: #0b1b2d;
+                border-top: 1px solid var(--line);
+            }
+
+            .kx-form-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 17px;
+            }
+
+            .kx-field {
+                min-width: 0;
+            }
+
+                .kx-field.full {
+                    grid-column: 1 / -1;
+                }
+
+                .kx-field label {
+                    display: block;
+                    color: #a2b8cd;
+                    margin-bottom: 7px;
+                    font-size: 12px;
+                    font-weight: 750;
+                }
+
+            .kx-subtitle {
+                grid-column: 1 / -1;
+                margin: 12px 0 0;
+                padding-top: 17px;
+                border-top: 1px solid var(--line);
+                color: var(--gold);
+                font-size: 14px;
+                font-weight: 850;
+            }
+
+            .kx-extra-card {
+                padding: 15px;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                background: #0b1b2e;
+                margin-bottom: 12px;
+            }
+
+            .kx-extra-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 14px;
+            }
+
+                .kx-extra-header strong {
+                    color: var(--gold);
+                    font-size: 12px;
+                }
+
+            .kx-check {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                color: var(--muted);
+                font-size: 12px;
+            }
+
+            .kx-detail-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0,1fr));
+                gap: 15px;
+            }
+
+            .kx-detail-item {
+                padding: 17px;
+                background: #0b1b2e;
+                border: 1px solid var(--line);
+                border-radius: 12px;
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+
+                .kx-detail-item small {
+                    display: block;
+                    color: var(--muted);
+                    margin-bottom: 7px;
+                }
+
+                .kx-detail-item strong {
+                    color: white;
+                    font-size: 14px;
+                }
+
+            .kx-message {
+                margin-bottom: 18px;
+                padding: 13px 15px;
+                border-radius: 10px;
+                background: rgba(255, 113, 133, .09);
+                border: 1px solid rgba(255, 113, 133, .25);
+                color: #ff9baa;
+                font-size: 13px;
+            }
+
+            .kx-toast {
+                position: fixed;
+                bottom: 25px;
+                right: 25px;
+                z-index: 10000;
+                max-width: min(400px, calc(100vw - 30px));
+                padding: 15px 19px;
+                border-radius: 12px;
+                background: #173b37;
+                border: 1px solid var(--green);
+                box-shadow: 0 15px 40px #0005;
+                color: white;
+                font-size: 13px;
+            }
+
+                .kx-toast.error {
+                    background: #442332;
+                    border-color: var(--red);
+                }
+
+            /* =====================================
+                                               RESPONSIVE
+                                            ===================================== */
+
+            @@media (max-width: 1200px) {
+
+                .kx-stats {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+
+            @@media (max-width: 900px) {
+
+                .kx-layout {
+                    grid-template-columns: 1fr;
+                }
+
+                .kx-sidebar {
+                    display: none;
+                }
+
+                .kx-main {
+                    padding: 18px;
+                }
+
+                .kx-filters {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @@media (max-width: 650px) {
+
+                .kx-stats {
+                    grid-template-columns: 1fr;
+                }
+
+                .kx-header h1 {
+                    font-size: 27px;
+                }
+
+                .kx-form-grid,
+                .kx-detail-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .kx-modal {
+                    padding: 8px;
+                }
+
+                .kx-modal-dialog {
+                    max-height: calc(100dvh - 16px);
+                }
+
+                .kx-modal-body {
+                    padding: 16px;
+                }
+
+                .kx-modal-header,
+                .kx-modal-footer {
+                    padding: 16px;
+                }
+
+                .kx-panel-header {
+                    flex-wrap: wrap;
+                }
+            }
+
+
+            /* Tabla estable: cada cabecera comparte anchura con su columna. */
+            .kx-table-wrap {
+                display: block;
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .kx-table {
+                width: 1200px;
+                min-width: 100%;
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
+
+                .kx-table th,
+                .kx-table td {
+                    box-sizing: border-box;
+                    padding: 13px 12px;
+                    vertical-align: middle;
+                    text-align: left;
+                    overflow: visible;
+                }
+
+                .kx-table th {
+                    white-space: nowrap;
+                }
+
+                .kx-table td {
+                    overflow-wrap: normal;
+                }
+
+            .kx-client {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+                width: 100%;
+            }
+
+                .kx-client > div:last-child {
+                    flex: 1 1 auto;
+                    min-width: 0;
+                    width: auto;
+                }
+
+                .kx-client strong,
+                .kx-client small {
+                    display: block;
+                    max-width: 100%;
+                    white-space: normal;
+                    overflow-wrap: anywhere;
+                    overflow: visible;
+                    text-overflow: clip;
+                }
+
+            .kx-contact {
+                min-width: 0;
+                max-width: 100%;
+            }
+
+            .kx-contact-phone,
+            .kx-contact-mail {
+                display: block;
+                max-width: 100%;
+                overflow-wrap: anywhere;
+                white-space: normal;
+                overflow: visible;
+            }
+
+            .kx-contact-mail {
+                color: var(--muted);
+            }
+
+            .kx-table-actions {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 8px;
+                flex-wrap: nowrap;
+            }
+
+                .kx-table-actions .kx-icon-btn {
+                    flex: 0 0 34px;
+                }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- TOKEN ANTIFALSIFICACIÓN -->
+
+    <form id="formTokenClientes"
+          method="post"
+          hidden>
+
+        @Html.AntiForgeryToken()
+
+    </form>
+
+    <div class="kx-layout">
+
+        <!-- ====================================
+             SIDEBAR
+        ==================================== -->
+
+        <aside class="kx-sidebar">
+
+            <div class="kx-brand">
+
+                <div class="kx-logo">K</div>
+
+                <div>
+                    <strong>KerniX</strong>
+                    <small>Gestión comercial</small>
+                </div>
+
+            </div>
+
+            <nav class="kx-nav">
+
+                <a href="/Inicio/Index">
+                    <span uk-icon="home"></span>
+                    Inicio
+                </a>
+
+                <a href="/Ventas/PrincipalVentas">
+                    <span uk-icon="cart"></span>
+                    Ventas
+                </a>
+
+                <a href="/Ventas/Nueva">
+                    <span uk-icon="plus-circle"></span>
+                    Nueva venta
+                </a>
+
+                <a href="/Cliente/Index"
+                   class="kx-submenu-link">
+
+                    <span class="kx-sub-dot"></span>
+                    Clientes
+
+                </a>
+            </nav>
+
+        </aside>
+
+        <!-- ====================================
+             CONTENIDO
+        ==================================== -->
+
+        <main class="kx-main">
+
+            <!-- CABECERA -->
+
+            <header class="kx-header">
+
+                <div>
+
+                    <span class="kx-eyebrow">
+                        Gestión comercial / CRM
+                    </span>
+
+                    <h1>Gestión de clientes</h1>
+
+                    <p>
+                        Administra clientes, contactos,
+                        direcciones y relaciones comerciales.
+                    </p>
+
+                </div>
+
+                <div class="kx-actions">
+
+                    <button type="button"
+                            class="kx-btn kx-btn-blue"
+                            id="recargarClientes">
+
+                        <span uk-icon="refresh"></span>
+                        Actualizar
+
+                    </button>
+
+                    <button type="button"
+                            class="kx-btn kx-btn-primary"
+                            id="abrirNuevoCliente">
+
+                        <span uk-icon="plus"></span>
+                        Nuevo cliente
+
+                    </button>
+
+                </div>
+
+            </header>
+
+            <!-- ====================================
+                 INDICADORES
+            ==================================== -->
+
+            <section class="kx-stats">
+
+                <article class="kx-stat gold">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="users"></span>
+                    </div>
+
+                    <span class="kx-stat-label">
+                        Total de clientes
+                    </span>
+
+                    <strong class="kx-stat-value"
+                            id="statTotal">
+                        0
+                    </strong>
+
+                    <small>
+                        Registros de la empresa
+                    </small>
+
+                </article>
+
+                <article class="kx-stat green">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="check-circle"></span>
+                    </div>
+
+                    <span class="kx-stat-label">
+                        Clientes activos
+                    </span>
+
+                    <strong class="kx-stat-value"
+                            id="statActivos">
+                        0
+                    </strong>
+
+                    <small>
+                        Habilitados actualmente
+                    </small>
+
+                </article>
+
+                <article class="kx-stat blue">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="world"></span>
+                    </div>
+
+                    <span class="kx-stat-label">
+                        Personas jurídicas
+                    </span>
+
+                    <strong class="kx-stat-value"
+                            id="statJuridicos">
+                        0
+                    </strong>
+
+                    <small>
+                        Empresas registradas
+                    </small>
+
+                </article>
+
+                <article class="kx-stat red">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="ban"></span>
+                    </div>
+
+                    <span class="kx-stat-label">
+                        Clientes inactivos
+                    </span>
+
+                    <strong class="kx-stat-value"
+                            id="statInactivos">
+                        0
+                    </strong>
+
+                    <small>
+                        Registros deshabilitados
+                    </small>
+
+                </article>
+
+            </section>
+
+            <!-- ====================================
+                 LISTADO
+            ==================================== -->
+
+            <section class="kx-panel">
+
+                <div class="kx-panel-header">
+
+                    <div>
+
+                        <h2>Directorio de clientes</h2>
+
+                        <p>
+                            Consulta y administra los
+                            clientes registrados.
+                        </p>
+
+                    </div>
+
+                    <span class="kx-count"
+                          id="contadorClientes">
+                        0 clientes
+                    </span>
+
+                </div>
+
+                <!-- FILTROS -->
+
+                <div class="kx-filters">
+
+                    <input type="search"
+                           class="kx-input"
+                           id="buscarClientes"
+                           autocomplete="off"
+                           placeholder="Buscar por nombre, RUC, DNI, correo..." />
+
+                    <select class="kx-select"
+                            id="filtroTipo">
+
+                        <option value="">
+                            Todos los tipos
+                        </option>
+
+                        <option value="natural">
+                            Persona natural
+                        </option>
+
+                        <option value="juridico">
+                            Persona jurídica
+                        </option>
+
+                    </select>
+
+                    <select class="kx-select"
+                            id="filtroEstado">
+
+                        <option value="">
+                            Todos los estados
+                        </option>
+
+                        <option value="activo">
+                            Activos
+                        </option>
+
+                        <option value="inactivo">
+                            Inactivos
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <!-- TABLA -->
+
+                <div class="kx-table-wrap">
+
+                    <table class="kx-table">
+                        <colgroup>
+                            <col style="width:285px" />
+                            <col style="width:160px" />
+                            <col style="width:125px" />
+                            <col style="width:330px" />
+                            <col style="width:130px" />
+                            <col style="width:170px" />
+                        </colgroup>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Cliente</th>
+                                <th>Documento</th>
+                                <th>Tipo</th>
+                                <th>Contacto</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tablaClientes">
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="kx-empty">
+
+                                    Cargando clientes...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <!-- PAGINACIÓN -->
+
+                <div class="kx-pagination">
+
+                    <span id="textoPaginacion">
+                        0 registros
+                    </span>
+
+                    <div class="kx-actions">
+
+                        <button type="button"
+                                class="kx-btn"
+                                id="paginaAnterior">
+
+                            Anterior
+
+                        </button>
+
+                        <button type="button"
+                                class="kx-btn"
+                                id="paginaSiguiente">
+
+                            Siguiente
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- ==========================================
+         MODAL REGISTRAR / EDITAR
+    ========================================== -->
+
+    <div class="kx-modal"
+         id="modalCliente"
+         hidden>
+
+        <div class="kx-modal-dialog"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="tituloModalCliente">
+
+            <div class="kx-modal-header">
+
+                <div>
+
+                    <h2 id="tituloModalCliente">
+                        Nuevo cliente
+                    </h2>
+
+                    <p>
+                        Completa los datos del cliente.
+                    </p>
+
+                </div>
+
+                <button type="button"
+                        class="kx-icon-btn"
+                        data-cerrar-modal
+                        aria-label="Cerrar">
+
+                    <span uk-icon="close"></span>
+
+                </button>
+
+            </div>
+
+            <div class="kx-modal-body">
+
+                <div id="mensajeFormulario"
+                     class="kx-message"
+                     role="alert"
+                     hidden>
+                </div>
+
+                <form id="formCliente"
+                      novalidate>
+
+                    <input type="hidden"
+                           id="idCliente"
+                           value="0" />
+
+                    <div class="kx-form-grid">
+
+                        <!-- TIPO -->
+
+                        <div class="kx-field">
+
+                            <label for="tipoCliente">
+                                Tipo de cliente *
+                            </label>
+
+                            <select id="tipoCliente"
+                                    class="kx-select"
+                                    required>
+
+                                <option value="natural">
+                                    Persona natural
+                                </option>
+
+                                <option value="juridico">
+                                    Persona jurídica
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- DOCUMENTO -->
+
+                        <div class="kx-field">
+
+                            <label for="tipoDocumento">
+                                Tipo de documento *
+                            </label>
+
+                            <select id="tipoDocumento"
+                                    class="kx-select"
+                                    required>
+
+                                <option value="DNI">DNI</option>
+                                <option value="RUC">RUC</option>
+                                <option value="CE">CE</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="kx-field full">
+
+                            <label for="numeroDocumento">
+                                Número de documento *
+                            </label>
+
+                            <input id="numeroDocumento"
+                                   class="kx-input"
+                                   maxlength="20"
+                                   required />
+
+                        </div>
+
+                        <!-- PERSONA NATURAL -->
+
+                        <div class="kx-field"
+                             id="grupoNombres">
+
+                            <label for="nombres">
+                                Nombres *
+                            </label>
+
+                            <input id="nombres"
+                                   class="kx-input"
+                                   maxlength="150" />
+
+                        </div>
+
+                        <div class="kx-field"
+                             id="grupoApellidos">
+
+                            <label for="apellidos">
+                                Apellidos *
+                            </label>
+
+                            <input id="apellidos"
+                                   class="kx-input"
+                                   maxlength="150" />
+
+                        </div>
+
+                        <!-- EMPRESA -->
+
+                        <div class="kx-field full"
+                             id="grupoRazonSocial"
+                             hidden>
+
+                            <label for="razonSocial">
+                                Razón social *
+                            </label>
+
+                            <input id="razonSocial"
+                                   class="kx-input"
+                                   maxlength="200" />
+
+                        </div>
+
+                        <!-- CONTACTO -->
+
+                        <div class="kx-subtitle">
+                            Información de contacto
+                        </div>
+
+                        <div class="kx-field">
+
+                            <label for="telefono">
+                                Teléfono
+                            </label>
+
+                            <input id="telefono"
+                                   class="kx-input"
+                                   type="tel"
+                                   maxlength="20" />
+
+                        </div>
+
+                        <div class="kx-field">
+
+                            <label for="correo">
+                                Correo electrónico
+                            </label>
+
+                            <input id="correo"
+                                   class="kx-input"
+                                   type="email"
+                                   maxlength="250" />
+
+                        </div>
+
+                        <!-- CONTACTOS ADICIONALES -->
+
+                        <div class="kx-subtitle">
+                            Contactos adicionales
+                        </div>
+
+                        <div class="kx-field full">
+
+                            <div id="listaContactos"></div>
+
+                            <button type="button"
+                                    id="agregarContacto"
+                                    class="kx-btn kx-btn-blue">
+
+                                <span uk-icon="plus"></span>
+                                Agregar contacto
+
+                            </button>
+
+                        </div>
+
+                        <!-- DIRECCIONES -->
+
+                        <div class="kx-subtitle">
+                            Direcciones
+                        </div>
+
+                        <div class="kx-field full">
+
+                            <div id="listaDirecciones"></div>
+
+                            <button type="button"
+                                    id="agregarDireccion"
+                                    class="kx-btn kx-btn-blue">
+
+                                <span uk-icon="plus"></span>
+                                Agregar dirección
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div class="kx-modal-footer">
+
+                <button type="button"
+                        class="kx-btn"
+                        data-cerrar-modal>
+
+                    Cancelar
+
+                </button>
+
+                <button type="submit"
+                        form="formCliente"
+                        class="kx-btn kx-btn-primary"
+                        id="guardarCliente">
+
+                    <span uk-icon="check"></span>
+                    Guardar cliente
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================================
+         MODAL DETALLE
+    ========================================== -->
+
+    <div class="kx-modal"
+         id="modalDetalle"
+         hidden>
+
+        <div class="kx-modal-dialog"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="tituloDetalle">
+
+            <div class="kx-modal-header">
+
+                <div>
+
+                    <h2 id="tituloDetalle">
+                        Detalle del cliente
+                    </h2>
+
+                    <p>
+                        Información registrada en KerniX.
+                    </p>
+
+                </div>
+
+                <button type="button"
+                        class="kx-icon-btn"
+                        data-cerrar-detalle
+                        aria-label="Cerrar">
+
+                    <span uk-icon="close"></span>
+
+                </button>
+
+            </div>
+
+            <div class="kx-modal-body"
+                 id="contenidoDetalle">
+
+                Cargando información...
+
+            </div>
+
+            <div class="kx-modal-footer">
+
+                <button type="button"
+                        class="kx-btn"
+                        data-cerrar-detalle>
+
+                    Cerrar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- UIKIT -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
+
+    <!-- ==========================================
+         JAVASCRIPT CLIENTES
+    ========================================== -->
+
+    <script>
+
+            "use strict";
+
+            const CONFIG_CLIENTES = {
+                idEmpresa: @Model.IdEmpresa,
+                paginaTamano: 10
+            };
+
+            let clientes = [];
+            let clientesFiltrados = [];
+            let paginaActual = 1;
+            let enviandoFormulario = false;
+            let toastTimeout = null;
+
+            const $ = id => document.getElementById(id);
+
+            // ==========================================
+            // UTILIDADES
+            // ==========================================
+
+            function escapar(valor) {
+
+                return String(valor ?? "")
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+
+            }
+
+            function normalizarTexto(valor) {
+
+                return String(valor ?? "")
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .toLowerCase()
+                    .trim();
+
+            }
+
+            function normalizarTipo(valor) {
+
+                const tipo = normalizarTexto(valor);
+
+                if (
+                    tipo === "empresa" ||
+                    tipo === "juridica" ||
+                    tipo === "juridico"
+                ) {
+                    return "juridico";
+                }
+
+                return "natural";
+
+            }
+
+            function nombreCliente(cliente) {
+
+                return cliente.razonSocial ||
+                    cliente.nombreCompleto ||
+                    [
+                        cliente.nombres,
+                        cliente.apellidos
+                    ].filter(Boolean).join(" ") ||
+                    "Cliente sin nombre";
+
+            }
+
+            function valorCampo(id) {
+
+                return $(id)?.value.trim() ?? "";
+
+            }
+
+            function tokenAntiforgery() {
+
+                return document.querySelector(
+                    '#formTokenClientes input[name="__RequestVerificationToken"]'
+                )?.value ?? "";
+
+            }
+
+            function mostrarToast(mensaje, error = false) {
+
+                document.querySelector(".kx-toast")?.remove();
+
+                if (toastTimeout) {
+                    clearTimeout(toastTimeout);
+                }
+
+                const toast = document.createElement("div");
+
+                toast.className =
+                    "kx-toast" + (error ? " error" : "");
+
+                toast.textContent = mensaje;
+
+                document.body.appendChild(toast);
+
+                toastTimeout = setTimeout(() => {
+                    toast.remove();
+                }, 4000);
+
+            }
+
+            function mensajeFormulario(mensaje) {
+
+                const elemento = $("mensajeFormulario");
+
+                elemento.textContent = mensaje;
+                elemento.hidden = !mensaje;
+
+            }
+
+            // ==========================================
+            // REQUEST A RAZOR
+            // ==========================================
+
+            async function solicitar(
+                handler,
+                metodo = "GET",
+                datos = null,
+                parametros = {}
+            ) {
+
+                const url = new URL(
+                    window.location.pathname,
+                    window.location.origin
+                );
+
+                url.searchParams.set("handler", handler);
+
+                Object.entries(parametros).forEach(([clave, valor]) => {
+                    url.searchParams.set(clave, valor);
+                });
+
+                const opciones = {
+                    method: metodo,
+                    credentials: "same-origin",
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                };
+
+                if (metodo !== "GET") {
+
+                    opciones.headers["RequestVerificationToken"] =
+                        tokenAntiforgery();
+
+                }
+
+                if (datos !== null) {
+
+                    opciones.headers["Content-Type"] =
+                        "application/json";
+
+                    opciones.body = JSON.stringify(datos);
+
+                }
+
+                const response = await fetch(url, opciones);
+
+                const texto = await response.text();
+
+                let resultado;
+
+                try {
+
+                    resultado = JSON.parse(texto);
+
+                }
+                catch {
+
+                    if (
+                        response.status === 401 ||
+                        response.redirected
+                    ) {
+
+                        throw new Error(
+                            "Tu sesión ha expirado. Inicia sesión nuevamente."
+                        );
+
+                    }
+
+                    throw new Error(
+                        "El servidor devolvió una respuesta no válida."
+                    );
+
+                }
+
+                if (!response.ok || resultado.success !== true) {
+
+                    throw new Error(
+                        resultado.message ||
+                        `Error HTTP ${response.status}`
+                    );
+
+                }
+
+                return resultado;
+
+            }
+
+            // ==========================================
+            // LISTAR CLIENTES
+            // ==========================================
+
+            async function cargarClientes(silencioso = false) {
+
+                $("tablaClientes").innerHTML = `
+                                                    <tr>
+                                                        <td colspan="6" class="kx-empty">
+                                                            Cargando clientes...
+                                                        </td>
+                                                    </tr>
+                                                `;
+
+                try {
+
+                    const resultado = await solicitar("Listar");
+
+                    clientes = Array.isArray(resultado.data?.items)
+                        ? resultado.data.items
+                        : [];
+
+                    actualizarIndicadores();
+
+                    aplicarFiltros();
+
+                }
+                catch (error) {
+
+                    clientes = [];
+                    clientesFiltrados = [];
+
+                    actualizarIndicadores();
+
+                    $("tablaClientes").innerHTML = `
+                                                        <tr>
+                                                            <td colspan="6" class="kx-empty">
+                                                                ${escapar(error.message)}
+                                                            </td>
+                                                        </tr>
+                                                    `;
+
+                    $("contadorClientes").textContent = "0 clientes";
+                    $("textoPaginacion").textContent = "Sin datos";
+                    $("paginaAnterior").disabled = true;
+                    $("paginaSiguiente").disabled = true;
+
+                    if (!silencioso) mostrarToast(error.message, true);
+
+                }
+
+            }
+
+            // ==========================================
+            // INDICADORES
+            // ==========================================
+
+            function actualizarIndicadores() {
+
+                const total = clientes.length;
+
+                const activos = clientes.filter(
+                    x => x.estado === true
+                ).length;
+
+                const juridicos = clientes.filter(
+                    x => normalizarTipo(x.tipoCliente) === "juridico"
+                ).length;
+
+                $("statTotal").textContent = total;
+                $("statActivos").textContent = activos;
+                $("statJuridicos").textContent = juridicos;
+                $("statInactivos").textContent = total - activos;
+
+            }
+
+            // ==========================================
+            // FILTROS
+            // ==========================================
+
+            function aplicarFiltros() {
+
+                const busqueda =
+                    normalizarTexto($("buscarClientes").value);
+
+                const tipo = $("filtroTipo").value;
+
+                const estado = $("filtroEstado").value;
+
+                clientesFiltrados = clientes.filter(cliente => {
+
+                    const texto = normalizarTexto([
+                        nombreCliente(cliente),
+                        cliente.numeroDocumento,
+                        cliente.tipoDocumento,
+                        cliente.correo,
+                        cliente.telefono
+                    ].join(" "));
+
+                    if (busqueda && !texto.includes(busqueda)) {
+                        return false;
+                    }
+
+                    if (
+                        tipo &&
+                        normalizarTipo(cliente.tipoCliente) !== tipo
+                    ) {
+                        return false;
+                    }
+
+                    if (
+                        estado === "activo" &&
+                        cliente.estado !== true
+                    ) {
+                        return false;
+                    }
+
+                    if (
+                        estado === "inactivo" &&
+                        cliente.estado === true
+                    ) {
+                        return false;
+                    }
+
+                    return true;
+
+                });
+
+                paginaActual = 1;
+
+                renderizarClientes();
+
+            }
+
+            // ==========================================
+            // TABLA
+            // ==========================================
+
+            function renderizarClientes() {
+
+                const tbody = $("tablaClientes");
+
+                const total = clientesFiltrados.length;
+
+                const totalPaginas = Math.max(
+                    1,
+                    Math.ceil(total / CONFIG_CLIENTES.paginaTamano)
+                );
+
+                paginaActual = Math.min(
+                    paginaActual,
+                    totalPaginas
+                );
+
+                const inicio =
+                    (paginaActual - 1) *
+                    CONFIG_CLIENTES.paginaTamano;
+
+                const registros = clientesFiltrados.slice(
+                    inicio,
+                    inicio + CONFIG_CLIENTES.paginaTamano
+                );
+
+                $("contadorClientes").textContent =
+                    `${total} clientes`;
+
+                $("textoPaginacion").textContent =
+                    total === 0
+                        ? "0 registros"
+                        : `Mostrando ${inicio + 1} - ${Math.min(
+                            inicio + registros.length,
+                            total
+                        )} de ${total}`;
+
+                $("paginaAnterior").disabled =
+                    paginaActual <= 1;
+
+                $("paginaSiguiente").disabled =
+                    paginaActual >= totalPaginas;
+
+                if (!registros.length) {
+
+                    tbody.innerHTML = `
+                                                        <tr>
+                                                            <td colspan="6" class="kx-empty">
+                                                                No se encontraron clientes.
+                                                            </td>
+                                                        </tr>
+                                                    `;
+
+                    return;
+
+                }
+
+                tbody.innerHTML = registros.map(cliente => {
+
+                    const id = Number(cliente.idCliente);
+
+                    const nombre = nombreCliente(cliente);
+
+                    const inicial = nombre.charAt(0).toUpperCase();
+
+                    const activo = cliente.estado === true;
+
+                    const tipo = normalizarTipo(cliente.tipoCliente);
+
+                    return `
+                                                        <tr>
+
+                                                            <td>
+
+                                                                <div class="kx-client">
+
+                                                                    <div class="kx-avatar">
+                                                                        ${escapar(inicial)}
+                                                                    </div>
+
+                                                                    <div>
+
+                                                                        <strong>
+                                                                            ${escapar(nombre)}
+                                                                        </strong>
+
+                                                                        <small>
+                                                                            Cliente #${id}
+                                                                        </small>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </td>
+
+                                                            <td>
+                                                                ${escapar(cliente.tipoDocumento)}
+                                                                <br>
+                                                                <strong>
+                                                                    ${escapar(cliente.numeroDocumento)}
+                                                                </strong>
+                                                            </td>
+
+                                                            <td>
+
+                                                                <span class="kx-badge type">
+                                                                    ${tipo === "juridico"
+                            ? "Jurídico"
+                            : "Natural"}
+                                                                </span>
+
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="kx-contact">
+                                                                    <span class="kx-contact-phone" title="${escapar(cliente.telefono || 'Sin teléfono')}">
+                                                                        ${escapar(cliente.telefono || "Sin teléfono")}
+                                                                    </span>
+                                                                    <small class="kx-contact-mail" title="${escapar(cliente.correo || 'Sin correo')}">
+                                                                        ${escapar(cliente.correo || "Sin correo")}
+                                                                    </small>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+
+                                                                <span class="kx-badge ${activo
+                            ? "active"
+                            : "inactive"}">
+
+                                                                    ${activo ? "Activo" : "Inactivo"}
+
+                                                                </span>
+
+                                                            </td>
+
+                                                            <td>
+
+                                                                <div class="kx-table-actions">
+
+                                                                    <button type="button"
+                                                                            class="kx-icon-btn"
+                                                                            data-accion="editar"
+                                                                            data-id="${id}"
+                                                                            title="Editar cliente"
+                                                                            aria-label="Editar cliente">
+
+                                                                        <span uk-icon="file-edit"></span>
+
+                                                                    </button>
+
+                                                                    <button type="button"
+                                                                            class="kx-icon-btn"
+                                                                            data-accion="estado"
+                                                                            data-id="${id}"
+                                                                            title="${activo
+                            ? "Desactivar"
+                            : "Activar"}"
+                                                                            aria-label="${activo
+                            ? "Desactivar"
+                            : "Activar"}">
+
+                                                                        <span uk-icon="${activo
+                            ? "ban"
+                            : "check"}"></span>
+
+                                                                    </button>
+
+                                                                </div>
+
+                                                            </td>
+
+                                                        </tr>
+                                                    `;
+
+                }).join("");
+
+                // UIkit detecta los elementos [uk-icon] añadidos dinámicamente.
+                // NO ejecutar UIkit.icon(tbody): tbody no es un icono y
+                // esa llamada puede reemplazar el contenido de la tabla.
+
+            }
+
+            // ==========================================
+            // MODALES
+            // ==========================================
+
+            function abrirModal(id) {
+
+                $(id).hidden = false;
+
+                document.body.style.overflow = "hidden";
+
+            }
+
+            function cerrarModal(id) {
+
+                $(id).hidden = true;
+
+                if (
+                    $("modalCliente").hidden &&
+                    $("modalDetalle").hidden
+                ) {
+
+                    document.body.style.overflow = "";
+
+                }
+
+            }
+
+            function limpiarFormulario() {
+
+                $("formCliente").reset();
+
+                $("idCliente").value = "0";
+
+                $("listaContactos").innerHTML = "";
+                $("listaDirecciones").innerHTML = "";
+
+                mensajeFormulario("");
+
+                cambiarTipoCliente();
+
+            }
+
+            function nuevoCliente() {
+
+                limpiarFormulario();
+
+                $("tituloModalCliente").textContent =
+                    "Registrar cliente";
+
+                abrirModal("modalCliente");
+
+                $("numeroDocumento").focus();
+
+            }
+
+            function cambiarTipoCliente() {
+
+                const juridico =
+                    $("tipoCliente").value === "juridico";
+
+                $("grupoNombres").hidden = juridico;
+                $("grupoApellidos").hidden = juridico;
+
+                $("grupoRazonSocial").hidden = !juridico;
+
+                $("nombres").required = !juridico;
+                $("apellidos").required = !juridico;
+                $("razonSocial").required = juridico;
+
+                if (juridico) {
+
+                    $("tipoDocumento").value = "RUC";
+
+                }
+                else if ($("tipoDocumento").value === "RUC") {
+
+                    $("tipoDocumento").value = "DNI";
+
+                }
+
+            }
+
+            // ==========================================
+            // CONTACTOS
+            // ==========================================
+
+            function agregarContacto(datos = {}) {
+
+                const contenedor = document.createElement("div");
+
+                contenedor.className = "kx-extra-card";
+
+                contenedor.innerHTML = `
+                                                    <div class="kx-extra-header">
+
+                                                        <strong>Contacto</strong>
+
+                                                        <button type="button"
+                                                                class="kx-icon-btn"
+                                                                data-eliminar-extra
+                                                                aria-label="Eliminar contacto">
+
+                                                            <span uk-icon="trash"></span>
+
+                                                        </button>
+
+                                                    </div>
+
+                                                    <div class="kx-form-grid">
+
+                                                        <div class="kx-field">
+
+                                                            <label>Nombre</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="nombres"
+                                                                   maxlength="150" />
+
+                                                        </div>
+
+                                                        <div class="kx-field">
+
+                                                            <label>Cargo</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="cargo"
+                                                                   maxlength="100" />
+
+                                                        </div>
+
+                                                        <div class="kx-field">
+
+                                                            <label>Teléfono</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="telefono"
+                                                                   maxlength="20" />
+
+                                                        </div>
+
+                                                        <div class="kx-field">
+
+                                                            <label>Correo</label>
+
+                                                            <input class="kx-input"
+                                                                   type="email"
+                                                                   data-campo="correo"
+                                                                   maxlength="250" />
+
+                                                        </div>
+
+                                                        <div class="kx-field full">
+
+                                                            <label class="kx-check">
+
+                                                                <input type="checkbox"
+                                                                       data-campo="esPrincipal" />
+
+                                                                Contacto principal
+
+                                                            </label>
+
+                                                        </div>
+
+                                                    </div>
+                                                `;
+
+                ["nombres", "cargo", "telefono", "correo"]
+                    .forEach(campo => {
+
+                        contenedor.querySelector(
+                            `[data-campo="${campo}"]`
+                        ).value = datos[campo] ?? "";
+
+                    });
+
+                contenedor.querySelector(
+                    '[data-campo="esPrincipal"]'
+                ).checked = datos.esPrincipal === true;
+
+                $("listaContactos").appendChild(contenedor);
+
+                return contenedor;
+
+            }
+
+            function obtenerContactos() {
+
+                return [
+                    ...$("listaContactos").children
+                ].map(card => ({
+
+                    nombres: card.querySelector(
+                        '[data-campo="nombres"]'
+                    ).value.trim(),
+
+                    cargo: card.querySelector(
+                        '[data-campo="cargo"]'
+                    ).value.trim(),
+
+                    telefono: card.querySelector(
+                        '[data-campo="telefono"]'
+                    ).value.trim(),
+
+                    correo: card.querySelector(
+                        '[data-campo="correo"]'
+                    ).value.trim(),
+
+                    esPrincipal: card.querySelector(
+                        '[data-campo="esPrincipal"]'
+                    ).checked,
+
+                    estado: true
+
+                }));
+
+            }
+
+            // ==========================================
+            // DIRECCIONES
+            // ==========================================
+
+            function agregarDireccion(datos = {}) {
+
+                const contenedor = document.createElement("div");
+
+                contenedor.className = "kx-extra-card";
+
+                contenedor.innerHTML = `
+                                                    <div class="kx-extra-header">
+
+                                                        <strong>Dirección</strong>
+
+                                                        <button type="button"
+                                                                class="kx-icon-btn"
+                                                                data-eliminar-extra
+                                                                aria-label="Eliminar dirección">
+
+                                                            <span uk-icon="trash"></span>
+
+                                                        </button>
+
+                                                    </div>
+
+                                                    <div class="kx-form-grid">
+
+                                                        <div class="kx-field">
+
+                                                            <label>Tipo</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="tipoDireccion"
+                                                                   placeholder="Fiscal, entrega..." />
+
+                                                        </div>
+
+                                                        <div class="kx-field">
+
+                                                            <label>Ubigeo</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="ubigeo"
+                                                                   maxlength="6" />
+
+                                                        </div>
+
+                                                        <div class="kx-field full">
+
+                                                            <label>Dirección</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="direccion" />
+
+                                                        </div>
+
+                                                        <div class="kx-field">
+
+                                                            <label>Distrito</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="distrito" />
+
+                                                        </div>
+
+                                                        <div class="kx-field">
+
+                                                            <label>Provincia</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="provincia" />
+
+                                                        </div>
+
+                                                        <div class="kx-field">
+
+                                                            <label>Departamento</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="departamento" />
+
+                                                        </div>
+
+                                                        <div class="kx-field full">
+
+                                                            <label>Referencia</label>
+
+                                                            <input class="kx-input"
+                                                                   data-campo="referencia" />
+
+                                                        </div>
+
+                                                        <div class="kx-field full">
+
+                                                            <label class="kx-check">
+
+                                                                <input type="checkbox"
+                                                                       data-campo="esPrincipal" />
+
+                                                                Dirección principal
+
+                                                            </label>
+
+                                                        </div>
+
+                                                    </div>
+                                                `;
+
+                [
+                    "tipoDireccion",
+                    "ubigeo",
+                    "direccion",
+                    "distrito",
+                    "provincia",
+                    "departamento",
+                    "referencia"
+                ].forEach(campo => {
+
+                    contenedor.querySelector(
+                        `[data-campo="${campo}"]`
+                    ).value = datos[campo] ?? "";
+
+                });
+
+                contenedor.querySelector(
+                    '[data-campo="esPrincipal"]'
+                ).checked = datos.esPrincipal === true;
+
+                $("listaDirecciones").appendChild(contenedor);
+
+                return contenedor;
+
+            }
+
+            function obtenerDirecciones() {
+
+                return [
+                    ...$("listaDirecciones").children
+                ].map(card => {
+
+                    const leer = campo => {
+
+                        return card.querySelector(
+                            `[data-campo="${campo}"]`
+                        ).value.trim();
+
+                    };
+
+                    return {
+
+                        tipoDireccion: leer("tipoDireccion"),
+                        direccion: leer("direccion"),
+                        referencia: leer("referencia"),
+                        distrito: leer("distrito"),
+                        provincia: leer("provincia"),
+                        departamento: leer("departamento"),
+                        ubigeo: leer("ubigeo"),
+
+                        esPrincipal: card.querySelector(
+                            '[data-campo="esPrincipal"]'
+                        ).checked,
+
+                        estado: true
+
+                    };
+
+                });
+
+            }
+
+            // ==========================================
+            // EDITAR
+            // ==========================================
+
+            async function editarCliente(id) {
+
+                try {
+
+                    const resultado = await solicitar(
+                        "Obtener",
+                        "GET",
+                        null,
+                        { idCliente: id }
+                    );
+
+                    const cliente = resultado.data;
+
+                    limpiarFormulario();
+
+                    $("idCliente").value = cliente.idCliente;
+
+                    $("tipoCliente").value =
+                        normalizarTipo(cliente.tipoCliente);
+
+                    cambiarTipoCliente();
+
+                    $("tipoDocumento").value =
+                        String(cliente.tipoDocumento || "DNI")
+                            .toUpperCase();
+
+                    $("numeroDocumento").value =
+                        cliente.numeroDocumento || "";
+
+                    $("razonSocial").value =
+                        cliente.razonSocial || "";
+
+                    $("nombres").value =
+                        cliente.nombres || "";
+
+                    $("apellidos").value =
+                        cliente.apellidos || "";
+
+                    $("telefono").value =
+                        cliente.telefono || "";
+
+                    $("correo").value =
+                        cliente.correo || "";
+
+                    (cliente.contactos || []).forEach(
+                        agregarContacto
+                    );
+
+                    (cliente.direcciones || []).forEach(
+                        agregarDireccion
+                    );
+
+                    $("tituloModalCliente").textContent =
+                        "Editar cliente";
+
+                    abrirModal("modalCliente");
+
+                }
+                catch (error) {
+
+                    mostrarToast(error.message, true);
+
+                }
+
+            }
+
+            // ==========================================
+            // GUARDAR
+            // ==========================================
+
+            async function guardarCliente(event) {
+
+                event.preventDefault();
+
+                if (enviandoFormulario) {
+                    return;
+                }
+
+                mensajeFormulario("");
+
+                const form = $("formCliente");
+
+                if (!form.checkValidity()) {
+
+                    form.reportValidity();
+
+                    return;
+
+                }
+
+                const idCliente =
+                    Number($("idCliente").value || 0);
+
+                const tipoCliente =
+                    $("tipoCliente").value;
+
+                const tipoDocumento =
+                    $("tipoDocumento").value;
+
+                const documento =
+                    valorCampo("numeroDocumento");
+
+                if (
+                    tipoDocumento === "DNI" &&
+                    !/^\d{8}$/.test(documento)
+                ) {
+
+                    mensajeFormulario(
+                        "El DNI debe contener exactamente 8 dígitos."
+                    );
+
+                    return;
+
+                }
+
+                if (
+                    tipoDocumento === "RUC" &&
+                    !/^\d{11}$/.test(documento)
+                ) {
+
+                    mensajeFormulario(
+                        "El RUC debe contener exactamente 11 dígitos."
+                    );
+
+                    return;
+
+                }
+
+                if (
+                    obtenerContactos().filter(
+                        x => x.esPrincipal
+                    ).length > 1
+                ) {
+
+                    mensajeFormulario(
+                        "Solo puedes seleccionar un contacto principal."
+                    );
+
+                    return;
+
+                }
+
+                if (
+                    obtenerDirecciones().filter(
+                        x => x.esPrincipal
+                    ).length > 1
+                ) {
+
+                    mensajeFormulario(
+                        "Solo puedes seleccionar una dirección principal."
+                    );
+
+                    return;
+
+                }
+
+                const request = {
+
+                    idEmpresa: CONFIG_CLIENTES.idEmpresa,
+
+                    tipoCliente: tipoCliente,
+
+                    tipoDocumento: tipoDocumento,
+
+                    numeroDocumento: documento,
+
+                    razonSocial: tipoCliente === "juridico"
+                        ? valorCampo("razonSocial")
+                        : null,
+
+                    nombres: tipoCliente === "natural"
+                        ? valorCampo("nombres")
+                        : null,
+
+                    apellidos: tipoCliente === "natural"
+                        ? valorCampo("apellidos")
+                        : null,
+
+                    telefono: valorCampo("telefono"),
+
+                    correo: valorCampo("correo") || null,
+
+                    contactos: obtenerContactos(),
+
+                    direcciones: obtenerDirecciones()
+
+                };
+
+                enviandoFormulario = true;
+
+                const boton = $("guardarCliente");
+
+                boton.disabled = true;
+
+                try {
+
+                    const editar = idCliente > 0;
+
+                    const resultado = await solicitar(
+                        editar ? "Actualizar" : "Registrar",
+                        "POST",
+                        request,
+                        editar ? { idCliente } : {}
+                    );
+
+                    cerrarModal("modalCliente");
+
+                    mostrarToast(
+                        resultado.message ||
+                        "Cliente guardado correctamente."
+                    );
+
+                    await cargarClientes();
+
+                }
+                catch (error) {
+
+                    mensajeFormulario(error.message);
+
+                }
+                finally {
+
+                    enviandoFormulario = false;
+
+                    boton.disabled = false;
+
+                }
+
+            }
+
+            // ==========================================
+            // DETALLE
+            // ==========================================
+
+            async function verDetalle(id) {
+
+                $("contenidoDetalle").textContent =
+                    "Cargando información...";
+
+                abrirModal("modalDetalle");
+
+                try {
+
+                    const resultado = await solicitar(
+                        "Obtener",
+                        "GET",
+                        null,
+                        { idCliente: id }
+                    );
+
+                    const cliente = resultado.data;
+
+                    const indicadores = cliente.indicadores || {};
+
+                    const contactos = cliente.contactos || [];
+
+                    const direcciones = cliente.direcciones || [];
+
+                    const dinero = valor => {
+
+                        return new Intl.NumberFormat(
+                            "es-PE",
+                            {
+                                style: "currency",
+                                currency: "PEN"
+                            }
+                        ).format(Number(valor || 0));
+
+                    };
+
+                    $("contenidoDetalle").innerHTML = `
+
+                                                        <div class="kx-detail-grid">
+
+                                                            <div class="kx-detail-item">
+
+                                                                <small>Cliente</small>
+
+                                                                <strong>
+                                                                    ${escapar(nombreCliente(cliente))}
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="kx-detail-item">
+
+                                                                <small>Documento</small>
+
+                                                                <strong>
+                                                                    ${escapar(cliente.tipoDocumento)}
+                                                                    ${escapar(cliente.numeroDocumento)}
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="kx-detail-item">
+
+                                                                <small>Teléfono</small>
+
+                                                                <strong>
+                                                                    ${escapar(cliente.telefono || "No registrado")}
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="kx-detail-item">
+
+                                                                <small>Correo</small>
+
+                                                                <strong>
+                                                                    ${escapar(cliente.correo || "No registrado")}
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="kx-detail-item">
+
+                                                                <small>Total de ventas</small>
+
+                                                                <strong>
+                                                                    ${Number(indicadores.totalVentas ?? 0)}
+                                                                </strong>
+
+                                                            </div>
+
+                                                            <div class="kx-detail-item">
+
+                                                                <small>Total comprado</small>
+
+                                                                <strong style="color:var(--gold)">
+                                                                    ${dinero(indicadores.totalComprado)}
+                                                                </strong>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                        <h3 style="color:var(--gold);margin-top:28px">
+                                                            Contactos (${contactos.length})
+                                                        </h3>
+
+                                                        ${contactos.length
+                            ? contactos.map(x => `
+
+                                                                <div class="kx-detail-item"
+                                                                     style="margin-bottom:10px">
+
+                                                                    <strong>
+                                                                        ${escapar(x.nombres)}
+                                                                    </strong>
+
+                                                                    <p style="color:var(--muted)">
+                                                                        ${escapar(x.cargo || "")}
+                                                                        <br>
+                                                                        ${escapar(x.telefono || "")}
+                                                                        <br>
+                                                                        ${escapar(x.correo || "")}
+                                                                    </p>
+
+                                                                </div>
+
+                                                            `).join("")
+                            : `<p style="color:var(--muted)">
+                                                                No hay contactos registrados.
+                                                               </p>`
+                        }
+
+                                                        <h3 style="color:var(--gold);margin-top:28px">
+                                                            Direcciones (${direcciones.length})
+                                                        </h3>
+
+                                                        ${direcciones.length
+                            ? direcciones.map(x => `
+
+                                                                <div class="kx-detail-item"
+                                                                     style="margin-bottom:10px">
+
+                                                                    <strong>
+                                                                        ${escapar(x.tipoDireccion || "Dirección")}
+                                                                    </strong>
+
+                                                                    <p style="color:var(--muted)">
+                                                                        ${escapar(x.direccion)}
+                                                                        <br>
+                                                                        ${escapar(x.distrito)}
+                                                                        ${escapar(x.provincia)}
+                                                                        ${escapar(x.departamento)}
+                                                                    </p>
+
+                                                                </div>
+
+                                                            `).join("")
+                            : `<p style="color:var(--muted)">
+                                                                No hay direcciones registradas.
+                                                               </p>`
+                        }
+
+                                                    `;
+
+                }
+                catch (error) {
+
+                    $("contenidoDetalle").textContent =
+                        error.message;
+
+                    mostrarToast(error.message, true);
+
+                }
+
+            }
+
+            // ==========================================
+            // ESTADO
+            // ==========================================
+
+            async function cambiarEstado(id) {
+                const cliente = clientes.find(
+                    x => Number(x.idCliente) === Number(id)
+                );
+                if (!cliente) return;
+
+                const activar = cliente.estado !== true;
+                const mensaje = activar
+                    ? "¿Deseas activar este cliente?"
+                    : "¿Deseas desactivar este cliente?";
+                if (!window.confirm(mensaje)) return;
+
+                const boton = document.querySelector(
+                    `#tablaClientes [data-accion="estado"][data-id="${id}"]`
+                );
+                if (boton) boton.disabled = true;
+
+                let respuesta;
+                let errorOperacion = null;
+                try {
+                    respuesta = await solicitar(
+                        activar ? "Activar" : "Desactivar",
+                        "POST", null, { idCliente: id }
+                    );
+                } catch (error) {
+                    errorOperacion = error;
+                }
+
+                // Un POST puede haber cambiado el estado aunque la respuesta
+                // devuelva un formato inesperado. Verificamos con un GET real.
+                let estadoVerificado = null;
+                try {
+                    const consulta = await solicitar(
+                        "Obtener", "GET", null, { idCliente: id }
+                    );
+                    if (typeof consulta.data?.estado === "boolean") {
+                        estadoVerificado = consulta.data.estado;
+                    }
+                } catch (error) {
+                    // La verificación falló; no se afirma éxito.
+                }
+
+                if (estadoVerificado === activar) {
+                    // Actualizamos el estado local primero: la recarga fallida
+                    // nunca debe convertir un éxito confirmado en toast rojo.
+                    cliente.estado = activar;
+                    actualizarIndicadores();
+                    aplicarFiltros();
+                    mostrarToast(activar
+                        ? "Cliente activado correctamente."
+                        : "Cliente desactivado correctamente.");
+                } else if (errorOperacion) {
+                    mostrarToast(errorOperacion.message, true);
+                } else if (estadoVerificado !== null) {
+                    mostrarToast("No se confirmó el cambio de estado. Revisa el cliente.", true);
+                } else {
+                    // La petición fue aceptada pero la verificación no se pudo
+                    // completar: no afirmamos ni éxito ni fallo del cambio.
+                    mostrarToast("Solicitud recibida; no se pudo verificar el estado. Actualiza la lista.", true);
+                }
+                if (boton?.isConnected) boton.disabled = false;
+            }
+
+            // ==========================================
+            // EVENTOS
+            // ==========================================
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                function() {
+
+                    cargarClientes();
+
+                    $("recargarClientes").addEventListener(
+                        "click",
+                        cargarClientes
+                    );
+
+                    $("abrirNuevoCliente").addEventListener(
+                        "click",
+                        nuevoCliente
+                    );
+
+                    $("buscarClientes").addEventListener(
+                        "input",
+                        aplicarFiltros
+                    );
+
+                    $("filtroTipo").addEventListener(
+                        "change",
+                        aplicarFiltros
+                    );
+
+                    $("filtroEstado").addEventListener(
+                        "change",
+                        aplicarFiltros
+                    );
+
+                    $("tipoCliente").addEventListener(
+                        "change",
+                        cambiarTipoCliente
+                    );
+
+                    $("formCliente").addEventListener(
+                        "submit",
+                        guardarCliente
+                    );
+
+                    $("agregarContacto").addEventListener(
+                        "click",
+                        () => agregarContacto()
+                    );
+
+                    $("agregarDireccion").addEventListener(
+                        "click",
+                        () => agregarDireccion()
+                    );
+
+                    $("paginaAnterior").addEventListener(
+                        "click",
+                        function() {
+
+                            if (paginaActual > 1) {
+
+                                paginaActual--;
+
+                                renderizarClientes();
+
+                            }
+
+                        }
+                    );
+
+                    $("paginaSiguiente").addEventListener(
+                        "click",
+                        function() {
+
+                            const totalPaginas = Math.ceil(
+                                clientesFiltrados.length /
+                                CONFIG_CLIENTES.paginaTamano
+                            );
+
+                            if (paginaActual < totalPaginas) {
+
+                                paginaActual++;
+
+                                renderizarClientes();
+
+                            }
+
+                        }
+                    );
+
+                    $("tablaClientes").addEventListener(
+                        "click",
+                        function(event) {
+
+                            const boton = event.target.closest(
+                                "[data-accion]"
+                            );
+
+                            if (!boton) {
+                                return;
+                            }
+
+                            const id = Number(boton.dataset.id);
+
+                            if (!Number.isInteger(id) || id <= 0) {
+                                return;
+                            }
+
+                            switch (boton.dataset.accion) {
+
+                                case "editar":
+                                    editarCliente(id);
+                                    break;
+
+                                case "estado":
+                                    cambiarEstado(id);
+                                    break;
+
+                            }
+
+                        }
+                    );
+
+                    document.querySelectorAll(
+                        "[data-cerrar-modal]"
+                    ).forEach(boton => {
+
+                        boton.addEventListener(
+                            "click",
+                            () => cerrarModal("modalCliente")
+                        );
+
+                    });
+
+                    document.querySelectorAll(
+                        "[data-cerrar-detalle]"
+                    ).forEach(boton => {
+
+                        boton.addEventListener(
+                            "click",
+                            () => cerrarModal("modalDetalle")
+                        );
+
+                    });
+
+                    document.addEventListener(
+                        "click",
+                        function(event) {
+
+                            const boton = event.target.closest(
+                                "[data-eliminar-extra]"
+                            );
+
+                            if (boton) {
+
+                                boton.closest(".kx-extra-card")?.remove();
+
+                            }
+
+                        }
+                    );
+
+                    document.addEventListener(
+                        "keydown",
+                        function(event) {
+
+                            if (event.key !== "Escape") {
+                                return;
+                            }
+
+                            if (!$("modalDetalle").hidden) {
+
+                                cerrarModal("modalDetalle");
+
+                            }
+                            else if (!$("modalCliente").hidden) {
+
+                                cerrarModal("modalCliente");
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+    </script>
+
+</body>
+</html>

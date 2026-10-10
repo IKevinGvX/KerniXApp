@@ -1,0 +1,58 @@
+﻿@page "/Ventas/Reclamos/Nuevo"
+@model KerniX.Pages.Ventas.Reclamos.NuevoModel
+@{
+    Layout = null; ViewData["Title"] = "Nuevo reclamo | KerniX";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nuevo reclamo · KerniX ERP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="@Url.Content("~/css/kx-ventas-registro.css")" />
+</head>
+<body class="kxo-body">
+    <main class="kxo-shell">
+        <nav class="kxo-nav" aria-label="Navegación">
+            <a class="kxo-brand" href="/Inicio/Index"><span>K</span> KerniX</a>
+            <div><a href="/Ventas/Reclamos">← Reclamos</a><a href="/Ventas/Index">Dashboard Ventas</a><a href="/Inicio/Index">Inicio</a></div>
+        </nav>
+        <section class="kxo-card">
+            <div class="kxo-ribbon">OPERACIONES / VENTAS / ATENCIÓN AL CLIENTE</div>
+            <header class="kxo-heading"><div class="kxo-orb">◇</div><div><p>GESTIÓN POSVENTA</p><h1>Nuevo <em>reclamo</em></h1><span>Registra una incidencia asociada a una venta real; el cliente se obtiene desde SQL Server.</span></div></header>
+            @if (TempData["KxReclamoOk"] is string ok)
+            {
+                <div class="kxo-message kxo-ok" role="status">✓ @ok @if(TempData["KxReclamoReferencia"] is string referencia){
+                    <b>Referencia: @referencia</b>
+                }
+                <a href="/Ventas/Reclamos">Ver reclamos →</a></div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.Error))
+            {
+                <div class="kxo-message kxo-error" role="alert">⚠ @Model.Error</div>
+            }
+            <div asp-validation-summary="All" class="kxo-validation"></div>
+            <form method="post" class="kxo-form" id="kxForm" autocomplete="off">
+                @Html.AntiForgeryToken()
+                <div class="kxo-grid">
+                    <label><span>ID DE VENTA <b>*</b></span><input name="Input.IdVenta" type="number" min="1" required value="@Model.Input.IdVenta" placeholder="Ej.: 55" /></label>
+                    <label>
+                        <span>TIPO DE RECLAMO <b>*</b></span>
+                        <select name="Input.TipoReclamo" required>
+                            <option value="producto" selected="@(Model.Input.TipoReclamo == "producto")">Producto</option>
+                            <option value="atencion" selected="@(Model.Input.TipoReclamo == "atencion")">Atención</option>
+                            <option value="comprobante" selected="@(Model.Input.TipoReclamo == "comprobante")">Comprobante</option>
+                        </select>
+                    </label>
+                    <label class="kxo-wide"><span>DESCRIPCIÓN DEL RECLAMO <b>*</b></span><textarea name="Input.Descripcion" rows="6" minlength="10" maxlength="2000" required placeholder="Explica qué ocurrió, cuándo y cuál es la solución solicitada...">@Model.Input.Descripcion</textarea></label>
+                </div>
+                <div class="kxo-note">◈ El número de reclamo se genera en el servidor. La empresa, el empleado y el cliente se validan contra SQL Server. Este formulario no autoriza devoluciones de dinero.</div>
+                <div class="kxo-actions"><a href="/Ventas/Reclamos">Cancelar</a><button type="submit" id="kxSubmit">Registrar reclamo <span>→</span></button></div>
+            </form>
+        </section>
+        <footer class="kxo-footer">KerniX S.A.C. · Atención y posventa · Registro con trazabilidad</footer>
+    </main>
+    <script>document.getElementById('kxForm').addEventListener('submit', function (e) { if (this.dataset.enviado === '1') { e.preventDefault(); return; } if (this.checkValidity()) { this.dataset.enviado = '1'; document.getElementById('kxSubmit').disabled = true; } });</script>
+</body>
+</html>

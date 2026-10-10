@@ -7,7 +7,6 @@
 }
 
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
@@ -21,35 +20,791 @@
         @ViewData["Title"] - KerniX
     </title>
 
+    <!-- UIKIT -->
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
-    <link rel="stylesheet"
-          href="~/css/configuracion.css"
-          asp-append-version="true" />
+    <style>
 
-    <link rel="stylesheet"
-          href="~/css/general.css"
-          asp-append-version="true" />
+            :root {
+                --kx-bg: #050d17;
+                --kx-card: #0b1b2b;
+                --kx-border: rgba(120, 160, 190, .18);
+                --kx-gold: #e3b72f;
+                --kx-gold-light: #f3cf65;
+                --kx-blue: #3f9fe8;
+                --kx-cyan: #58d4ff;
+                --kx-purple: #8c6cff;
+                --kx-text: #f4f7fb;
+                --kx-muted: #8fa2b5;
+                --kx-success: #4fd39a;
+                --kx-danger: #ff6c6c;
+                --kx-sidebar-width: 230px;
+            }
+
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+
+            html,
+            body {
+                margin: 0;
+                min-height: 100%;
+                background: var(--kx-bg);
+                color: var(--kx-text);
+                font-family: "Segoe UI", Arial, sans-serif;
+            }
+
+
+            body {
+                overflow-x: hidden;
+            }
+
+
+            a {
+                text-decoration: none !important;
+            }
+
+
+
+            /* =========================================================
+                       APP
+                    ========================================================= */
+
+            .kx-app {
+                min-height: 100vh;
+                display: grid;
+                grid-template-columns: var(--kx-sidebar-width) minmax(0, 1fr);
+                background: radial-gradient( circle at 90% 0%, rgba(63, 159, 232, .08), transparent 35% ), radial-gradient( circle at 45% 0%, rgba(140, 108, 255, .06), transparent 30% ), radial-gradient( circle at 25% 0%, rgba(227, 183, 47, .04), transparent 28% ), var(--kx-bg);
+            }
+
+
+
+            /* =========================================================
+                       SIDEBAR
+                    ========================================================= */
+
+            .kx-sidebar {
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                padding: 18px 14px;
+                overflow-y: auto;
+                border-right: 1px solid rgba(255, 255, 255, .06);
+                background: linear-gradient( 180deg, #06101c, #071522 );
+                z-index: 20;
+            }
+
+
+            .kx-logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 4px 6px 18px;
+                border-bottom: 1px solid rgba(255, 255, 255, .07);
+            }
+
+
+            .kx-logo-icon {
+                width: 38px;
+                height: 38px;
+                flex: 0 0 38px;
+                display: grid;
+                place-items: center;
+                border-radius: 12px;
+                color: #07111c;
+                font-size: 12px;
+                font-weight: 900;
+                background: linear-gradient( 135deg, var(--kx-gold), var(--kx-gold-light) );
+            }
+
+
+            .kx-logo strong {
+                display: block;
+                color: white;
+                font-size: 17px;
+            }
+
+
+            .kx-logo small {
+                display: block;
+                margin-top: 3px;
+                color: #6f8397;
+                font-size: 9px;
+            }
+
+
+
+            /* =========================================================
+                       NAV
+                    ========================================================= */
+
+            .kx-nav {
+                display: grid;
+                gap: 7px;
+                margin-top: 18px;
+            }
+
+
+                .kx-nav a {
+                    min-height: 42px;
+                    display: flex;
+                    align-items: center;
+                    gap: 11px;
+                    padding: 0 12px;
+                    border-radius: 11px;
+                    color: #aebccb;
+                    font-size: 13px;
+                    font-weight: 700;
+                    transition: .2s ease;
+                }
+
+
+                    .kx-nav a:hover {
+                        color: white;
+                        background: rgba(255, 255, 255, .04);
+                    }
+
+
+                    .kx-nav a.active {
+                        color: white;
+                        border: 1px solid rgba(227, 183, 47, .65);
+                        background: linear-gradient( 90deg, rgba(227, 183, 47, .12), rgba(63, 159, 232, .05) );
+                    }
+
+
+                        .kx-nav a.active [uk-icon] {
+                            color: var(--kx-gold);
+                        }
+
+
+
+            /* =========================================================
+                       MAIN
+                    ========================================================= */
+
+            .kx-main {
+                min-width: 0;
+                padding: 28px;
+            }
+
+
+            .kx-container {
+                width: 100%;
+                max-width: 1500px;
+                margin: 0 auto;
+            }
+
+
+
+            /* =========================================================
+                       HEADER
+                    ========================================================= */
+
+            .kx-header {
+                position: relative;
+                overflow: hidden;
+                margin-bottom: 22px;
+                padding: 26px 28px;
+                border: 1px solid var(--kx-border);
+                border-radius: 20px;
+                background: linear-gradient( 135deg, rgba(140, 108, 255, .07), transparent 38% ), linear-gradient( 120deg, rgba(63, 159, 232, .08), transparent 65% ), rgba(8, 22, 36, .88);
+            }
+
+
+                .kx-header::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 1px;
+                    background: linear-gradient( 90deg, var(--kx-purple), var(--kx-blue), var(--kx-gold) );
+                }
+
+
+            .kx-back {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: #8fa4b8;
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+
+                .kx-back:hover {
+                    color: white;
+                }
+
+
+            .kx-header h1 {
+                margin: 12px 0 5px;
+                color: white;
+                font-size: clamp( 27px, 3vw, 42px );
+                font-weight: 800;
+                letter-spacing: -.03em;
+            }
+
+
+            .kx-header p {
+                margin: 0;
+                color: var(--kx-muted);
+                font-size: 14px;
+            }
+
+
+            .kx-header-badge {
+                position: absolute;
+                top: 24px;
+                right: 24px;
+                min-height: 36px;
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                padding: 0 13px;
+                border: 1px solid rgba(140, 108, 255, .30);
+                border-radius: 999px;
+                background: rgba(140, 108, 255, .08);
+                color: #d8ceff;
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+
+
+            /* =========================================================
+                       ALERTAS
+                    ========================================================= */
+
+            .kx-alert {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 18px;
+                padding: 13px 15px;
+                border-radius: 13px;
+                font-size: 13px;
+            }
+
+
+                .kx-alert.success {
+                    color: #baf4d9;
+                    border: 1px solid rgba(79, 211, 154, .26);
+                    background: rgba(79, 211, 154, .08);
+                }
+
+
+                .kx-alert.error {
+                    color: #ffc3c3;
+                    border: 1px solid rgba(255, 108, 108, .26);
+                    background: rgba(255, 108, 108, .08);
+                }
+
+
+
+            /* =========================================================
+                       GRID
+                    ========================================================= */
+
+            .kx-grid {
+                display: grid;
+                grid-template-columns: repeat( 2, minmax(0, 1fr) );
+                gap: 20px;
+            }
+
+
+
+            /* =========================================================
+                       CARD
+                    ========================================================= */
+
+            .kx-card {
+                min-width: 0;
+                overflow: hidden;
+                border: 1px solid var(--kx-border);
+                border-radius: 18px;
+                background: linear-gradient( 135deg, rgba(255, 255, 255, .015), transparent 45% ), var(--kx-card);
+            }
+
+
+            .kx-card-header {
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 20px 21px 15px;
+                border-bottom: 1px solid rgba(255, 255, 255, .05);
+            }
+
+
+            .kx-card-icon {
+                flex: 0 0 42px;
+                width: 42px;
+                height: 42px;
+                display: grid;
+                place-items: center;
+                border-radius: 13px;
+                color: var(--kx-gold);
+                border: 1px solid rgba(227, 183, 47, .25);
+                background: rgba(227, 183, 47, .06);
+            }
+
+
+            .kx-card.ai .kx-card-icon {
+                color: #c4b8ff;
+                border-color: rgba(140, 108, 255, .28);
+                background: rgba(140, 108, 255, .08);
+            }
+
+
+            .kx-card-header h2 {
+                margin: 0;
+                color: white;
+                font-size: 17px;
+                font-weight: 800;
+            }
+
+
+            .kx-card-header p {
+                margin: 3px 0 0;
+                color: #7f93a6;
+                font-size: 12px;
+            }
+
+
+            .kx-card-body {
+                padding: 20px 21px 22px;
+            }
+
+
+
+            /* =========================================================
+                       OPTION
+                    ========================================================= */
+
+            .kx-option {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                padding: 14px 15px;
+                border: 1px solid rgba(255, 255, 255, .055);
+                border-radius: 13px;
+                background: rgba(255, 255, 255, .018);
+            }
+
+
+                .kx-option > div {
+                    min-width: 0;
+                    flex: 1;
+                }
+
+
+                .kx-option strong {
+                    display: block;
+                    color: white;
+                    font-size: 13px;
+                }
+
+
+                .kx-option small {
+                    display: block;
+                    margin-top: 3px;
+                    color: #7d90a3;
+                    font-size: 11px;
+                    line-height: 1.45;
+                }
+
+
+
+            /* =========================================================
+                       SWITCH
+                    ========================================================= */
+
+            .kx-switch {
+                position: relative;
+                width: 44px;
+                height: 24px;
+                flex: 0 0 auto;
+            }
+
+
+                .kx-switch input[type="checkbox"] {
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    opacity: 0;
+                }
+
+
+            .kx-slider {
+                position: absolute;
+                inset: 0;
+                cursor: pointer;
+                border: 1px solid rgba(132, 157, 180, .30);
+                border-radius: 999px;
+                background: #182737;
+                transition: .2s ease;
+            }
+
+
+                .kx-slider::before {
+                    content: "";
+                    position: absolute;
+                    top: 3px;
+                    left: 3px;
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    background: #c4ced8;
+                    transition: .2s ease;
+                }
+
+
+            .kx-switch
+            input[type="checkbox"]:checked + .kx-slider {
+                border-color: rgba(140, 108, 255, .65);
+                background: rgba(140, 108, 255, .45);
+            }
+
+
+                .kx-switch
+                input[type="checkbox"]:checked + .kx-slider::before {
+                    transform: translateX(20px);
+                    background: white;
+                }
+
+
+
+            /* =========================================================
+                       INPUT
+                    ========================================================= */
+
+            .kx-field {
+                min-width: 0;
+                margin-top: 18px;
+            }
+
+
+                .kx-field label {
+                    display: block;
+                    margin-bottom: 7px;
+                    color: #b9c6d3;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+
+
+            .kx-input {
+                width: 100%;
+                min-width: 0;
+                height: 44px;
+                padding: 0 13px;
+                color: white;
+                border: 1px solid rgba(132, 157, 180, .20);
+                border-radius: 11px;
+                outline: none;
+                background: rgba(3, 12, 21, .72);
+                font-size: 13px;
+            }
+
+
+                .kx-input:focus {
+                    border-color: rgba(140, 108, 255, .70);
+                    box-shadow: 0 0 0 3px rgba(140, 108, 255, .08);
+                }
+
+
+            .kx-help {
+                display: block;
+                margin-top: 6px;
+                color: #73879b;
+                font-size: 11px;
+                line-height: 1.45;
+            }
+
+
+
+            /* =========================================================
+                       SUMMARY
+                    ========================================================= */
+
+            .kx-summary {
+                display: grid;
+                gap: 0;
+                margin-top: 16px;
+            }
+
+
+            .kx-summary-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                padding: 13px 0;
+                border-bottom: 1px solid rgba(255, 255, 255, .05);
+            }
+
+
+                .kx-summary-row:last-child {
+                    border-bottom: none;
+                }
+
+
+                .kx-summary-row span {
+                    color: #879bad;
+                    font-size: 12px;
+                }
+
+
+                .kx-summary-row strong {
+                    max-width: 60%;
+                    color: white;
+                    font-size: 13px;
+                    text-align: right;
+                    overflow-wrap: anywhere;
+                }
+
+
+
+            /* =========================================================
+                       STATUS
+                    ========================================================= */
+
+            .kx-status-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                min-height: 30px;
+                padding: 0 11px;
+                border-radius: 999px;
+                font-size: 10px;
+                font-weight: 900;
+            }
+
+
+                .kx-status-pill.on {
+                    color: #cdbfff;
+                    border: 1px solid rgba(140, 108, 255, .30);
+                    background: rgba(140, 108, 255, .08);
+                }
+
+
+                .kx-status-pill.off {
+                    color: #99a9b9;
+                    border: 1px solid rgba(132, 157, 180, .16);
+                    background: rgba(132, 157, 180, .05);
+                }
+
+
+
+            /* =========================================================
+                       ACTIONS
+                    ========================================================= */
+
+            .kx-actions {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 22px;
+            }
+
+
+            .kx-btn {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 16px;
+                border: 1px solid transparent;
+                border-radius: 11px;
+                font-size: 12px;
+                font-weight: 800;
+                cursor: pointer;
+                transition: .2s ease;
+            }
+
+
+            .kx-btn-primary {
+                color: white;
+                border-color: rgba(140, 108, 255, .40);
+                background: linear-gradient( 135deg, #7b5ee8, #4f8de8 );
+            }
+
+
+                .kx-btn-primary:hover {
+                    filter: brightness(1.08);
+                    transform: translateY(-1px);
+                }
+
+
+            .kx-btn-secondary {
+                color: #c7d2dd;
+                border-color: rgba(132, 157, 180, .22);
+                background: rgba(255, 255, 255, .025);
+            }
+
+
+                .kx-btn-secondary:hover {
+                    color: white;
+                    border-color: rgba(140, 108, 255, .35);
+                }
+
+
+
+            /* =========================================================
+                       RESPONSIVE
+                    ========================================================= */
+
+            @@media (max-width: 1100px) {
+
+                :root {
+                    --kx-sidebar-width: 205px;
+                }
+
+
+                .kx-main {
+                    padding: 22px;
+                }
+            }
+
+
+            @@media (max-width: 900px) {
+
+                .kx-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+
+            @@media (max-width: 760px) {
+
+                .kx-app {
+                    display: block;
+                }
+
+
+                .kx-sidebar {
+                    position: relative;
+                    height: auto;
+                    border-right: none;
+                    border-bottom: 1px solid rgba(255, 255, 255, .06);
+                }
+
+
+                .kx-nav {
+                    display: flex;
+                    overflow-x: auto;
+                    gap: 7px;
+                }
+
+
+                    .kx-nav a {
+                        flex: 0 0 auto;
+                        white-space: nowrap;
+                    }
+
+
+                .kx-main {
+                    padding: 14px;
+                }
+
+
+                .kx-header {
+                    padding: 20px 18px;
+                }
+
+
+                .kx-header-badge {
+                    position: static;
+                    width: fit-content;
+                    margin-top: 14px;
+                }
+
+
+                .kx-actions {
+                    flex-direction: column-reverse;
+                    align-items: stretch;
+                }
+
+
+                .kx-btn {
+                    width: 100%;
+                }
+            }
+
+
+            @@media (max-width: 480px) {
+
+                .kx-main {
+                    padding: 10px;
+                }
+
+
+                .kx-header,
+                .kx-card {
+                    border-radius: 14px;
+                }
+
+
+                .kx-card-header {
+                    padding: 16px 15px 13px;
+                }
+
+
+                .kx-card-body {
+                    padding: 16px 15px 18px;
+                }
+
+
+                .kx-option {
+                    align-items: flex-start;
+                }
+
+
+                .kx-summary-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 4px;
+                }
+
+
+                    .kx-summary-row strong {
+                        max-width: 100%;
+                        text-align: left;
+                    }
+            }
+
+    </style>
 
 </head>
 
 
-<body class="kx-body">
+<body>
+
 
     <div class="kx-app">
 
-        <!-- ===================================================== -->
+
         <!-- SIDEBAR -->
-        <!-- ===================================================== -->
 
         <aside class="kx-sidebar">
 
+
             <div class="kx-logo">
+
 
                 <div class="kx-logo-icon">
                     KX
                 </div>
+
 
                 <div>
 
@@ -63,73 +818,70 @@
 
                 </div>
 
+
             </div>
+
 
 
             <nav class="kx-nav">
 
+
                 <a href="/Inicio/Index">
 
-                    <span uk-icon="icon: home"></span>
-
-                    <span>
-                        Inicio
+                    <span uk-icon="icon: home; ratio: .85">
                     </span>
+
+                    Inicio
 
                 </a>
 
 
                 <a href="/Ventas/Index">
 
-                    <span uk-icon="icon: cart"></span>
-
-                    <span>
-                        Ventas
+                    <span uk-icon="icon: cart; ratio: .85">
                     </span>
+
+                    Ventas
 
                 </a>
 
 
                 <a href="/Inventario/Index">
 
-                    <span uk-icon="icon: database"></span>
-
-                    <span>
-                        Inventario
+                    <span uk-icon="icon: database; ratio: .85">
                     </span>
+
+                    Inventario
 
                 </a>
 
 
                 <a href="/Productos/Index">
 
-                    <span uk-icon="icon: thumbnails"></span>
-
-                    <span>
-                        Productos
+                    <span uk-icon="icon: grid; ratio: .85">
                     </span>
+
+                    Productos
 
                 </a>
 
 
                 <a href="/Clientes/Index">
 
-                    <span uk-icon="icon: users"></span>
-
-                    <span>
-                        Clientes
+                    <span uk-icon="icon: users; ratio: .85">
                     </span>
+
+                    Clientes
 
                 </a>
 
 
                 <a href="/IA/Index">
 
-                    <span uk-icon="icon: bolt"></span>
-
-                    <span>
-                        KerniX IA
+                    <span uk-icon="icon: bolt; ratio: .85">
                     </span>
+
+                    KerniX IA
 
                 </a>
 
@@ -137,37 +889,39 @@
                 <a href="/Configuracion/Index1"
                    class="active">
 
-                    <span uk-icon="icon: settings"></span>
-
-                    <span>
-                        Configuración
+                    <span uk-icon="icon: settings; ratio: .85">
                     </span>
+
+                    Configuración
 
                 </a>
 
+
             </nav>
+
 
         </aside>
 
 
-        <!-- ===================================================== -->
-        <!-- CONTENIDO -->
-        <!-- ===================================================== -->
 
-        <main class="kx-content">
+        <!-- MAIN -->
 
-            <!-- ================================================= -->
-            <!-- CABECERA -->
-            <!-- ================================================= -->
+        <main class="kx-main">
 
-            <header class="kx-topbar">
 
-                <div>
+            <div class="kx-container">
+
+
+                <!-- HEADER -->
+
+                <header class="kx-header">
+
 
                     <a href="/Configuracion/Index1"
                        class="kx-back">
 
-                        <span uk-icon="icon: arrow-left"></span>
+                        <span uk-icon="icon: arrow-left; ratio: .8">
+                        </span>
 
                         Volver a configuración
 
@@ -180,584 +934,860 @@
 
 
                     <p>
-                        Activa o desactiva las funciones inteligentes
+
+                        Activa y administra
+                        las funciones inteligentes
                         disponibles en ventas e inventario.
+
                     </p>
 
-                </div>
 
-            </header>
+                    <div class="kx-header-badge">
 
+                        <span uk-icon="icon: bolt; ratio: .75">
+                        </span>
 
-            <!-- ================================================= -->
-            <!-- MENSAJE EXITO -->
-            <!-- ================================================= -->
-            @if (!string.IsNullOrWhiteSpace(
-                        Model.MensajeExito))
-            {
-                <div class="kx-alert-success">
+                        Motor inteligente
 
-                    <span uk-icon="icon: check"></span>
-
-                    <span>
-                        @Model.MensajeExito
-                    </span>
-
-                </div>
-            }
-
-
-            <!-- ================================================= -->
-            <!-- MENSAJE ERROR -->
-            <!-- ================================================= -->
-            @if (!string.IsNullOrWhiteSpace(
-                        Model.MensajeError))
-            {
-                <div class="kx-alert-error">
-
-                    <span uk-icon="icon: warning"></span>
-
-                    <span>
-                        @Model.MensajeError
-                    </span>
-
-                </div>
-            }
-
-
-            <!-- ================================================= -->
-            <!-- VALIDACIONES -->
-            <!-- ================================================= -->
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="kx-alert-error">
-
-                    <span uk-icon="icon: warning"></span>
-
-                    <div asp-validation-summary="All">
                     </div>
 
-                </div>
-            }
+
+                </header>
 
 
-            <!-- ================================================= -->
-            <!-- FORMULARIO -->
-            <!-- ================================================= -->
 
-            <form method="post"
-                  action="/Configuracion/IA?handler=Guardar">
+                <!-- MENSAJES -->
+                @if (!string.IsNullOrWhiteSpace(
+                                Model.MensajeExito))
+                {
 
-                @Html.AntiForgeryToken()
+                    <div class="kx-alert success">
+
+                        <span uk-icon="icon: check">
+                        </span>
+
+                        <span>
+                            @Model.MensajeExito
+                        </span>
+
+                    </div>
+
+                }
 
 
-                <input type="hidden"
-                       name="IdEmpresa"
-                       value="@Model.IdEmpresa" />
+                @if (!string.IsNullOrWhiteSpace(
+                    Model.MensajeError))
+                {
+
+                    <div class="kx-alert error">
+
+                        <span uk-icon="icon: warning">
+                        </span>
+
+                        <span>
+                            @Model.MensajeError
+                        </span>
+
+                    </div>
+
+                }
 
 
-                <div class="kx-settings-layout">
+                @if (!ViewData.ModelState.IsValid)
+                {
 
+                    <div class="kx-alert error">
 
-                    <!-- ========================================= -->
-                    <!-- MOTOR IA -->
-                    <!-- ========================================= -->
+                        <span uk-icon="icon: warning">
+                        </span>
 
-                    <section class="kx-card">
-
-                        <div class="kx-card-header">
-
-                            <div class="kx-card-icon">
-
-                                <span uk-icon="icon: bolt">
-                                </span>
-
-                            </div>
-
-                            <div>
-
-                                <h2>
-                                    Motor de Inteligencia Artificial
-                                </h2>
-
-                                <p>
-                                    Control general de funciones inteligentes.
-                                </p>
-
-                            </div>
-
+                        <div asp-validation-summary="All">
                         </div>
 
+                    </div>
 
-                        <div class="kx-option">
+                }
 
-                            <div>
 
-                                <strong>
-                                    Activar KerniX IA
-                                </strong>
 
-                                <small>
-                                    Habilita el uso de funciones
-                                    inteligentes dentro del sistema.
-                                </small>
+                <!-- FORMULARIO -->
+
+                <form method="post"
+                      action="/Configuracion/IA?handler=Guardar">
+
+
+                    @Html.AntiForgeryToken()
+
+
+                    <input type="hidden"
+                           name="IdEmpresa"
+                           value="@Model.IdEmpresa" />
+
+
+
+                    <div class="kx-grid">
+
+
+                        <!-- MOTOR IA -->
+
+                        <section class="kx-card ai">
+
+
+                            <div class="kx-card-header">
+
+
+                                <div class="kx-card-icon">
+
+                                    <span uk-icon="icon: bolt">
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        Motor de Inteligencia Artificial
+                                    </h2>
+
+                                    <p>
+                                        Control general del sistema inteligente.
+                                    </p>
+
+                                </div>
+
 
                             </div>
 
 
-                            <div>
 
-                                <label class="kx-switch">
-
-                                    <input type="checkbox"
-                                           name="IaActiva"
-                                           value="true"
-                                           checked="@Model.IaActiva" />
-
-                                    <span class="kx-slider"></span>
-
-                                </label>
+                            <div class="kx-card-body">
 
 
-                                <input type="hidden"
-                                       name="IaActiva"
-                                       value="false" />
+                                <div class="kx-option">
+
+
+                                    <div>
+
+                                        <strong>
+                                            Activar KerniX IA
+                                        </strong>
+
+                                        <small>
+
+                                            Habilita las funciones inteligentes
+                                            dentro de KerniX.
+
+                                        </small>
+
+                                    </div>
+
+
+
+                                    <div>
+
+
+                                        <label class="kx-switch">
+
+
+                                            <input type="checkbox"
+                                                   name="IaActiva"
+                                                   value="true"
+                                                   checked="@Model.IaActiva" />
+
+
+                                            <span class="kx-slider">
+                                            </span>
+
+
+                                        </label>
+
+
+                                        <input type="hidden"
+                                               name="IaActiva"
+                                               value="false" />
+
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="kx-summary">
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Estado actual
+                                        </span>
+
+
+                                        <strong>
+
+                                            @if (Model.IaActiva)
+                                            {
+
+                                                <span class="kx-status-pill on">
+
+                                                    <span uk-icon="icon: bolt; ratio: .65">
+                                                    </span>
+
+                                                    ACTIVA
+
+                                                </span>
+
+                                            }
+                                            else
+                                            {
+
+                                                <span class="kx-status-pill off">
+
+                                                    DESACTIVADA
+
+                                                </span>
+
+                                            }
+
+                                        </strong>
+
+                                    </div>
+
+
+                                </div>
+
 
                             </div>
 
-                        </div>
+
+                        </section>
 
 
-                        <div class="kx-summary-row">
 
-                            <span>
-                                Estado actual
+                        <!-- PRONOSTICO -->
+
+                        <section class="kx-card ai">
+
+
+                            <div class="kx-card-header">
+
+
+                                <div class="kx-card-icon">
+
+                                    <span uk-icon="icon: future">
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        Pronóstico de ventas
+                                    </h2>
+
+                                    <p>
+                                        Analiza datos históricos para estimar ventas futuras.
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="kx-card-body">
+
+
+                                <div class="kx-option">
+
+
+                                    <div>
+
+                                        <strong>
+                                            Habilitar pronóstico
+                                        </strong>
+
+                                        <small>
+
+                                            Calcula tendencias
+                                            y comportamiento esperado de ventas.
+
+                                        </small>
+
+                                    </div>
+
+
+
+                                    <div>
+
+
+                                        <label class="kx-switch">
+
+
+                                            <input type="checkbox"
+                                                   name="IaPronosticoVentas"
+                                                   value="true"
+                                                   checked="@Model.IaPronosticoVentas" />
+
+
+                                            <span class="kx-slider">
+                                            </span>
+
+
+                                        </label>
+
+
+                                        <input type="hidden"
+                                               name="IaPronosticoVentas"
+                                               value="false" />
+
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="kx-field">
+
+
+                                    <label>
+                                        Días de historial
+                                    </label>
+
+
+                                    <input type="number"
+                                           name="DiasHistoricoPronostico"
+                                           value="@(Model.DiasHistoricoPronostico ?? 90)"
+                                           min="7"
+                                           max="3650"
+                                           step="1"
+                                           class="kx-input" />
+
+
+                                    <small class="kx-help">
+
+                                        Cantidad de días históricos
+                                        utilizados para analizar
+                                        el comportamiento de ventas.
+
+                                    </small>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </section>
+
+
+
+                        <!-- REPOSICION -->
+
+                        <section class="kx-card ai">
+
+
+                            <div class="kx-card-header">
+
+
+                                <div class="kx-card-icon">
+
+                                    <span uk-icon="icon: refresh">
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        Reposición inteligente
+                                    </h2>
+
+                                    <p>
+                                        Recomendaciones automáticas de abastecimiento.
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="kx-card-body">
+
+
+                                <div class="kx-option">
+
+
+                                    <div>
+
+                                        <strong>
+                                            Recomendar reposición
+                                        </strong>
+
+                                        <small>
+
+                                            Analiza stock mínimo,
+                                            disponibilidad y rotación
+                                            para sugerir compras.
+
+                                        </small>
+
+                                    </div>
+
+
+
+                                    <div>
+
+
+                                        <label class="kx-switch">
+
+
+                                            <input type="checkbox"
+                                                   name="IaRecomendacionReposicion"
+                                                   value="true"
+                                                   checked="@Model.IaRecomendacionReposicion" />
+
+
+                                            <span class="kx-slider">
+                                            </span>
+
+
+                                        </label>
+
+
+                                        <input type="hidden"
+                                               name="IaRecomendacionReposicion"
+                                               value="false" />
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </section>
+
+
+
+                        <!-- ANOMALIAS -->
+
+                        <section class="kx-card ai">
+
+
+                            <div class="kx-card-header">
+
+
+                                <div class="kx-card-icon">
+
+                                    <span uk-icon="icon: warning">
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        Detección de anomalías
+                                    </h2>
+
+                                    <p>
+                                        Identifica comportamientos inusuales.
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="kx-card-body">
+
+
+                                <div class="kx-option">
+
+
+                                    <div>
+
+                                        <strong>
+                                            Detectar anomalías
+                                        </strong>
+
+                                        <small>
+
+                                            Busca patrones atípicos
+                                            en ventas y movimientos de inventario.
+
+                                        </small>
+
+                                    </div>
+
+
+
+                                    <div>
+
+
+                                        <label class="kx-switch">
+
+
+                                            <input type="checkbox"
+                                                   name="IaAlertasAnomalias"
+                                                   value="true"
+                                                   checked="@Model.IaAlertasAnomalias" />
+
+
+                                            <span class="kx-slider">
+                                            </span>
+
+
+                                        </label>
+
+
+                                        <input type="hidden"
+                                               name="IaAlertasAnomalias"
+                                               value="false" />
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </section>
+
+
+
+                        <!-- ESTADO -->
+
+                        <section class="kx-card ai">
+
+
+                            <div class="kx-card-header">
+
+
+                                <div class="kx-card-icon">
+
+                                    <span uk-icon="icon: info">
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        Estado actual
+                                    </h2>
+
+                                    <p>
+                                        Resumen de la configuración inteligente.
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="kx-card-body">
+
+
+                                <div class="kx-summary">
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Empresa
+                                        </span>
+
+                                        <strong>
+                                            #@Model.IdEmpresa
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            KerniX IA
+                                        </span>
+
+                                        <strong>
+
+                                            @(Model.IaActiva
+                                                ? "Activa"
+                                                : "Desactivada")
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Pronóstico
+                                        </span>
+
+                                        <strong>
+
+                                            @(Model.IaPronosticoVentas
+                                                ? "Activo"
+                                                : "Desactivado")
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Reposición
+                                        </span>
+
+                                        <strong>
+
+                                            @(Model.IaRecomendacionReposicion
+                                                ? "Activa"
+                                                : "Desactivada")
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Anomalías
+                                        </span>
+
+                                        <strong>
+
+                                            @(Model.IaAlertasAnomalias
+                                                ? "Activa"
+                                                : "Desactivada")
+
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Historial
+                                        </span>
+
+                                        <strong>
+
+                                            @(Model.DiasHistoricoPronostico ?? 90)
+                                            días
+
+                                        </strong>
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </section>
+
+
+
+                        <!-- INFORMACION -->
+
+                        <section class="kx-card ai">
+
+
+                            <div class="kx-card-header">
+
+
+                                <div class="kx-card-icon">
+
+                                    <span uk-icon="icon: settings">
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <h2>
+                                        Funciones inteligentes
+                                    </h2>
+
+                                    <p>
+                                        Capacidades disponibles en KerniX.
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="kx-card-body">
+
+
+                                <div class="kx-summary">
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Análisis de ventas
+                                        </span>
+
+                                        <strong>
+                                            Pronóstico
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Inventario
+                                        </span>
+
+                                        <strong>
+                                            Reposición
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Monitoreo
+                                        </span>
+
+                                        <strong>
+                                            Anomalías
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="kx-summary-row">
+
+                                        <span>
+                                            Motor
+                                        </span>
+
+                                        <strong>
+                                            KerniX IA
+                                        </strong>
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </section>
+
+
+                    </div>
+
+
+
+                    <!-- BOTONES -->
+
+                    <div class="kx-actions">
+
+
+                        <a href="/Configuracion/Index1"
+                           class="kx-btn kx-btn-secondary">
+
+                            <span uk-icon="icon: arrow-left; ratio: .8">
                             </span>
 
-                            <strong>
+                            Cancelar
 
-                                @(Model.IaActiva
-                                    ? "ACTIVA"
-                                    : "DESACTIVADA")
+                        </a>
 
-                            </strong>
 
-                        </div>
+                        <a href="/IA/Index"
+                           class="kx-btn kx-btn-secondary">
 
-                    </section>
-
-
-                    <!-- ========================================= -->
-                    <!-- PRONOSTICO -->
-                    <!-- ========================================= -->
-
-                    <section class="kx-card">
-
-                        <div class="kx-card-header">
-
-                            <div class="kx-card-icon">
-
-                                <span uk-icon="icon: future">
-                                </span>
-
-                            </div>
-
-                            <div>
-
-                                <h2>
-                                    Pronóstico de ventas
-                                </h2>
-
-                                <p>
-                                    Analiza historial para estimar
-                                    ventas futuras.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="kx-option">
-
-                            <div>
-
-                                <strong>
-                                    Habilitar pronóstico
-                                </strong>
-
-                                <small>
-                                    Permite calcular tendencias
-                                    y comportamiento esperado de ventas.
-                                </small>
-
-                            </div>
-
-
-                            <div>
-
-                                <label class="kx-switch">
-
-                                    <input type="checkbox"
-                                           name="IaPronosticoVentas"
-                                           value="true"
-                                           checked="@Model.IaPronosticoVentas" />
-
-                                    <span class="kx-slider"></span>
-
-                                </label>
-
-
-                                <input type="hidden"
-                                       name="IaPronosticoVentas"
-                                       value="false" />
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="kx-form-group">
-
-                            <label>
-                                Días de historial
-                            </label>
-
-                            <input type="number"
-                                   name="DiasHistoricoPronostico"
-                                   value="@(Model.DiasHistoricoPronostico ?? 90)"
-                                   min="7"
-                                   max="3650"
-                                   step="1"
-                                   class="kx-input" />
-
-
-                            <small class="kx-help">
-                                Cantidad de días históricos utilizados
-                                para analizar el comportamiento de ventas.
-                            </small>
-
-                        </div>
-
-                    </section>
-
-
-                    <!-- ========================================= -->
-                    <!-- REPOSICION -->
-                    <!-- ========================================= -->
-
-                    <section class="kx-card">
-
-                        <div class="kx-card-header">
-
-                            <div class="kx-card-icon">
-
-                                <span uk-icon="icon: refresh">
-                                </span>
-
-                            </div>
-
-                            <div>
-
-                                <h2>
-                                    Reposición inteligente
-                                </h2>
-
-                                <p>
-                                    Recomendaciones automáticas de reposición.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="kx-option">
-
-                            <div>
-
-                                <strong>
-                                    Recomendar reposición
-                                </strong>
-
-                                <small>
-                                    Analiza stock mínimo,
-                                    disponibilidad y rotación
-                                    para sugerir compras.
-                                </small>
-
-                            </div>
-
-
-                            <div>
-
-                                <label class="kx-switch">
-
-                                    <input type="checkbox"
-                                           name="IaRecomendacionReposicion"
-                                           value="true"
-                                           checked="@Model.IaRecomendacionReposicion" />
-
-                                    <span class="kx-slider"></span>
-
-                                </label>
-
-
-                                <input type="hidden"
-                                       name="IaRecomendacionReposicion"
-                                       value="false" />
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-
-                    <!-- ========================================= -->
-                    <!-- ANOMALIAS -->
-                    <!-- ========================================= -->
-
-                    <section class="kx-card">
-
-                        <div class="kx-card-header">
-
-                            <div class="kx-card-icon">
-
-                                <span uk-icon="icon: warning">
-                                </span>
-
-                            </div>
-
-                            <div>
-
-                                <h2>
-                                    Detección de anomalías
-                                </h2>
-
-                                <p>
-                                    Identificación de comportamientos inusuales.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="kx-option">
-
-                            <div>
-
-                                <strong>
-                                    Detectar anomalías
-                                </strong>
-
-                                <small>
-                                    Busca patrones atípicos
-                                    en ventas y movimientos de inventario.
-                                </small>
-
-                            </div>
-
-
-                            <div>
-
-                                <label class="kx-switch">
-
-                                    <input type="checkbox"
-                                           name="IaAlertasAnomalias"
-                                           value="true"
-                                           checked="@Model.IaAlertasAnomalias" />
-
-                                    <span class="kx-slider"></span>
-
-                                </label>
-
-
-                                <input type="hidden"
-                                       name="IaAlertasAnomalias"
-                                       value="false" />
-
-                            </div>
-
-                        </div>
-
-                    </section>
-
-
-                    <!-- ========================================= -->
-                    <!-- ESTADO -->
-                    <!-- ========================================= -->
-
-                    <section class="kx-card">
-
-                        <div class="kx-card-header">
-
-                            <div class="kx-card-icon">
-
-                                <span uk-icon="icon: info">
-                                </span>
-
-                            </div>
-
-                            <div>
-
-                                <h2>
-                                    Estado actual
-                                </h2>
-
-                                <p>
-                                    Resumen de configuración inteligente.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="kx-summary-row">
-
-                            <span>
-                                Empresa
+                            <span uk-icon="icon: bolt; ratio: .8">
                             </span>
 
-                            <strong>
-                                #@Model.IdEmpresa
-                            </strong>
+                            Abrir asistente
 
-                        </div>
+                        </a>
 
 
-                        <div class="kx-summary-row">
+                        <button type="submit"
+                                class="kx-btn kx-btn-primary">
 
-                            <span>
-                                KerniX IA
+                            <span uk-icon="icon: check; ratio: .85">
                             </span>
 
-                            <strong>
+                            Guardar configuración
 
-                                @(Model.IaActiva
-                                    ? "Activa"
-                                    : "Desactivada")
-
-                            </strong>
-
-                        </div>
+                        </button>
 
 
-                        <div class="kx-summary-row">
-
-                            <span>
-                                Pronóstico
-                            </span>
-
-                            <strong>
-
-                                @(Model.IaPronosticoVentas
-                                    ? "Activo"
-                                    : "Desactivado")
-
-                            </strong>
-
-                        </div>
+                    </div>
 
 
-                        <div class="kx-summary-row">
-
-                            <span>
-                                Reposición
-                            </span>
-
-                            <strong>
-
-                                @(Model.IaRecomendacionReposicion
-                                    ? "Activa"
-                                    : "Desactivada")
-
-                            </strong>
-
-                        </div>
+                </form>
 
 
-                        <div class="kx-summary-row">
+            </div>
 
-                            <span>
-                                Anomalías
-                            </span>
-
-                            <strong>
-
-                                @(Model.IaAlertasAnomalias
-                                    ? "Activa"
-                                    : "Desactivada")
-
-                            </strong>
-
-                        </div>
-
-
-                        <div class="kx-summary-row">
-
-                            <span>
-                                Historial
-                            </span>
-
-                            <strong>
-                                @(Model.DiasHistoricoPronostico ?? 90) días
-                            </strong>
-
-                        </div>
-
-                    </section>
-
-                </div>
-
-
-                <!-- ================================================= -->
-                <!-- BOTONES -->
-                <!-- ================================================= -->
-
-                <div class="kx-form-actions">
-
-                    <a href="/Configuracion/Index1"
-                       class="kx-btn-secondary">
-
-                        Cancelar
-
-                    </a>
-
-
-                    <a href="/IA/Index"
-                       class="kx-btn-secondary">
-
-                        Abrir asistente
-
-                    </a>
-
-
-                    <button type="submit"
-                            class="kx-btn-primary">
-
-                        <span uk-icon="icon: check"></span>
-
-                        Guardar configuración
-
-                    </button>
-
-                </div>
-
-            </form>
 
         </main>
 
+
     </div>
 
+
+
+    <!-- UIKIT JS -->
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
     </script>
+
 
 </body>
 

@@ -1,56 +1,631 @@
-﻿/* =========================================================
-   KERNIX - CONTROL GLOBAL DE IMÁGENES
-   Evita desbordamientos
-========================================================= */
+﻿/* ============================================================
+   KerniX - configuracion.css
+   Versión limpia, responsive y ajustable
+   Compatible con:
+   - Configuración / Seguridad
+   - Configuración / Inventario
+   - Configuración / Impuestos
+   - Configuración / Backups
 
-img {
-    max-width: 100%;
-    height: auto;
+   IMPORTANTE:
+   Este archivo NO controla .kx-app, .kx-sidebar ni .kx-content.
+   Esa estructura debe quedar únicamente en general.css.
+============================================================ */
+
+/* ============================================================
+   VARIABLES DEL MÓDULO
+============================================================ */
+
+:root {
+    --kx-config-gap: 22px;
+    --kx-config-card-radius: 18px;
+    --kx-config-card-padding: 24px;
+    --kx-config-control-height: 46px;
+    --kx-config-bg: rgba(5, 18, 31, 0.86);
+    --kx-config-bg-soft: rgba(9, 29, 48, 0.72);
+    --kx-config-border: rgba(71, 128, 171, 0.25);
+    --kx-config-border-gold: rgba(222, 177, 35, 0.55);
+    --kx-config-text: #f4f7fb;
+    --kx-config-muted: #a7b3c1;
+    --kx-config-gold: #d9ac21;
+    --kx-config-blue: #2f8fd8;
+    --kx-config-danger: #ef6a6a;
+    --kx-config-success: #4fd197;
 }
 
-/* Contenedor principal */
-.kx-config-page,
-.kx-config-content,
-.kx-config-main {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    overflow-x: hidden;
+/* ============================================================
+   RESET LOCAL / PROTECCIÓN CONTRA DESBORDAMIENTO
+============================================================ */
+
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
-/* =========================================================
-   IMÁGENES DE TARJETAS / MÓDULOS
-========================================================= */
-
-.kx-config-card img,
-.kx-module-card img,
-.kx-config-image {
-    display: block;
-    width: 100%;
-    max-width: 220px;
-    height: 150px;
-    margin: 0 auto;
-    object-fit: contain;
-    object-position: center;
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
 }
 
-/* Si la imagen está dentro de un contenedor */
+img {
+    height: auto;
+}
+
+/* ============================================================
+   CONTENEDORES INTERNOS DE CONFIGURACIÓN
+============================================================ */
+
+.kx-config-page,
+.kx-config-content,
+.kx-config-main,
+.kx-content > form,
+.kx-content > section,
+.kx-content > .kx-settings-layout,
+.kx-content > .kx-alert-success,
+.kx-content > .kx-alert-error {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* ============================================================
+   CABECERA
+============================================================ */
+
+.kx-topbar {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 0 26px;
+    padding: 0;
+}
+
+    .kx-topbar > div {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .kx-topbar h1 {
+        margin: 8px 0 6px;
+        font-size: clamp(1.75rem, 2.5vw, 2.55rem);
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+    }
+
+    .kx-topbar p {
+        width: 100%;
+        max-width: 780px;
+        margin: 0;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+.kx-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    max-width: 100%;
+    text-decoration: none;
+}
+
+/* ============================================================
+   GRID PRINCIPAL
+============================================================ */
+
+.kx-settings-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--kx-config-gap);
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* ============================================================
+   TARJETAS
+============================================================ */
+
+.kx-card {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: var(--kx-config-card-padding);
+    overflow: hidden;
+    border: 1px solid var(--kx-config-border);
+    border-radius: var(--kx-config-card-radius);
+    background: linear-gradient( 135deg, rgba(218, 171, 28, 0.035), transparent 36%, rgba(47, 143, 216, 0.045) ), var(--kx-config-bg);
+}
+
+    .kx-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: linear-gradient( 90deg, var(--kx-config-gold), rgba(217, 172, 33, 0.08) 35%, rgba(47, 143, 216, 0.65) );
+        pointer-events: none;
+    }
+
+    .kx-card > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+.kx-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-bottom: 22px;
+}
+
+    .kx-card-header > div:last-child {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .kx-card-header h2 {
+        margin: 0 0 5px;
+        font-size: clamp(1.12rem, 1.5vw, 1.38rem);
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    .kx-card-header p {
+        margin: 0;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+.kx-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--kx-config-border-gold);
+    border-radius: 12px;
+}
+
+/* ============================================================
+   FORMULARIOS
+============================================================ */
+
+.kx-form-group {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+    .kx-form-group label {
+        display: block;
+        width: 100%;
+        margin: 0 0 7px;
+        overflow-wrap: anywhere;
+    }
+
+.kx-input,
+input.kx-input,
+select.kx-input,
+textarea.kx-input {
+    display: block;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    min-height: var(--kx-config-control-height);
+    padding: 10px 14px;
+    border: 1px solid rgba(112, 145, 175, 0.34);
+    border-radius: 10px;
+    outline: none;
+    color: inherit;
+    background: rgba(3, 14, 26, 0.72);
+    font: inherit;
+}
+
+select.kx-input {
+    padding-right: 36px;
+}
+
+textarea.kx-input {
+    min-height: 110px;
+    resize: vertical;
+}
+
+    .kx-input:focus,
+    input.kx-input:focus,
+    select.kx-input:focus,
+    textarea.kx-input:focus {
+        border-color: rgba(217, 172, 33, 0.78);
+    }
+
+.kx-help {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 7px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+/* ============================================================
+   OPCIONES / SWITCHES
+============================================================ */
+
+.kx-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 14px 0;
+}
+
+    .kx-option + .kx-option {
+        border-top: 1px solid rgba(113, 144, 170, 0.12);
+    }
+
+    .kx-option > div:first-child {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .kx-option strong {
+        display: block;
+        margin-bottom: 3px;
+        overflow-wrap: anywhere;
+    }
+
+    .kx-option small {
+        display: block;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+.kx-switch {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    width: 48px;
+    height: 26px;
+    margin: 0;
+}
+
+    .kx-switch input[type="checkbox"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+.kx-slider {
+    position: absolute;
+    inset: 0;
+    border: 1px solid rgba(125, 151, 177, 0.42);
+    border-radius: 999px;
+    background: rgba(79, 96, 116, 0.55);
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+    .kx-slider::before {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #ffffff;
+        transition: 0.2s ease;
+    }
+
+.kx-switch input[type="checkbox"]:checked + .kx-slider {
+    border-color: rgba(217, 172, 33, 0.78);
+    background: rgba(217, 172, 33, 0.72);
+}
+
+    .kx-switch input[type="checkbox"]:checked + .kx-slider::before {
+        transform: translateX(22px);
+    }
+
+/* Soporta hidden + checkbox + slider */
+.kx-switch input[type="hidden"] + input[type="checkbox"]:checked + .kx-slider {
+    border-color: rgba(217, 172, 33, 0.78);
+    background: rgba(217, 172, 33, 0.72);
+}
+
+    .kx-switch input[type="hidden"] + input[type="checkbox"]:checked + .kx-slider::before {
+        transform: translateX(22px);
+    }
+
+/* ============================================================
+   RESUMEN
+============================================================ */
+
+.kx-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 12px 0;
+}
+
+    .kx-summary-row + .kx-summary-row {
+        border-top: 1px solid rgba(113, 144, 170, 0.12);
+    }
+
+    .kx-summary-row > * {
+        min-width: 0;
+    }
+
+    .kx-summary-row span {
+        overflow-wrap: anywhere;
+    }
+
+    .kx-summary-row strong {
+        flex: 0 0 auto;
+        max-width: 52%;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+/* ============================================================
+   BOTONES
+============================================================ */
+
+.kx-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 26px 0 0;
+}
+
+.kx-btn-primary,
+.kx-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    max-width: 100%;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.2;
+    font: inherit;
+    cursor: pointer;
+}
+
+/* ============================================================
+   ALERTAS
+============================================================ */
+
+.kx-alert-success,
+.kx-alert-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    overflow-wrap: anywhere;
+}
+
+.kx-alert-success {
+    border: 1px solid rgba(79, 209, 151, 0.34);
+    background: rgba(79, 209, 151, 0.08);
+}
+
+.kx-alert-error {
+    border: 1px solid rgba(239, 106, 106, 0.34);
+    background: rgba(239, 106, 106, 0.08);
+}
+
+/* ============================================================
+   TABLAS - IMPUESTOS
+============================================================ */
+
+.kx-table-wrap {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.kx-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+    .kx-table th,
+    .kx-table td {
+        padding: 12px 14px;
+        text-align: left;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .kx-table th {
+        font-weight: 700;
+    }
+
+    .kx-table tbody tr + tr {
+        border-top: 1px solid rgba(113, 144, 170, 0.12);
+    }
+
+.kx-empty {
+    text-align: center !important;
+    white-space: normal !important;
+}
+
+.kx-card-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+}
+
+    .kx-card-actions form {
+        width: auto;
+        margin: 0;
+    }
+
+/* ============================================================
+   ESTADOS
+============================================================ */
+
+.kx-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+    .kx-status.active {
+        border: 1px solid rgba(79, 209, 151, 0.35);
+        background: rgba(79, 209, 151, 0.10);
+    }
+
+    .kx-status.inactive {
+        border: 1px solid rgba(239, 106, 106, 0.35);
+        background: rgba(239, 106, 106, 0.10);
+    }
+
+/* ============================================================
+   MODALES
+============================================================ */
+
+.kx-modal {
+    width: min(620px, calc(100vw - 36px));
+    max-width: calc(100vw - 36px);
+    box-sizing: border-box;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.kx-modal-title {
+    margin-bottom: 22px;
+}
+
+    .kx-modal-title > span {
+        display: inline-block;
+        margin-bottom: 4px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+    }
+
+    .kx-modal-title h2 {
+        margin: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .kx-modal-title p {
+        margin: 6px 0 0;
+        overflow-wrap: anywhere;
+    }
+
+/* ============================================================
+   BACKUPS / BLOQUES CON RUTAS LARGAS
+============================================================ */
+
+.kx-backup-path,
+.kx-code,
+.kx-path,
+code,
+pre {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+/* ============================================================
+   IMÁGENES DE CONFIGURACIÓN
+============================================================ */
+
+.kx-config-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    gap: 18px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.kx-config-card,
+.kx-module-card {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+    .kx-config-card img,
+    .kx-module-card img,
+    .kx-config-image {
+        display: block;
+        width: 100%;
+        max-width: 220px;
+        height: 150px;
+        margin: 0 auto;
+        object-fit: contain;
+        object-position: center;
+    }
+
 .kx-image-container {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    max-width: 100%;
     min-width: 0;
+    max-width: 100%;
     overflow: hidden;
     padding: 12px;
-    box-sizing: border-box;
 }
-
-/* =========================================================
-   IMAGEN PRINCIPAL / BANNER
-========================================================= */
 
 .kx-config-hero img,
 .kx-config-banner img {
@@ -62,10 +637,6 @@ img {
     object-fit: contain;
 }
 
-/* =========================================================
-   LOGO
-========================================================= */
-
 .kx-config-logo,
 .kx-sidebar-logo img {
     width: auto;
@@ -74,32 +645,33 @@ img {
     object-fit: contain;
 }
 
-/* =========================================================
-   GRID
-========================================================= */
+/* ============================================================
+   RESPONSIVE - LAPTOP / TABLET GRANDE
+============================================================ */
 
-.kx-config-grid {
-    display: grid;
-    grid-template-columns: repeat( auto-fit, minmax(240px, 1fr) );
-    gap: 18px;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+@media (max-width: 1180px) {
+    :root {
+        --kx-config-gap: 18px;
+        --kx-config-card-padding: 21px;
+    }
+
+    .kx-settings-layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
-.kx-config-card,
-.kx-module-card {
-    min-width: 0;
-    max-width: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-}
+/* ============================================================
+   RESPONSIVE - TABLET
+============================================================ */
 
-/* =========================================================
-   TABLET
-========================================================= */
+@media (max-width: 980px) {
+    .kx-settings-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
 
-@media (max-width: 900px) {
+    .kx-table {
+        min-width: 720px;
+    }
 
     .kx-config-card img,
     .kx-module-card img,
@@ -115,11 +687,87 @@ img {
     }
 }
 
-/* =========================================================
-   MÓVIL
-========================================================= */
+/* ============================================================
+   RESPONSIVE - MÓVIL
+============================================================ */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
+    :root {
+        --kx-config-card-padding: 17px;
+        --kx-config-gap: 14px;
+    }
+
+    .kx-topbar {
+        margin-bottom: 20px;
+    }
+
+        .kx-topbar h1 {
+            font-size: clamp(1.55rem, 7vw, 2rem);
+        }
+
+    .kx-card-header {
+        gap: 11px;
+        margin-bottom: 18px;
+    }
+
+    .kx-card-icon {
+        flex-basis: 38px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .kx-option {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .kx-form-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .kx-btn-primary,
+    .kx-btn-secondary {
+        width: 100%;
+    }
+
+    .kx-summary-row strong {
+        max-width: 48%;
+    }
+
+    .kx-table {
+        min-width: 680px;
+    }
+}
+
+/* ============================================================
+   RESPONSIVE - MÓVIL PEQUEÑO
+============================================================ */
+
+@media (max-width: 480px) {
+    :root {
+        --kx-config-card-padding: 14px;
+    }
+
+    .kx-option {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .kx-switch {
+        align-self: flex-start;
+    }
+
+    .kx-summary-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+        .kx-summary-row strong {
+            max-width: 100%;
+            text-align: left;
+        }
 
     .kx-config-grid {
         grid-template-columns: 1fr;
@@ -128,14 +776,12 @@ img {
     .kx-config-card img,
     .kx-module-card img,
     .kx-config-image {
-        width: 100%;
         max-width: 160px;
         height: 110px;
     }
 
     .kx-config-hero img,
     .kx-config-banner img {
-        width: 100%;
         max-width: 300px;
         max-height: 190px;
     }

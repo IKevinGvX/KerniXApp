@@ -1,4 +1,1216 @@
 ﻿@page
 @model KerniX.Pages.Inventario.IndexModel
+
 @{
+    ViewData["Title"] = "Inventario";
+
+    decimal utilidad =
+        Math.Max(
+            0M,
+            Model.UtilidadPotencial
+        );
+
+    decimal valorMaximo =
+        Math.Max(
+            1M,
+            Math.Max(
+                Model.ValorInventarioCompra,
+                Model.ValorInventarioVenta
+            )
+        );
 }
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/inventario-index.css"
+      asp-append-version="true" />
+
+
+<div class="kx-inventory-page">
+
+    <main class="inv-shell">
+
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+
+        <section class="inv-hero">
+
+            <div class="inv-hero-main">
+
+                <div class="inv-hero-copy">
+
+                    <div class="inv-eyebrow">
+                        KERNIX · GESTIÓN DE INVENTARIO
+                    </div>
+
+                    <h1 class="inv-title">
+                        Inventario
+                        <strong>central</strong>
+                    </h1>
+
+                    <p class="inv-subtitle">
+                        Administra productos, existencias, movimientos,
+                        valorización y trazabilidad desde un único panel.
+                        El módulo integra entradas, salidas, transferencias,
+                        inventario físico, ajustes, mermas, devoluciones,
+                        reversas y Kardex.
+                    </p>
+
+                </div>
+
+
+                <div class="inv-hero-actions">
+
+                    <a href="/Inicio/Index"
+                       class="inv-btn">
+                        <span uk-icon="icon: arrow-left"></span>
+                        Inicio
+                    </a>
+
+                    <a href="/Inventario/Entradas/Nueva"
+                       class="inv-btn">
+                        <span uk-icon="icon: push"></span>
+                        Nueva entrada
+                    </a>
+
+                    <a href="/Inventario/Salidas/Nueva"
+                       class="inv-btn">
+                        <span uk-icon="icon: pull"></span>
+                        Nueva salida
+                    </a>
+
+                    <a href="/Inventario/Transferencias"
+                       class="inv-btn inv-btn-cyan">
+                        <span uk-icon="icon: move"></span>
+                        Transferir
+                    </a>
+
+                    <a href="/Inventario/Productos/Nuevo"
+                       class="inv-btn inv-btn-gold">
+                        <span uk-icon="icon: plus-circle"></span>
+                        Nuevo producto
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="inv-hero-status">
+
+                <div class="inv-status-dot"></div>
+
+                <div>
+                    <strong>
+                        Motor de stock centralizado
+                    </strong>
+
+                    <span>
+                        Empresa @Model.IdEmpresa ·
+                        Sucursal @Model.IdSucursal
+                    </span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ERROR
+             ===================================================== -->
+        @if (
+                    !string.IsNullOrWhiteSpace(
+                        Model.MensajeError
+                    )
+                )
+        {
+            <div class="inv-error">
+
+                <span uk-icon="icon: warning"></span>
+
+                <div>
+                    <strong>
+                        No fue posible cargar todo el dashboard.
+                    </strong>
+
+                    <p>
+                        @Model.MensajeError
+                    </p>
+                </div>
+
+            </div>
+        }
+
+
+        <!-- =====================================================
+             REGLA OPERATIVA
+             ===================================================== -->
+
+        <section class="inv-notice">
+
+            <div class="inv-notice-icon">
+                <span uk-icon="icon: lock"></span>
+            </div>
+
+            <div>
+
+                <strong>
+                    Trazabilidad protegida
+                </strong>
+
+                <p>
+                    El stock no debe editarse directamente.
+                    Toda variación debe provenir de una operación:
+                    entrada, salida, venta, transferencia, ajuste,
+                    merma, devolución o reversa. Así se conserva
+                    correctamente el Kardex.
+                </p>
+
+            </div>
+
+            <a href="/Inventario/Kardex"
+               class="inv-notice-link">
+                Ver Kardex
+                <span uk-icon="icon: arrow-right"></span>
+            </a>
+
+        </section>
+
+
+        <!-- =====================================================
+             KPI PRINCIPALES
+             ===================================================== -->
+
+        <section class="inv-kpis">
+
+            <article class="inv-kpi inv-kpi-gold">
+
+                <div class="inv-kpi-head">
+
+                    <span>
+                        Productos activos
+                    </span>
+
+                    <i uk-icon="icon: thumbnails"></i>
+
+                </div>
+
+                <strong class="inv-kpi-value">
+                    @Model.ProductosActivos
+                </strong>
+
+                <div class="inv-kpi-foot">
+                    @Model.TotalProductos registrados ·
+                    @Model.ProductosInactivos inactivos
+                </div>
+
+            </article>
+
+
+            <article class="inv-kpi inv-kpi-cyan">
+
+                <div class="inv-kpi-head">
+
+                    <span>
+                        Stock disponible
+                    </span>
+
+                    <i uk-icon="icon: database"></i>
+
+                </div>
+
+                <strong class="inv-kpi-value">
+                    @Model.StockDisponible.ToString("N2")
+                </strong>
+
+                <div class="inv-kpi-foot">
+                    @Model.StockReservado.ToString("N2")
+                    unidades reservadas
+                </div>
+
+            </article>
+
+
+            <article class="inv-kpi inv-kpi-red">
+
+                <div class="inv-kpi-head">
+
+                    <span>
+                        Alertas
+                    </span>
+
+                    <i uk-icon="icon: warning"></i>
+
+                </div>
+
+                <strong class="inv-kpi-value">
+                    @Model.AlertasStock
+                </strong>
+
+                <div class="inv-kpi-foot">
+                    @Model.ProductosSinStock sin stock ·
+                    @Model.ProductosBajoStock bajo mínimo
+                </div>
+
+            </article>
+
+
+            <article class="inv-kpi inv-kpi-green">
+
+                <div class="inv-kpi-head">
+
+                    <span>
+                        Almacenes
+                    </span>
+
+                    <i uk-icon="icon: location"></i>
+
+                </div>
+
+                <strong class="inv-kpi-value">
+                    @Model.TotalAlmacenes
+                </strong>
+
+                <div class="inv-kpi-foot">
+                    Ubicaciones registradas
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             ESTADÍSTICAS SECUNDARIAS
+             ===================================================== -->
+
+        <section class="inv-secondary-grid">
+
+            <article class="inv-secondary">
+
+                <span>
+                    Stock actual
+                </span>
+
+                <strong>
+                    @Model.StockActual.ToString("N2")
+                </strong>
+
+                <small>
+                    Existencia total
+                </small>
+
+            </article>
+
+
+            <article class="inv-secondary">
+
+                <span>
+                    Stock reservado
+                </span>
+
+                <strong>
+                    @Model.StockReservado.ToString("N2")
+                </strong>
+
+                <small>
+                    Cantidad comprometida
+                </small>
+
+            </article>
+
+
+            <article class="inv-secondary">
+
+                <span>
+                    Normal
+                </span>
+
+                <strong>
+                    @Model.ProductosNormales
+                </strong>
+
+                <small>
+                    Productos saludables
+                </small>
+
+            </article>
+
+
+            <article class="inv-secondary">
+
+                <span>
+                    Sobre stock
+                </span>
+
+                <strong>
+                    @Model.ProductosSobreStock
+                </strong>
+
+                <small>
+                    Sobre máximo
+                </small>
+
+            </article>
+
+
+            <article class="inv-secondary">
+
+                <span>
+                    Margen promedio
+                </span>
+
+                <strong>
+                    @Model.MargenPromedio.ToString("N2")%
+                </strong>
+
+                <small>
+                    Catálogo activo
+                </small>
+
+            </article>
+
+
+            <article class="inv-secondary">
+
+                <span>
+                    Utilidad potencial
+                </span>
+
+                <strong>
+                    S/ @utilidad.ToString("N2")
+                </strong>
+
+                <small>
+                    Venta - costo
+                </small>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             ANALÍTICA
+             ===================================================== -->
+
+        <section class="inv-analytics-grid">
+
+
+            <!-- SALUD DE STOCK -->
+
+            <article class="inv-card">
+
+                <header class="inv-card-head">
+
+                    <div>
+                        <span class="inv-card-kicker">
+                            STOCK
+                        </span>
+
+                        <h2>
+                            Salud del inventario
+                        </h2>
+
+                        <p>
+                            Distribución actual de productos.
+                        </p>
+                    </div>
+
+                    <span class="inv-chip">
+                        @Model.PorcentajeSaludable.ToString("N1")% normal
+                    </span>
+
+                </header>
+
+
+                <div class="inv-card-body">
+
+                    <div class="inv-health-list">
+
+                        <div class="inv-health-row">
+
+                            <div>
+                                <span class="inv-health-dot green"></span>
+                                Normal
+                            </div>
+
+                            <strong>
+                                @Model.ProductosNormales
+                            </strong>
+
+                        </div>
+
+
+                        <div class="inv-health-row">
+
+                            <div>
+                                <span class="inv-health-dot gold"></span>
+                                Bajo mínimo
+                            </div>
+
+                            <strong>
+                                @Model.ProductosBajoStock
+                            </strong>
+
+                        </div>
+
+
+                        <div class="inv-health-row">
+
+                            <div>
+                                <span class="inv-health-dot red"></span>
+                                Sin stock
+                            </div>
+
+                            <strong>
+                                @Model.ProductosSinStock
+                            </strong>
+
+                        </div>
+
+
+                        <div class="inv-health-row">
+
+                            <div>
+                                <span class="inv-health-dot violet"></span>
+                                Sobre stock
+                            </div>
+
+                            <strong>
+                                @Model.ProductosSobreStock
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="inv-stock-meter">
+
+                        <div class="inv-meter-label">
+
+                            <span>
+                                Disponible sobre stock actual
+                            </span>
+
+                            <strong>
+                                @Model.PorcentajeDisponible.ToString("N1")%
+                            </strong>
+
+                        </div>
+
+                        <progress class="inv-progress inv-progress-cyan"
+                                  max="100"
+                                  value="@Model.PorcentajeDisponible">
+                        </progress>
+
+
+                        <div class="inv-meter-label">
+
+                            <span>
+                                Reservado
+                            </span>
+
+                            <strong>
+                                @Model.PorcentajeReservado.ToString("N1")%
+                            </strong>
+
+                        </div>
+
+                        <progress class="inv-progress inv-progress-gold"
+                                  max="100"
+                                  value="@Model.PorcentajeReservado">
+                        </progress>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- VALORIZACIÓN -->
+
+            <article class="inv-card">
+
+                <header class="inv-card-head">
+
+                    <div>
+                        <span class="inv-card-kicker">
+                            VALORIZACIÓN
+                        </span>
+
+                        <h2>
+                            Costo vs. venta
+                        </h2>
+
+                        <p>
+                            Valorización basada en stock disponible.
+                        </p>
+                    </div>
+
+                    <span class="inv-chip gold">
+                        S/
+                    </span>
+
+                </header>
+
+
+                <div class="inv-card-body">
+
+                    <div class="inv-value-total">
+
+                        <span>
+                            Valor comercial estimado
+                        </span>
+
+                        <strong>
+                            S/ @Model.ValorInventarioVenta.ToString("N2")
+                        </strong>
+
+                    </div>
+
+
+                    <div class="inv-value-row">
+
+                        <div class="inv-value-label">
+
+                            <span>
+                                Costo
+                            </span>
+
+                            <strong>
+                                S/ @Model.ValorInventarioCompra.ToString("N2")
+                            </strong>
+
+                        </div>
+
+                        <progress class="inv-progress inv-progress-blue"
+                                  max="@valorMaximo"
+                                  value="@Model.ValorInventarioCompra">
+                        </progress>
+
+                    </div>
+
+
+                    <div class="inv-value-row">
+
+                        <div class="inv-value-label">
+
+                            <span>
+                                Venta
+                            </span>
+
+                            <strong>
+                                S/ @Model.ValorInventarioVenta.ToString("N2")
+                            </strong>
+
+                        </div>
+
+                        <progress class="inv-progress inv-progress-gold"
+                                  max="@valorMaximo"
+                                  value="@Model.ValorInventarioVenta">
+                        </progress>
+
+                    </div>
+
+
+                    <div class="inv-potential">
+
+                        <span>
+                            Utilidad potencial
+                        </span>
+
+                        <strong>
+                            S/ @utilidad.ToString("N2")
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- MAYOR STOCK -->
+
+            <article class="inv-card">
+
+                <header class="inv-card-head">
+
+                    <div>
+                        <span class="inv-card-kicker">
+                            DISPONIBILIDAD
+                        </span>
+
+                        <h2>
+                            Mayor stock
+                        </h2>
+
+                        <p>
+                            Productos con más unidades disponibles.
+                        </p>
+                    </div>
+
+                    <a href="/Inventario/Productos"
+                       class="inv-card-link">
+                        Ver productos
+                    </a>
+
+                </header>
+
+
+                <div class="inv-card-body inv-list-body">
+
+                    @if (
+                        Model.ProductosMayorStock.Count == 0
+                    )
+                    {
+                        <div class="inv-empty">
+                            No hay productos con stock disponible.
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (
+                            var producto
+                            in Model.ProductosMayorStock
+                        )
+                        {
+                            <a class="inv-product-row"
+                               href="/Inventario/Productos/Detalle?idProducto=@producto.IdProducto">
+
+                                <div>
+
+                                    <strong>
+                                        @producto.Nombre
+                                    </strong>
+
+                                    <span>
+                                        @producto.Codigo
+                                    </span>
+
+                                </div>
+
+                                <b>
+                                    @producto.StockDisponible.ToString("N2")
+                                </b>
+
+                            </a>
+                        }
+                    }
+
+                </div>
+
+            </article>
+
+
+            <!-- CRÍTICOS -->
+
+            <article class="inv-card inv-card-danger">
+
+                <header class="inv-card-head">
+
+                    <div>
+                        <span class="inv-card-kicker red">
+                            ALERTAS
+                        </span>
+
+                        <h2>
+                            Productos críticos
+                        </h2>
+
+                        <p>
+                            Requieren revisión de abastecimiento.
+                        </p>
+                    </div>
+
+                    <span class="inv-chip red">
+                        @Model.AlertasStock
+                    </span>
+
+                </header>
+
+
+                <div class="inv-card-body inv-list-body">
+
+                    @if (
+                        Model.ProductosCriticos.Count == 0
+                    )
+                    {
+                        <div class="inv-empty success">
+                            No existen productos críticos.
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (
+                            var producto
+                            in Model.ProductosCriticos
+                        )
+                        {
+                            <a class="inv-product-row"
+                               href="/Inventario/Productos/Detalle?idProducto=@producto.IdProducto">
+
+                                <div>
+
+                                    <strong>
+                                        @producto.Nombre
+                                    </strong>
+
+                                    <span>
+                                        @producto.Codigo
+                                    </span>
+
+                                </div>
+
+                                <div class="inv-product-status">
+
+                                    <b>
+                                        @producto.StockDisponible.ToString("N2")
+                                    </b>
+
+                                    <small class="@Model.ObtenerClaseStock(producto.EstadoStock)">
+                                        @Model.FormatearEstadoStock(producto.EstadoStock)
+                                    </small>
+
+                                </div>
+
+                            </a>
+                        }
+                    }
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             OPERACIONES
+             ===================================================== -->
+
+        <section class="inv-section">
+
+            <div class="inv-section-head">
+
+                <div>
+
+                    <span class="inv-section-kicker">
+                        OPERACIONES
+                    </span>
+
+                    <h2>
+                        Procesos de inventario
+                    </h2>
+
+                    <p>
+                        Cada proceso genera movimientos trazables
+                        sin modificar directamente el stock.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="inv-modules">
+
+
+                <a href="/Inventario/Productos"
+                   class="inv-module inv-module-gold">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: thumbnails"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Productos
+                        </strong>
+
+                        <p>
+                            Catálogo, precios, mínimos,
+                            máximos y disponibilidad.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Entradas"
+                   class="inv-module">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: push"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Entradas
+                        </strong>
+
+                        <p>
+                            Ingreso manual controlado
+                            de existencias.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Salidas"
+                   class="inv-module">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: pull"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Salidas
+                        </strong>
+
+                        <p>
+                            Salida manual separada
+                            de la salida por venta.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Transferencias"
+                   class="inv-module inv-module-cyan">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: move"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Transferencias
+                        </strong>
+
+                        <p>
+                            Borrador, aprobación,
+                            despacho y recepción.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/InventarioFisico"
+                   class="inv-module">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: check"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Inventario físico
+                        </strong>
+
+                        <p>
+                            Conteo, diferencias y
+                            regularización controlada.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Ajustes"
+                   class="inv-module">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: settings"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Ajustes
+                        </strong>
+
+                        <p>
+                            Ajustes positivos y negativos
+                            con motivo obligatorio.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Mermas"
+                   class="inv-module inv-module-red">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: warning"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Mermas
+                        </strong>
+
+                        <p>
+                            Daño, vencimiento, pérdida,
+                            robo o destrucción.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Devoluciones"
+                   class="inv-module">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: refresh"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Devoluciones
+                        </strong>
+
+                        <p>
+                            Cliente y proveedor con
+                            documento de origen.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Reversiones"
+                   class="inv-module inv-module-violet">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: history"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Reversiones
+                        </strong>
+
+                        <p>
+                            Revierte sin borrar el
+                            movimiento original.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Kardex"
+                   class="inv-module inv-module-gold">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: list"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Kardex
+                        </strong>
+
+                        <p>
+                            Stock anterior/nuevo,
+                            origen y reversas.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+
+                <a href="/Inventario/Alertas"
+                   class="inv-module">
+
+                    <div class="inv-module-icon">
+                        <span uk-icon="icon: bell"></span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Alertas de stock
+                        </strong>
+
+                        <p>
+                            Mínimos, agotados,
+                            sobrestock y seguimiento.
+                        </p>
+                    </div>
+
+                    <span class="inv-module-arrow"
+                          uk-icon="icon: arrow-right">
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             TOP MARGEN
+             ===================================================== -->
+
+        <section class="inv-card inv-margin-card">
+
+            <header class="inv-card-head">
+
+                <div>
+
+                    <span class="inv-card-kicker">
+                        RENTABILIDAD
+                    </span>
+
+                    <h2>
+                        Productos con mayor margen
+                    </h2>
+
+                    <p>
+                        Comparación de precio de compra y venta.
+                    </p>
+
+                </div>
+
+                <div class="inv-price-summary">
+
+                    <span>
+                        Compra prom.
+                        <strong>
+                            S/ @Model.PrecioCompraPromedio.ToString("N2")
+                        </strong>
+                    </span>
+
+                    <span>
+                        Venta prom.
+                        <strong>
+                            S/ @Model.PrecioVentaPromedio.ToString("N2")
+                        </strong>
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <div class="inv-card-body">
+
+                <div class="inv-margin-grid">
+
+                    @if (
+                        Model.ProductosMayorMargen.Count == 0
+                    )
+                    {
+                        <div class="inv-empty">
+                            No hay información de margen disponible.
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (
+                            var producto
+                            in Model.ProductosMayorMargen
+                        )
+                        {
+                            <a href="/Inventario/Productos/Detalle?idProducto=@producto.IdProducto"
+                               class="inv-margin-item">
+
+                                <div>
+
+                                    <strong>
+                                        @producto.Nombre
+                                    </strong>
+
+                                    <span>
+                                        @producto.Codigo
+                                    </span>
+
+                                </div>
+
+                                <div class="inv-margin-prices">
+
+                                    <small>
+                                        S/ @producto.PrecioCompra.ToString("N2")
+                                        →
+                                        S/ @producto.PrecioVenta.ToString("N2")
+                                    </small>
+
+                                    <b>
+                                        @producto.MargenPorcentaje.ToString("N2")%
+                                    </b>
+
+                                </div>
+
+                            </a>
+                        }
+                    }
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

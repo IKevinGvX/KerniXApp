@@ -1,0 +1,128 @@
+﻿@page "/Inventario/InventarioFisico/Detalle"
+@model KerniX.Pages.Inventario.InventarioFisico.DetalleModel
+@{
+    ViewData["Title"] = "Detalle Inventario Físico";
+    var d = Model.Documento;
+    string estado = d?.Estado?.Trim().ToLowerInvariant() ?? "";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+<link rel="stylesheet" href="~/css/Inventario/inventario-operaciones.css" asp-append-version="true" />
+
+<div class="io-page">
+    <div class="io-shell">
+        <section class="io-hero"><div><div class="io-eyebrow">INVENTARIO FÍSICO · DETALLE</div><h1 class="io-title">@(d?.NumeroInventario ?? "Inventario")</h1><p class="io-subtitle">@(d is null ? "" : $"{d.Almacen} · {d.Estado}")</p></div><div class="io-actions"><a href="/Inventario/InventarioFisico" class="io-btn">← Volver</a><a href="/Inventario/Kardex" class="io-btn io-btn-cyan">Kardex</a></div></section>
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeExito))
+        {
+            <div class="io-alert ok">@Model.MensajeExito</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="io-alert error">@Model.MensajeError</div>
+        }
+
+        @if (d is not null)
+        {
+            <section class="io-kpis">
+                <article class="io-kpi"><span>Productos</span><strong>@d.Detalles.Count</strong><small>Snapshot</small></article>
+                <article class="io-kpi"><span>Pendientes</span><strong>@Model.Pendientes</strong><small>Sin conteo</small></article>
+                <article class="io-kpi"><span>Con diferencia</span><strong>@Model.Diferencias</strong><small>Requieren ajuste</small></article>
+                <article class="io-kpi"><span>Diferencia neta</span><strong>@Model.DiferenciaNeta.ToString("N2")</strong><small>Total neto</small></article>
+            </section>
+
+            <section class="io-card">
+                <header class="io-card-head">
+                    <div><div class="io-kicker">ESTADO</div><h2>@d.Estado</h2><p>@d.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</p></div><div class="io-actions">
+                    @if (estado == "en_conteo")
+                    {
+                        <form method="post" action="?handler=Accion">
+                            @Html.AntiForgeryToken()<input type="hidden" name="id" value="@d.IdInventarioFisico" /><button class="io-btn io-btn-gold" name="accion" value="cerrar" type="submit" data-confirm="¿Cerrar el conteo?">Cerrar conteo</button>
+                        </form>
+                    }
+                    @if (estado == "cerrado")
+                    {
+                        <form method="post" action="?handler=Accion">
+                            @Html.AntiForgeryToken()<input type="hidden" name="id" value="@d.IdInventarioFisico" /><button class="io-btn io-btn-green" name="accion" value="aplicar" type="submit" data-confirm="¿Aplicar diferencias al stock?">Aplicar diferencias</button>
+                        </form>
+                    }
+                </div>
+            </header>
+            <div class="io-card-body">
+                @if (estado == "en_conteo")
+                {
+                    <div class="io-info-note">Registra la cantidad física encontrada. El stock sistema es el snapshot tomado al iniciar.</div>
+                }
+                @if (estado == "cerrado")
+                {
+                    <div class="io-danger-note">El conteo está cerrado. Al aplicar se crearán ajustes positivos o negativos.</div>
+                }
+                @if (estado == "aplicado")
+                {
+                    <div class="io-info-note">Documento aplicado. Los movimientos generados están disponibles en el Kardex.</div>
+                }
+            </div>
+        </section>
+
+        <section class="io-card">
+            <header class="io-card-head"><div><div class="io-kicker">CONTEO</div><h2>Productos</h2></div></header>
+            <div class="io-table-wrap">
+                <table class="io-table">
+                    <thead><tr><th>Producto</th><th>Stock sistema</th><th>Conteo físico</th><th>Diferencia</th><th>Movimiento ajuste</th></tr></thead>
+                    <tbody>
+                        @foreach (var x in d.Detalles)
+                        {
+                            <tr>
+                                <td><strong>@x.Producto</strong><div class="io-muted">@x.CodigoProducto</div></td>
+                                <td>@x.StockSistema.ToString("N2")</td>
+                                <td>
+                                    @if (estado == "en_conteo")
+                                    {
+                                        <form method="post" action="?handler=Conteo" class="io-row-actions">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@d.IdInventarioFisico" /><input type="hidden" name="idProducto" value="@x.IdProducto" />
+                                            <input class="io-input io-count-input" type="number" name="cantidadContada" min="0" step="0.0001" value="@x.CantidadContada?.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture)" required />
+                                            <button class="io-btn io-btn-cyan" type="submit">Guardar</button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+
+                                        @(x.CantidadContada?.ToString("N2") ?? "—")
+                                    }
+                                </td>
+                                <td>
+                                    @if (!x.Diferencia.HasValue)
+                                    {
+                                        <span class="io-muted">Pendiente</span>
+                                    }
+                                    else if (x.Diferencia.Value > 0)
+                                    {
+
+                                        <span class="io-pos">+@x.Diferencia.Value.ToString("N2")</span>
+                                    }
+                                    else if (x.Diferencia.Value < 0)
+                                    {
+
+                                        <span class="io-neg">@x.Diferencia.Value.ToString("N2")</span>
+                                    }
+                                    else
+                                    {
+
+                                        <span class="io-pos">0.00</span>
+                                    }
+                                </td>
+                                <td>@(x.IdMovimientoAjuste?.ToString() ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
+<script src="~/js/Inventario/inventario-operaciones.js" asp-append-version="true"></script>

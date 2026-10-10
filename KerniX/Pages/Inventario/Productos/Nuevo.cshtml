@@ -1,0 +1,895 @@
+﻿@page "/Inventario/Productos/Nuevo"
+@model KerniX.Pages.Inventario.Productos.NuevoModel
+
+@{
+    ViewData["Title"] = "Nuevo Producto";
+
+    var errores = ViewData.ModelState
+        .Where(x => x.Value?.Errors.Count > 0)
+        .SelectMany(x => x.Value!.Errors.Select(e =>
+            !string.IsNullOrWhiteSpace(e.ErrorMessage)
+                ? e.ErrorMessage
+                : e.Exception?.Message ?? "Dato inválido."))
+        .Distinct()
+        .ToList();
+}
+
+<style>
+    .kx-product-page {
+        --bg: #020b18;
+        --panel: #06182b;
+        --panel2: #08213b;
+        --border: rgba(70,145,220,.28);
+        --border-gold: rgba(255,184,0,.42);
+        --gold: #ffb800;
+        --gold2: #ffdc69;
+        --cyan: #44d2ff;
+        --green: #47d7ac;
+        --red: #ff7187;
+        --text: #eef7ff;
+        --muted: #9db8d5;
+        min-height: 100vh;
+        padding: 26px;
+        color: var(--text);
+        background: radial-gradient(circle at 92% 0%, rgba(0,157,255,.14), transparent 28%), radial-gradient(circle at 5% 0%, rgba(255,184,0,.08), transparent 23%), linear-gradient(145deg,#020b18,#031426);
+    }
+
+        .kx-product-page *,
+        .kx-product-page *::before,
+        .kx-product-page *::after {
+            box-sizing: border-box;
+        }
+
+    .kx-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 20px;
+    }
+
+    .kx-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .kx-logo-box {
+        width: 66px;
+        height: 66px;
+        display: grid;
+        place-items: center;
+        border-radius: 18px;
+        color: var(--gold);
+        font-size: 32px;
+        border: 1px solid var(--border-gold);
+        background: rgba(255,184,0,.07);
+        box-shadow: 0 0 28px rgba(255,184,0,.10);
+    }
+
+    .kx-breadcrumb {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+        font-size: 14px;
+        color: var(--muted);
+    }
+
+        .kx-breadcrumb a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+    .kx-title {
+        margin: 0;
+        color: #fff;
+        font-size: 34px;
+        line-height: 1.1;
+        font-weight: 850;
+    }
+
+    .kx-subtitle {
+        margin: 7px 0 0;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.55;
+    }
+
+    .kx-actions, .kx-footer-actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .kx-btn {
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 18px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        text-decoration: none !important;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .kx-btn-secondary {
+        color: #eaf6ff;
+        border-color: var(--border);
+        background: linear-gradient(180deg,#0b2946,#06182c);
+    }
+
+    .kx-btn-primary {
+        color: #171100;
+        border-color: #ffe486;
+        background: linear-gradient(180deg,#ffdc69,#eaa400);
+        box-shadow: 0 10px 26px rgba(255,184,0,.16);
+    }
+
+    .kx-alert {
+        margin-bottom: 16px;
+        padding: 15px 17px;
+        border-radius: 13px;
+        border: 1px solid rgba(255,113,135,.40);
+        background: rgba(255,113,135,.08);
+        color: #ffc1cb;
+        line-height: 1.55;
+    }
+
+        .kx-alert strong {
+            display: block;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+    .kx-errors {
+        margin: 9px 0 0;
+        padding-left: 22px;
+    }
+
+    .kx-notice {
+        display: flex;
+        gap: 13px;
+        align-items: flex-start;
+        margin-bottom: 17px;
+        padding: 16px 18px;
+        border: 1px solid rgba(0,157,255,.30);
+        border-radius: 14px;
+        background: linear-gradient(90deg,rgba(0,157,255,.08),rgba(255,184,0,.03));
+    }
+
+    .kx-notice-icon {
+        width: 35px;
+        height: 35px;
+        flex: 0 0 35px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        color: var(--cyan);
+        border: 1px solid rgba(68,210,255,.28);
+        background: rgba(68,210,255,.07);
+    }
+
+    .kx-notice strong {
+        display: block;
+        color: #fff;
+        margin-bottom: 4px;
+    }
+
+    .kx-notice p {
+        margin: 0;
+        color: #bed2e7;
+        line-height: 1.6;
+    }
+
+    .kx-layout {
+        display: grid;
+        grid-template-columns: minmax(0,2fr) minmax(300px,.75fr);
+        gap: 16px;
+    }
+
+    .kx-main, .kx-sidebar {
+        display: grid;
+        align-content: start;
+        gap: 16px;
+    }
+
+    .kx-card {
+        border-radius: 17px;
+        border: 1px solid var(--border);
+        background: linear-gradient(145deg,rgba(7,29,52,.98),rgba(4,19,36,.98));
+        box-shadow: 0 15px 36px rgba(0,0,0,.22);
+    }
+
+    .kx-card-gold {
+        border-color: var(--border-gold);
+    }
+
+    .kx-section {
+        padding: 20px;
+    }
+
+    .kx-section-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(72,132,194,.18);
+    }
+
+    .kx-section-title {
+        margin: 0;
+        color: #fff;
+        font-size: 21px;
+        font-weight: 850;
+    }
+
+    .kx-section-desc {
+        margin: 5px 0 0;
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: 15px;
+    }
+
+    .kx-number {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 9px;
+        color: var(--gold);
+        border: 1px solid var(--border-gold);
+        background: rgba(255,184,0,.07);
+        font-weight: 850;
+    }
+
+    .kx-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 15px;
+    }
+
+    .kx-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 15px;
+    }
+
+    .kx-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+        .kx-field.full {
+            grid-column: 1 / -1;
+        }
+
+    .kx-label {
+        color: #deedff;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .kx-required {
+        color: var(--gold);
+    }
+
+    .kx-help {
+        color: #789bc1;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .kx-input, .kx-select, .kx-textarea {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgba(68,137,207,.32);
+        outline: none;
+        color: #fff;
+        background: linear-gradient(180deg,#06192d,#041425);
+        font-size: 16px;
+    }
+
+    .kx-input, .kx-select {
+        min-height: 50px;
+        padding: 0 14px;
+    }
+
+    .kx-textarea {
+        min-height: 120px;
+        padding: 14px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+        .kx-input:focus, .kx-select:focus, .kx-textarea:focus {
+            border-color: rgba(0,157,255,.8);
+            box-shadow: 0 0 0 4px rgba(0,157,255,.10);
+        }
+
+    .kx-select option {
+        background: #06182b;
+        color: #fff;
+    }
+
+    .kx-price-preview {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .kx-price-box {
+        padding: 13px;
+        border-radius: 12px;
+        border: 1px solid rgba(63,127,193,.19);
+        background: rgba(2,17,32,.50);
+    }
+
+        .kx-price-box small {
+            display: block;
+            color: #7ea6ce;
+            margin-bottom: 5px;
+        }
+
+        .kx-price-box strong {
+            color: #fff;
+            font-size: 22px;
+        }
+
+            .kx-price-box strong.gold {
+                color: var(--gold2);
+            }
+
+            .kx-price-box strong.green {
+                color: var(--green);
+            }
+
+    .kx-switch-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 16px;
+        border-radius: 13px;
+        border: 1px solid rgba(59,129,199,.22);
+        background: rgba(3,20,37,.58);
+        margin-bottom: 15px;
+    }
+
+    .kx-switch-title {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 850;
+    }
+
+    .kx-switch-desc {
+        color: var(--muted);
+        margin-top: 4px;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .kx-check {
+        width: 24px;
+        height: 24px;
+        accent-color: #009dff;
+    }
+
+    .kx-summary {
+        padding: 18px;
+    }
+
+    .kx-summary-title {
+        color: #fff;
+        font-size: 19px;
+        font-weight: 850;
+        margin-bottom: 14px;
+    }
+
+    .kx-summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(65,121,178,.13);
+    }
+
+        .kx-summary-row span:first-child {
+            color: #91b0d0;
+        }
+
+        .kx-summary-row strong {
+            color: #fff;
+            text-align: right;
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    .kx-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        margin-top: 17px;
+        padding: 17px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: rgba(5,22,40,.90);
+    }
+
+        .kx-footer strong {
+            display: block;
+            color: #fff;
+        }
+
+        .kx-footer span {
+            display: block;
+            color: var(--muted);
+            margin-top: 3px;
+            font-size: 13px;
+        }
+
+    @@media(max-width:1050px) {
+        .kx-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-sidebar {
+            grid-template-columns: repeat(2,1fr);
+        }
+    }
+
+    @@media(max-width:760px) {
+        .kx-product-page {
+            padding: 14px;
+        }
+
+        .kx-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .kx-grid-2, .kx-grid-3, .kx-price-preview, .kx-sidebar {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-footer {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .kx-footer-actions .kx-btn {
+            flex: 1;
+        }
+
+        .kx-title {
+            font-size: 27px;
+        }
+    }
+</style>
+
+<div class="kx-product-page">
+
+    <header class="kx-header">
+        <div class="kx-header-left">
+            <div class="kx-logo-box">＋</div>
+            <div>
+                <div class="kx-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>›</span>
+                    <a href="/Inventario/Productos">Productos</a>
+                    <span>›</span>
+                    <span>Nuevo</span>
+                </div>
+                <h1 class="kx-title">Nuevo Producto</h1>
+                <p class="kx-subtitle">Registra un nuevo producto y configura sus parámetros de inventario.</p>
+            </div>
+        </div>
+
+        <div class="kx-actions">
+            <a href="/Inventario" class="kx-btn kx-btn-secondary">← Inventario</a>
+            <a href="/Inventario/Productos" class="kx-btn kx-btn-secondary">← Productos</a>
+        </div>
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(Model.MensajeError) || errores.Count > 0)
+    {
+        <div class="kx-alert">
+            <strong>No se pudo completar el registro.</strong>
+
+            @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+            {
+                <div>@Model.MensajeError</div>
+            }
+
+            @if (errores.Count > 0)
+            {
+                <ul class="kx-errors">
+                    @foreach (var error in errores)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+
+    <div class="kx-notice">
+        <div class="kx-notice-icon">ⓘ</div>
+        <div>
+            <strong>Registro de producto</strong>
+            <p>
+                Esta pantalla crea la información maestra del producto.
+                El stock físico inicial debe registrarse después mediante una entrada de inventario.
+            </p>
+        </div>
+    </div>
+
+    <!-- UN SOLO FORMULARIO REAL. TODOS LOS CAMPOS ESTÁN DENTRO. -->
+    <form method="post"
+          action="/Inventario/Productos/Nuevo"
+          id="formProducto"
+          autocomplete="off">
+
+        @Html.AntiForgeryToken()
+
+        <div class="kx-layout">
+
+            <main class="kx-main">
+
+                <section class="kx-card kx-card-gold kx-section">
+                    <div class="kx-section-head">
+                        <div>
+                            <h2 class="kx-section-title">Datos generales</h2>
+                            <p class="kx-section-desc">Identificación principal del producto.</p>
+                        </div>
+                        <div class="kx-number">01</div>
+                    </div>
+
+                    <div class="kx-grid-2">
+                        <div class="kx-field">
+                            <label for="codigoProducto" class="kx-label">Código <span class="kx-required">*</span></label>
+                            <input id="codigoProducto"
+                                   name="Input.Codigo"
+                                   value="@Model.Input.Codigo"
+                                   class="kx-input"
+                                   maxlength="100"
+                                   required
+                                   placeholder="Ej. PROD-TEST-001" />
+                            <div class="kx-help">Código interno único.</div>
+                        </div>
+
+                        <div class="kx-field">
+                            <label for="codigoBarras" class="kx-label">Código de barras</label>
+                            <input id="codigoBarras"
+                                   name="Input.CodigoBarras"
+                                   value="@Model.Input.CodigoBarras"
+                                   class="kx-input"
+                                   maxlength="200"
+                                   placeholder="Ej. 7751234567890" />
+                            <div class="kx-help">Opcional: EAN, UPC u otro identificador.</div>
+                        </div>
+
+                        <div class="kx-field full">
+                            <label for="nombreProducto" class="kx-label">Nombre del producto <span class="kx-required">*</span></label>
+                            <input id="nombreProducto"
+                                   name="Input.Nombre"
+                                   value="@Model.Input.Nombre"
+                                   class="kx-input"
+                                   maxlength="400"
+                                   required
+                                   placeholder="Ej. Mouse Inalámbrico Logitech M185" />
+                        </div>
+
+                        <div class="kx-field full">
+                            <label for="descripcionProducto" class="kx-label">Descripción</label>
+                            <textarea id="descripcionProducto"
+                                      name="Input.Descripcion"
+                                      class="kx-textarea"
+                                      maxlength="1000"
+                                      placeholder="Descripción comercial y características...">@Model.Input.Descripcion</textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="kx-card kx-section">
+                    <div class="kx-section-head">
+                        <div>
+                            <h2 class="kx-section-title">Clasificación</h2>
+                            <p class="kx-section-desc">Categoría, marca y unidad de medida.</p>
+                        </div>
+                        <div class="kx-number">02</div>
+                    </div>
+
+                    <div class="kx-grid-3">
+                        <div class="kx-field">
+                            <label for="categoriaProducto" class="kx-label">Categoría <span class="kx-required">*</span></label>
+                            <select id="categoriaProducto"
+                                    name="Input.IdCategoriaProducto"
+                                    class="kx-select"
+                                    required>
+                                <option value="0">Seleccionar categoría</option>
+                                @foreach (var categoria in Model.Catalogos.Categorias)
+                                {
+                                    if (Model.Input.IdCategoriaProducto == categoria.Id)
+                                    {
+                                        <option value="@categoria.Id" selected>@categoria.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@categoria.Id">@categoria.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="kx-field">
+                            <label for="marcaProducto" class="kx-label">Marca</label>
+                            <select id="marcaProducto"
+                                    name="Input.IdMarca"
+                                    class="kx-select">
+                                <option value="">Sin marca</option>
+                                @foreach (var marca in Model.Catalogos.Marcas)
+                                {
+                                    if (Model.Input.IdMarca == marca.Id)
+                                    {
+                                        <option value="@marca.Id" selected>@marca.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@marca.Id">@marca.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="kx-field">
+                            <label for="unidadProducto" class="kx-label">Unidad de medida <span class="kx-required">*</span></label>
+                            <select id="unidadProducto"
+                                    name="Input.IdUnidadMedida"
+                                    class="kx-select"
+                                    required>
+                                <option value="0">Seleccionar unidad</option>
+                                @foreach (var unidad in Model.Catalogos.UnidadesMedida)
+                                {
+                                    if (Model.Input.IdUnidadMedida == unidad.Id)
+                                    {
+                                        <option value="@unidad.Id" selected>@unidad.Nombre</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@unidad.Id">@unidad.Nombre</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="kx-card kx-section">
+                    <div class="kx-section-head">
+                        <div>
+                            <h2 class="kx-section-title">Precios y margen</h2>
+                            <p class="kx-section-desc">Costo y precio comercial del producto.</p>
+                        </div>
+                        <div class="kx-number">03</div>
+                    </div>
+
+                    <div class="kx-grid-2">
+                        <div class="kx-field">
+                            <label for="precioCompra" class="kx-label">Precio de compra</label>
+                            <input id="precioCompra"
+                                   name="Input.PrecioCompra"
+                                   value="@Model.Input.PrecioCompra.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="kx-input" />
+                        </div>
+
+                        <div class="kx-field">
+                            <label for="precioVenta" class="kx-label">Precio de venta</label>
+                            <input id="precioVenta"
+                                   name="Input.PrecioVenta"
+                                   value="@Model.Input.PrecioVenta.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                   type="number"
+                                   min="0"
+                                   step="0.01"
+                                   class="kx-input" />
+                        </div>
+                    </div>
+
+                    <div class="kx-price-preview">
+                        <div class="kx-price-box"><small>Compra</small><strong id="previewCompra">S/ 0.00</strong></div>
+                        <div class="kx-price-box"><small>Ganancia por unidad</small><strong id="previewGanancia" class="gold">S/ 0.00</strong></div>
+                        <div class="kx-price-box"><small>Margen estimado</small><strong id="previewMargen" class="green">0.00%</strong></div>
+                    </div>
+                </section>
+
+                <section class="kx-card kx-section">
+                    <div class="kx-section-head">
+                        <div>
+                            <h2 class="kx-section-title">Control de inventario</h2>
+                            <p class="kx-section-desc">Niveles mínimo y máximo para alertas.</p>
+                        </div>
+                        <div class="kx-number">04</div>
+                    </div>
+
+                    <div class="kx-switch-card">
+                        <div>
+                            <div class="kx-switch-title">Controlar existencias</div>
+                            <div class="kx-switch-desc">Activa validaciones y alertas de stock.</div>
+                        </div>
+
+                        <input type="hidden" name="Input.ControlaStock" value="false" />
+                        <input id="controlaStock"
+                               class="kx-check"
+                               type="checkbox"
+                               name="Input.ControlaStock"
+                               value="true"
+                        @(Model.Input.ControlaStock ? "checked" : null) />
+                    </div>
+
+                    <div id="bloqueStock" class="kx-grid-2">
+                        <div class="kx-field">
+                            <label for="stockMinimo" class="kx-label">Stock mínimo</label>
+                            <input id="stockMinimo"
+                                   name="Input.StockMinimo"
+                                   value="@Model.Input.StockMinimo.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture)"
+                                   type="number"
+                                   min="0"
+                                   step="0.0001"
+                                   class="kx-input" />
+                            <div class="kx-help">Nivel desde el que KerniX puede alertar reposición.</div>
+                        </div>
+
+                        <div class="kx-field">
+                            <label for="stockMaximo" class="kx-label">Stock máximo</label>
+                            <input id="stockMaximo"
+                                   name="Input.StockMaximo"
+                                   value="@(Model.Input.StockMaximo?.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture) ?? "")"
+                                   type="number"
+                                   min="0"
+                                   step="0.0001"
+                                   class="kx-input"
+                                   placeholder="Opcional" />
+                            <div class="kx-help">Permite detectar sobrestock.</div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <aside class="kx-sidebar">
+                <section class="kx-card kx-card-gold kx-summary">
+                    <div class="kx-summary-title">Vista previa</div>
+                    <div class="kx-summary-row"><span>Producto</span><strong id="resumenNombre">Sin definir</strong></div>
+                    <div class="kx-summary-row"><span>Código</span><strong id="resumenCodigo">-</strong></div>
+                    <div class="kx-summary-row"><span>Categoría</span><strong id="resumenCategoria">-</strong></div>
+                    <div class="kx-summary-row"><span>Marca</span><strong id="resumenMarca">Sin marca</strong></div>
+                    <div class="kx-summary-row"><span>Unidad</span><strong id="resumenUnidad">-</strong></div>
+                    <div class="kx-summary-row"><span>Precio venta</span><strong id="resumenPrecio">S/ 0.00</strong></div>
+                </section>
+
+                <section class="kx-card kx-summary">
+                    <div class="kx-summary-title">Producto de prueba</div>
+                    <div style="color:#afc7df;line-height:1.7;font-size:14px;">
+                        Código: <b style="color:#fff;">PROD-TEST-001</b><br />
+                        Nombre: <b style="color:#fff;">Mouse Inalámbrico Logitech M185</b><br />
+                        Compra: <b style="color:#fff;">35.00</b><br />
+                        Venta: <b style="color:#fff;">55.00</b><br />
+                        Mínimo: <b style="color:#fff;">5</b><br />
+                        Máximo: <b style="color:#fff;">30</b>
+                    </div>
+                </section>
+            </aside>
+        </div>
+
+        <div class="kx-footer">
+            <div>
+                <strong>Confirma la información antes de guardar</strong>
+                <span>El stock inicial se registra después mediante una entrada de inventario.</span>
+            </div>
+
+            <div class="kx-footer-actions">
+                <a href="/Inventario/Productos" class="kx-btn kx-btn-secondary">Cancelar</a>
+                <button type="submit" id="btnGuardarProducto" class="kx-btn kx-btn-primary">✓ Registrar Producto</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+    (() => {
+        "use strict";
+
+        const byId = id => document.getElementById(id);
+        const codigo = byId("codigoProducto");
+        const nombre = byId("nombreProducto");
+        const categoria = byId("categoriaProducto");
+        const marca = byId("marcaProducto");
+        const unidad = byId("unidadProducto");
+        const precioCompra = byId("precioCompra");
+        const precioVenta = byId("precioVenta");
+        const controlaStock = byId("controlaStock");
+        const stockMinimo = byId("stockMinimo");
+        const stockMaximo = byId("stockMaximo");
+        const form = byId("formProducto");
+        const btnGuardar = byId("btnGuardarProducto");
+
+        function num(v) {
+            const n = Number.parseFloat(v);
+            return Number.isFinite(n) ? n : 0;
+        }
+
+        function money(v) {
+            return "S/ " + num(v).toLocaleString("es-PE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function selectedText(select, fallback = "-") {
+            if (!select || select.selectedIndex < 0) return fallback;
+            const op = select.options[select.selectedIndex];
+            if (!op || !op.value || op.value === "0") return fallback;
+            return op.textContent?.trim() || fallback;
+        }
+
+        function refresh() {
+            const compra = num(precioCompra?.value);
+            const venta = num(precioVenta?.value);
+            const ganancia = venta - compra;
+            const margen = compra > 0 ? (ganancia / compra) * 100 : 0;
+
+            byId("previewCompra").textContent = money(compra);
+            byId("previewGanancia").textContent = money(ganancia);
+            byId("previewMargen").textContent = margen.toLocaleString("es-PE", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + "%";
+
+            byId("resumenNombre").textContent = nombre?.value?.trim() || "Sin definir";
+            byId("resumenCodigo").textContent = codigo?.value?.trim() || "-";
+            byId("resumenCategoria").textContent = selectedText(categoria);
+            byId("resumenMarca").textContent = selectedText(marca, "Sin marca");
+            byId("resumenUnidad").textContent = selectedText(unidad);
+            byId("resumenPrecio").textContent = money(venta);
+
+            const activo = controlaStock?.checked ?? false;
+            if (stockMinimo) stockMinimo.disabled = !activo;
+            if (stockMaximo) stockMaximo.disabled = !activo;
+        }
+
+        [codigo, nombre, categoria, marca, unidad, precioCompra, precioVenta, controlaStock, stockMinimo, stockMaximo]
+            .filter(Boolean)
+            .forEach(el => {
+                el.addEventListener("input", refresh);
+                el.addEventListener("change", refresh);
+            });
+
+        form?.addEventListener("submit", () => {
+            const data = new FormData(form);
+            console.log("[KerniX] Campos a enviar:");
+            for (const [key, value] of data.entries()) {
+                console.log(key, value);
+            }
+
+            if (btnGuardar) {
+                btnGuardar.disabled = true;
+                btnGuardar.textContent = "Registrando...";
+            }
+        });
+
+        refresh();
+    })();
+</script>

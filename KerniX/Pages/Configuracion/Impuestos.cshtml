@@ -7,7 +7,6 @@
 }
 
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
@@ -21,22 +20,930 @@
         @ViewData["Title"] - KerniX
     </title>
 
+
+    <!-- ============================================= -->
+    <!-- UIKIT -->
+    <!-- ============================================= -->
+
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
-    <link rel="stylesheet"
-          href="~/css/configuracion.css"
-          asp-append-version="true" />
 
-    <link rel="stylesheet"
-          href="~/css/general.css"
-          asp-append-version="true" />
+    <style>
+
+            /* ==========================================================
+                       VARIABLES
+                    ========================================================== */
+
+            :root {
+                --kx-bg: #050d17;
+                --kx-sidebar: #07131f;
+                --kx-card: #0b1b2b;
+                --kx-card-soft: #0f2236;
+                --kx-border: rgba( 120, 160, 190, .18 );
+                --kx-gold: #e3b72f;
+                --kx-gold-soft: rgba( 227, 183, 47, .12 );
+                --kx-blue: #3f9fe8;
+                --kx-text: #f4f7fb;
+                --kx-muted: #8fa2b5;
+                --kx-success: #4fd39a;
+                --kx-danger: #ff6c6c;
+                --kx-sidebar-width: 230px;
+            }
+
+
+
+            /* ==========================================================
+                       RESET
+                    ========================================================== */
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+
+            html,
+            body {
+                margin: 0;
+                min-height: 100%;
+                background: var(--kx-bg);
+                color: var(--kx-text);
+                font-family: "Segoe UI", Arial, sans-serif;
+            }
+
+
+            body {
+                overflow-x: hidden;
+            }
+
+
+            a {
+                text-decoration: none !important;
+            }
+
+
+
+            /* ==========================================================
+                       ESTRUCTURA GENERAL
+                    ========================================================== */
+
+            .kx-app {
+                min-height: 100vh;
+                display: grid;
+                grid-template-columns: var(--kx-sidebar-width) minmax( 0, 1fr );
+                background: radial-gradient( circle at 90% 0%, rgba( 63, 159, 232, .08 ), transparent 34% ), radial-gradient( circle at 30% 0%, rgba( 227, 183, 47, .05 ), transparent 30% ), var(--kx-bg);
+            }
+
+
+
+            /* ==========================================================
+                       SIDEBAR
+                    ========================================================== */
+
+            .kx-sidebar {
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                padding: 18px 14px;
+                border-right: 1px solid rgba( 255, 255, 255, .06 );
+                background: linear-gradient( 180deg, #06101c, #071522 );
+                overflow-y: auto;
+                z-index: 20;
+            }
+
+
+            .kx-logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 4px 6px 18px;
+                border-bottom: 1px solid rgba( 255, 255, 255, .07 );
+            }
+
+
+            .kx-logo-icon {
+                width: 38px;
+                height: 38px;
+                display: grid;
+                place-items: center;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 900;
+                color: #08111c;
+                background: linear-gradient( 135deg, var(--kx-gold), #f5d46a );
+            }
+
+
+            .kx-logo strong {
+                display: block;
+                color: white;
+                font-size: 17px;
+            }
+
+
+            .kx-logo small {
+                display: block;
+                margin-top: 3px;
+                color: #6f8397;
+                font-size: 9px;
+            }
+
+
+
+            /* ==========================================================
+                       MENÚ
+                    ========================================================== */
+
+            .kx-nav {
+                display: grid;
+                gap: 7px;
+                margin-top: 18px;
+            }
+
+
+                .kx-nav a {
+                    min-height: 42px;
+                    display: flex;
+                    align-items: center;
+                    gap: 11px;
+                    padding: 0 12px;
+                    border-radius: 11px;
+                    color: #aebccb;
+                    font-size: 13px;
+                    font-weight: 700;
+                    transition: .2s ease;
+                }
+
+
+                    .kx-nav a:hover {
+                        color: white;
+                        background: rgba( 255, 255, 255, .04 );
+                    }
+
+
+                    .kx-nav a.active {
+                        color: white;
+                        border: 1px solid rgba( 227, 183, 47, .65 );
+                        background: linear-gradient( 90deg, rgba( 227, 183, 47, .12 ), rgba( 63, 159, 232, .05 ) );
+                    }
+
+
+                        .kx-nav a.active
+                        [uk-icon] {
+                            color: var(--kx-gold);
+                        }
+
+
+
+            /* ==========================================================
+                       MAIN
+                    ========================================================== */
+
+            .kx-main {
+                min-width: 0;
+                padding: 28px;
+            }
+
+
+            .kx-container {
+                width: 100%;
+                max-width: 1500px;
+                margin: 0 auto;
+            }
+
+
+
+            /* ==========================================================
+                       HEADER
+                    ========================================================== */
+
+            .kx-header {
+                position: relative;
+                overflow: hidden;
+                padding: 26px 28px;
+                margin-bottom: 22px;
+                border: 1px solid var(--kx-border);
+                border-radius: 20px;
+                background: linear-gradient( 135deg, rgba( 227, 183, 47, .055 ), transparent 40% ), linear-gradient( 120deg, rgba( 63, 159, 232, .08 ), transparent 65% ), rgba( 8, 22, 36, .88 );
+            }
+
+
+                .kx-header::after {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    width: 100%;
+                    height: 1px;
+                    background: linear-gradient( 90deg, var(--kx-gold), rgba( 227, 183, 47, .1 ), var(--kx-blue) );
+                }
+
+
+            .kx-back {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: #8fa4b8;
+                font-size: 12px;
+                font-weight: 700;
+            }
+
+
+                .kx-back:hover {
+                    color: white;
+                }
+
+
+            .kx-header h1 {
+                margin: 12px 0 5px;
+                color: white;
+                font-size: clamp( 27px, 3vw, 42px );
+                font-weight: 800;
+            }
+
+
+            .kx-header p {
+                margin: 0;
+                color: var(--kx-muted);
+                font-size: 14px;
+            }
+
+
+            .kx-header-badge {
+                position: absolute;
+                right: 24px;
+                top: 24px;
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                min-height: 36px;
+                padding: 0 13px;
+                border-radius: 999px;
+                border: 1px solid rgba( 63, 159, 232, .25 );
+                background: rgba( 63, 159, 232, .07 );
+                color: #bde8ff;
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+
+
+            /* ==========================================================
+                       ALERTAS
+                    ========================================================== */
+
+            .kx-alert {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 18px;
+                padding: 13px 15px;
+                border-radius: 13px;
+                font-size: 13px;
+            }
+
+
+                .kx-alert.success {
+                    border: 1px solid rgba( 79, 211, 154, .26 );
+                    background: rgba( 79, 211, 154, .08 );
+                    color: #baf4d9;
+                }
+
+
+                .kx-alert.error {
+                    border: 1px solid rgba( 255, 108, 108, .26 );
+                    background: rgba( 255, 108, 108, .08 );
+                    color: #ffc3c3;
+                }
+
+
+
+            /* ==========================================================
+                       GRID PRINCIPAL
+                    ========================================================== */
+
+            .kx-grid {
+                display: grid;
+                grid-template-columns: minmax( 0, .85fr ) minmax( 0, 1.15fr );
+                gap: 20px;
+                align-items: start;
+            }
+
+
+
+            /* ==========================================================
+                       CARDS
+                    ========================================================== */
+
+            .kx-card {
+                min-width: 0;
+                overflow: hidden;
+                border: 1px solid var(--kx-border);
+                border-radius: 18px;
+                background: linear-gradient( 135deg, rgba( 255, 255, 255, .015 ), transparent 45% ), var(--kx-card);
+            }
+
+
+            .kx-card-header {
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 20px 21px 15px;
+                border-bottom: 1px solid rgba( 255, 255, 255, .05 );
+            }
+
+
+            .kx-card-icon {
+                flex: 0 0 42px;
+                width: 42px;
+                height: 42px;
+                display: grid;
+                place-items: center;
+                border-radius: 13px;
+                color: var(--kx-gold);
+                border: 1px solid rgba( 227, 183, 47, .25 );
+                background: rgba( 227, 183, 47, .06 );
+            }
+
+
+            .kx-card-header h2 {
+                margin: 0;
+                color: white;
+                font-size: 17px;
+                font-weight: 800;
+            }
+
+
+            .kx-card-header p {
+                margin: 3px 0 0;
+                color: #7f93a6;
+                font-size: 12px;
+            }
+
+
+            .kx-card-body {
+                padding: 20px 21px 22px;
+            }
+
+
+
+            /* ==========================================================
+                       RESUMEN
+                    ========================================================== */
+
+            .kx-stat-grid {
+                display: grid;
+                grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+                gap: 12px;
+            }
+
+
+            .kx-stat {
+                min-width: 0;
+                padding: 15px;
+                border: 1px solid rgba( 255, 255, 255, .055 );
+                border-radius: 14px;
+                background: rgba( 255, 255, 255, .018 );
+            }
+
+
+                .kx-stat span {
+                    display: block;
+                    color: #8195a8;
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                }
+
+
+                .kx-stat strong {
+                    display: block;
+                    margin-top: 5px;
+                    color: white;
+                    font-size: 24px;
+                }
+
+
+
+            /* ==========================================================
+                       FORMULARIO
+                    ========================================================== */
+
+            .kx-form-grid {
+                display: grid;
+                grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+                gap: 14px;
+            }
+
+
+            .kx-field {
+                min-width: 0;
+            }
+
+
+                .kx-field.full {
+                    grid-column: 1 / -1;
+                }
+
+
+                .kx-field label {
+                    display: block;
+                    margin-bottom: 7px;
+                    color: #b9c6d3;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+
+
+            .kx-input {
+                width: 100%;
+                min-width: 0;
+                height: 44px;
+                padding: 0 13px;
+                color: white;
+                border: 1px solid rgba( 132, 157, 180, .2 );
+                border-radius: 11px;
+                outline: none;
+                background: rgba( 3, 12, 21, .72 );
+                font-size: 13px;
+                transition: .2s ease;
+            }
+
+
+                .kx-input:focus {
+                    border-color: rgba( 227, 183, 47, .7 );
+                    box-shadow: 0 0 0 3px rgba( 227, 183, 47, .08 );
+                }
+
+
+            .kx-help {
+                display: block;
+                margin-top: 6px;
+                color: #73879b;
+                font-size: 11px;
+            }
+
+
+
+            /* ==========================================================
+                       SWITCH
+                    ========================================================== */
+
+            .kx-switch-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                margin-top: 16px;
+                padding: 14px 15px;
+                border: 1px solid rgba( 255, 255, 255, .055 );
+                border-radius: 13px;
+                background: rgba( 255, 255, 255, .018 );
+            }
+
+
+                .kx-switch-row strong {
+                    display: block;
+                    color: white;
+                    font-size: 13px;
+                }
+
+
+                .kx-switch-row small {
+                    display: block;
+                    margin-top: 3px;
+                    color: #7d90a3;
+                    font-size: 11px;
+                }
+
+
+            .kx-switch input {
+                width: 42px;
+                height: 23px;
+                appearance: none;
+                position: relative;
+                border: 1px solid rgba( 132, 157, 180, .28 );
+                border-radius: 999px;
+                background: #182737;
+                cursor: pointer;
+                transition: .2s ease;
+            }
+
+
+                .kx-switch input::before {
+                    content: "";
+                    position: absolute;
+                    top: 3px;
+                    left: 3px;
+                    width: 15px;
+                    height: 15px;
+                    border-radius: 50%;
+                    background: #c4ced8;
+                    transition: .2s ease;
+                }
+
+
+                .kx-switch input:checked {
+                    border-color: rgba( 227, 183, 47, .65 );
+                    background: rgba( 227, 183, 47, .45 );
+                }
+
+
+                    .kx-switch input:checked::before {
+                        left: 22px;
+                        background: white;
+                    }
+
+
+
+            /* ==========================================================
+                       BOTONES
+                    ========================================================== */
+
+            .kx-actions {
+                display: flex;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 18px;
+            }
+
+
+            .kx-btn {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                padding: 0 16px;
+                border-radius: 11px;
+                border: 1px solid transparent;
+                font-size: 12px;
+                font-weight: 800;
+                cursor: pointer;
+                transition: .2s ease;
+            }
+
+
+            .kx-btn-primary {
+                color: #08111c;
+                background: linear-gradient( 135deg, var(--kx-gold), #f2cf65 );
+            }
+
+
+                .kx-btn-primary:hover {
+                    filter: brightness( 1.06 );
+                }
+
+
+            .kx-btn-secondary {
+                color: #c7d2dd;
+                border-color: rgba( 132, 157, 180, .22 );
+                background: rgba( 255, 255, 255, .025 );
+            }
+
+
+                .kx-btn-secondary:hover {
+                    color: white;
+                    border-color: rgba( 227, 183, 47, .35 );
+                }
+
+
+
+            /* ==========================================================
+                       TABLA
+                    ========================================================== */
+
+            .kx-table-card {
+                margin-top: 20px;
+            }
+
+
+            .kx-table-wrap {
+                width: 100%;
+                overflow-x: auto;
+            }
+
+
+            .kx-table {
+                width: 100%;
+                min-width: 900px;
+                border-collapse: collapse;
+            }
+
+
+                .kx-table th {
+                    padding: 12px 14px;
+                    color: #7e93a8;
+                    font-size: 10px;
+                    font-weight: 900;
+                    text-transform: uppercase;
+                    text-align: left;
+                    border-bottom: 1px solid rgba( 255, 255, 255, .06 );
+                    background: rgba( 255, 255, 255, .018 );
+                }
+
+
+                .kx-table td {
+                    padding: 13px 14px;
+                    color: #c8d2dc;
+                    font-size: 12px;
+                    border-bottom: 1px solid rgba( 255, 255, 255, .045 );
+                }
+
+
+                .kx-table tbody tr:hover td {
+                    background: rgba( 63, 159, 232, .035 );
+                }
+
+
+                .kx-table td strong {
+                    color: white;
+                }
+
+
+            .kx-empty {
+                text-align: center;
+                padding: 35px !important;
+                color: #7b8da0 !important;
+            }
+
+
+
+            /* ==========================================================
+                       ESTADOS
+                    ========================================================== */
+
+            .kx-status {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 27px;
+                padding: 0 9px;
+                border-radius: 999px;
+                font-size: 10px;
+                font-weight: 900;
+            }
+
+
+                .kx-status.active {
+                    color: #b8f6d9;
+                    border: 1px solid rgba( 79, 211, 154, .25 );
+                    background: rgba( 79, 211, 154, .08 );
+                }
+
+
+                .kx-status.inactive {
+                    color: #ffc2c2;
+                    border: 1px solid rgba( 255, 108, 108, .22 );
+                    background: rgba( 255, 108, 108, .08 );
+                }
+
+
+
+            /* ==========================================================
+                       ACCIONES TABLA
+                    ========================================================== */
+
+            .kx-row-actions {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 7px;
+            }
+
+
+                .kx-row-actions form {
+                    margin: 0;
+                }
+
+
+            .kx-mini-btn {
+                min-height: 32px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 10px;
+                border: 1px solid rgba( 132, 157, 180, .18 );
+                border-radius: 9px;
+                color: #b8c5d1;
+                background: rgba( 255, 255, 255, .025 );
+                font-size: 10px;
+                font-weight: 800;
+                cursor: pointer;
+            }
+
+
+                .kx-mini-btn:hover {
+                    color: white;
+                    border-color: rgba( 227, 183, 47, .35 );
+                }
+
+
+                .kx-mini-btn.primary {
+                    color: #08111c;
+                    border-color: transparent;
+                    background: var(--kx-gold);
+                }
+
+
+
+            /* ==========================================================
+                       MODALES
+                    ========================================================== */
+
+            .uk-modal {
+                background: rgba( 1, 8, 14, .78 );
+                backdrop-filter: blur( 7px );
+            }
+
+
+            .kx-modal {
+                width: min( 620px, calc( 100vw - 30px ) );
+                padding: 0;
+                overflow: hidden;
+                border: 1px solid rgba( 132, 157, 180, .2 );
+                border-radius: 18px;
+                color: var(--kx-text);
+                background: #0a1928;
+            }
+
+
+            .kx-modal-header {
+                padding: 22px 24px 16px;
+                border-bottom: 1px solid rgba( 255, 255, 255, .055 );
+            }
+
+
+                .kx-modal-header span {
+                    color: var(--kx-gold);
+                    font-size: 10px;
+                    font-weight: 900;
+                }
+
+
+                .kx-modal-header h2 {
+                    margin: 5px 0 0;
+                    color: white;
+                    font-size: 23px;
+                }
+
+
+                .kx-modal-header p {
+                    margin: 5px 0 0;
+                    color: #8093a5;
+                    font-size: 12px;
+                }
+
+
+            .kx-modal-body {
+                padding: 20px 24px 24px;
+            }
+
+
+
+            /* ==========================================================
+                       RESPONSIVE
+                    ========================================================== */
+
+            @@media (
+                        max-width:
+                        1100px
+                    ) {
+
+                :root {
+                    --kx-sidebar-width: 205px;
+                }
+
+
+                .kx-main {
+                    padding: 22px;
+                }
+
+
+                .kx-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+
+            @@media (
+                        max-width:
+                        760px
+                    ) {
+
+                .kx-app {
+                    display: block;
+                }
+
+
+                .kx-sidebar {
+                    position: relative;
+                    height: auto;
+                    border-right: none;
+                    border-bottom: 1px solid rgba( 255, 255, 255, .06 );
+                }
+
+
+                .kx-nav {
+                    display: flex;
+                    overflow-x: auto;
+                    gap: 7px;
+                }
+
+
+                    .kx-nav a {
+                        flex: 0 0 auto;
+                        white-space: nowrap;
+                    }
+
+
+                .kx-main {
+                    padding: 14px;
+                }
+
+
+                .kx-header {
+                    padding: 20px 18px;
+                }
+
+
+                .kx-header-badge {
+                    position: static;
+                    width: fit-content;
+                    margin-top: 14px;
+                }
+
+
+                .kx-stat-grid,
+                .kx-form-grid {
+                    grid-template-columns: 1fr;
+                }
+
+
+                .kx-field.full {
+                    grid-column: auto;
+                }
+
+
+                .kx-actions {
+                    flex-direction: column-reverse;
+                    align-items: stretch;
+                }
+
+
+                .kx-btn {
+                    width: 100%;
+                }
+            }
+
+
+            @@media (
+                        max-width:
+                        460px
+                    ) {
+
+                .kx-main {
+                    padding: 10px;
+                }
+
+
+                .kx-header,
+                .kx-card {
+                    border-radius: 14px;
+                }
+
+
+                .kx-card-header {
+                    padding: 16px 15px 13px;
+                }
+
+
+                .kx-card-body {
+                    padding: 16px 15px 18px;
+                }
+
+
+                .kx-stat-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+    </style>
 
 </head>
 
-<body class="kx-body">
+
+<body>
 
     <div class="kx-app">
+
+
+        <!-- ===================================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================================== -->
 
         <aside class="kx-sidebar">
 
@@ -64,43 +971,72 @@
             <nav class="kx-nav">
 
                 <a href="/Inicio/Index">
-                    <span uk-icon="icon: home"></span>
-                    <span>Inicio</span>
+
+                    <span uk-icon="icon: home; ratio: .85">
+                    </span>
+
+                    Inicio
+
                 </a>
+
 
                 <a href="/Ventas/Index">
-                    <span uk-icon="icon: cart"></span>
-                    <span>Ventas</span>
+
+                    <span uk-icon="icon: cart; ratio: .85">
+                    </span>
+
+                    Ventas
+
                 </a>
+
 
                 <a href="/Inventario/Index">
-                    <span uk-icon="icon: database"></span>
-                    <span>Inventario</span>
+
+                    <span uk-icon="icon: database; ratio: .85">
+                    </span>
+
+                    Inventario
+
                 </a>
+
 
                 <a href="/Productos/Index">
-                    <span uk-icon="icon: thumbnails"></span>
-                    <span>Productos</span>
+
+                    <span uk-icon="icon: grid; ratio: .85">
+                    </span>
+
+                    Productos
+
                 </a>
+
 
                 <a href="/Clientes/Index">
-                    <span uk-icon="icon: users"></span>
-                    <span>Clientes</span>
+
+                    <span uk-icon="icon: users; ratio: .85">
+                    </span>
+
+                    Clientes
+
                 </a>
 
+
                 <a href="/IA/Index">
-                    <span uk-icon="icon: bolt"></span>
-                    <span>KerniX IA</span>
+
+                    <span uk-icon="icon: bolt; ratio: .85">
+                    </span>
+
+                    KerniX IA
+
                 </a>
+
 
                 <a href="/Configuracion/Index1"
                    class="active">
 
-                    <span uk-icon="icon: settings"></span>
-
-                    <span>
-                        Configuración
+                    <span uk-icon="icon: settings; ratio: .85">
                     </span>
+
+                    Configuración
 
                 </a>
 
@@ -109,16 +1045,27 @@
         </aside>
 
 
-        <main class="kx-content">
 
-            <header class="kx-topbar">
+        <!-- ===================================================== -->
+        <!-- MAIN -->
+        <!-- ===================================================== -->
 
-                <div>
+        <main class="kx-main">
+
+            <div class="kx-container">
+
+
+                <!-- ================================================= -->
+                <!-- HEADER -->
+                <!-- ================================================= -->
+
+                <header class="kx-header">
 
                     <a href="/Configuracion/Index1"
                        class="kx-back">
 
-                        <span uk-icon="icon: arrow-left"></span>
+                        <span uk-icon="icon: arrow-left; ratio: .8">
+                        </span>
 
                         Volver a configuración
 
@@ -132,773 +1079,980 @@
 
                     <p>
                         Administra porcentajes,
-                        vigencias y estados tributarios.
+                        vigencias y estados tributarios
+                        desde un único panel.
                     </p>
 
-                </div>
 
-            </header>
+                    <div class="kx-header-badge">
 
-
-            @if (!string.IsNullOrWhiteSpace(
-                Model.MensajeExito))
-            {
-                <div class="kx-alert-success">
-
-                    <span uk-icon="icon: check"></span>
-
-                    @Model.MensajeExito
-
-                </div>
-            }
-
-
-            @if (!string.IsNullOrWhiteSpace(
-                Model.MensajeError))
-            {
-                <div class="kx-alert-error">
-
-                    <span uk-icon="icon: warning"></span>
-
-                    @Model.MensajeError
-
-                </div>
-            }
-
-
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="kx-alert-error">
-
-                    <div asp-validation-summary="All">
-                    </div>
-
-                </div>
-            }
-
-
-            <div class="kx-settings-layout">
-
-                <!-- ============================================= -->
-                <!-- RESUMEN -->
-                <!-- ============================================= -->
-
-                <section class="kx-card">
-
-                    <div class="kx-card-header">
-
-                        <div class="kx-card-icon">
-
-                            <span uk-icon="icon: info">
-                            </span>
-
-                        </div>
-
-                        <div>
-
-                            <h2>
-                                Resumen
-                            </h2>
-
-                            <p>
-                                Estado tributario de la empresa.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
-                        <span>
-                            Empresa
+                        <span uk-icon="icon: settings; ratio: .75">
                         </span>
 
-                        <strong>
-                            #@Model.IdEmpresa
-                        </strong>
+                        Configuración fiscal
 
                     </div>
 
+                </header>
 
-                    <div class="kx-summary-row">
 
-                        <span>
-                            Registrados
+
+                <!-- ================================================= -->
+                <!-- MENSAJES -->
+                <!-- ================================================= -->
+                @if (!string.IsNullOrWhiteSpace(
+                                    Model.MensajeExito))
+                {
+                    <div class="kx-alert success">
+
+                        <span uk-icon="icon: check">
                         </span>
 
-                        <strong>
-                            @Model.Impuestos.Count
-                        </strong>
-
-                    </div>
-
-
-                    <div class="kx-summary-row">
-
                         <span>
-                            Activos
+                            @Model.MensajeExito
                         </span>
 
-                        <strong>
-                            @Model.Impuestos.Count(x => x.Estado)
-                        </strong>
-
                     </div>
+                }
 
 
-                    <div class="kx-summary-row">
+                @if (!string.IsNullOrWhiteSpace(
+                    Model.MensajeError))
+                {
+                    <div class="kx-alert error">
 
-                        <span>
-                            Vigentes hoy
+                        <span uk-icon="icon: warning">
                         </span>
 
-                        <strong>
-                            @Model.Impuestos.Count(
-                                x =>
-                                    x.Estado &&
-                                    x.FechaInicio.Date <= DateTime.Today &&
-                                    (!x.FechaFin.HasValue ||
-                                     x.FechaFin.Value.Date >= DateTime.Today))
-                        </strong>
+                        <span>
+                            @Model.MensajeError
+                        </span>
 
                     </div>
+                }
 
-                </section>
 
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="kx-alert error">
 
-                <!-- ============================================= -->
-                <!-- CREAR -->
-                <!-- ============================================= -->
+                        <span uk-icon="icon: warning">
+                        </span>
 
-                <section class="kx-card">
-
-                    <div class="kx-card-header">
-
-                        <div class="kx-card-icon">
-
-                            <span uk-icon="icon: plus">
-                            </span>
-
-                        </div>
-
-                        <div>
-
-                            <h2>
-                                Nuevo impuesto
-                            </h2>
-
-                            <p>
-                                Registra una nueva configuración tributaria.
-                            </p>
-
+                        <div asp-validation-summary="All">
                         </div>
 
                     </div>
+                }
 
 
-                    <form method="post"
-                          action="/Configuracion/Impuestos?handler=Crear">
 
-                        @Html.AntiForgeryToken()
+                <!-- ================================================= -->
+                <!-- GRID -->
+                <!-- ================================================= -->
 
-
-                        <div class="kx-form-group">
-
-                            <label>
-                                Código
-                            </label>
-
-                            <input type="text"
-                                   name="NuevoCodigo"
-                                   maxlength="50"
-                                   placeholder="Ej. IGV"
-                                   class="kx-input"
-                                   required />
-
-                        </div>
+                <div class="kx-grid">
 
 
-                        <div class="kx-form-group">
+                    <!-- ============================================= -->
+                    <!-- RESUMEN -->
+                    <!-- ============================================= -->
 
-                            <label>
-                                Nombre
-                            </label>
+                    <section class="kx-card">
 
-                            <input type="text"
-                                   name="NuevoNombre"
-                                   maxlength="200"
-                                   placeholder="Impuesto General a las Ventas"
-                                   class="kx-input"
-                                   required />
+                        <div class="kx-card-header">
 
-                        </div>
+                            <div class="kx-card-icon">
 
-
-                        <div class="kx-form-group">
-
-                            <label>
-                                Porcentaje
-                            </label>
-
-                            <input type="number"
-                                   name="NuevoPorcentaje"
-                                   min="0"
-                                   max="100"
-                                   step="0.01"
-                                   value="18"
-                                   class="kx-input"
-                                   required />
-
-                        </div>
-
-
-                        <div class="kx-form-group">
-
-                            <label>
-                                Fecha inicio
-                            </label>
-
-                            <input type="date"
-                                   name="NuevaFechaInicio"
-                                   value="@DateTime.Today.ToString("yyyy-MM-dd")"
-                                   class="kx-input"
-                                   required />
-
-                        </div>
-
-
-                        <div class="kx-form-group">
-
-                            <label>
-                                Fecha fin
-                            </label>
-
-                            <input type="date"
-                                   name="NuevaFechaFin"
-                                   class="kx-input" />
-
-                            <small class="kx-help">
-                                Déjalo vacío si no tiene fecha de finalización.
-                            </small>
-
-                        </div>
-
-
-                        <div class="kx-option">
-
-                            <div>
-
-                                <strong>
-                                    Estado activo
-                                </strong>
-
-                                <small>
-                                    El impuesto estará disponible para utilizarse.
-                                </small>
+                                <span uk-icon="icon: info">
+                                </span>
 
                             </div>
 
 
-                            <label class="kx-switch">
+                            <div>
 
-                                <input type="checkbox"
-                                       name="NuevoEstado"
-                                       value="true"
-                                       checked />
+                                <h2>
+                                    Resumen tributario
+                                </h2>
 
-                                <input type="hidden"
-                                       name="NuevoEstado"
-                                       value="false" />
+                                <p>
+                                    Estado actual de los impuestos.
+                                </p>
 
-                                <span class="kx-slider"></span>
-
-                            </label>
+                            </div>
 
                         </div>
 
 
-                        <div class="kx-form-actions">
+                        <div class="kx-card-body">
 
-                            <button type="submit"
-                                    class="kx-btn-primary">
+                            <div class="kx-stat-grid">
 
-                                <span uk-icon="icon: plus"></span>
 
-                                Crear impuesto
+                                <div class="kx-stat">
 
-                            </button>
+                                    <span>
+                                        Empresa
+                                    </span>
+
+                                    <strong>
+                                        #@Model.IdEmpresa
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-stat">
+
+                                    <span>
+                                        Registrados
+                                    </span>
+
+                                    <strong>
+                                        @Model.Impuestos.Count
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-stat">
+
+                                    <span>
+                                        Activos
+                                    </span>
+
+                                    <strong>
+                                        @Model.Impuestos.Count(
+                                            x => x.Estado
+                                        )
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="kx-stat">
+
+                                    <span>
+                                        Vigentes hoy
+                                    </span>
+
+                                    <strong>
+
+                                        @Model.Impuestos.Count(
+                                            x =>
+                                                x.Estado &&
+                                                x.FechaInicio.Date
+                                                    <= DateTime.Today &&
+                                                (
+                                                    !x.FechaFin.HasValue ||
+                                                    x.FechaFin.Value.Date
+                                                        >= DateTime.Today
+                                                )
+                                        )
+
+                                    </strong>
+
+                                </div>
+
+
+                            </div>
 
                         </div>
 
-                    </form>
-
-                </section>
-
-            </div>
+                    </section>
 
 
-            <!-- ================================================= -->
-            <!-- TABLA -->
-            <!-- ================================================= -->
 
-            <section class="kx-card"
-                     style="margin-top:22px;">
+                    <!-- ============================================= -->
+                    <!-- NUEVO IMPUESTO -->
+                    <!-- ============================================= -->
 
-                <div class="kx-card-header">
+                    <section class="kx-card">
 
-                    <div class="kx-card-icon">
+                        <div class="kx-card-header">
 
-                        <span uk-icon="icon: list">
-                        </span>
+                            <div class="kx-card-icon">
 
-                    </div>
+                                <span uk-icon="icon: plus">
+                                </span>
 
-                    <div>
+                            </div>
 
-                        <h2>
-                            Impuestos configurados
-                        </h2>
 
-                        <p>
-                            Vigencias y porcentajes registrados.
-                        </p>
+                            <div>
 
-                    </div>
+                                <h2>
+                                    Nuevo impuesto
+                                </h2>
+
+                                <p>
+                                    Registra una nueva configuración tributaria.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="kx-card-body">
+
+                            <form method="post"
+                                  action="/Configuracion/Impuestos?handler=Crear">
+
+                                @Html.AntiForgeryToken()
+
+
+                                <div class="kx-form-grid">
+
+
+                                    <div class="kx-field">
+
+                                        <label>
+                                            Código
+                                        </label>
+
+                                        <input type="text"
+                                               name="NuevoCodigo"
+                                               maxlength="50"
+                                               placeholder="Ej. IGV"
+                                               class="kx-input"
+                                               required />
+
+                                    </div>
+
+
+
+                                    <div class="kx-field">
+
+                                        <label>
+                                            Porcentaje
+                                        </label>
+
+                                        <input type="number"
+                                               name="NuevoPorcentaje"
+                                               min="0"
+                                               max="100"
+                                               step="0.01"
+                                               value="18"
+                                               class="kx-input"
+                                               required />
+
+                                    </div>
+
+
+
+                                    <div class="kx-field full">
+
+                                        <label>
+                                            Nombre
+                                        </label>
+
+                                        <input type="text"
+                                               name="NuevoNombre"
+                                               maxlength="200"
+                                               placeholder="Impuesto General a las Ventas"
+                                               class="kx-input"
+                                               required />
+
+                                    </div>
+
+
+
+                                    <div class="kx-field">
+
+                                        <label>
+                                            Fecha inicio
+                                        </label>
+
+                                        <input type="date"
+                                               name="NuevaFechaInicio"
+                                               value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                               class="kx-input"
+                                               required />
+
+                                    </div>
+
+
+
+                                    <div class="kx-field">
+
+                                        <label>
+                                            Fecha fin
+                                        </label>
+
+                                        <input type="date"
+                                               name="NuevaFechaFin"
+                                               class="kx-input" />
+
+                                        <small class="kx-help">
+
+                                            Déjalo vacío si no tiene
+                                            fecha final.
+
+                                        </small>
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="kx-switch-row">
+
+                                    <div>
+
+                                        <strong>
+                                            Estado activo
+                                        </strong>
+
+                                        <small>
+                                            El impuesto estará disponible
+                                            para utilizarse.
+                                        </small>
+
+                                    </div>
+
+
+                                    <label class="kx-switch">
+
+                                        <input type="checkbox"
+                                               name="NuevoEstado"
+                                               value="true"
+                                               checked />
+
+                                    </label>
+
+
+                                    <input type="hidden"
+                                           name="NuevoEstado"
+                                           value="false" />
+
+                                </div>
+
+
+
+                                <div class="kx-actions">
+
+                                    <button type="submit"
+                                            class="kx-btn kx-btn-primary">
+
+                                        <span uk-icon="icon: plus; ratio: .8">
+                                        </span>
+
+                                        Crear impuesto
+
+                                    </button>
+
+                                </div>
+
+
+                            </form>
+
+                        </div>
+
+                    </section>
+
 
                 </div>
 
 
-                <div class="kx-table-wrap">
 
-                    <table class="kx-table">
+                <!-- ================================================= -->
+                <!-- TABLA -->
+                <!-- ================================================= -->
 
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Código
-                                </th>
-
-                                <th>
-                                    Nombre
-                                </th>
-
-                                <th>
-                                    %
-                                </th>
-
-                                <th>
-                                    Inicio
-                                </th>
-
-                                <th>
-                                    Fin
-                                </th>
-
-                                <th>
-                                    Estado
-                                </th>
-
-                                <th>
-                                    Acciones
-                                </th>
-
-                            </tr>
-
-                        </thead>
+                <section class="kx-card kx-table-card">
 
 
-                        <tbody>
+                    <div class="kx-card-header">
 
-                            @if (Model.Impuestos.Count == 0)
-                            {
+                        <div class="kx-card-icon">
+
+                            <span uk-icon="icon: list">
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <h2>
+                                Impuestos configurados
+                            </h2>
+
+                            <p>
+                                Vigencias,
+                                porcentajes y estados registrados.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="kx-table-wrap">
+
+                        <table class="kx-table">
+
+
+                            <thead>
+
                                 <tr>
 
-                                    <td colspan="7"
-                                        class="kx-empty">
+                                    <th>
+                                        Código
+                                    </th>
 
-                                        No existen impuestos configurados.
+                                    <th>
+                                        Nombre
+                                    </th>
 
-                                    </td>
+                                    <th>
+                                        %
+                                    </th>
+
+                                    <th>
+                                        Inicio
+                                    </th>
+
+                                    <th>
+                                        Fin
+                                    </th>
+
+                                    <th>
+                                        Estado
+                                    </th>
+
+                                    <th>
+                                        Acciones
+                                    </th>
 
                                 </tr>
-                            }
-                            else
-                            {
-                                @foreach (var impuesto in Model.Impuestos)
-                                {
-                                    string modalEditar =
-                                        $"modal-impuesto-{impuesto.IdImpuesto}";
 
-                                    string modalCerrar =
-                                        $"modal-cerrar-{impuesto.IdImpuesto}";
+                            </thead>
+
+
+
+                            <tbody>
+
+
+                                @if (Model.Impuestos.Count == 0)
+                                {
 
                                     <tr>
 
-                                        <td>
-                                            <strong>
-                                                @impuesto.Codigo
-                                            </strong>
-                                        </td>
+                                        <td colspan="7"
+                                            class="kx-empty">
 
-                                        <td>
-                                            @impuesto.Nombre
-                                        </td>
-
-                                        <td>
-                                            @impuesto.Porcentaje.ToString("0.##") %
-                                        </td>
-
-                                        <td>
-                                            @impuesto.FechaInicio.ToString("dd/MM/yyyy")
-                                        </td>
-
-                                        <td>
-
-                                            @(impuesto.FechaFin.HasValue
-                                                ? impuesto.FechaFin.Value.ToString("dd/MM/yyyy")
-                                                : "Sin fecha")
-
-                                        </td>
-
-                                        <td>
-
-                                            @if (impuesto.Estado)
-                                            {
-                                                <span class="kx-status active">
-                                                    Activo
-                                                </span>
-                                            }
-                                            else
-                                            {
-                                                <span class="kx-status inactive">
-                                                    Inactivo
-                                                </span>
-                                            }
-
-                                        </td>
-
-                                        <td>
-
-                                            <div class="kx-card-actions">
-
-                                                <button type="button"
-                                                        class="kx-btn-secondary"
-                                                        uk-toggle="target: #@modalEditar">
-
-                                                    Editar
-
-                                                </button>
-
-
-                                                @if (!impuesto.FechaFin.HasValue)
-                                                {
-                                                    <button type="button"
-                                                            class="kx-btn-secondary"
-                                                            uk-toggle="target: #@modalCerrar">
-
-                                                        Cerrar vigencia
-
-                                                    </button>
-                                                }
-
-
-                                                <form method="post"
-                                                      action="/Configuracion/Impuestos?handler=CambiarEstado">
-
-                                                    @Html.AntiForgeryToken()
-
-                                                    <input type="hidden"
-                                                           name="IdImpuestoEstado"
-                                                           value="@impuesto.IdImpuesto" />
-
-                                                    <input type="hidden"
-                                                           name="EstadoNuevo"
-                                                           value="@(!impuesto.Estado)" />
-
-                                                    <button type="submit"
-                                                            class="@(impuesto.Estado
-                                                                                                                ? "kx-btn-secondary"
-                                                                                                                : "kx-btn-primary")">
-
-                                                        @(impuesto.Estado
-                                                            ? "Desactivar"
-                                                            : "Activar")
-
-                                                    </button>
-
-                                                </form>
-
-                                            </div>
+                                            No existen impuestos
+                                            configurados.
 
                                         </td>
 
                                     </tr>
 
+                                }
+                                else
+                                {
 
-                                    <!-- ================================= -->
-                                    <!-- EDITAR -->
-                                    <!-- ================================= -->
+                                    @foreach (
+                                        var impuesto
+                                        in Model.Impuestos)
+                                    {
 
-                                    <div id="@modalEditar"
-                                         uk-modal>
+                                        string modalEditar =
+                                            $"modal-impuesto-{impuesto.IdImpuesto}";
 
-                                        <div class="uk-modal-dialog kx-modal">
 
-                                            <button type="button"
-                                                    class="uk-modal-close-default"
-                                                    uk-close>
-                                            </button>
+                                        string modalCerrar =
+                                            $"modal-cerrar-{impuesto.IdImpuesto}";
 
 
-                                            <div class="kx-modal-title">
+                                        <tr>
 
-                                                <span>
-                                                    IMPUESTO
-                                                </span>
 
-                                                <h2>
-                                                    Editar @impuesto.Codigo
-                                                </h2>
+                                            <td>
 
-                                            </div>
+                                                <strong>
+                                                    @impuesto.Codigo
+                                                </strong>
 
+                                            </td>
 
-                                            <form method="post"
-                                                  action="/Configuracion/Impuestos?handler=Editar">
 
-                                                @Html.AntiForgeryToken()
+                                            <td>
+                                                @impuesto.Nombre
+                                            </td>
 
 
-                                                <input type="hidden"
-                                                       name="IdImpuestoEditar"
-                                                       value="@impuesto.IdImpuesto" />
+                                            <td>
 
+                                                @impuesto.Porcentaje.ToString("0.##") %
 
-                                                <div class="kx-form-group">
+                                            </td>
 
-                                                    <label>
-                                                        Código
-                                                    </label>
 
-                                                    <input type="text"
-                                                           value="@impuesto.Codigo"
-                                                           class="kx-input"
-                                                           readonly />
+                                            <td>
 
-                                                </div>
+                                                @impuesto.FechaInicio.ToString(
+                                                    "dd/MM/yyyy"
+                                                )
 
+                                            </td>
 
-                                                <div class="kx-form-group">
 
-                                                    <label>
-                                                        Nombre
-                                                    </label>
+                                            <td>
 
-                                                    <input type="text"
-                                                           name="NombreEditar"
-                                                           value="@impuesto.Nombre"
-                                                           class="kx-input"
-                                                           required />
+                                                @(impuesto.FechaFin.HasValue
 
-                                                </div>
+                                                    ? impuesto.FechaFin.Value
+                                                        .ToString(
+                                                            "dd/MM/yyyy"
+                                                        )
 
+                                                    : "Sin fecha")
 
-                                                <div class="kx-form-group">
+                                            </td>
 
-                                                    <label>
-                                                        Porcentaje
-                                                    </label>
 
-                                                    <input type="number"
-                                                           name="PorcentajeEditar"
-                                                           value="@impuesto.Porcentaje"
-                                                           min="0"
-                                                           max="100"
-                                                           step="0.01"
-                                                           class="kx-input"
-                                                           required />
+                                            <td>
 
-                                                </div>
+                                                @if (impuesto.Estado)
+                                                {
 
+                                                    <span class="kx-status active">
 
-                                                <div class="kx-form-group">
+                                                        Activo
 
-                                                    <label>
-                                                        Fecha inicio
-                                                    </label>
+                                                    </span>
 
-                                                    <input type="date"
-                                                           name="FechaInicioEditar"
-                                                           value="@impuesto.FechaInicio.ToString("yyyy-MM-dd")"
-                                                           class="kx-input"
-                                                           required />
+                                                }
+                                                else
+                                                {
 
-                                                </div>
+                                                    <span class="kx-status inactive">
 
+                                                        Inactivo
 
-                                                <div class="kx-form-group">
+                                                    </span>
 
-                                                    <label>
-                                                        Fecha fin
-                                                    </label>
+                                                }
 
-                                                    <input type="date"
-                                                           name="FechaFinEditar"
-                                                           value="@(impuesto.FechaFin.HasValue
-                                                                                                            ? impuesto.FechaFin.Value.ToString("yyyy-MM-dd")
-                                                                                                        : string.Empty)"
-                                                           class="kx-input" />
+                                            </td>
 
-                                                </div>
 
+                                            <td>
 
-                                                <input type="hidden"
-                                                       name="EstadoEditar"
-                                                       value="@impuesto.Estado.ToString().ToLowerInvariant()" />
+                                                <div class="kx-row-actions">
 
-
-                                                <div class="kx-form-actions">
-                                                    <a asp-page="/Configuracion/Index1"
-                                                       class="kx-btn-secondary">
-
-                                                        Cancelar
-
-                                                    </a>
-
-                                                    <button type="submit"
-                                                            class="kx-btn-primary">
-
-                                                        Guardar cambios
-
-                                                    </button>
-
-                                                </div>
-
-                                            </form>
-
-                                        </div>
-
-                                    </div>
-
-
-                                    <!-- ================================= -->
-                                    <!-- CERRAR VIGENCIA -->
-                                    <!-- ================================= -->
-
-                                    <div id="@modalCerrar"
-                                         uk-modal>
-
-                                        <div class="uk-modal-dialog kx-modal">
-
-                                            <button type="button"
-                                                    class="uk-modal-close-default"
-                                                    uk-close>
-                                            </button>
-
-
-                                            <div class="kx-modal-title">
-
-                                                <span>
-                                                    VIGENCIA
-                                                </span>
-
-                                                <h2>
-                                                    Cerrar @impuesto.Codigo
-                                                </h2>
-
-                                                <p>
-                                                    Define la fecha final de vigencia.
-                                                </p>
-
-                                            </div>
-
-
-                                            <form method="post"
-                                                  action="/Configuracion/Impuestos?handler=CerrarVigencia">
-
-                                                @Html.AntiForgeryToken()
-
-                                                <input type="hidden"
-                                                       name="IdImpuestoCerrar"
-                                                       value="@impuesto.IdImpuesto" />
-
-
-                                                <div class="kx-form-group">
-
-                                                    <label>
-                                                        Fecha fin
-                                                    </label>
-
-                                                    <input type="date"
-                                                           name="FechaFinCerrar"
-                                                           value="@DateTime.Today.ToString("yyyy-MM-dd")"
-                                                           class="kx-input"
-                                                           required />
-
-                                                </div>
-
-
-                                                <div class="kx-form-actions">
 
                                                     <button type="button"
-                                                            class="kx-btn-secondary uk-modal-close">
+                                                            class="kx-mini-btn"
+                                                            uk-toggle="target: #@modalEditar">
 
-                                                        Cancelar
-
-                                                    </button>
-
-
-                                                    <button type="submit"
-                                                            class="kx-btn-primary">
-
-                                                        Cerrar vigencia
+                                                        Editar
 
                                                     </button>
+
+
+
+                                                    @if (!impuesto.FechaFin.HasValue)
+                                                    {
+
+                                                        <button type="button"
+                                                                class="kx-mini-btn"
+                                                                uk-toggle="target: #@modalCerrar">
+
+                                                            Cerrar vigencia
+
+                                                        </button>
+
+                                                    }
+
+
+
+                                                    <form method="post"
+                                                          action="/Configuracion/Impuestos?handler=CambiarEstado">
+
+
+                                                        @Html.AntiForgeryToken()
+
+
+                                                        <input type="hidden"
+                                                               name="IdImpuestoEstado"
+                                                               value="@impuesto.IdImpuesto" />
+
+
+                                                        <input type="hidden"
+                                                               name="EstadoNuevo"
+                                                               value="@(!impuesto.Estado)" />
+
+
+                                                        <button type="submit"
+                                                                class="@(impuesto.Estado
+                                                                                                                                ? "kx-mini-btn"
+                                                                                                                                : "kx-mini-btn primary")">
+
+                                                            @(impuesto.Estado
+
+                                                                ? "Desactivar"
+
+                                                                : "Activar")
+
+                                                        </button>
+
+
+                                                    </form>
+
 
                                                 </div>
 
-                                            </form>
+                                            </td>
+
+
+                                        </tr>
+
+
+
+                                        <!-- ================================= -->
+                                        <!-- MODAL EDITAR -->
+                                        <!-- ================================= -->
+
+                                        <div id="@modalEditar"
+                                             uk-modal>
+
+
+                                            <div class="uk-modal-dialog kx-modal">
+
+
+                                                <button type="button"
+                                                        class="uk-modal-close-default"
+                                                        uk-close>
+                                                </button>
+
+
+
+                                                <div class="kx-modal-header">
+
+                                                    <span>
+                                                        IMPUESTO
+                                                    </span>
+
+                                                    <h2>
+                                                        Editar @impuesto.Codigo
+                                                    </h2>
+
+                                                </div>
+
+
+
+                                                <div class="kx-modal-body">
+
+
+                                                    <form method="post"
+                                                          action="/Configuracion/Impuestos?handler=Editar">
+
+
+                                                        @Html.AntiForgeryToken()
+
+
+                                                        <input type="hidden"
+                                                               name="IdImpuestoEditar"
+                                                               value="@impuesto.IdImpuesto" />
+
+
+
+                                                        <div class="kx-form-grid">
+
+
+                                                            <div class="kx-field full">
+
+                                                                <label>
+                                                                    Código
+                                                                </label>
+
+                                                                <input type="text"
+                                                                       value="@impuesto.Codigo"
+                                                                       class="kx-input"
+                                                                       readonly />
+
+                                                            </div>
+
+
+
+                                                            <div class="kx-field full">
+
+                                                                <label>
+                                                                    Nombre
+                                                                </label>
+
+                                                                <input type="text"
+                                                                       name="NombreEditar"
+                                                                       value="@impuesto.Nombre"
+                                                                       class="kx-input"
+                                                                       required />
+
+                                                            </div>
+
+
+
+                                                            <div class="kx-field">
+
+                                                                <label>
+                                                                    Porcentaje
+                                                                </label>
+
+                                                                <input type="number"
+                                                                       name="PorcentajeEditar"
+                                                                       value="@impuesto.Porcentaje"
+                                                                       min="0"
+                                                                       max="100"
+                                                                       step="0.01"
+                                                                       class="kx-input"
+                                                                       required />
+
+                                                            </div>
+
+
+
+                                                            <div class="kx-field">
+
+                                                                <label>
+                                                                    Fecha inicio
+                                                                </label>
+
+                                                                <input type="date"
+                                                                       name="FechaInicioEditar"
+                                                                       value="@impuesto.FechaInicio.ToString("yyyy-MM-dd")"
+                                                                       class="kx-input"
+                                                                       required />
+
+                                                            </div>
+
+
+
+                                                            <div class="kx-field full">
+
+                                                                <label>
+                                                                    Fecha fin
+                                                                </label>
+
+                                                                <input type="date"
+                                                                       name="FechaFinEditar"
+                                                                       value="@(impuesto.FechaFin.HasValue
+                                                                                                                                           ? impuesto.FechaFin.Value.ToString("yyyy-MM-dd")
+                                                                                                                                       : string.Empty)"
+                                                                       class="kx-input" />
+
+                                                            </div>
+
+
+                                                        </div>
+
+
+
+                                                        <input type="hidden"
+                                                               name="EstadoEditar"
+                                                               value="@impuesto.Estado.ToString().ToLowerInvariant()" />
+
+
+
+                                                        <div class="kx-actions">
+
+
+                                                            <button type="button"
+                                                                    class="kx-btn kx-btn-secondary uk-modal-close">
+
+                                                                Cancelar
+
+                                                            </button>
+
+
+                                                            <button type="submit"
+                                                                    class="kx-btn kx-btn-primary">
+
+                                                                Guardar cambios
+
+                                                            </button>
+
+
+                                                        </div>
+
+
+                                                    </form>
+
+
+                                                </div>
+
+
+                                            </div>
+
 
                                         </div>
 
-                                    </div>
+
+
+                                        <!-- ================================= -->
+                                        <!-- MODAL CERRAR VIGENCIA -->
+                                        <!-- ================================= -->
+
+                                        <div id="@modalCerrar"
+                                             uk-modal>
+
+
+                                            <div class="uk-modal-dialog kx-modal">
+
+
+                                                <button type="button"
+                                                        class="uk-modal-close-default"
+                                                        uk-close>
+                                                </button>
+
+
+
+                                                <div class="kx-modal-header">
+
+                                                    <span>
+                                                        VIGENCIA
+                                                    </span>
+
+                                                    <h2>
+                                                        Cerrar @impuesto.Codigo
+                                                    </h2>
+
+                                                    <p>
+                                                        Define la fecha final de vigencia.
+                                                    </p>
+
+                                                </div>
+
+
+
+                                                <div class="kx-modal-body">
+
+
+                                                    <form method="post"
+                                                          action="/Configuracion/Impuestos?handler=CerrarVigencia">
+
+
+                                                        @Html.AntiForgeryToken()
+
+
+                                                        <input type="hidden"
+                                                               name="IdImpuestoCerrar"
+                                                               value="@impuesto.IdImpuesto" />
+
+
+
+                                                        <div class="kx-field">
+
+                                                            <label>
+                                                                Fecha fin
+                                                            </label>
+
+                                                            <input type="date"
+                                                                   name="FechaFinCerrar"
+                                                                   value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                                                   class="kx-input"
+                                                                   required />
+
+                                                        </div>
+
+
+
+                                                        <div class="kx-actions">
+
+
+                                                            <button type="button"
+                                                                    class="kx-btn kx-btn-secondary uk-modal-close">
+
+                                                                Cancelar
+
+                                                            </button>
+
+
+                                                            <button type="submit"
+                                                                    class="kx-btn kx-btn-primary">
+
+                                                                Cerrar vigencia
+
+                                                            </button>
+
+
+                                                        </div>
+
+
+                                                    </form>
+
+
+                                                </div>
+
+
+                                            </div>
+
+
+                                        </div>
+
+
+                                    }
+
                                 }
-                            }
 
-                        </tbody>
 
-                    </table>
+                            </tbody>
+
+
+                        </table>
+
+
+                    </div>
+
+
+                </section>
+
+
+
+                <!-- ================================================= -->
+                <!-- VOLVER -->
+                <!-- ================================================= -->
+
+                <div class="kx-actions">
+
+                    <a href="/Configuracion/Index1"
+                       class="kx-btn kx-btn-secondary">
+
+                        <span uk-icon="icon: arrow-left; ratio: .8">
+                        </span>
+
+                        Volver
+
+                    </a>
 
                 </div>
 
-            </section>
-
-
-            <div class="kx-form-actions">
-
-                <a href="/Configuracion/Index1"
-                   class="kx-btn-secondary">
-
-                    Volver
-
-                </a>
 
             </div>
 
         </main>
 
+
     </div>
 
+
+
+    <!-- ========================================================= -->
+    <!-- UIKIT JS -->
+    <!-- ========================================================= -->
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
     </script>
+
 
 </body>
 

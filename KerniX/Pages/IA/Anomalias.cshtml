@@ -1,0 +1,88 @@
+﻿@page "/IA/Anomalias"
+@model KerniX.Pages.IA.AnomaliasModel
+@{
+    ViewData["Title"] = "Anomalías inteligentes | KerniX";
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+<link rel="stylesheet" href="~/css/IA/kernix-ia.css" asp-append-version="true" />
+<div class="kx-ai-page">
+    <main class="kai-wrap">
+        <nav class="kai-breadcrumb"><a href="/Inicio/Index">Inicio</a><span>/</span><a href="/IA/Index">Centro IA</a><span>/</span><b>Anomalías</b></nav>
+        <header class="kai-hero kai-hero-compact">
+            <div class="kai-hero-copy">
+                <div class="kai-eyebrow"><span class="kai-dot blue"></span> MODELO 02 · ANÁLISIS ESTADÍSTICO</div><h1>Detección de <em>anomalías</em></h1><p>Señales explicables sobre variaciones de venta. Ventana histórica de 28 días, dispersión robusta y revisión humana.</p>
+                <div class="kai-actions"><a class="kai-btn kai-btn-gold" href="/IA/Anomalias"><span uk-icon="refresh"></span> Actualizar análisis</a><a class="kai-btn" href="/IA/Index"><span uk-icon="arrow-left"></span> Centro IA</a><a class="kai-btn" href="/Pedidos"><span uk-icon="cart"></span> Ir a Ventas</a></div>
+            </div><div class="kai-hero-symbol"><span uk-icon="icon: bolt; ratio: 3"></span></div>
+        </header>
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kai-alert"><span uk-icon="warning"></span> @Model.MensajeError</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Analisis.Aviso))
+        {
+            <div class="kai-info"><span uk-icon="info"></span> @Model.Analisis.Aviso</div>
+        }
+        <section class="kai-kpis kai-kpis-3">
+            <article class="kai-kpi kai-gold"><div><span>Ventanas evaluadas</span><i uk-icon="history"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.DiasAnalizados.ToString() : "—")</strong><small>Días calendario considerados</small></article>
+            <article class="kai-kpi kai-cyan"><div><span>Días con movimiento</span><i uk-icon="database"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.DiasConVentas.ToString() : "—")</strong><small>Ventas por empresa en SQL</small></article>
+            <article class="kai-kpi kai-red"><div><span>Señales detectadas</span><i uk-icon="warning"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.TotalAlertas.ToString() : "—")</strong><small>Hasta cinco desviaciones recientes</small></article>
+        </section>
+        <div class="kai-two-cols">
+            <section class="kai-panel">
+                <div class="kai-panel-head"><div><span class="kai-kicker">VENTAS</span><h2>Serie comercial · 21 días</h2><p>Valores reales por día y empresa autenticada.</p></div><span class="kai-status kai-status-live">Consulta bajo demanda</span></div>
+                @if (Model.Analisis.DatosDisponibles && Model.Analisis.Serie.Count > 0)
+                {
+                    <div class="kai-bars kai-bars-tall">
+                        @foreach (var d in Model.Analisis.Serie)
+                        {
+                            <div class="kai-bar-slot" title="@d.Fecha.ToString("dd/MM/yyyy") · S/ @d.Total.ToString("N2") · @d.Operaciones ventas">
+                                <div class="kai-bar" style="height: @(Math.Max(3M, d.Intensidad).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div><span>@d.Fecha.ToString("dd")</span>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+
+                    <div class="kai-empty">Sin serie disponible para graficar.</div>
+                }
+                <div class="kai-chart-foot"><span>Importe de venta diaria (S/)</span><span>Lectura sin modificar stock ni ventas</span></div>
+            </section>
+            <section class="kai-panel">
+                <div class="kai-panel-head"><div><span class="kai-kicker">METODOLOGÍA</span><h2>Modelo de incertidumbre</h2><p>Reglas analíticas visibles, sin falsos porcentajes de confianza.</p></div></div>
+                <div class="kai-logic-grid">
+                    <div><span class="kai-n">01</span><strong>Base móvil</strong><p>28 días previos a cada observación.</p></div>
+                    <div><span class="kai-n">02</span><strong>Dispersión robusta</strong><p>Mediana y desviación absoluta mediana (MAD), con ajuste para series variables.</p></div>
+                    <div><span class="kai-n">03</span><strong>Umbral de alerta</strong><p>Desviación ≥ 3,2 unidades de escala y variación relativa ≥ 35 %.</p></div>
+                    <div><span class="kai-n">04</span><strong>Control de evidencia</strong><p>Al menos 7 días con ventas de 28 días; incertidumbre explícita.</p></div>
+                </div>
+                <div class="kai-info kai-info-inner"><span uk-icon="warning"></span> Una señal no prueba fraude, desabastecimiento ni error humano: solo justifica investigar.</div>
+            </section>
+        </div>
+        <section class="kai-panel kai-fullpanel">
+            <div class="kai-panel-head"><div><span class="kai-kicker">SEÑALES DETECTADAS</span><h2>Observaciones que requieren revisión</h2><p>Señales del periodo reciente; ordenadas por desviación.</p></div></div>
+            @if (Model.Analisis.Anomalias.Count > 0)
+            {
+                <div class="kai-table-scroll">
+                    <table class="kai-table">
+                        <thead><tr><th>Fecha</th><th>Señal</th><th>Venta observada</th><th>Promedio histórico</th><th>Desviación</th><th>Fiabilidad</th></tr></thead>
+                        <tbody>
+                            @foreach (var a in Model.Analisis.Anomalias)
+                            {
+                                <tr><td>@a.Fecha.ToString("dd/MM/yyyy")</td><td><span class="kai-tag @(a.Tipo.StartsWith("Alza") ? "kai-tag-gold" : "kai-tag-red")">@a.Tipo</span></td><td>S/ @a.TotalObservado.ToString("N2")</td><td>S/ @a.MediaHistorica.ToString("N2")</td><td>@a.DesviacionesRobustas.ToString("+0.00;-0.00;0.00")</td><td>@a.Certidumbre</td></tr>
+                                <tr class="kai-explain"><td colspan="6"><span uk-icon="info"></span> @a.Explicacion · Actividad histórica: @a.DiasConActividad días.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="kai-empty"><span uk-icon="icon: check; ratio: 1.8"></span><strong>Sin señales que superen el umbral</strong><p>Esto no implica ausencia total de riesgo. Con un historial escaso, el resultado puede ser inconcluyente.</p></div>
+            }
+        </section>
+        <footer class="kai-footer"><span>KerniX · Análisis de anomalías</span> · Sin SQL Jobs · Sin escrituras SQL</footer>
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

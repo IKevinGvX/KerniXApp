@@ -1,0 +1,323 @@
+﻿@page "/Seguridad/Sesiones"
+@model KerniX.Pages.Seguridad.Sesiones.IndexModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Mis sesiones | KerniX ERP";
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+    <style>
+            :root {
+                color-scheme: dark;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                min-height: 100vh;
+                margin: 0;
+                background: radial-gradient(circle at 90% 0%,#132753,transparent 42%),#050912;
+                color: #eaf0ff;
+                font-family: 'Segoe UI',sans-serif;
+            }
+
+            .kx-wrap {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 38px 22px 70px;
+            }
+
+            .kx-nav {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 35px;
+            }
+
+            .kx-brand {
+                color: white;
+                font-size: 24px;
+                font-weight: 800;
+            }
+
+                .kx-brand b {
+                    color: #f5b92c;
+                }
+
+            .kx-link {
+                color: #bcd1f2;
+                text-decoration: none;
+            }
+
+                .kx-link:hover {
+                    color: #ffc854;
+                    text-decoration: none;
+                }
+
+            .kx-label {
+                color: #f4ba38;
+                text-transform: uppercase;
+                font-size: 12px;
+                letter-spacing: .14em;
+                font-weight: 700;
+            }
+
+            h1 {
+                font-size: clamp(28px,4vw,39px);
+                color: white;
+                margin: 7px 0 9px;
+                font-weight: 800;
+            }
+
+            .kx-description {
+                color: #aebbd1;
+                line-height: 1.6;
+                max-width: 750px;
+                margin-bottom: 30px;
+            }
+
+            .kx-card {
+                padding: 25px;
+                background: linear-gradient(155deg,#101a30,#0a101e);
+                border: 1px solid rgba(244,185,56,.33);
+                border-radius: 18px;
+                box-shadow: 0 15px 50px #0005;
+            }
+
+            .kx-card-top {
+                display: flex;
+                justify-content: space-between;
+                gap: 15px;
+                align-items: center;
+                flex-wrap: wrap;
+                margin-bottom: 20px;
+            }
+
+            h2 {
+                color: #f9f8f2;
+                font-size: 19px;
+                margin: 0;
+                font-weight: 700;
+            }
+
+            .kx-muted {
+                color: #aebbd1;
+                font-size: 13px;
+            }
+
+            .kx-btn {
+                appearance: none;
+                border: 1px solid #e2ab35;
+                background: linear-gradient(150deg,#ffe18a,#d89a19);
+                border-radius: 9px;
+                color: #211604;
+                padding: 11px 15px;
+                font-weight: 800;
+                cursor: pointer;
+                font: 700 13px 'Segoe UI',sans-serif;
+            }
+
+                .kx-btn:hover {
+                    filter: brightness(1.12);
+                }
+
+                .kx-btn:focus-visible, .kx-link:focus-visible {
+                    outline: 2px solid #a0d9ff;
+                    outline-offset: 3px;
+                }
+
+            .kx-btn-outline {
+                background: #101b2c;
+                border-color: #57647d;
+                color: #f5d58a;
+            }
+
+            .kx-list {
+                display: grid;
+                gap: 11px;
+            }
+
+            .kx-session {
+                border: 1px solid #2b3955;
+                border-radius: 12px;
+                padding: 16px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 18px;
+                flex-wrap: wrap;
+                background: #0a1222;
+            }
+
+            .kx-main {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                min-width: 180px;
+            }
+
+            .kx-icon {
+                height: 48px;
+                width: 48px;
+                border-radius: 12px;
+                display: grid;
+                place-items: center;
+                flex-shrink: 0;
+                background: #192846;
+                color: #f4c053;
+            }
+
+            .kx-device {
+                color: #f4f7ff;
+                font-weight: 700;
+            }
+
+            .kx-pill {
+                display: inline-block;
+                margin-left: 9px;
+                border-radius: 20px;
+                padding: 3px 9px;
+                font-size: 11px;
+                background: #163c31;
+                color: #88e8ba;
+            }
+
+            .kx-details {
+                display: flex;
+                gap: 9px 19px;
+                flex-wrap: wrap;
+                margin-top: 6px;
+                color: #aabbd3;
+                font-size: 12px;
+            }
+
+            .kx-message {
+                border: 1px solid #53755b;
+                background: #102a20;
+                border-radius: 10px;
+                padding: 13px;
+                color: #a9eec7;
+                margin-bottom: 15px;
+            }
+
+            .kx-error {
+                border-color: #9d4c58;
+                background: #32141e;
+                color: #ffd9de;
+            }
+
+            .kx-empty {
+                color: #bdcbe4;
+                padding: 27px;
+                text-align: center;
+                border: 1px dashed #394863;
+                border-radius: 12px;
+            }
+
+            .kx-info {
+                margin-top: 22px;
+                color: #9bacbf;
+                font-size: 12px;
+                line-height: 1.6;
+            }
+    </style>
+</head>
+<body>
+    <main class="kx-wrap">
+        <header class="kx-nav">
+            <div class="kx-brand">KerniX <b>ERP</b></div>
+            <nav aria-label="Navegación de sesiones">
+                <a class="kx-link" href="/Inicio/Carga">Volver al sistema</a>
+                <span style="color:#65768d;margin:0 13px">|</span>
+                <a class="kx-link" href="/Account/Logout">Cerrar mi sesión</a>
+            </nav>
+        </header>
+        <span class="kx-label">Seguridad de la cuenta</span>
+        <h1>Sesiones y dispositivos</h1>
+        <p class="kx-description">Consulta dónde tienes abierta tu sesión de KerniX y cierra el acceso web desde otros dispositivos. Los cambios se aplican en la siguiente petición de ese dispositivo.</p>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Mensaje))
+        {
+            <div role="status" class="kx-message">@Model.Mensaje</div>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Error))
+        {
+            <div role="alert" class="kx-message kx-error">@Model.Error</div>
+        }
+
+        <section class="kx-card" aria-label="Sesiones activas">
+            <div class="kx-card-top">
+                <div>
+                    <h2>Mis accesos activos</h2>
+                    <div class="kx-muted">Sesiones registradas durante los últimos 30 minutos de actividad</div>
+                </div>
+                <form method="post" action="/Seguridad/Sesiones?handler=CerrarOtras">
+                    @Html.AntiForgeryToken()
+                    <button class="kx-btn" type="submit">Cerrar otras sesiones</button>
+                </form>
+            </div>
+
+            @if (Model.Sesiones.Count == 0)
+            {
+                <div class="kx-empty">No se encontraron sesiones activas o no fue posible consultar el listado.</div>
+            }
+            else
+            {
+                <div class="kx-list">
+                    @foreach (var sesion in Model.Sesiones)
+                    {
+                        bool actual = sesion.IdSesion == Model.IdActual;
+                        <article class="kx-session">
+                            <div class="kx-main">
+                                <div class="kx-icon" aria-hidden="true">
+                                    <span uk-icon="icon: desktop; ratio: 1.25"></span>
+                                </div>
+                                <div>
+                                    <div class="kx-device">
+                                        @sesion.Dispositivo · @sesion.Navegador
+                                        @if (actual)
+                                        {
+                                            <span class="kx-pill">Esta sesión</span>
+                                        }
+                                    </div>
+                                    <div class="kx-details">
+                                        <span>IP: @(sesion.Ip ?? "No disponible")</span>
+                                        <span>Inicio: @sesion.FechaInicioUtc.ToString("dd/MM/yyyy HH:mm") UTC</span>
+                                        <span>Actividad: @sesion.UltimoAccesoUtc.ToString("dd/MM/yyyy HH:mm") UTC</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @if (!actual)
+                            {
+                                <form method="post" action="/Seguridad/Sesiones?handler=Cerrar">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@sesion.IdSesion" />
+                                    <button class="kx-btn kx-btn-outline" type="submit" aria-label="Cerrar sesión de @sesion.Dispositivo">
+                                        Cerrar acceso
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="kx-muted">Dispositivo actual</span>
+                            }
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+        <p class="kx-info">El nombre del dispositivo y navegador es aproximado y depende del navegador utilizado. El cierre remoto impide nuevas peticiones web a KerniX; no revoca por sí solo un JWT previamente emitido en la API. Las horas se muestran en UTC.</p>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
+</body>
+</html>

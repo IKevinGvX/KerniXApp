@@ -1,0 +1,349 @@
+﻿:root {
+    color-scheme: dark;
+    --bg: #040915;
+    --panel: #0a1426;
+    --gold: #f9bc36;
+    --gold2: #ffdc7b;
+    --blue: #158bfb;
+    --text: #f2f5ff;
+    --muted: #9cacc6
+}
+
+* {
+    box-sizing: border-box
+}
+
+html {
+    scroll-behavior: smooth
+}
+
+body.kxo-body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Inter,Segoe UI,Arial,sans-serif;
+    color: var(--text);
+    background: radial-gradient(ellipse 55% 48% at 82% 10%,rgba(13,74,155,.24),transparent),radial-gradient(ellipse 44% 42% at 0 100%,rgba(160,110,17,.13),transparent),#040915
+}
+
+a {
+    text-decoration: none
+}
+
+.kxo-shell {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 25px 25px 44px
+}
+
+.kxo-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    min-height: 67px;
+    border-bottom: 1px solid rgba(250,191,70,.18)
+}
+
+    .kxo-nav > div {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap
+    }
+
+    .kxo-nav a {
+        color: #a7bad5;
+        font-size: 13px
+    }
+
+        .kxo-nav a:hover {
+            color: #ffcb58
+        }
+
+.kxo-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-weight: 800;
+    font-size: 23px !important;
+    color: #fff !important
+}
+
+    .kxo-brand span {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#ffe48f,#be7610);
+        color: #071226;
+        box-shadow: 0 0 20px #ffa90033
+    }
+
+.kxo-card {
+    position: relative;
+    margin: 40px auto 25px;
+    padding: 36px 40px 34px;
+    border-radius: 22px;
+    max-width: 870px;
+    border: 1px solid rgba(249,188,54,.38);
+    background: linear-gradient(155deg,rgba(13,29,53,.98),rgba(6,13,27,.98));
+    box-shadow: 0 25px 90px #0009,0 0 40px #0f75df18,inset 0 1px 0 #f8cb5b1d;
+    overflow: hidden
+}
+
+    .kxo-card:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,transparent,#e3a22b,#61a5f9,transparent)
+    }
+
+.kxo-ribbon {
+    letter-spacing: 2px;
+    font-weight: 700;
+    color: #daa43a;
+    font-size: 10px;
+    margin-bottom: 25px
+}
+
+.kxo-heading {
+    display: flex;
+    align-items: center;
+    gap: 21px;
+    margin-bottom: 32px
+}
+
+.kxo-orb {
+    display: grid;
+    place-items: center;
+    flex: 0 0 78px;
+    height: 78px;
+    border-radius: 50%;
+    font-size: 25px;
+    font-weight: 900;
+    color: #ffd46b;
+    background: radial-gradient(circle at 32% 20%,#69440e,#08152b 70%);
+    border: 1px solid #c08b25;
+    box-shadow: 0 10px 3px #02060a,0 12px 24px #d99a253c,inset 0 3px 7px #ffe5ab55
+}
+
+.kxo-heading p {
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 800;
+    color: #5baaff;
+    margin: 0 0 7px
+}
+
+.kxo-heading h1 {
+    font-size: clamp(30px,5vw,43px);
+    line-height: 1.06;
+    margin: 0 0 10px;
+    font-weight: 850
+}
+
+    .kxo-heading h1 em {
+        color: #ffca52;
+        font-style: normal
+    }
+
+.kxo-heading span {
+    color: #aebdd1;
+    font-size: 13px;
+    line-height: 1.6
+}
+
+.kxo-form {
+    border-top: 1px solid #30425b;
+    padding-top: 28px
+}
+
+.kxo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 21px 23px
+}
+
+    .kxo-grid label {
+        display: flex;
+        flex-direction: column;
+        gap: 9px;
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: .4px;
+        color: #e8eefc
+    }
+
+        .kxo-grid label b {
+            color: var(--gold)
+        }
+
+        .kxo-grid label.kxo-wide {
+            grid-column: 1/-1
+        }
+
+    .kxo-grid input, .kxo-grid select, .kxo-grid textarea {
+        width: 100%;
+        outline: none;
+        border: 1px solid #31496b;
+        border-radius: 10px;
+        padding: 13px 14px;
+        min-height: 47px;
+        background: #051125;
+        color: #f2f5ff;
+        font: 500 14px Segoe UI,Arial,sans-serif;
+        transition: border-color .2s,box-shadow .2s
+    }
+
+        .kxo-grid input:focus, .kxo-grid textarea:focus, .kxo-grid select:focus {
+            border-color: #f7bd48;
+            box-shadow: 0 0 0 3px #f7bd481d
+        }
+
+    .kxo-grid textarea {
+        resize: vertical;
+        min-height: 132px
+    }
+
+    .kxo-grid select {
+        cursor: pointer
+    }
+
+    .kxo-grid input[readonly] {
+        color: #9aabbe;
+        background: #0e1b2d
+    }
+
+.kxo-note {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #aebed1;
+    border-left: 2px solid #c9952e;
+    padding: 12px 15px;
+    margin: 25px 0 22px;
+    background: #111c2b
+}
+
+.kxo-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px
+}
+
+    .kxo-actions > a {
+        padding: 13px 22px;
+        color: #a7bad8;
+        border: 1px solid #354c6c;
+        border-radius: 10px;
+        font-weight: 650;
+        font-size: 13px
+    }
+
+    .kxo-actions > button {
+        cursor: pointer;
+        border: 1px solid #ffdc77;
+        border-radius: 10px;
+        padding: 13px 23px;
+        color: #12181f;
+        background: linear-gradient(180deg,#ffdc7f,#e7a71d);
+        font-weight: 850;
+        box-shadow: 0 8px 0 #80530955,0 10px 22px #f0b13e28;
+        transition: transform .18s
+    }
+
+        .kxo-actions > button:hover {
+            transform: translateY(-2px)
+        }
+
+        .kxo-actions > button:disabled {
+            opacity: .55;
+            cursor: wait
+        }
+
+        .kxo-actions > button span {
+            padding-left: 12px
+        }
+
+.kxo-message {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 15px;
+    border-radius: 11px;
+    margin: 0 0 20px;
+    font-size: 14px
+}
+
+    .kxo-message a {
+        margin-left: auto;
+        color: #fff;
+        text-decoration: underline
+    }
+
+.kxo-ok {
+    border: 1px solid #3fcb98;
+    color: #bafde1;
+    background: #0a352c
+}
+
+.kxo-error {
+    border: 1px solid #f68b71;
+    background: #381d22;
+    color: #ffc4b5
+}
+
+.kxo-validation {
+    color: #f3a19c;
+    font-size: 13px
+}
+
+.kxo-footer {
+    text-align: center;
+    color: #72829d;
+    font-size: 12px
+}
+
+@media(max-width:700px) {
+    .kxo-shell {
+        padding: 15px
+    }
+
+    .kxo-nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding-bottom: 13px
+    }
+
+    .kxo-card {
+        padding: 26px 18px;
+        margin-top: 20px
+    }
+
+    .kxo-grid {
+        grid-template-columns: 1fr
+    }
+
+    .kxo-heading {
+        align-items: flex-start
+    }
+
+    .kxo-orb {
+        flex-basis: 57px;
+        height: 57px
+    }
+
+    .kxo-actions {
+        flex-wrap: wrap
+    }
+
+        .kxo-actions > * {
+            flex: 1;
+            white-space: nowrap;
+            text-align: center
+        }
+}

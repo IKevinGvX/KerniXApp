@@ -1,0 +1,547 @@
+﻿@page "/Inventario/Kardex"
+@model KerniX.Pages.Inventario.Kardex.IndexModel
+
+@{
+    ViewData["Title"] = "Kardex Avanzado";
+
+    int anterior =
+        Math.Max(
+            1,
+            Model.Resultado.Pagina - 1
+        );
+
+    int siguiente =
+        Math.Min(
+            Math.Max(
+                1,
+                Model.Resultado.TotalPaginas
+            ),
+            Model.Resultado.Pagina + 1
+        );
+
+    decimal balancePagina =
+        Model.Ingresos - Model.Egresos;
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<link rel="stylesheet"
+      href="~/css/Inventario/auditoria-inventario.css"
+      asp-append-version="true" />
+
+<div class="kai-page kai-page--kardex">
+
+    <main class="kai-shell">
+
+        <section class="kai-hero">
+
+            <div>
+
+                <div class="kai-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Kardex</strong>
+                </div>
+
+                <div class="kai-eyebrow">
+                    INVENTARIO · TRAZABILIDAD TOTAL
+                </div>
+
+                <h1>
+                    Kardex <strong>Avanzado</strong>
+                </h1>
+
+                <p>
+                    Consulta movimientos de stock con naturaleza,
+                    existencias antes y después, documento de origen,
+                    contexto del proceso y relación de reversa.
+                </p>
+
+            </div>
+
+
+            <div class="kai-actions">
+
+                <a href="/Inventario"
+                   class="kai-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="/Inventario/Reversiones"
+                   class="kai-btn kai-btn-violet">
+                    <span uk-icon="icon: history; ratio: .8"></span>
+                    Reversiones
+                </a>
+
+            </div>
+
+        </section>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kai-alert kai-alert-error">
+                <span uk-icon="icon: warning; ratio: .8"></span>
+                @Model.MensajeError
+            </div>
+        }
+
+
+        <section class="kai-kpis">
+
+            <article>
+                <span>MOVIMIENTOS</span>
+                <strong>@Model.Resultado.TotalRegistros</strong>
+                <small>Total encontrado</small>
+            </article>
+
+            <article class="positive">
+                <span>INGRESOS</span>
+                <strong>+@Model.Ingresos.ToString("N2")</strong>
+                <small>Página actual</small>
+            </article>
+
+            <article class="negative">
+                <span>EGRESOS</span>
+                <strong>-@Model.Egresos.ToString("N2")</strong>
+                <small>Página actual</small>
+            </article>
+
+            <article class="protected">
+                <span>REVERTIDOS</span>
+                <strong>@Model.Revertidos</strong>
+                <small>Página actual</small>
+            </article>
+
+        </section>
+
+
+        <section class="kai-summary-grid">
+
+            <article>
+                <span>BALANCE PÁGINA</span>
+
+                @if (balancePagina > 0)
+                {
+                    <strong class="kai-pos">
+                        +@balancePagina.ToString("N2")
+                    </strong>
+                }
+                else if (balancePagina < 0)
+                {
+                    <strong class="kai-neg">
+                        @balancePagina.ToString("N2")
+                    </strong>
+                }
+                else
+                {
+                    <strong>
+                        0.00
+                    </strong>
+                }
+            </article>
+
+            <article>
+                <span>PÁGINA</span>
+                <strong>
+                    @Model.Resultado.Pagina /
+                    @Math.Max(1, Model.Resultado.TotalPaginas)
+                </strong>
+            </article>
+
+            <article>
+                <span>TAMAÑO</span>
+                <strong>
+                    @Model.Filtro.TamanoPagina
+                </strong>
+            </article>
+
+            <article>
+                <span>VISIBLES</span>
+                <strong>
+                    @Model.Resultado.Items.Count
+                </strong>
+            </article>
+
+        </section>
+
+
+        <section class="kai-card">
+
+            <header class="kai-card-head">
+
+                <div>
+                    <span>FILTROS</span>
+
+                    <h2>
+                        Buscar movimientos
+                    </h2>
+
+                    <p>
+                        Filtra por almacén, producto, tipo, rango de fechas o texto.
+                    </p>
+                </div>
+
+            </header>
+
+
+            <div class="kai-card-body">
+
+                <form method="get"
+                      action="/Inventario/Kardex">
+
+                    <div class="kai-filter-grid">
+
+                        <div class="kai-field kai-field-wide">
+                            <label>Buscar</label>
+
+                            <input type="text"
+                                   name="Filtro.Buscar"
+                                   value="@Model.Filtro.Buscar"
+                                   maxlength="200"
+                                   placeholder="Producto, código, referencia..." />
+                        </div>
+
+
+                        <div class="kai-field">
+                            <label>Almacén</label>
+
+                            <select name="Filtro.IdAlmacen">
+
+                                <option value="">
+                                    Todos
+                                </option>
+
+                                @foreach (var almacen in Model.Catalogos.Almacenes)
+                                {
+                                    if (Model.Filtro.IdAlmacen == almacen.IdAlmacen)
+                                    {
+                                        <option value="@almacen.IdAlmacen"
+                                                selected>
+                                            @almacen.Codigo · @almacen.Nombre
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@almacen.IdAlmacen">
+                                            @almacen.Codigo · @almacen.Nombre
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kai-field">
+                            <label>Producto</label>
+
+                            <select name="Filtro.IdProducto">
+
+                                <option value="">
+                                    Todos
+                                </option>
+
+                                @foreach (var producto in Model.Catalogos.Productos)
+                                {
+                                    if (Model.Filtro.IdProducto == producto.IdProducto)
+                                    {
+                                        <option value="@producto.IdProducto"
+                                                selected>
+                                            @producto.Codigo · @producto.Nombre
+                                        </option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@producto.IdProducto">
+                                            @producto.Codigo · @producto.Nombre
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+                        </div>
+
+
+                        <div class="kai-field">
+                            <label>Tipo movimiento</label>
+
+                            <input type="text"
+                                   name="Filtro.CodigoMovimiento"
+                                   value="@Model.Filtro.CodigoMovimiento"
+                                   maxlength="50"
+                                   placeholder="entrada, salida, merma..." />
+                        </div>
+
+
+                        <div class="kai-field">
+                            <label>Desde</label>
+
+                            <input type="date"
+                                   name="Filtro.FechaDesde"
+                                   value="@(Model.Filtro.FechaDesde?.ToString("yyyy-MM-dd"))" />
+                        </div>
+
+
+                        <div class="kai-field">
+                            <label>Hasta</label>
+
+                            <input type="date"
+                                   name="Filtro.FechaHasta"
+                                   value="@(Model.Filtro.FechaHasta?.ToString("yyyy-MM-dd"))" />
+                        </div>
+
+                    </div>
+
+                    <input type="hidden"
+                           name="Filtro.Pagina"
+                           value="1" />
+
+                    <input type="hidden"
+                           name="Filtro.TamanoPagina"
+                           value="@Model.Filtro.TamanoPagina" />
+
+
+                    <div class="kai-form-actions">
+
+                        <button type="submit"
+                                class="kai-btn kai-btn-cyan">
+                            <span uk-icon="icon: search; ratio: .8"></span>
+                            Filtrar
+                        </button>
+
+                        <a href="/Inventario/Kardex"
+                           class="kai-btn">
+                            Limpiar
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <section class="kai-card">
+
+            <header class="kai-card-head">
+
+                <div>
+                    <span>MOVIMIENTOS</span>
+
+                    <h2>
+                        Historial de Kardex
+                    </h2>
+
+                    <p>
+                        Página @Model.Resultado.Pagina de
+                        @Math.Max(1, Model.Resultado.TotalPaginas)
+                    </p>
+                </div>
+
+                <span class="kai-pill">
+                    @Model.Resultado.TotalRegistros movimientos
+                </span>
+
+            </header>
+
+
+            <div class="kai-table-wrap">
+
+                <table class="kai-table kai-table-kardex">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>FECHA / HORA</th>
+                            <th>TIPO</th>
+                            <th>PRODUCTO</th>
+                            <th>ALMACÉN</th>
+                            <th>CANTIDAD</th>
+                            <th>STOCK</th>
+                            <th>DOCUMENTO / ORIGEN</th>
+                            <th>MOTIVO</th>
+                            <th>REVERSA</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.Resultado.Items.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="10">
+                                    <div class="kai-empty">
+                                        No existen movimientos para los filtros seleccionados.
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Resultado.Items)
+                            {
+                                bool ingreso =
+                                    string.Equals(
+                                        item.Naturaleza,
+                                        "ingreso",
+                                        StringComparison.OrdinalIgnoreCase
+                                    );
+
+                                <tr>
+
+                                    <td>
+                                        <strong class="kai-number">
+                                            #@item.IdMovimientoInventario
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.FechaMovimiento.ToString("dd/MM/yyyy")
+                                        </strong>
+
+                                        <small>
+                                            @item.FechaMovimiento.ToString("HH:mm")
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <span class="kai-badge @(ingreso ? "green" : "red")">
+                                            @item.CodigoMovimiento
+                                        </span>
+
+                                        <small>
+                                            @item.Naturaleza
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.Producto
+                                        </strong>
+
+                                        <small>
+                                            @item.CodigoProducto
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.Almacen
+                                        </strong>
+
+                                        <small>
+                                            @item.Sucursal
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        @if (ingreso)
+                                        {
+                                            <span class="kai-pos">
+                                                +@item.Cantidad.ToString("N2")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="kai-neg">
+                                                -@item.Cantidad.ToString("N2")
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <span class="kai-stock-flow">
+                                            @item.StockAnterior.ToString("N2")
+                                            <b>→</b>
+                                            @item.StockNuevo.ToString("N2")
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @(item.DocumentoOrigen ?? item.Referencia ?? "—")
+                                        </strong>
+
+                                        <small>
+                                            @(item.OrigenTipo ?? item.Modulo ?? "—")
+                                            @if (item.OrigenId.HasValue)
+                                            {
+                                                <text> #@item.OrigenId</text>
+                                            }
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        @(item.Motivo ?? "—")
+                                    </td>
+
+                                    <td>
+                                        @if (item.EstaRevertido)
+                                        {
+                                            <span class="kai-badge violet">
+                                                Revertido
+                                                #@item.IdMovimientoReversa
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="kai-badge green">
+                                                Activo
+                                            </span>
+                                        }
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="kai-pagination">
+
+                <span>
+                    @Model.Resultado.TotalRegistros movimientos
+                </span>
+
+
+                <div class="kai-actions">
+
+                    @if (Model.Resultado.Pagina > 1)
+                    {
+                        <a class="kai-btn"
+                           href="?Filtro.Pagina=@anterior&Filtro.TamanoPagina=@Model.Filtro.TamanoPagina&Filtro.Buscar=@Uri.EscapeDataString(Model.Filtro.Buscar ?? "")&Filtro.CodigoMovimiento=@Uri.EscapeDataString(Model.Filtro.CodigoMovimiento ?? "")&Filtro.IdAlmacen=@Model.Filtro.IdAlmacen&Filtro.IdProducto=@Model.Filtro.IdProducto&Filtro.FechaDesde=@(Model.Filtro.FechaDesde?.ToString("yyyy-MM-dd"))&Filtro.FechaHasta=@(Model.Filtro.FechaHasta?.ToString("yyyy-MM-dd"))">
+                            ← Anterior
+                        </a>
+                    }
+
+                    @if (Model.Resultado.Pagina < Model.Resultado.TotalPaginas)
+                    {
+                        <a class="kai-btn kai-btn-cyan"
+                           href="?Filtro.Pagina=@siguiente&Filtro.TamanoPagina=@Model.Filtro.TamanoPagina&Filtro.Buscar=@Uri.EscapeDataString(Model.Filtro.Buscar ?? "")&Filtro.CodigoMovimiento=@Uri.EscapeDataString(Model.Filtro.CodigoMovimiento ?? "")&Filtro.IdAlmacen=@Model.Filtro.IdAlmacen&Filtro.IdProducto=@Model.Filtro.IdProducto&Filtro.FechaDesde=@(Model.Filtro.FechaDesde?.ToString("yyyy-MM-dd"))&Filtro.FechaHasta=@(Model.Filtro.FechaHasta?.ToString("yyyy-MM-dd"))">
+                            Siguiente →
+                        </a>
+                    }
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

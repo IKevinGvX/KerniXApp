@@ -1,0 +1,224 @@
+﻿@page "/Inventario/InventarioFisico"
+@model KerniX.Pages.Inventario.InventarioFisico.IndexModel
+
+@{
+    ViewData["Title"] = "Inventario Físico";
+}
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+<link rel="stylesheet"
+      href="~/css/Inventario/inventario-fisico.css"
+      asp-append-version="true" />
+
+<div class="kif-page">
+    <main class="kif-shell">
+
+        <section class="kif-hero">
+            <div>
+                <div class="kif-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>/</span>
+                    <strong>Inventario Físico</strong>
+                </div>
+
+                <div class="kif-eyebrow">
+                    INVENTARIO · CONTEO Y REGULARIZACIÓN
+                </div>
+
+                <h1>
+                    Inventario <strong>Físico</strong>
+                </h1>
+
+                <p>
+                    Genera un snapshot del stock, registra el conteo real,
+                    identifica diferencias y regulariza existencias mediante
+                    movimientos de ajuste controlados.
+                </p>
+            </div>
+
+            <div class="kif-actions">
+                <a href="/Inventario" class="kif-btn">
+                    <span uk-icon="icon: arrow-left; ratio: .8"></span>
+                    Volver Inventario
+                </a>
+
+                <a href="#nuevo-conteo" class="kif-btn kif-btn-gold">
+                    <span uk-icon="icon: plus-circle; ratio: .8"></span>
+                    Nuevo Conteo
+                </a>
+
+                <a href="/Inventario/Kardex" class="kif-btn kif-btn-cyan">
+                    <span uk-icon="icon: list; ratio: .8"></span>
+                    Kardex
+                </a>
+            </div>
+        </section>
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kif-alert kif-alert-error">
+                @Model.MensajeError
+            </div>
+        }
+
+        <section class="kif-kpis">
+            <article><span>EN CONTEO</span><strong>@Model.EnConteo</strong><small>Documentos abiertos</small></article>
+            <article><span>CERRADOS</span><strong>@Model.Cerrados</strong><small>Pendientes de aplicar</small></article>
+            <article><span>APLICADOS</span><strong>@Model.Aplicados</strong><small>Regularización completada</small></article>
+            <article><span>PENDIENTES</span><strong>@Model.Pendientes</strong><small>Productos aún sin contar</small></article>
+        </section>
+
+        <section class="kif-flow">
+            <div><b>01</b><strong>Iniciar</strong><small>Snapshot del stock</small></div>
+            <i>→</i>
+            <div><b>02</b><strong>Contar</strong><small>Registrar físico real</small></div>
+            <i>→</i>
+            <div><b>03</b><strong>Cerrar</strong><small>Bloquear edición</small></div>
+            <i>→</i>
+            <div><b>04</b><strong>Aplicar</strong><small>Generar ajustes</small></div>
+        </section>
+
+        <section id="nuevo-conteo" class="kif-card">
+            <header class="kif-card-head">
+                <div>
+                    <span>NUEVO CONTEO</span>
+                    <h2>Iniciar inventario físico</h2>
+                    <p>Se tomará una fotografía del stock actual del almacén.</p>
+                </div>
+            </header>
+
+            <div class="kif-card-body">
+                <form method="post" action="?handler=Crear">
+                    @Html.AntiForgeryToken()
+
+                    <div class="kif-form-grid">
+                        <div class="kif-field">
+                            <label>Almacén</label>
+                            <select name="idAlmacen" required>
+                                <option value="">Seleccionar...</option>
+                                @foreach (var almacen in Model.Catalogos.Almacenes)
+                                {
+                                    <option value="@almacen.IdAlmacen">
+                                        @almacen.Codigo · @almacen.Nombre
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="kif-field kif-field-wide">
+                            <label>Observación</label>
+                            <input type="text"
+                                   name="observacion"
+                                   maxlength="500"
+                                   placeholder="Conteo mensual, auditoría, cierre de periodo..." />
+                        </div>
+                    </div>
+
+                    <div class="kif-form-actions">
+                        <button type="submit" class="kif-btn kif-btn-gold">
+                            Iniciar Conteo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="kif-card">
+            <header class="kif-card-head">
+                <div>
+                    <span>HISTORIAL</span>
+                    <h2>Inventarios físicos</h2>
+                    <p>Abre un documento para continuar el conteo o aplicar diferencias.</p>
+                </div>
+
+                <form method="get" class="kif-filter">
+                    <div class="kif-field">
+                        <label>Estado</label>
+                        <select name="Estado">
+                            <option value="">Todos</option>
+                            @foreach (var estado in new[] { "en_conteo", "cerrado", "aplicado" })
+                            {
+                                if (string.Equals(Model.Estado, estado, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <option value="@estado" selected>@estado</option>
+                                }
+                                else
+                                {
+                                    <option value="@estado">@estado</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="kif-btn kif-btn-cyan">
+                        Filtrar
+                    </button>
+                </form>
+            </header>
+
+            <div class="kif-table-wrap">
+                <table class="kif-table">
+                    <thead>
+                        <tr>
+                            <th>NÚMERO</th>
+                            <th>ALMACÉN</th>
+                            <th>ESTADO</th>
+                            <th>PRODUCTOS</th>
+                            <th>PENDIENTES</th>
+                            <th>DIFERENCIA</th>
+                            <th>CREACIÓN</th>
+                            <th>APLICACIÓN</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Items.Count == 0)
+                        {
+                            <tr><td colspan="9"><div class="kif-empty">No existen inventarios físicos para el filtro seleccionado.</div></td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Items)
+                            {
+                                string estado = item.Estado?.Trim().ToLowerInvariant() ?? string.Empty;
+                                string clase = estado switch
+                                {
+                                    "en_conteo" => "counting",
+                                    "cerrado" => "closed",
+                                    "aplicado" => "applied",
+                                    _ => ""
+                                };
+
+                                <tr>
+                                    <td><strong class="kif-number">@item.NumeroInventario</strong></td>
+                                    <td>@item.Almacen</td>
+                                    <td><span class="kif-badge @clase">@item.Estado</span></td>
+                                    <td>@item.TotalProductos</td>
+                                    <td>
+                                        @if (item.PendientesConteo > 0)
+                                        {
+                                            <span class="kif-neg">@item.PendientesConteo</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="kif-pos">0</span>
+                                        }
+                                    </td>
+                                    <td>@item.DiferenciaAbsoluta.ToString("N2")</td>
+                                    <td>@item.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@(item.FechaAplicacion?.ToString("dd/MM/yyyy HH:mm") ?? "—")</td>
+                                    <td><a href="/Inventario/InventarioFisico/Detalle?id=@item.IdInventarioFisico" class="kif-btn kif-btn-small">Abrir</a></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>

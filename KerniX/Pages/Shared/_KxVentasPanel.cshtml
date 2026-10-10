@@ -1,0 +1,239 @@
+﻿@using System
+@using System.Globalization
+@using KerniX.Models.Ventas.Panel
+@model VentasPanelVm
+@{
+    var pe = CultureInfo.GetCultureInfo("es-PE");
+    var ok = Model.PorcentajeOk.ToString("0.##", CultureInfo.InvariantCulture);
+    var pend = Model.PorcentajePendiente.ToString("0.##", CultureInfo.InvariantCulture);
+    var uno = Model.Serie.Count >= 4 ? Model.Serie.Skip(2).ToList() : Model.Serie;
+}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#050b15" />
+    <title>@Model.Titulo · KerniX ERP</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+    <link rel="stylesheet" href="@Url.Content("~/css/kx-ventas-panel.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/css/kx-ventas-panel-excel.css")" />
+</head>
+<body class="kx-root">
+    <div class="kx-app">
+        <aside class="kx-sidebar" id="menuLateral" aria-label="Menú de KerniX">
+            <a class="kx-brand" href="/Inicio/Index" title="Inicio KerniX">
+                <span class="kx-brand-mark">K</span>
+                <span class="kx-brand-name">Kerni<span>X</span><small>VENTAS INTELIGENTES</small></span>
+            </a>
+            <div class="kx-nav-label">NAVEGACIÓN PRINCIPAL</div>
+            <nav class="kx-main-nav">
+                <a href="/Inicio/Index"><span class="kx-nico">⌂</span> Inicio</a>
+                <a href="/Ventas/Index"><span class="kx-nico">▦</span> Dashboard Ventas</a>
+                <a href="/Inventario/Index"><span class="kx-nico">⬡</span> Inventario</a>
+                <a href="/Cliente/Index"><span class="kx-nico">♧</span> Clientes</a>
+                <div class="kx-nav-label kx-nav-group">OPERACIONES DE VENTAS</div>
+                <a class="@(Model.Tipo == PanelTipo.Pagos ? "kx-selected" : "")" href="/Ventas/Pagos"><span class="kx-nico">◈</span> Pagos <span class="kx-nav-arrow">›</span></a>
+                <a class="@(Model.Tipo == PanelTipo.Comprobantes ? "kx-selected" : "")" href="/Ventas/Comprobantes"><span class="kx-nico">▤</span> Comprobantes <span class="kx-nav-arrow">›</span></a>
+                <a class="@(Model.Tipo == PanelTipo.Devoluciones ? "kx-selected" : "")" href="/Ventas/Devoluciones"><span class="kx-nico">↶</span> Devoluciones <span class="kx-nav-arrow">›</span></a>
+                <a class="@(Model.Tipo == PanelTipo.Reclamos ? "kx-selected" : "")" href="/Ventas/Reclamos"><span class="kx-nico">◇</span> Reclamos <span class="kx-nav-arrow">›</span></a>
+            </nav>
+            <div class="kx-sidebar-bottom">
+                <div class="kx-orbit"><span>AI</span></div>
+                <div><b>KerniX IA</b><small>Panel preparado para integrar modelos analíticos empresariales.</small></div>
+            </div>
+        </aside>
+
+        <div class="kx-work">
+            <header class="kx-topbar">
+                <div class="kx-top-left">
+                    <button type="button" class="kx-icon-btn kx-menu-toggle" data-menu-toggle aria-label="Abrir navegación">☰</button>
+                    <div class="kx-breadcrumb">KERNIX <span>/</span> VENTAS <span>/</span> <b>@Model.Titulo.ToUpperInvariant()</b></div>
+                </div>
+                <div class="kx-top-right">
+                    <div class="kx-time"><span class="kx-tiny-icon">◷</span> @DateTime.Now.ToString("dd MMM yyyy", pe).ToUpperInvariant()</div>
+                    <span class="kx-server"><i></i> SQL Server</span>
+                    <a class="kx-user" href="/Inicio/Index"><span class="kx-user-avatar">K</span><span>Cuenta KerniX<small>Volver a inicio</small></span></a>
+                </div>
+            </header>
+
+            <main class="kx-page">
+                <div class="kx-heading">
+                    <div class="kx-heading-main">
+                        <div class="kx-heading-icon">@Model.Icono</div>
+                        <div><div class="kx-micro">CONTROL EMPRESARIAL <span>·</span> VENTAS</div><h1>@Model.Titulo <span>KerniX</span></h1><p>@Model.Subtitulo</p></div>
+                    </div>
+                    <div class="kx-heading-actions">
+                        @if (Model.Tipo == PanelTipo.Pagos)
+                        {
+                            <a class="kx-gold-btn" href="/Ventas/Pagos/Nuevo"><span>＋</span> Registrar pago</a>
+                        }
+                        else if (Model.Tipo == PanelTipo.Reclamos)
+                        {
+                            <a class="kx-gold-btn" href="/Ventas/Reclamos/Nuevo"><span>＋</span> Nuevo reclamo</a>
+                        }
+                        <a class="kx-quiet-btn" href="/Inicio/Index"><span>←</span> Volver al inicio</a>
+                        <a class="kx-gold-btn" href="@Model.Url(1, true)" uk-tooltip="title: Descargar reporte Excel premium con filtros; pos: bottom"><span>↓</span> Exportar Excel</a>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Aviso))
+                {
+                    <div class="kx-warning" role="alert"><span>!</span><p>@Model.Aviso</p></div>
+                }
+
+                <section class="kx-stats" aria-label="Resumen de @Model.Titulo">
+                    <article class="kx-stat kx-stat-gold">
+                        <div class="kx-stat-top"><span class="kx-stat-caption">REGISTROS EN CONSULTA</span><span class="kx-stat-glyph">▦</span></div>
+                        <strong>@Model.Total.ToString("N0", pe)</strong>
+                        <div class="kx-stat-note">Total según filtros activos</div>
+                        <div class="kx-spark">@foreach(var a in Model.Serie){
+                            <i style="--h:@(a.Altura.ToString("0.##", CultureInfo.InvariantCulture))%"></i>
+                        }
+                    </div>
+                </article>
+                <article class="kx-stat kx-stat-blue">
+                    <div class="kx-stat-top"><span class="kx-stat-caption">COMPLETADOS</span><span class="kx-stat-glyph">✓</span></div>
+                    <strong>@Model.Completados.ToString("N0", pe)</strong><div class="kx-stat-note">@(Model.PorcentajeOk.ToString("0.0", pe))% de los registros</div>
+                    <div class="kx-spark">@foreach(var a in Model.Serie){
+                        <i style="--h:@(a.Altura.ToString("0.##", CultureInfo.InvariantCulture))%"></i>
+                    }
+                </div>
+            </article>
+            <article class="kx-stat kx-stat-purple">
+                <div class="kx-stat-top"><span class="kx-stat-caption">PENDIENTES</span><span class="kx-stat-glyph">◷</span></div>
+                <strong>@Model.Pendientes.ToString("N0", pe)</strong><div class="kx-stat-note">Requieren seguimiento</div>
+                <div class="kx-spark">@foreach(var a in Model.Serie){
+                    <i style="--h:@(a.Altura.ToString("0.##", CultureInfo.InvariantCulture))%"></i>
+                }
+            </div>
+        </article>
+        <article class="kx-stat kx-stat-cyan">
+            <div class="kx-stat-top"><span class="kx-stat-caption">@Model.UltimaEtiqueta.ToUpperInvariant()</span><span class="kx-stat-glyph">◈</span></div>
+            <strong class="kx-stat-money">@(Model.TieneMonto ? "S/ " + Model.MontoTotal.ToString("N2", pe) : "Sin campo de monto")</strong>
+            <div class="kx-stat-note">@(Model.TieneMonto ? "Acumulado de los registros filtrados" : "No disponible en este módulo")</div>
+            <div class="kx-spark">@foreach(var a in Model.Serie){
+                <i style="--h:@(a.Altura.ToString("0.##", CultureInfo.InvariantCulture))%"></i>
+            }
+        </div>
+    </article>
+</section>
+
+<section class="kx-content-grid">
+    <div class="kx-panel kx-table-card">
+        <div class="kx-panel-header"><div><div class="kx-panel-eyebrow">OPERACIONES REGISTRADAS</div><h2>Directorio de @Model.Titulo.ToLowerInvariant()</h2></div><span class="kx-chip">5 por página</span></div>
+        <form method="get" action="@Model.Ruta" class="kx-filter-form" id="busquedaPanel">
+            <label class="kx-searchbox"><span>⌕</span><input id="buscarGeneral" type="search" name="buscar" maxlength="120" value="@Model.Buscar" placeholder="Buscar por documento, cliente o venta..." aria-label="Buscar registros" /><kbd>Ctrl K</kbd></label>
+            <select name="estado" aria-label="Estado">
+                <option value="todos" selected="@(Model.EstadoFiltro == "todos")">Todos los estados</option>
+                <option value="completados" selected="@(Model.EstadoFiltro == "completados")">Completados</option>
+                <option value="pendientes" selected="@(Model.EstadoFiltro == "pendientes")">Pendientes</option>
+                <option value="otros" selected="@(Model.EstadoFiltro == "otros")">Otros estados</option>
+            </select>
+            <label class="kx-date"><span>Desde</span><input type="date" name="desde" value="@(Model.Desde?.ToString("yyyy-MM-dd"))" /></label>
+            <label class="kx-date"><span>Hasta</span><input type="date" name="hasta" value="@(Model.Hasta?.ToString("yyyy-MM-dd"))" /></label>
+            <button type="submit" class="kx-filter-submit">⌕ Filtrar</button>
+            <a class="kx-clear" href="@Model.Ruta" title="Limpiar filtros">↺</a>
+        </form>
+        <div class="kx-table-scroll">
+            <table class="kx-table">
+                <thead><tr><th>DOCUMENTO / ID</th><th>CLIENTE</th><th>FECHA</th><th>@Model.TipoColumna.ToUpperInvariant()</th><th>MONTO</th><th>ESTADO</th><th>VENTA</th><th>ACCIÓN</th></tr></thead>
+                <tbody>
+                    @foreach (var item in Model.Registros)
+                    {
+                        <tr>
+                            <td><div class="kx-doc">@(string.IsNullOrWhiteSpace(item.Documento) ? "—" : item.Documento)<small>ID #@item.Id</small></div></td>
+                            <td class="kx-td-client" title="@item.Cliente">@item.Cliente</td>
+                            <td class="kx-date-cell">@(item.Fecha?.ToString("dd/MM/yyyy") ?? "—")</td>
+                            <td><span class="kx-type">@(string.IsNullOrWhiteSpace(item.Tipo) ? "—" : item.Tipo)</span></td>
+                            <td class="kx-td-money">@(item.Monto.HasValue ? "S/ " + item.Monto.Value.ToString("N2", pe) : "—")</td>
+                            <td><span class="kx-status kx-status-@item.Categoria"><i></i>@(string.IsNullOrWhiteSpace(item.Estado) ? "Sin estado" : item.Estado)</span></td>
+                            <td class="kx-venta-num">@(string.IsNullOrWhiteSpace(item.Referencia) ? "—" : item.Referencia)</td>
+                            <td><button class="kx-eye" type="button" data-ver data-id="@item.Id" data-doc="@item.Documento" data-cliente="@item.Cliente" data-fecha="@(item.Fecha?.ToString("dd/MM/yyyy"))" data-tipo="@item.Tipo" data-monto="@(item.Monto?.ToString("N2", pe))" data-estado="@item.Estado" data-venta="@item.Referencia" aria-label="Ver registro @item.Id" uk-tooltip="title: Ver detalles; pos: top">◉ <span>Ver</span></button></td>
+                        </tr>
+                    }
+                    @if (Model.Registros.Count == 0)
+                    {
+                        <tr><td class="kx-empty" colspan="8"><span>◇</span><b>No hay registros para mostrar</b><small>Cambia los filtros o revisa la conexión SQL.</small></td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="kx-pager">
+            <span>Mostrando @Model.Registros.Count de @Model.Total registros</span>
+            <nav aria-label="Paginación de @Model.Titulo">
+                @if (Model.Pagina > 1)
+                {
+                    <a href="@Model.Url(Model.Pagina - 1)" aria-label="Página anterior">‹</a>
+                }
+                else
+                {
+
+                    <span class="kx-page-disabled">‹</span>
+                }
+                <span class="kx-current">@Model.Pagina</span><span class="kx-page-of">de @Model.TotalPaginas</span>
+                @if (Model.Pagina < Model.TotalPaginas)
+                {
+                    <a href="@Model.Url(Model.Pagina + 1)" aria-label="Página siguiente">›</a>
+                }
+                else
+                {
+
+                    <span class="kx-page-disabled">›</span>
+                }
+            </nav>
+        </div>
+    </div>
+    <aside class="kx-aside">
+        <section class="kx-panel kx-donut-panel">
+            <div class="kx-panel-header"><div><div class="kx-panel-eyebrow">SEGMENTACIÓN EN TIEMPO REAL</div><h2>Distribución de estados</h2></div><span class="kx-chip">SQL</span></div>
+            <div class="kx-donut-content">
+                <div class="kx-donut" style="--ok:@ok%;--pend:@pend%;" role="img" aria-label="@Model.Completados completados, @Model.Pendientes pendientes y @Model.Otros otros">
+                    <div class="kx-donut-hole"><strong>@Model.Total.ToString("N0", pe)</strong><small>Total</small></div>
+                </div>
+                <div class="kx-donut-legend"><div><i class="kx-legend-ok"></i> Completados <b>@Model.Completados</b></div><div><i class="kx-legend-pend"></i> Pendientes <b>@Model.Pendientes</b></div><div><i class="kx-legend-other"></i> Otros <b>@Model.Otros</b></div></div>
+            </div>
+        </section>
+        <section class="kx-panel kx-help-panel">
+            <div class="kx-panel-header"><div><div class="kx-panel-eyebrow">ACCESOS DIRECTOS</div><h2>Otras operaciones</h2></div></div>
+            <div class="kx-mini-links"><a href="/Ventas/Pagos">◈ Pagos <span>→</span></a><a href="/Ventas/Comprobantes">▤ Comprobantes <span>→</span></a><a href="/Ventas/Devoluciones">↶ Devoluciones <span>→</span></a><a href="/Ventas/Reclamos">◇ Reclamos <span>→</span></a></div>
+        </section>
+    </aside>
+</section>
+
+<section class="kx-insights">
+    <div class="kx-panel kx-chart-panel">
+        <div class="kx-panel-header"><div><div class="kx-panel-eyebrow">ANÁLISIS COMERCIAL</div><h2>Evolución de los últimos 6 meses</h2></div><span class="kx-chip">@(Model.TieneMonto ? "Importes" : "Registros")</span></div>
+        <div class="kx-histogram" role="img" aria-label="Histograma de los últimos seis meses">
+            <div class="kx-gridlines"><i></i><i></i><i></i><i></i></div>
+            @foreach (var punto in Model.Serie)
+            {
+                <div class="kx-histo-col"><div class="kx-histo-number">@(Model.TieneMonto ? punto.Monto.ToString("N0", pe) : punto.Cantidad.ToString("N0", pe))</div><div class="kx-histo-bar-wrap"><div class="kx-histo-bar" style="--bar-height:@(punto.Altura.ToString("0.##", CultureInfo.InvariantCulture))%"></div></div><small>@punto.Mes</small></div>
+            }
+        </div>
+        <div class="kx-chart-footer">Datos de SQL Server · Agrupación mensual · No incluye estimaciones</div>
+    </div>
+    <div class="kx-panel kx-summary-panel">
+        <div class="kx-panel-header"><div><div class="kx-panel-eyebrow">INDICADORES</div><h2>Resumen operativo</h2></div></div>
+        <div class="kx-summary-list"><div><span>Registros revisados</span><b>@Model.Total.ToString("N0", pe)</b></div><div><span>Tasa de completados</span><b>@Model.PorcentajeOk.ToString("0.0", pe)%</b></div><div><span>Requieren seguimiento</span><b>@Model.Pendientes.ToString("N0", pe)</b></div><div><span>Estado no clasificado</span><b>@Model.Otros.ToString("N0", pe)</b></div></div>
+        <div class="kx-summary-note">Las categorías se calculan a partir del valor real de estado. Ajusta las equivalencias si tu base utiliza nombres distintos.</div>
+    </div>
+    <div class="kx-panel kx-ai-panel">
+        <div class="kx-panel-header"><div><div class="kx-panel-eyebrow">INTELIGENCIA EMPRESARIAL</div><h2>KerniX IA</h2></div><span class="kx-chip">PREPARADO</span></div>
+        <div class="kx-ai-art"><div class="kx-ai-sphere">AI</div></div>
+        <p>Zona preparada para recomendaciones predictivas y detección de anomalías. Esta versión muestra indicadores reales; aún no ejecuta un modelo de IA.</p>
+    </div>
+</section>
+<footer class="kx-footer"><span>KerniX S.A.C. · Panel de ventas</span><span>4 módulos · Tablas de 5 registros por página</span></footer>
+</main>
+</div>
+</div>
+<dialog id="detalleKx" class="kx-dialog" aria-labelledby="kxDialogTitulo">
+    <div class="kx-dialog-top"><span class="kx-dialog-mark">K</span><div><small>FICHA DE OPERACIÓN</small><h2 id="kxDialogTitulo">Detalle de @Model.Titulo</h2></div><button type="button" class="kx-dialog-close" data-cerrar aria-label="Cerrar">×</button></div>
+    <dl id="detalleKxCampos"></dl><div class="kx-dialog-actions"><button class="kx-gold-btn" type="button" data-cerrar>Cerrar detalle</button></div>
+</dialog>
+<script defer src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
+<script defer src="@Url.Content("~/js/kx-ventas-panel.js")"></script>
+</body>
+</html>

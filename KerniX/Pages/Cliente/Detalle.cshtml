@@ -1,0 +1,1195 @@
+﻿@page
+@model KerniX.Pages.Cliente.DetalleModel
+@using System.Globalization
+
+@{
+    Layout = null;
+
+    ViewData["Title"] = "Detalle del cliente";
+
+    var cultura = CultureInfo.GetCultureInfo("es-PE");
+}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>Detalle del cliente | KerniX</title>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
+
+    <style>
+
+            :root {
+                --kx-bg: #07111f;
+                --kx-panel: #102136;
+                --kx-panel2: #142a42;
+                --kx-gold: #f6c75b;
+                --kx-blue: #60adff;
+                --kx-green: #38d6a7;
+                --kx-red: #ff7185;
+                --kx-text: #edf4fc;
+                --kx-muted: #95abc0;
+                --kx-line: rgba(140,180,220,.17);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                background: radial-gradient( circle at 90% 0%, rgba(38,103,166,.17), transparent 32% ), linear-gradient( 145deg, #06101c, #0b1c2f );
+                font-family: Inter, "Segoe UI", Arial, sans-serif;
+                color: var(--kx-text);
+            }
+
+            [hidden] {
+                display: none !important;
+            }
+
+            .kx-container {
+                width: min(1450px, 100%);
+                margin: auto;
+                padding: 30px;
+            }
+
+            /* CABECERA */
+
+            .kx-toolbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+
+            .kx-back {
+                display: inline-flex;
+                align-items: center;
+                gap: 9px;
+                color: #a8c6e4;
+                font-size: 13px;
+                font-weight: 800;
+                text-decoration: none;
+            }
+
+                .kx-back:hover {
+                    color: var(--kx-gold);
+                    text-decoration: none;
+                }
+
+            .kx-actions {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .kx-btn {
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                gap: 8px;
+                min-height: 43px;
+                padding: 0 17px;
+                border-radius: 10px;
+                border: 1px solid var(--kx-line);
+                background: #193149;
+                color: white;
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: 800;
+                cursor: pointer;
+            }
+
+                .kx-btn:hover {
+                    color: white;
+                    background: #24425e;
+                    text-decoration: none;
+                }
+
+            .kx-btn-gold {
+                border: none;
+                background: linear-gradient( 145deg, #f8d57c, #d8a236 );
+                color: #081524;
+            }
+
+                .kx-btn-gold:hover {
+                    color: #081524;
+                    filter: brightness(1.08);
+                }
+
+            /* PANEL */
+
+            .kx-panel {
+                background: linear-gradient( 145deg, #13273e, #0d1d30 );
+                border: 1px solid var(--kx-line);
+                border-radius: 17px;
+                overflow: hidden;
+                margin-bottom: 23px;
+                box-shadow: 0 18px 45px rgba(0,0,0,.13);
+            }
+
+            .kx-panel-header {
+                padding: 20px 23px;
+                border-bottom: 1px solid var(--kx-line);
+            }
+
+                .kx-panel-header h2 {
+                    margin: 0;
+                    color: white;
+                    font-size: 18px;
+                    font-weight: 850;
+                }
+
+                .kx-panel-header p {
+                    margin: 6px 0 0;
+                    font-size: 12px;
+                    color: var(--kx-muted);
+                }
+
+            /* PERFIL */
+
+            .kx-profile {
+                position: relative;
+                padding: 30px;
+                background: linear-gradient( 115deg, #142d49, #102238 60%, #172a40 );
+            }
+
+                .kx-profile::before {
+                    content: "";
+                    position: absolute;
+                    height: 5px;
+                    left: 0;
+                    right: 0;
+                    top: 0;
+                    background: linear-gradient( 90deg, #f8d57c, #d8a236, #60adff );
+                }
+
+            .kx-profile-main {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .kx-avatar {
+                flex: 0 0 auto;
+                width: 74px;
+                height: 74px;
+                display: grid;
+                place-items: center;
+                border-radius: 19px;
+                background: linear-gradient( 145deg, #f9da8a, #d8a236 );
+                color: #091522;
+                font-size: 32px;
+                font-weight: 900;
+            }
+
+            .kx-eyebrow {
+                display: block;
+                color: var(--kx-gold);
+                font-size: 11px;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: 1.1px;
+                margin-bottom: 8px;
+            }
+
+            .kx-profile h1 {
+                margin: 0;
+                color: white;
+                font-size: clamp(23px, 3vw, 34px);
+                line-height: 1.2;
+                overflow-wrap: anywhere;
+                font-weight: 900;
+            }
+
+            .kx-profile-sub {
+                margin-top: 9px;
+                color: var(--kx-muted);
+                font-size: 13px;
+            }
+
+            .kx-badges {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 9px;
+                margin-top: 20px;
+            }
+
+            .kx-badge {
+                display: inline-flex;
+                padding: 7px 12px;
+                border-radius: 30px;
+                font-size: 11px;
+                font-weight: 850;
+            }
+
+                .kx-badge.active {
+                    background: rgba(56,214,167,.12);
+                    color: #56ecc0;
+                }
+
+                .kx-badge.inactive {
+                    background: rgba(255,113,133,.12);
+                    color: #ff94a3;
+                }
+
+                .kx-badge.type {
+                    background: rgba(96,173,255,.12);
+                    color: #a0d0ff;
+                }
+
+            /* INDICADORES */
+
+            .kx-stats {
+                display: grid;
+                grid-template-columns: repeat(4,minmax(0,1fr));
+                gap: 17px;
+                margin-bottom: 24px;
+            }
+
+            .kx-stat {
+                padding: 23px;
+                min-width: 0;
+                border-radius: 16px;
+                border: 1px solid var(--kx-line);
+                background: linear-gradient( 145deg, #152c45, #0e1e31 );
+            }
+
+                .kx-stat:nth-child(1) {
+                    border-color: rgba(246,199,91,.30);
+                }
+
+                .kx-stat:nth-child(2) {
+                    border-color: rgba(56,214,167,.25);
+                }
+
+                .kx-stat:nth-child(3) {
+                    border-color: rgba(96,173,255,.25);
+                }
+
+            .kx-stat-icon {
+                display: grid;
+                place-items: center;
+                width: 43px;
+                height: 43px;
+                border-radius: 12px;
+                background: rgba(246,199,91,.12);
+                color: var(--kx-gold);
+                margin-bottom: 16px;
+            }
+
+            .kx-stat:nth-child(2) .kx-stat-icon {
+                background: rgba(56,214,167,.12);
+                color: var(--kx-green);
+            }
+
+            .kx-stat:nth-child(3) .kx-stat-icon {
+                background: rgba(96,173,255,.12);
+                color: var(--kx-blue);
+            }
+
+            .kx-stat span.kx-label {
+                display: block;
+                color: var(--kx-muted);
+                font-size: 12px;
+            }
+
+            .kx-stat strong {
+                display: block;
+                margin-top: 9px;
+                color: white;
+                font-size: 27px;
+                font-weight: 900;
+                overflow-wrap: anywhere;
+            }
+
+            .kx-stat:nth-child(1) strong {
+                color: var(--kx-gold);
+            }
+
+            .kx-stat small {
+                display: block;
+                margin-top: 7px;
+                color: #7993ab;
+                font-size: 11px;
+            }
+
+            /* GRID GENERAL */
+
+            .kx-grid {
+                display: grid;
+                grid-template-columns: minmax(0,1.2fr) minmax(0,1fr);
+                gap: 22px;
+            }
+
+            /* INFORMACIÓN */
+
+            .kx-info-grid {
+                display: grid;
+                grid-template-columns: repeat(2,minmax(0,1fr));
+                gap: 14px;
+                padding: 22px;
+            }
+
+            .kx-info-item {
+                min-width: 0;
+                padding: 17px;
+                background: #0a1b2e;
+                border: 1px solid var(--kx-line);
+                border-radius: 11px;
+                overflow-wrap: anywhere;
+            }
+
+                .kx-info-item small {
+                    display: block;
+                    color: var(--kx-muted);
+                    font-size: 11px;
+                    margin-bottom: 8px;
+                }
+
+                .kx-info-item strong {
+                    color: white;
+                    font-size: 13px;
+                    font-weight: 800;
+                }
+
+                .kx-info-item a {
+                    color: #93c8ff;
+                    text-decoration: none;
+                }
+
+            /* CONTACTOS */
+
+            .kx-list {
+                padding: 20px;
+            }
+
+            .kx-list-item {
+                display: flex;
+                gap: 13px;
+                padding: 16px;
+                border: 1px solid var(--kx-line);
+                background: #0b1c2e;
+                border-radius: 12px;
+                margin-bottom: 11px;
+            }
+
+            .kx-list-icon {
+                flex: 0 0 auto;
+                width: 41px;
+                height: 41px;
+                display: grid;
+                place-items: center;
+                border-radius: 11px;
+                background: rgba(96,173,255,.10);
+                color: #8dc4ff;
+            }
+
+            .kx-list-content {
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+
+                .kx-list-content strong {
+                    display: block;
+                    color: white;
+                    font-size: 13px;
+                }
+
+                .kx-list-content span {
+                    display: block;
+                    margin-top: 5px;
+                    color: var(--kx-muted);
+                    font-size: 12px;
+                }
+
+            .kx-tag {
+                display: inline-block;
+                margin-top: 9px;
+                padding: 4px 9px;
+                color: var(--kx-gold);
+                background: rgba(246,199,91,.09);
+                border-radius: 20px;
+                font-size: 10px;
+                font-weight: 800;
+            }
+
+            /* COMPRAS */
+
+            .kx-purchase {
+                padding: 23px;
+            }
+
+                .kx-purchase small {
+                    display: block;
+                    color: var(--kx-muted);
+                    font-size: 12px;
+                }
+
+                .kx-purchase strong {
+                    display: block;
+                    margin: 10px 0;
+                    color: var(--kx-gold);
+                    font-size: 38px;
+                    font-weight: 900;
+                }
+
+            .kx-purchase-date {
+                margin-top: 17px;
+                padding-top: 16px;
+                border-top: 1px solid var(--kx-line);
+                color: var(--kx-muted);
+                font-size: 12px;
+            }
+
+            .kx-empty {
+                padding: 25px;
+                color: var(--kx-muted);
+                font-size: 13px;
+                text-align: center;
+            }
+
+            .kx-error {
+                padding: 22px;
+                border: 1px solid rgba(255,113,133,.35);
+                border-radius: 13px;
+                background: rgba(255,113,133,.09);
+                color: #ff9fac;
+            }
+
+            /* RESPONSIVE */
+
+            @@media (max-width:1100px) {
+
+                .kx-stats {
+                    grid-template-columns: repeat(2,1fr);
+                }
+
+                .kx-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            @@media (max-width:650px) {
+
+                .kx-container {
+                    padding: 15px;
+                }
+
+                .kx-profile {
+                    padding: 20px;
+                }
+
+                .kx-profile-main {
+                    align-items: flex-start;
+                    flex-direction: column;
+                }
+
+                .kx-avatar {
+                    width: 60px;
+                    height: 60px;
+                }
+
+                .kx-stats,
+                .kx-info-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .kx-toolbar {
+                    align-items: stretch;
+                }
+
+                .kx-actions {
+                    width: 100%;
+                }
+
+                    .kx-actions .kx-btn {
+                        flex: 1;
+                    }
+            }
+
+            /* IMPRESIÓN */
+
+            @@media print {
+
+                body {
+                    background: white !important;
+                    color: #111827 !important;
+                }
+
+                .kx-toolbar {
+                    display: none !important;
+                }
+
+                .kx-panel,
+                .kx-stat {
+                    box-shadow: none !important;
+                    break-inside: avoid;
+                    border: 1px solid #cbd5e1 !important;
+                    background: white !important;
+                }
+
+                    .kx-panel *,
+                    .kx-stat *,
+                    .kx-profile * {
+                        color: #111827 !important;
+                    }
+
+                .kx-info-item,
+                .kx-list-item {
+                    background: white !important;
+                    border-color: #cbd5e1 !important;
+                }
+            }
+
+    </style>
+
+</head>
+
+<body>
+
+    <main class="kx-container">
+
+        <!-- =====================================
+             BARRA SUPERIOR
+        ===================================== -->
+
+        <header class="kx-toolbar">
+
+            <a href="/Cliente/Index"
+               class="kx-back">
+
+                <span uk-icon="arrow-left"></span>
+
+                Volver a clientes
+
+            </a>
+
+            <div class="kx-actions">
+
+                @if (Model.TieneCliente)
+                {
+                    <button type="button"
+                            class="kx-btn"
+                            onclick="window.print()">
+
+                        <span uk-icon="print"></span>
+
+                        Imprimir / PDF
+
+                    </button>
+                }
+
+                <a href="/Cliente/Index"
+                   class="kx-btn kx-btn-gold">
+
+                    <span uk-icon="users"></span>
+
+                    Administrar clientes
+
+                </a>
+
+            </div>
+
+        </header>
+
+        @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
+        {
+            <div class="kx-error"
+                 role="alert">
+
+                @Model.MensajeError
+
+            </div>
+        }
+        else if (Model.Cliente is { } cliente)
+        {
+            var indicadores = Model.Indicadores;
+
+            var nombre = !string.IsNullOrWhiteSpace(
+                cliente.RazonSocial)
+                ? cliente.RazonSocial
+                : !string.IsNullOrWhiteSpace(
+                    cliente.NombreCompleto)
+                    ? cliente.NombreCompleto
+                    : $"{cliente.Nombres} {cliente.Apellidos}".Trim();
+
+            if (string.IsNullOrWhiteSpace(nombre))
+            {
+                nombre = "Cliente";
+            }
+
+            var esJuridico =
+                cliente.TipoCliente.Equals(
+                    "juridico",
+                    StringComparison.OrdinalIgnoreCase)
+                ||
+                cliente.TipoCliente.Equals(
+                    "empresa",
+                    StringComparison.OrdinalIgnoreCase);
+
+            // =====================================
+            // PERFIL
+            // =====================================
+
+            <section class="kx-panel">
+
+                <div class="kx-profile">
+
+                    <div class="kx-profile-main">
+
+                        <div class="kx-avatar">
+
+                            @nombre.Substring(0, 1).ToUpperInvariant()
+
+                        </div>
+
+                        <div>
+
+                            <span class="kx-eyebrow">
+                                KerniX / Gestión de clientes
+                            </span>
+
+                            <h1>@nombre</h1>
+
+                            <div class="kx-profile-sub">
+
+                                Cliente #@cliente.IdCliente
+
+                                ·
+
+                                @cliente.TipoDocumento
+
+                                @cliente.NumeroDocumento
+
+                            </div>
+
+                            <div class="kx-badges">
+
+                                <span class="kx-badge @(cliente.Estado ? "active" : "inactive")">
+
+                                    @(cliente.Estado
+                                        ? "● Cliente activo"
+                                        : "● Cliente inactivo")
+
+                                </span>
+
+                                <span class="kx-badge type">
+
+                                    @(esJuridico
+                                        ? "Persona jurídica"
+                                        : "Persona natural")
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- =====================================
+                 INDICADORES
+            ===================================== -->
+
+            <section class="kx-stats">
+
+                <article class="kx-stat">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="cart"></span>
+                    </div>
+
+                    <span class="kx-label">
+                        Total de ventas
+                    </span>
+
+                    <strong>
+                        @indicadores.TotalVentas
+                    </strong>
+
+                    <small>
+                        Operaciones registradas
+                    </small>
+
+                </article>
+
+                <article class="kx-stat">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="credit-card"></span>
+                    </div>
+
+                    <span class="kx-label">
+                        Total comprado
+                    </span>
+
+                    <strong>
+                        S/ @indicadores.TotalComprado.ToString("N2", cultura)
+                    </strong>
+
+                    <small>
+                        Importe acumulado registrado
+                    </small>
+
+                </article>
+
+                <article class="kx-stat">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="users"></span>
+                    </div>
+
+                    <span class="kx-label">
+                        Contactos
+                    </span>
+
+                    <strong>
+                        @Model.Contactos.Count
+                    </strong>
+
+                    <small>
+                        Contactos disponibles
+                    </small>
+
+                </article>
+
+                <article class="kx-stat">
+
+                    <div class="kx-stat-icon">
+                        <span uk-icon="location"></span>
+                    </div>
+
+                    <span class="kx-label">
+                        Direcciones
+                    </span>
+
+                    <strong>
+                        @Model.Direcciones.Count
+                    </strong>
+
+                    <small>
+                        Direcciones registradas
+                    </small>
+
+                </article>
+
+            </section>
+
+            <!-- =====================================
+                 CONTENIDO PRINCIPAL
+            ===================================== -->
+
+            <div class="kx-grid">
+
+                <!-- COLUMNA IZQUIERDA -->
+
+                <div>
+
+                    <!-- INFORMACIÓN GENERAL -->
+
+                    <section class="kx-panel">
+
+                        <header class="kx-panel-header">
+
+                            <h2>
+                                Información del cliente
+                            </h2>
+
+                            <p>
+                                Datos registrados en el sistema.
+                            </p>
+
+                        </header>
+
+                        <div class="kx-info-grid">
+
+                            <div class="kx-info-item">
+
+                                <small>Identificador</small>
+
+                                <strong>
+                                    #@cliente.IdCliente
+                                </strong>
+
+                            </div>
+
+                            <div class="kx-info-item">
+
+                                <small>Tipo de cliente</small>
+
+                                <strong>
+                                    @(esJuridico
+                                        ? "Persona jurídica"
+                                        : "Persona natural")
+                                </strong>
+
+                            </div>
+
+                            <div class="kx-info-item">
+
+                                <small>Tipo de documento</small>
+
+                                <strong>
+                                    @cliente.TipoDocumento
+                                </strong>
+
+                            </div>
+
+                            <div class="kx-info-item">
+
+                                <small>Número de documento</small>
+
+                                <strong>
+                                    @cliente.NumeroDocumento
+                                </strong>
+
+                            </div>
+
+                            <div class="kx-info-item">
+
+                                <small>Teléfono</small>
+
+                                <strong>
+
+                                    @(string.IsNullOrWhiteSpace(cliente.Telefono)
+                                        ? "No registrado"
+                                        : cliente.Telefono)
+
+                                </strong>
+
+                            </div>
+
+                            <div class="kx-info-item">
+
+                                <small>Correo electrónico</small>
+
+                                <strong>
+
+                                    @(string.IsNullOrWhiteSpace(cliente.Correo)
+                                        ? "No registrado"
+                                        : cliente.Correo)
+
+                                </strong>
+
+                            </div>
+
+                            <div class="kx-info-item">
+
+                                <small>Empresa</small>
+
+                                <strong>
+                                    @cliente.Empresa
+                                </strong>
+
+                            </div>
+
+                            <div class="kx-info-item">
+
+                                <small>Fecha de registro</small>
+
+                                <strong>
+
+                                    @(cliente.FechaRegistro == DateTime.MinValue
+                                        ? "No registrada"
+                                        : cliente.FechaRegistro.ToString(
+                                            "dd/MM/yyyy HH:mm",
+                                            cultura))
+
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- CONTACTOS -->
+
+                    <section class="kx-panel">
+
+                        <header class="kx-panel-header">
+
+                            <h2>Contactos</h2>
+
+                            <p>
+                                Personas de contacto registradas.
+                            </p>
+
+                        </header>
+
+                        @if (Model.Contactos.Count == 0)
+                        {
+                            <div class="kx-empty">
+
+                                No hay contactos registrados.
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="kx-list">
+
+                                @foreach (var contacto in Model.Contactos)
+                                {
+                                    <article class="kx-list-item">
+
+                                        <div class="kx-list-icon">
+
+                                            <span uk-icon="user"></span>
+
+                                        </div>
+
+                                        <div class="kx-list-content">
+
+                                            <strong>
+
+                                                @(string.IsNullOrWhiteSpace(contacto.Nombres)
+                                                    ? "Contacto"
+                                                    : contacto.Nombres)
+
+                                            </strong>
+
+                                            @if (!string.IsNullOrWhiteSpace(contacto.Cargo))
+                                            {
+                                                <span>
+                                                    @contacto.Cargo
+                                                </span>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(contacto.Telefono))
+                                            {
+                                                <span>
+                                                    Tel: @contacto.Telefono
+                                                </span>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(contacto.Correo))
+                                            {
+                                                <span>
+                                                    @contacto.Correo
+                                                </span>
+                                            }
+
+                                            @if (contacto.EsPrincipal)
+                                            {
+                                                <span class="kx-tag">
+                                                    Contacto principal
+                                                </span>
+                                            }
+
+                                            @if (!contacto.Estado)
+                                            {
+                                                <span class="kx-tag">
+                                                    Inactivo
+                                                </span>
+                                            }
+
+                                        </div>
+
+                                    </article>
+                                }
+
+                            </div>
+                        }
+
+                    </section>
+
+                </div>
+
+                <!-- COLUMNA DERECHA -->
+
+                <div>
+
+                    <!-- RESUMEN COMERCIAL -->
+
+                    <section class="kx-panel">
+
+                        <header class="kx-panel-header">
+
+                            <h2>
+                                Resumen comercial
+                            </h2>
+
+                            <p>
+                                Información proporcionada por la API.
+                            </p>
+
+                        </header>
+
+                        <div class="kx-purchase">
+
+                            <small>
+                                Importe total comprado
+                            </small>
+
+                            <strong>
+                                S/ @indicadores.TotalComprado.ToString("N2", cultura)
+                            </strong>
+
+                            <div class="kx-purchase-date">
+
+                                <span uk-icon="calendar"></span>
+
+                                Última compra:
+
+                                @(indicadores.FechaUltimaCompra.HasValue
+                                    ? indicadores.FechaUltimaCompra.Value
+                                        .ToString("dd/MM/yyyy HH:mm", cultura)
+                                    : "Sin compras registradas")
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <!-- DIRECCIONES -->
+
+                    <section class="kx-panel">
+
+                        <header class="kx-panel-header">
+
+                            <h2>Direcciones</h2>
+
+                            <p>
+                                Ubicaciones registradas del cliente.
+                            </p>
+
+                        </header>
+
+                        @if (Model.Direcciones.Count == 0)
+                        {
+                            <div class="kx-empty">
+
+                                No hay direcciones registradas.
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="kx-list">
+
+                                @foreach (var direccion in Model.Direcciones)
+                                {
+                                    <article class="kx-list-item">
+
+                                        <div class="kx-list-icon">
+
+                                            <span uk-icon="location"></span>
+
+                                        </div>
+
+                                        <div class="kx-list-content">
+
+                                            <strong>
+
+                                                @(string.IsNullOrWhiteSpace(
+                                                    direccion.TipoDireccion)
+                                                    ? "Dirección"
+                                                    : direccion.TipoDireccion)
+
+                                            </strong>
+
+                                            <span>
+                                                @direccion.Direccion
+                                            </span>
+
+                                            <span>
+
+                                                @string.Join(
+                                                    ", ",
+                                                    new[]
+                                                    {
+                                                        direccion.Distrito,
+                                                        direccion.Provincia,
+                                                        direccion.Departamento
+                                                    }
+                                                    .Where(x =>
+                                                        !string.IsNullOrWhiteSpace(x))
+                                                )
+
+                                            </span>
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                direccion.Referencia))
+                                            {
+                                                <span>
+
+                                                    Ref:
+                                                    @direccion.Referencia
+
+                                                </span>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(
+                                                direccion.Ubigeo))
+                                            {
+                                                <span>
+
+                                                    Ubigeo:
+                                                    @direccion.Ubigeo
+
+                                                </span>
+                                            }
+
+                                            @if (direccion.EsPrincipal)
+                                            {
+                                                <span class="kx-tag">
+                                                    Dirección principal
+                                                </span>
+                                            }
+
+                                            @if (!direccion.Estado)
+                                            {
+                                                <span class="kx-tag">
+                                                    Inactiva
+                                                </span>
+                                            }
+
+                                        </div>
+
+                                    </article>
+                                }
+
+                            </div>
+                        }
+
+                    </section>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="kx-error">
+
+                No se encontró información del cliente.
+
+            </div>
+        }
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
+
+</body>
+</html>

@@ -1,4 +1,9 @@
-﻿using System.Net;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using KerniX.DTOs.Auth;
@@ -10,6 +15,7 @@ public sealed class AuthApiService : IAuthApiService
 {
     private readonly HttpClient _httpClient;
     private readonly ILogger<AuthApiService> _logger;
+    private readonly IConfiguration _configuration;
 
     private static readonly JsonSerializerOptions JsonOptions =
         new()
@@ -19,10 +25,12 @@ public sealed class AuthApiService : IAuthApiService
 
     public AuthApiService(
         HttpClient httpClient,
-        ILogger<AuthApiService> logger)
+        ILogger<AuthApiService> logger,
+        IConfiguration configuration)
     {
         _httpClient = httpClient;
         _logger = logger;
+        _configuration = configuration;
     }
 
     public async Task<ApiResponse<LoginResponse>?> LoginAsync(
@@ -48,10 +56,10 @@ public sealed class AuthApiService : IAuthApiService
             await response.Content.ReadAsStringAsync(
                 cancellationToken);
 
+        // No escribir el cuerpo del login en logs: contiene credenciales derivadas y tokens.
         _logger.LogInformation(
-            "LOGIN <- HTTP {StatusCode} | BODY: {Body}",
-            (int)response.StatusCode,
-            contenido);
+            "LOGIN <- HTTP {StatusCode}",
+            (int)response.StatusCode);
 
         // =========================================================
         // ERROR HTTP
@@ -98,6 +106,26 @@ public sealed class AuthApiService : IAuthApiService
                 Message =
                     "La API respondió correctamente pero no devolvió contenido."
             };
+        }
+
+        // No aceptar respuestas de autenticación marcadas explícitamente
+        // como success:false, aunque accidentalmente incluyan un token.
+        try
+        {
+            using var indicador = JsonDocument.Parse(contenido);
+            if (TryGetProperty(indicador.RootElement, "success", out var exito) &&
+                exito.ValueKind == JsonValueKind.False)
+            {
+                return new ApiResponse<LoginResponse>
+                {
+                    Success = false,
+                    Message = "La API rechazó la autenticación."
+                };
+            }
+        }
+        catch (JsonException)
+        {
+            // El parser existente devolverá un error de formato más abajo.
         }
 
         // =========================================================
@@ -358,9 +386,8 @@ public sealed class AuthApiService : IAuthApiService
         // =========================================================
 
         _logger.LogError(
-            "La API respondió HTTP {StatusCode}, pero no se encontró AccessToken. BODY: {Body}",
-            (int)response.StatusCode,
-            contenido);
+            "La API respondió HTTP {StatusCode}, pero no se encontró AccessToken.",
+            (int)response.StatusCode);
 
         return new ApiResponse<LoginResponse>
         {
@@ -370,6 +397,136 @@ public sealed class AuthApiService : IAuthApiService
                 "La autenticación fue aceptada, " +
                 "pero no se encontró el token de acceso."
         };
+    }
+
+
+    // =============================================================
+    // REFRESH JWT: ACTIVO SOLO CON ENDPOINT CONFIRMADO
+    // =============================================================
+
+    public async Task<ApiResponse<LoginResponse>?> RefreshAsync(
+        string refreshToken,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(refreshToken))
+        {
+            return new ApiResponse<LoginResponse>
+            {
+                Success = false,
+                Message = "No se recibió un refresh token."
+            };
+        }
+
+        string? refreshPath =
+            _configuration["ApiSettings:RefreshPath"]?.Trim();
+
+        // Sin ruta confirmada no hacer llamadas a endpoints inventados.
+        if (string.IsNullOrWhiteSpace(refreshPath))
+        {
+            return new ApiResponse<LoginResponse>
+            {
+                Success = false,
+                Message = "La renovación JWT todavía no está configurada."
+            };
+        }
+
+        // Solo rutas relativas al host de ApiSettings:BaseUrl.
+        if (!Uri.TryCreate(refreshPath, UriKind.Relative, out _) ||
+            refreshPath.StartsWith("//", StringComparison.Ordinal) ||
+            refreshPath.Contains("..", StringComparison.Ordinal))
+        {
+            _logger.LogError("ApiSettings:RefreshPath no es una ruta relativa segura.");
+            return new ApiResponse<LoginResponse>
+            {
+                Success = false,
+                Message = "La ruta de renovación está mal configurada."
+            };
+        }
+
+        // Contrato propuesto: { "refreshToken": "..." }.
+        // Ajustarlo al DTO real de tu API si utiliza otro formato.
+        using var response = await _httpClient.PostAsJsonAsync(
+            refreshPath,
+            new { refreshToken },
+            cancellationToken);
+
+        _logger.LogInformation(
+            "REFRESH JWT <- HTTP {StatusCode}",
+            (int)response.StatusCode);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return new ApiResponse<LoginResponse>
+            {
+                Success = false,
+                Message = "La API rechazó la renovación de sesión."
+            };
+        }
+
+        string contenido = await response.Content.ReadAsStringAsync(
+            cancellationToken);
+
+        if (string.IsNullOrWhiteSpace(contenido))
+        {
+            return new ApiResponse<LoginResponse>
+            {
+                Success = false,
+                Message = "La API no devolvió nuevos tokens."
+            };
+        }
+
+        // Acepta wrapper o respuesta directa, como en LoginAsync.
+        // Un success:false explícito nunca debe sobreescribirse.
+        try
+        {
+            using var document = JsonDocument.Parse(contenido);
+            JsonElement root = document.RootElement;
+
+            if (TryGetProperty(root, "success", out var ok) &&
+                ok.ValueKind == JsonValueKind.False)
+            {
+                return new ApiResponse<LoginResponse>
+                {
+                    Success = false,
+                    Message = "La API no autorizó la renovación de sesión."
+                };
+            }
+
+            string? access = BuscarStringRecursivo(root, "accessToken");
+            if (string.IsNullOrWhiteSpace(access))
+                access = BuscarStringRecursivo(root, "token");
+
+            string? nuevoRefresh = BuscarStringRecursivo(root, "refreshToken");
+
+            if (string.IsNullOrWhiteSpace(access))
+            {
+                return new ApiResponse<LoginResponse>
+                {
+                    Success = false,
+                    Message = "La API no devolvió un access token válido."
+                };
+            }
+
+            return new ApiResponse<LoginResponse>
+            {
+                Success = true,
+                Message = "Token renovado.",
+                Data = new LoginResponse
+                {
+                    AccessToken = access,
+                    RefreshToken = nuevoRefresh
+                }
+            };
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "JSON inesperado en respuesta de renovación JWT.");
+            return new ApiResponse<LoginResponse>
+            {
+                Success = false,
+                Message = "La API devolvió un formato de renovación no reconocido."
+            };
+        }
     }
 
     // =============================================================

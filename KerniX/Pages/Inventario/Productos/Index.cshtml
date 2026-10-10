@@ -1,0 +1,1457 @@
+﻿@page
+@model KerniX.Pages.Inventario.Productos.IndexModel
+
+@{
+    ViewData["Title"] = "Productos";
+}
+
+<style>
+    /* =========================================================
+               KERNIX - PRODUCTOS
+               PALETA CONFIGURABLE
+               ========================================================= */
+
+    .kx-products-page {
+        --kx-bg: #020c18;
+        --kx-bg-soft: #041526;
+        --kx-panel: #06182b;
+        --kx-panel-2: #071d33;
+        --kx-panel-3: #09233d;
+        --kx-gold: #ffb800;
+        --kx-gold-light: #ffd45e;
+        --kx-blue: #009dff;
+        --kx-blue-light: #42caff;
+        --kx-green: #26e88a;
+        --kx-red: #ff4567;
+        --kx-orange: #ff921c;
+        --kx-purple: #a75cff;
+        --kx-text: #ffffff;
+        --kx-text-soft: #d9ebff;
+        --kx-muted: #80a6ce;
+        --kx-border: rgba(47, 130, 214, .27);
+        --kx-border-gold: rgba(255, 184, 0, .34);
+        min-height: 100vh;
+        padding: 22px;
+        color: var(--kx-text);
+        background: radial-gradient( circle at 85% 0%, rgba(0, 157, 255, .10), transparent 27% ), radial-gradient( circle at 10% 0%, rgba(255, 184, 0, .06), transparent 22% ), var(--kx-bg);
+    }
+
+        .kx-products-page *,
+        .kx-products-page *::before,
+        .kx-products-page *::after {
+            box-sizing: border-box;
+        }
+
+    /* =========================================================
+               HEADER
+               ========================================================= */
+
+    .kx-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 17px;
+    }
+
+    .kx-header-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .kx-header-icon {
+        width: 58px;
+        height: 58px;
+        flex: 0 0 58px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        color: var(--kx-gold);
+        font-size: 24px;
+        border: 1px solid var(--kx-border-gold);
+        background: radial-gradient( circle, rgba(255, 184, 0, .16), rgba(255, 184, 0, .03) 62%, transparent 64% );
+        box-shadow: 0 0 30px rgba(255, 184, 0, .10);
+    }
+
+    .kx-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 3px;
+        color: var(--kx-muted);
+        font-size: 11px;
+    }
+
+        .kx-breadcrumb a {
+            color: var(--kx-blue-light);
+            text-decoration: none;
+        }
+
+    .kx-title {
+        margin: 0;
+        color: #ffffff !important;
+        font-size: 27px;
+        font-weight: 800;
+        line-height: 1.1;
+    }
+
+    .kx-subtitle {
+        margin: 5px 0 0;
+        color: var(--kx-muted) !important;
+        font-size: 12px;
+    }
+
+    .kx-header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    /* =========================================================
+               BOTONES
+               ========================================================= */
+
+    .kx-btn {
+        min-height: 42px;
+        padding: 0 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        border-radius: 11px;
+        text-decoration: none !important;
+        font-size: 12px;
+        font-weight: 750;
+        cursor: pointer;
+        transition: transform .18s ease, border-color .18s ease, filter .18s ease;
+    }
+
+        .kx-btn:hover {
+            transform: translateY(-1px);
+        }
+
+    .kx-btn-back {
+        color: #dcecff !important;
+        border: 1px solid var(--kx-border);
+        background: linear-gradient( 180deg, #0a223a, #06182a );
+    }
+
+    .kx-btn-primary {
+        color: #161000 !important;
+        border: 1px solid #ffd155;
+        background: linear-gradient( 180deg, #ffd35a, #efa900 );
+        box-shadow: 0 8px 25px rgba(255, 184, 0, .15);
+    }
+
+        .kx-btn-primary:hover {
+            filter: brightness(1.06);
+        }
+
+    /* =========================================================
+               AVISO
+               ========================================================= */
+
+    .kx-notice {
+        display: flex;
+        gap: 12px;
+        padding: 13px 15px;
+        margin-bottom: 17px;
+        border-radius: 14px;
+        border: 1px solid rgba(0, 157, 255, .30);
+        background: linear-gradient( 90deg, rgba(0, 157, 255, .075), rgba(255, 184, 0, .03) );
+    }
+
+    .kx-notice-icon {
+        color: var(--kx-blue-light);
+        font-size: 18px;
+    }
+
+    .kx-notice strong {
+        color: #ffffff !important;
+        display: block;
+        margin-bottom: 2px;
+        font-size: 12px;
+    }
+
+    .kx-notice p {
+        color: #b6cee8 !important;
+        margin: 0;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    /* =========================================================
+               KPI
+               ========================================================= */
+
+    .kx-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .kx-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px;
+        border: 1px solid var(--kx-border);
+        background: linear-gradient( 145deg, var(--kx-panel), var(--kx-panel-2) );
+        box-shadow: 0 12px 35px rgba(0, 0, 0, .24);
+    }
+
+    .kx-card-gold {
+        border-color: var(--kx-border-gold);
+    }
+
+    .kx-kpi {
+        min-height: 174px;
+        padding: 15px;
+    }
+
+        .kx-kpi::after {
+            content: "";
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            right: -45px;
+            bottom: -60px;
+            border-radius: 50%;
+            background: radial-gradient( circle, rgba(0, 157, 255, .14), transparent 66% );
+        }
+
+    .kx-card-gold::after {
+        background: radial-gradient( circle, rgba(255, 184, 0, .14), transparent 66% );
+    }
+
+    .kx-kpi-title {
+        color: #8ebce9 !important;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .kx-kpi-value {
+        margin-top: 7px;
+        color: #ffffff !important;
+        font-size: 28px;
+        font-weight: 850;
+    }
+
+    .kx-kpi-description {
+        margin-top: 2px;
+        color: #7ca5cd !important;
+        font-size: 10px;
+    }
+
+    /* =========================================================
+               GRÁFICAS KPI
+               ========================================================= */
+
+    .kx-chart {
+        position: relative;
+        height: 64px;
+        margin-top: 11px;
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        padding-bottom: 5px;
+    }
+
+        .kx-chart::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 5px;
+            height: 1px;
+            background: linear-gradient( 90deg, transparent, rgba(67, 174, 255, .30), transparent );
+        }
+
+    .kx-chart-bar {
+        position: relative;
+        width: 11px;
+        min-height: 7px;
+        border-radius: 3px 3px 1px 1px;
+        background: linear-gradient( 180deg, var(--kx-blue-light), var(--kx-blue) );
+        box-shadow: 0 0 9px rgba(0, 157, 255, .30);
+    }
+
+    .kx-chart.gold .kx-chart-bar {
+        background: linear-gradient( 180deg, #ffdd67, var(--kx-gold) );
+        box-shadow: 0 0 9px rgba(255, 184, 0, .28);
+    }
+
+    /* =========================================================
+               DETALLES ADICIONALES
+               ========================================================= */
+
+    .kx-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 9px;
+        margin-bottom: 12px;
+    }
+
+    .kx-detail-card {
+        padding: 11px 12px;
+        min-height: 70px;
+    }
+
+    .kx-detail-label {
+        color: #75a4d0 !important;
+        font-size: 9px;
+        margin-bottom: 4px;
+    }
+
+    .kx-detail-value {
+        color: #ffffff !important;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .kx-detail-description {
+        color: #638db9 !important;
+        margin-top: 2px;
+        font-size: 8px;
+    }
+
+    /* =========================================================
+               MAYOR DISPONIBILIDAD
+               ========================================================= */
+
+    .kx-highlight {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 12px;
+        padding: 13px 15px;
+    }
+
+    .kx-highlight-label {
+        color: var(--kx-gold) !important;
+        font-size: 9px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .kx-highlight-name {
+        color: #ffffff !important;
+        margin-top: 4px;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .kx-highlight-description {
+        color: #77a6d7 !important;
+        margin-top: 3px;
+        font-size: 9px;
+    }
+
+    .kx-highlight-number {
+        color: var(--kx-gold) !important;
+        font-size: 26px;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+        .kx-highlight-number small {
+            color: #8aadd2 !important;
+            font-size: 9px;
+        }
+
+    /* =========================================================
+               FILTROS
+               ========================================================= */
+
+    .kx-filter-card {
+        padding: 11px;
+        margin-bottom: 12px;
+    }
+
+    .kx-filter-title {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+
+        .kx-filter-title strong {
+            color: #ffffff !important;
+            font-size: 12px;
+        }
+
+        .kx-filter-title span {
+            color: #77a6d7 !important;
+            font-size: 8px;
+        }
+
+    .kx-filter-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+        gap: 7px;
+    }
+
+    .kx-input,
+    .kx-select {
+        width: 100%;
+        min-height: 39px;
+        padding: 0 11px;
+        border-radius: 9px;
+        border: 1px solid rgba(62, 125, 191, .28);
+        outline: none;
+        color: #ffffff !important;
+        background: #041528 !important;
+        font-size: 10px;
+    }
+
+        .kx-input::placeholder {
+            color: #668cad !important;
+        }
+
+        .kx-select option {
+            color: #ffffff;
+            background: #07182b;
+        }
+
+    .kx-filter-actions {
+        display: flex;
+        gap: 6px;
+    }
+
+    .kx-filter-button {
+        min-height: 39px;
+        padding: 0 14px;
+        border-radius: 9px;
+        border: 1px solid var(--kx-border);
+        background: #071a2e;
+        color: #ffffff !important;
+        font-size: 10px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+        .kx-filter-button.search {
+            color: #161000 !important;
+            border-color: var(--kx-gold);
+            background: linear-gradient( 180deg, #ffd75b, #ecaa00 );
+        }
+
+    /* =========================================================
+               TABLA
+               ========================================================= */
+
+    .kx-table-card {
+        overflow: hidden;
+    }
+
+    .kx-table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 11px 13px;
+        border-bottom: 1px solid rgba(50, 111, 174, .22);
+    }
+
+        .kx-table-header h3 {
+            margin: 0;
+            color: #ffffff !important;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .kx-table-header p {
+            margin: 2px 0 0;
+            color: #74a0ca !important;
+            font-size: 8px;
+        }
+
+    .kx-page-info {
+        color: #78a7d5 !important;
+        font-size: 8px;
+    }
+
+    .kx-table-container {
+        overflow-x: auto;
+    }
+
+    .kx-table {
+        width: 100%;
+        min-width: 1050px;
+        border-collapse: collapse;
+    }
+
+    /* ESTO CORRIGE LO QUE MARCASTE EN ROJO */
+
+    .kx-products-page .kx-table th {
+        padding: 11px 10px;
+        color: #80b7ea !important;
+        font-size: 8px !important;
+        font-weight: 750;
+        text-align: left;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba(65, 124, 187, .20);
+    }
+
+    .kx-products-page .kx-table td {
+        padding: 11px 10px;
+        color: #eef7ff !important;
+        font-size: 9px !important;
+        vertical-align: middle;
+        border-bottom: 1px solid rgba(57, 105, 157, .11);
+    }
+
+    .kx-products-page .kx-table tbody tr {
+        transition: background .15s ease;
+    }
+
+        .kx-products-page .kx-table tbody tr:hover {
+            background: rgba(0, 157, 255, .045);
+        }
+
+    .kx-product-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .kx-product-icon {
+        width: 29px;
+        height: 29px;
+        flex: 0 0 29px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        color: var(--kx-blue-light) !important;
+        border: 1px solid rgba(0, 157, 255, .28);
+        background: rgba(0, 157, 255, .06);
+    }
+
+    .kx-product-name {
+        color: #ffffff !important;
+        font-weight: 750;
+        font-size: 9px;
+    }
+
+    .kx-product-code,
+    .kx-product-barcode {
+        color: #72a7d8 !important;
+        font-size: 8px;
+    }
+
+    .kx-category,
+    .kx-brand,
+    .kx-price,
+    .kx-margin,
+    .kx-stock {
+        color: #eaf5ff !important;
+    }
+
+    .kx-secondary-value {
+        color: #70a7d8 !important;
+        font-size: 8px;
+    }
+
+    /* =========================================================
+               BADGES
+               ========================================================= */
+
+    .kx-badge {
+        min-width: 62px;
+        display: inline-flex;
+        justify-content: center;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 8px;
+        font-weight: 750;
+    }
+
+    .kx-stock-danger {
+        color: #ff7193 !important;
+        background: rgba(255, 69, 103, .10);
+        border: 1px solid rgba(255, 69, 103, .34);
+    }
+
+    .kx-stock-warning {
+        color: #ffc75b !important;
+        background: rgba(255, 146, 28, .10);
+        border: 1px solid rgba(255, 146, 28, .32);
+    }
+
+    .kx-stock-success {
+        color: #52efa2 !important;
+        background: rgba(38, 232, 138, .09);
+        border: 1px solid rgba(38, 232, 138, .28);
+    }
+
+    .kx-stock-info {
+        color: #3fc7ff !important;
+        background: rgba(0, 157, 255, .10);
+        border: 1px solid rgba(0, 157, 255, .35);
+    }
+
+    .kx-stock-neutral {
+        color: #afc4db !important;
+        background: rgba(255, 255, 255, .04);
+        border: 1px solid rgba(255, 255, 255, .10);
+    }
+
+    .kx-active {
+        color: #4bf0a0 !important;
+        background: rgba(38, 232, 138, .09);
+        border: 1px solid rgba(38, 232, 138, .30);
+    }
+
+    .kx-inactive {
+        color: #ff7187 !important;
+        background: rgba(255, 69, 103, .09);
+        border: 1px solid rgba(255, 69, 103, .30);
+    }
+
+    /* =========================================================
+               ACCIONES
+               ========================================================= */
+
+    .kx-actions {
+        display: flex;
+        gap: 5px;
+    }
+
+    .kx-action {
+        width: 29px;
+        height: 29px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        border: 1px solid rgba(55, 118, 181, .26);
+        background: #041628;
+        color: #bce0ff !important;
+        text-decoration: none !important;
+        cursor: pointer;
+    }
+
+        .kx-action:hover {
+            color: var(--kx-gold) !important;
+            border-color: var(--kx-border-gold);
+        }
+
+    /* =========================================================
+               EMPTY
+               ========================================================= */
+
+    .kx-empty {
+        padding: 35px !important;
+        color: #81a6ca !important;
+        text-align: center;
+    }
+
+    /* =========================================================
+               ERROR
+               ========================================================= */
+
+    .kx-error {
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        color: #ff9dae !important;
+        border: 1px solid rgba(255, 69, 103, .30);
+        background: rgba(255, 69, 103, .08);
+    }
+
+    /* =========================================================
+               RESPONSIVE
+               ========================================================= */
+
+    @@media(max-width: 1250px) {
+        .kx-kpi-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .kx-detail-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .kx-filter-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 700px) {
+        .kx-products-page {
+            padding: 12px;
+        }
+
+        .kx-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .kx-kpi-grid,
+        .kx-detail-grid,
+        .kx-filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kx-highlight {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+</style>
+
+
+<div class="kx-products-page">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <header class="kx-header">
+
+        <div class="kx-header-left">
+
+            <div class="kx-header-icon">
+                ◇
+            </div>
+
+            <div>
+
+                <div class="kx-breadcrumb">
+                    <a href="/Inventario">Inventario</a>
+                    <span>›</span>
+                    <span>Productos</span>
+                </div>
+
+                <h1 class="kx-title">
+                    Productos
+                </h1>
+
+                <p class="kx-subtitle">
+                    Catálogo, precios, márgenes, existencias y
+                    disponibilidad del inventario.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="kx-header-actions">
+
+            <a href="/Inventario"
+               class="kx-btn kx-btn-back">
+
+                ← Volver a Inventario
+
+            </a>
+
+
+            <a href="/Inventario/Productos/Nuevo"
+               class="kx-btn kx-btn-primary">
+
+                + Nuevo Producto
+
+            </a>
+            <a href="/Inventario/Catalogos/Index"
+               class="kx-btn kx-btn-primary">
+                Categorías y Unidades
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         ERROR
+         ===================================================== -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="kx-error">
+            No fue posible completar la operación.
+        </div>
+    }
+
+
+    <!-- =====================================================
+         AVISO
+         ===================================================== -->
+
+    <section class="kx-notice">
+
+        <div class="kx-notice-icon">
+            ⓘ
+        </div>
+
+        <div>
+
+            <strong>
+                Información del módulo
+            </strong>
+
+            <p>
+                El stock mostrado corresponde al acumulado disponible
+                del catálogo. Los productos con control de stock son
+                evaluados automáticamente para identificar agotados,
+                mínimos y sobrestock.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         KPI
+         ===================================================== -->
+
+    <section class="kx-kpi-grid">
+
+        <article class="kx-card kx-card-gold kx-kpi">
+
+            <div class="kx-kpi-title">
+                Productos registrados
+            </div>
+
+            <div class="kx-kpi-value">
+                @Model.Resumen.TotalProductos
+            </div>
+
+            <div class="kx-kpi-description">
+                Catálogo de la empresa
+            </div>
+
+            <div class="kx-chart gold">
+
+                @foreach (int valor in Model.GraficaProductos)
+                {
+                    <span class="kx-chart-bar"
+                          style="height:@valor%">
+                    </span>
+                }
+
+            </div>
+
+        </article>
+
+
+        <article class="kx-card kx-kpi">
+
+            <div class="kx-kpi-title">
+                Stock disponible
+            </div>
+
+            <div class="kx-kpi-value">
+                @Model.Resumen.StockDisponibleTotal.ToString("N2")
+            </div>
+
+            <div class="kx-kpi-description">
+                Existencia disponible
+            </div>
+
+            <div class="kx-chart">
+
+                @foreach (int valor in Model.GraficaStock)
+                {
+                    <span class="kx-chart-bar"
+                          style="height:@valor%">
+                    </span>
+                }
+
+            </div>
+
+        </article>
+
+
+        <article class="kx-card kx-card-gold kx-kpi">
+
+            <div class="kx-kpi-title">
+                Productos críticos
+            </div>
+
+            <div class="kx-kpi-value">
+                @Model.Resumen.ProductosCriticos
+            </div>
+
+            <div class="kx-kpi-description">
+                Sin stock o bajo mínimo
+            </div>
+
+            <div class="kx-chart gold">
+
+                @foreach (int valor in Model.GraficaCriticos)
+                {
+                    <span class="kx-chart-bar"
+                          style="height:@valor%">
+                    </span>
+                }
+
+            </div>
+
+        </article>
+
+
+        <article class="kx-card kx-kpi">
+
+            <div class="kx-kpi-title">
+                Margen promedio
+            </div>
+
+            <div class="kx-kpi-value">
+                @Model.Resumen.MargenPromedio.ToString("N1")%
+            </div>
+
+            <div class="kx-kpi-description">
+                Margen comercial promedio
+            </div>
+
+            <div class="kx-chart">
+
+                @foreach (int valor in Model.GraficaMargen)
+                {
+                    <span class="kx-chart-bar"
+                          style="height:@valor%">
+                    </span>
+                }
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         DETALLES
+         ===================================================== -->
+
+    <section class="kx-detail-grid">
+
+        <article class="kx-card kx-detail-card">
+            <div class="kx-detail-label">Stock actual</div>
+            <div class="kx-detail-value">
+                @Model.Resultado.Items.Sum(x => x.StockActual).ToString("N2")
+            </div>
+            <div class="kx-detail-description">
+                Existencia registrada
+            </div>
+        </article>
+
+
+        <article class="kx-card kx-detail-card">
+            <div class="kx-detail-label">Stock reservado</div>
+            <div class="kx-detail-value">
+                @Model.Resultado.Items.Sum(x => x.StockReservado).ToString("N2")
+            </div>
+            <div class="kx-detail-description">
+                Comprometido por operaciones
+            </div>
+        </article>
+
+
+        <article class="kx-card kx-detail-card">
+            <div class="kx-detail-label">Control de stock</div>
+            <div class="kx-detail-value">
+                @Model.Resumen.ProductosControlStock
+            </div>
+            <div class="kx-detail-description">
+                Productos controlados
+            </div>
+        </article>
+
+
+        <article class="kx-card kx-detail-card">
+            <div class="kx-detail-label">
+                Precio compra promedio
+            </div>
+
+            <div class="kx-detail-value">
+                S/ @Model.Resumen.PrecioCompraPromedio.ToString("N2")
+            </div>
+
+            <div class="kx-detail-description">
+                Costo medio del catálogo
+            </div>
+        </article>
+
+
+        <article class="kx-card kx-detail-card">
+            <div class="kx-detail-label">
+                Precio venta promedio
+            </div>
+
+            <div class="kx-detail-value">
+                S/ @Model.Resumen.PrecioVentaPromedio.ToString("N2")
+            </div>
+
+            <div class="kx-detail-description">
+                Precio comercial medio
+            </div>
+        </article>
+
+
+        <article class="kx-card kx-detail-card">
+            <div class="kx-detail-label">
+                Valor disponible
+            </div>
+
+            <div class="kx-detail-value">
+                S/
+                @(
+                    Model.Resultado.Items
+                        .Sum(x =>
+                            x.StockDisponible *
+                            x.PrecioVenta
+                        )
+                        .ToString("N2")
+                )
+            </div>
+
+            <div class="kx-detail-description">
+                Valor estimado a precio venta
+            </div>
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         MAYOR DISPONIBILIDAD
+         ===================================================== -->
+
+    <section class="kx-card kx-card-gold kx-highlight">
+
+        <div>
+
+            <div class="kx-highlight-label">
+                Mayor disponibilidad
+            </div>
+
+            <div class="kx-highlight-name">
+                @Model.Resumen.ProductoMayorStock
+            </div>
+
+            <div class="kx-highlight-description">
+                Producto actualmente con la mayor cantidad
+                disponible dentro del inventario.
+            </div>
+
+        </div>
+
+
+        <div class="kx-highlight-number">
+
+            @Model.Resumen.MayorStockDisponible.ToString("N2")
+
+            <small>uds.</small>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         FILTROS
+         ===================================================== -->
+
+    <section class="kx-card kx-filter-card">
+
+        <div class="kx-filter-title">
+
+            <strong>
+                Filtros avanzados
+            </strong>
+
+            <span>
+                Localiza rápidamente un producto.
+            </span>
+
+        </div>
+
+
+        <form method="get">
+
+            <div class="kx-filter-grid">
+
+                <input asp-for="Filtro.Buscar"
+                       class="kx-input"
+                       placeholder="Buscar código, producto, barras..." />
+
+
+                <select asp-for="Filtro.IdCategoriaProducto"
+                        class="kx-select">
+
+                    <option value="">
+                        Todas las categorías
+                    </option>
+
+                    @foreach (
+                        var categoria in
+                        Model.Catalogos.Categorias
+                    )
+                    {
+                        <option value="@categoria.Id">
+                            @categoria.Nombre
+                        </option>
+                    }
+
+                </select>
+
+
+                <select asp-for="Filtro.IdMarca"
+                        class="kx-select">
+
+                    <option value="">
+                        Todas las marcas
+                    </option>
+
+                    @foreach (
+                        var marca in
+                        Model.Catalogos.Marcas
+                    )
+                    {
+                        <option value="@marca.Id">
+                            @marca.Nombre
+                        </option>
+                    }
+
+                </select>
+
+
+                <select asp-for="Filtro.IdAlmacen"
+                        class="kx-select">
+
+                    <option value="">
+                        Todos los almacenes
+                    </option>
+
+                    @foreach (
+                        var almacen in
+                        Model.Catalogos.Almacenes
+                    )
+                    {
+                        <option value="@almacen.Id">
+                            @almacen.Nombre
+                        </option>
+                    }
+
+                </select>
+
+
+                <select asp-for="Filtro.EstadoStock"
+                        class="kx-select">
+
+                    <option value="">
+                        Cualquier stock
+                    </option>
+
+                    <option value="normal">
+                        Normal
+                    </option>
+
+                    <option value="sin_stock">
+                        Sin stock
+                    </option>
+
+                    <option value="bajo_stock">
+                        Stock bajo
+                    </option>
+
+                    <option value="bajo_minimo">
+                        Bajo mínimo
+                    </option>
+
+                    <option value="sobre_stock">
+                        Sobre stock
+                    </option>
+
+                </select>
+
+
+                <div class="kx-filter-actions">
+
+                    <button type="submit"
+                            class="kx-filter-button search">
+
+                        Buscar
+
+                    </button>
+
+
+                    <a href="/Inventario/Productos"
+                       class="kx-filter-button"
+                       style="
+                        text-decoration:none;
+                        display:flex;
+                        align-items:center;
+                        ">
+
+                        Limpiar
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =====================================================
+         TABLA
+         ===================================================== -->
+
+    <section class="kx-card kx-table-card">
+
+        <div class="kx-table-header">
+
+            <div>
+
+                <h3>
+                    Catálogo de Productos
+                </h3>
+
+                <p>
+                    @Model.Resultado.TotalRegistros registro(s)
+                    encontrados
+                </p>
+
+            </div>
+
+
+            <div class="kx-page-info">
+
+                Página @Model.Resultado.Pagina
+                de @Math.Max(
+                                                    Model.Resultado.TotalPaginas,
+                                                    1
+                                                )
+
+            </div>
+
+        </div>
+
+
+        <div class="kx-table-container">
+
+            <table class="kx-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Producto</th>
+                        <th>Categoría</th>
+                        <th>Marca</th>
+                        <th>Precio</th>
+                        <th>Margen</th>
+                        <th>Stock</th>
+                        <th>Disponible</th>
+                        <th>Estado stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @if (
+                        Model.Resultado.Items.Count == 0
+                    )
+                    {
+                        <tr>
+
+                            <td colspan="10"
+                                class="kx-empty">
+
+                                No se encontraron productos.
+
+                            </td>
+
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (
+                            var producto in
+                            Model.Resultado.Items
+                        )
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <div class="kx-product-cell">
+
+                                        <div class="kx-product-icon">
+                                            ◇
+                                        </div>
+
+                                        <div>
+
+                                            <div class="kx-product-name">
+                                                @producto.Nombre
+                                            </div>
+
+                                            <div class="kx-product-code">
+                                                @producto.Codigo
+                                            </div>
+
+                                            @if (
+                                                !string.IsNullOrWhiteSpace(
+                                                    producto.CodigoBarras
+                                                )
+                                            )
+                                            {
+                                                <div class="kx-product-barcode">
+                                                    @producto.CodigoBarras
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td class="kx-category">
+                                    @producto.Categoria
+                                </td>
+
+
+                                <td class="kx-brand">
+
+                                    @(string.IsNullOrWhiteSpace(
+                                        producto.Marca
+                                    )
+                                        ? "-"
+                                        : producto.Marca)
+
+                                </td>
+
+
+                                <td class="kx-price">
+
+                                    <strong>
+                                        S/
+                                        @producto.PrecioVenta.ToString("N2")
+                                    </strong>
+
+                                    <div class="kx-secondary-value">
+                                        Compra:
+                                        S/
+                                        @producto.PrecioCompra.ToString("N2")
+                                    </div>
+
+                                </td>
+
+
+                                <td class="kx-margin">
+
+                                    @(producto.MargenPorcentaje.ToString("N1"))%
+
+                                    <div class="kx-secondary-value">
+
+                                        + S/
+                                        @producto.MargenMonto.ToString("N2")
+
+                                    </div>
+
+                                </td>
+
+
+                                <td class="kx-stock">
+
+                                    @producto.StockActual.ToString("N2")
+
+                                </td>
+
+
+                                <td class="kx-stock">
+
+                                    @producto.StockDisponible.ToString("N2")
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="
+                                        kx-badge
+                                        @Model.ObtenerClaseStock(
+  producto.EstadoStock
+  )
+                                        ">
+
+                                        @Model.FormatearEstadoStock(
+                                            producto.EstadoStock
+                                        )
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="
+                                        kx-badge
+                                        @(producto.Estado
+  ? "kx-active"
+  : "kx-inactive")
+                                        ">
+
+                                        @(producto.Estado
+                                            ? "Activo"
+                                            : "Inactivo")
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="kx-actions">
+
+                                        <a href="/Inventario/Productos/Detalle?idProducto=@producto.IdProducto"
+                                           class="kx-action"
+                                           title="Ver producto">
+
+                                            ⊙
+
+                                        </a>
+
+
+                                        <a href="/Inventario/Productos/Editar?idProducto=@producto.IdProducto"
+                                           class="kx-action"
+                                           title="Editar producto">
+
+                                            ✎
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</div>
