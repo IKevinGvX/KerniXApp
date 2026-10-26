@@ -1,88 +1,2601 @@
 ﻿@page "/IA/Anomalias"
 @model KerniX.Pages.IA.AnomaliasModel
+@using System.Globalization
+@using System.Linq
+
 @{
-    ViewData["Title"] = "Anomalías inteligentes | KerniX";
+    ViewData["Title"] = "Detección de Anomalías | KerniX";
+
+    var serie = Model.Analisis.Serie ?? new List<KerniX.Models.IA.IaDiaVenta>();
+
+    var recientes = serie
+        .TakeLast(Math.Min(30, serie.Count))
+        .ToList();
+
+    var meses = serie
+        .GroupBy(x => new { x.Fecha.Year, x.Fecha.Month })
+        .Select(g => new
+        {
+            Fecha = new DateTime(g.Key.Year, g.Key.Month, 1),
+            Total = g.Sum(x => x.Total),
+            Operaciones = g.Sum(x => x.Operaciones)
+        })
+        .OrderBy(x => x.Fecha)
+        .ToList();
+
+    decimal maxReciente = recientes.Count > 0
+        ? Math.Max(1M, recientes.Max(x => x.Total))
+        : 1M;
+
+    decimal maxMes = meses.Count > 0
+        ? Math.Max(1M, meses.Max(x => x.Total))
+        : 1M;
+
+    int maxOps = serie.Count > 0
+        ? Math.Max(1, serie.Max(x => x.Operaciones))
+        : 1;
+
+    var fechasAnomalias = Model.Analisis.Anomalias
+        .Select(x => x.Fecha.Date)
+        .ToHashSet();
+
+    string desdeTexto = Model.FechaDesde?.ToString("dd/MM/yyyy") ?? "—";
+    string hastaTexto = Model.FechaHasta?.ToString("dd/MM/yyyy") ?? "—";
 }
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
-<link rel="stylesheet" href="~/css/IA/kernix-ia.css" asp-append-version="true" />
-<div class="kx-ai-page">
-    <main class="kai-wrap">
-        <nav class="kai-breadcrumb"><a href="/Inicio/Index">Inicio</a><span>/</span><a href="/IA/Index">Centro IA</a><span>/</span><b>Anomalías</b></nav>
-        <header class="kai-hero kai-hero-compact">
-            <div class="kai-hero-copy">
-                <div class="kai-eyebrow"><span class="kai-dot blue"></span> MODELO 02 · ANÁLISIS ESTADÍSTICO</div><h1>Detección de <em>anomalías</em></h1><p>Señales explicables sobre variaciones de venta. Ventana histórica de 28 días, dispersión robusta y revisión humana.</p>
-                <div class="kai-actions"><a class="kai-btn kai-btn-gold" href="/IA/Anomalias"><span uk-icon="refresh"></span> Actualizar análisis</a><a class="kai-btn" href="/IA/Index"><span uk-icon="arrow-left"></span> Centro IA</a><a class="kai-btn" href="/Pedidos"><span uk-icon="cart"></span> Ir a Ventas</a></div>
-            </div><div class="kai-hero-symbol"><span uk-icon="icon: bolt; ratio: 3"></span></div>
-        </header>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<style>
+
+/* =========================================================
+BASE
+========================================================= */
+
+.ka-page,
+.ka-page * {
+box-sizing: border-box;
+}
+
+.ka-page {
+--bg: #020812;
+--panel: #06192b;
+--panel2: #09253e;
+--gold: #ffc62e;
+--cyan: #20d9ff;
+--red: #ff4f69;
+--green: #35e6ad;
+--text: #f5faff;
+--muted: #7895aa;
+min-height: 100vh;
+padding: 12px 0 24px;
+color: var(--text);
+font-family: Inter, "Segoe UI", Arial, sans-serif;
+background: radial-gradient( circle at 8% 0%, rgba(32,217,255,.08), transparent 24% ), radial-gradient( circle at 92% 4%, rgba(255,198,46,.07), transparent 22% ), linear-gradient( 145deg, #010711, #04111f 50%, #020812 );
+}
+
+.ka-container {
+width: min(1480px, calc(100% - 30px));
+margin: auto;
+}
+
+
+/* =========================================================
+BREADCRUMB
+========================================================= */
+
+.ka-breadcrumb {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-bottom: 8px;
+color: #58768d;
+font-size: 12px;
+font-weight: 800;
+}
+
+.ka-breadcrumb a {
+color: var(--cyan);
+text-decoration: none;
+}
+
+.ka-breadcrumb strong {
+color: #dcebf5;
+}
+
+
+/* =========================================================
+HERO 3D COMPACTO
+========================================================= */
+
+.ka-hero {
+position: relative;
+overflow: hidden;
+display: grid;
+grid-template-columns: 1fr 220px;
+align-items: center;
+min-height: 115px;
+padding: 20px 28px;
+border: 1px solid rgba(255,198,46,.25);
+border-radius: 24px;
+background: radial-gradient( circle at 84% 50%, rgba(32,217,255,.12), transparent 22% ), linear-gradient( 135deg, #08243e, #051729 55%, #020b15 );
+box-shadow: 0 28px 65px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.07);
+}
+
+.ka-hero::after {
+content: "";
+position: absolute;
+left: 8%;
+right: 8%;
+bottom: 0;
+height: 2px;
+background: linear-gradient( 90deg, transparent, var(--gold), var(--cyan), transparent );
+box-shadow: 0 0 20px rgba(32,217,255,.5);
+}
+
+.ka-eyebrow {
+display: flex;
+align-items: center;
+gap: 9px;
+margin-bottom: 7px;
+color: var(--cyan);
+font-size: 10px;
+font-weight: 950;
+letter-spacing: 1.3px;
+}
+
+.ka-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: var(--green);
+box-shadow: 0 0 12px var(--green);
+}
+
+.ka-hero h1 {
+margin: 0;
+font-size: clamp( 30px, 3.2vw, 46px );
+line-height: .98;
+font-weight: 950;
+letter-spacing: -2.5px;
+}
+
+.ka-hero h1 span {
+color: var(--gold);
+}
+
+.ka-hero p {
+max-width: 720px;
+margin: 13px 0 0;
+color: #88a5b9;
+font-size: 13px;
+line-height: 1.7;
+}
+
+
+/* =========================================================
+BOTONES
+========================================================= */
+
+.ka-actions {
+display: flex;
+flex-wrap: wrap;
+gap: 9px;
+margin-top: 8px;
+}
+
+.ka-btn {
+min-height: 36px;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 0 15px;
+border: 1px solid rgba(104,179,223,.22);
+border-radius: 11px;
+color: #dcebf5 !important;
+background: linear-gradient( 180deg, rgba(255,255,255,.06), rgba(255,255,255,.015) );
+box-shadow: 0 10px 22px rgba(0,0,0,.23), inset 0 1px rgba(255,255,255,.07);
+text-decoration: none !important;
+font-size: 11px;
+font-weight: 950;
+transition: .2s;
+}
+
+.ka-btn:hover {
+transform: translateY(-3px);
+border-color: rgba(32,217,255,.5);
+}
+
+.ka-btn-gold {
+color: #07121d !important;
+border-color: #ffed99;
+background: linear-gradient( 135deg, #fff09b, #ffc62e 52%, #e89b00 );
+box-shadow: 0 13px 30px rgba(255,180,0,.2), inset 0 1px rgba(255,255,255,.9);
+}
+
+
+/* =========================================================
+ORBE 3D
+========================================================= */
+
+.ka-orb {
+position: relative;
+width: 145px;
+height: 115px;
+display: grid;
+place-items: center;
+justify-self: end;
+perspective: 900px;
+}
+
+.ka-orb::before,
+.ka-orb::after {
+content: "";
+position: absolute;
+border-radius: 50%;
+}
+
+.ka-orb::before {
+width: 108px;
+height: 48px;
+border: 1px solid rgba(255,198,46,.58);
+transform: rotateX(68deg) rotateZ(-9deg);
+box-shadow: 0 0 22px rgba(255,198,46,.18);
+}
+
+.ka-orb::after {
+width: 108px;
+height: 108px;
+border: 1px solid rgba(32,217,255,.32);
+transform: rotateY(68deg) rotateZ(10deg);
+box-shadow: 0 0 28px rgba(32,217,255,.12);
+}
+
+.ka-core {
+z-index: 2;
+width: 68px;
+height: 68px;
+display: grid;
+place-items: center;
+border: 1px solid rgba(255,198,46,.7);
+border-radius: 50%;
+color: var(--gold);
+background: radial-gradient( circle at 35% 25%, #2a647d, #0b304a 30%, #061d31 62%, #020c16 );
+box-shadow: 0 0 28px rgba(255,198,46,.18), 0 0 55px rgba(32,217,255,.13), inset 6px 6px 14px rgba(255,255,255,.08), inset -14px -14px 24px rgba(0,0,0,.55);
+animation: kaFloat 4s ease-in-out infinite;
+}
+
+@@keyframes kaFloat {
+
+50% {
+transform: translateY(-9px) rotateY(8deg);
+}
+}
+
+
+/* =========================================================
+MENSAJES
+========================================================= */
+
+.ka-message {
+display: flex;
+align-items: center;
+gap: 9px;
+margin-top: 8px;
+padding: 11px 14px;
+border-radius: 11px;
+font-size: 11px;
+}
+
+.ka-error {
+color: #ffb5c0;
+border: 1px solid rgba(255,79,105,.25);
+background: rgba(255,79,105,.07);
+}
+
+.ka-info {
+color: #a5efff;
+border: 1px solid rgba(32,217,255,.22);
+background: rgba(32,217,255,.055);
+}
+
+
+/* =========================================================
+CONSOLA DE FECHAS
+========================================================= */
+
+.ka-console {
+margin-top: 10px;
+overflow: hidden;
+border: 1px solid rgba(32,217,255,.2);
+border-radius: 20px;
+background: linear-gradient( 145deg, #071f35, #041422 );
+box-shadow: 0 20px 45px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.05);
+}
+
+.ka-console-head {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+padding: 12px 16px;
+border-bottom: 1px solid rgba(255,255,255,.055);
+}
+
+.ka-title-row {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.ka-title-icon {
+width: 42px;
+height: 42px;
+display: grid;
+place-items: center;
+color: var(--cyan);
+border: 1px solid rgba(32,217,255,.28);
+border-radius: 12px;
+background: rgba(32,217,255,.07);
+box-shadow: 0 10px 22px rgba(0,0,0,.24);
+}
+
+.ka-kicker {
+color: var(--gold);
+font-size: 10px;
+font-weight: 950;
+letter-spacing: 1.3px;
+}
+
+.ka-console h2,
+.ka-panel h2 {
+margin: 2px 0;
+color: #fff;
+font-size: 18px;
+font-weight: 950;
+}
+
+.ka-console p,
+.ka-panel-head p {
+margin: 0;
+color: #8ca9bc;
+font-size: 10px;
+}
+
+.ka-live {
+display: flex;
+align-items: center;
+gap: 8px;
+padding: 8px 11px;
+color: var(--green);
+border: 1px solid rgba(53,230,173,.22);
+border-radius: 999px;
+background: rgba(53,230,173,.05);
+font-size: 9px;
+font-weight: 950;
+}
+
+.ka-live::before {
+content: "";
+width: 7px;
+height: 7px;
+border-radius: 50%;
+background: var(--green);
+box-shadow: 0 0 10px var(--green);
+}
+
+
+/* =========================================================
+FORMULARIO
+========================================================= */
+
+.ka-form {
+display: grid;
+grid-template-columns: 1fr 1fr auto;
+gap: 12px;
+align-items: end;
+padding: 12px 16px;
+}
+
+.ka-field {
+padding: 10px;
+border: 1px solid rgba(255,255,255,.07);
+border-radius: 14px;
+background: linear-gradient( 145deg, #0a2946, #05192c );
+box-shadow: 0 12px 25px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.045);
+}
+
+.ka-field label {
+display: block;
+margin-bottom: 7px;
+color: #7e9aaf;
+font-size: 9px;
+font-weight: 950;
+letter-spacing: .7px;
+}
+
+.ka-date {
+width: 100%;
+height: 36px;
+padding: 0 11px;
+color: #fff;
+color-scheme: dark;
+border: 1px solid rgba(32,217,255,.16);
+border-radius: 9px;
+outline: none;
+background: #03111f;
+font-size: 12px;
+font-weight: 800;
+}
+
+.ka-date:focus {
+border-color: rgba(32,217,255,.65);
+box-shadow: 0 0 0 3px rgba(32,217,255,.07);
+}
+
+.ka-analyze {
+height: 58px;
+min-width: 205px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 9px;
+border: 1px solid #fff09a;
+border-radius: 13px;
+color: #07121d;
+background: linear-gradient( 135deg, #fff09b, #ffc62e 50%, #e79a00 );
+box-shadow: 0 14px 30px rgba(255,181,0,.22), inset 0 1px rgba(255,255,255,.9);
+cursor: pointer;
+font-size: 11px;
+font-weight: 950;
+transition: .2s;
+}
+
+.ka-analyze:hover {
+transform: translateY(-3px);
+box-shadow: 0 20px 38px rgba(255,181,0,.32);
+}
+
+
+/* =========================================================
+ACCESO RÁPIDO
+========================================================= */
+
+.ka-presets {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 8px;
+padding: 0 16px 10px;
+}
+
+.ka-chip {
+padding: 5px 8px;
+color: #89a7bb;
+border: 1px solid rgba(255,255,255,.08);
+border-radius: 999px;
+background: rgba(255,255,255,.025);
+font-size: 9px;
+font-weight: 900;
+text-decoration: none !important;
+}
+
+.ka-chip:hover {
+color: var(--cyan);
+border-color: rgba(32,217,255,.28);
+}
+
+.ka-period {
+display: flex;
+justify-content: space-between;
+gap: 15px;
+padding: 8px 16px;
+border-top: 1px solid rgba(255,255,255,.045);
+background: rgba(0,0,0,.11);
+color: #617f95;
+font-size: 10px;
+}
+
+.ka-period strong {
+color: #dcecf6;
+}
+
+
+/* =========================================================
+KPI
+========================================================= */
+
+.ka-kpis {
+display: grid;
+grid-template-columns: repeat(3,1fr);
+gap: 12px;
+margin-top: 10px;
+}
+
+.ka-kpi {
+position: relative;
+overflow: hidden;
+min-height: 92px;
+padding: 13px 15px;
+border: 1px solid rgba(74,151,204,.2);
+border-radius: 17px;
+background: radial-gradient( circle at 100% 100%, rgba(32,217,255,.055), transparent 45% ), linear-gradient( 145deg, #0a2844, #05182a );
+box-shadow: 0 17px 34px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.055), inset 0 -2px rgba(0,0,0,.45);
+transition: .22s;
+}
+
+.ka-kpi:hover {
+transform: translateY(-5px);
+}
+
+.ka-kpi-top {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.ka-kpi-label {
+color: #86a3b7;
+font-size: 10px;
+font-weight: 850;
+}
+
+.ka-kpi-icon {
+width: 34px;
+height: 34px;
+display: grid;
+place-items: center;
+border-radius: 10px;
+background: rgba(32,217,255,.06);
+border: 1px solid rgba(32,217,255,.15);
+}
+
+.ka-kpi strong {
+display: block;
+margin-top: 8px;
+font-size: 27px;
+line-height: 1;
+font-weight: 950;
+}
+
+.ka-kpi small {
+display: block;
+margin-top: 7px;
+color: #86a3b7;
+font-size: 9px;
+}
+
+.ka-gold .ka-kpi-icon {
+color: var(--gold);
+border-color: rgba(255,198,46,.18);
+background: rgba(255,198,46,.06);
+}
+
+.ka-cyan .ka-kpi-icon {
+color: var(--cyan);
+}
+
+.ka-red .ka-kpi-icon {
+color: var(--red);
+border-color: rgba(255,79,105,.18);
+background: rgba(255,79,105,.06);
+}
+
+
+/* =========================================================
+PANELES
+========================================================= */
+
+.ka-panel {
+overflow: hidden;
+margin-top: 10px;
+border: 1px solid rgba(70,149,204,.2);
+border-radius: 19px;
+background: linear-gradient( 145deg, #071e34, #041422 );
+box-shadow: 0 20px 45px rgba(0,0,0,.3), inset 0 1px rgba(255,255,255,.045);
+}
+
+.ka-panel-head {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 15px;
+padding: 12px 16px;
+border-bottom: 1px solid rgba(255,255,255,.055);
+}
+
+.ka-badge {
+padding: 5px 8px;
+color: var(--green);
+border: 1px solid rgba(53,230,173,.2);
+border-radius: 999px;
+background: rgba(53,230,173,.05);
+font-size: 9px;
+font-weight: 950;
+}
+
+
+/* =========================================================
+DOS GRÁFICOS SUPERIORES
+========================================================= */
+
+.ka-grid2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-top: 10px;
+}
+
+.ka-grid2 .ka-panel {
+margin-top: 0;
+}
+
+.ka-chart-pad {
+padding: 8px 12px 7px;
+}
+
+.ka-chart {
+position: relative;
+height: 150px;
+display: flex;
+align-items: flex-end;
+gap: 7px;
+padding: 10px 5px 22px;
+background: repeating-linear-gradient( to bottom, transparent 0, transparent 29px, rgba(80,155,200,.09) 30px );
+}
+
+.ka-bar-item {
+position: relative;
+height: 100%;
+min-width: 15px;
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+align-items: center;
+}
+
+.ka-bar {
+position: relative;
+width: min(22px,72%);
+min-height: 4px;
+border-radius: 5px 5px 1px 1px;
+background: linear-gradient( 90deg, #08789f, #20d9ff 38%, #8df1ff 62%, #078eb9 );
+box-shadow: 0 0 11px rgba(32,217,255,.3), 3px 0 rgba(0,64,92,.28);
+transition: .18s;
+}
+
+.ka-bar::before {
+content: "";
+position: absolute;
+left: 2px;
+right: 2px;
+top: -2px;
+height: 4px;
+border-radius: 50%;
+background: #91f3ff;
+box-shadow: 0 0 7px rgba(32,217,255,.7);
+}
+
+.ka-bar-item:hover .ka-bar {
+transform: translateY(-4px);
+filter: brightness(1.25);
+}
+
+.ka-bar-item.anomaly .ka-bar {
+background: linear-gradient( 90deg, #a11f3a, #ff4f69 45%, #ffb1bd );
+box-shadow: 0 0 14px rgba(255,79,105,.45);
+}
+
+.ka-label {
+position: absolute;
+bottom: 0;
+color: #57758b;
+font-size: 8px;
+white-space: nowrap;
+}
+
+
+/* =========================================================
+TOOLTIP
+========================================================= */
+
+.ka-tooltip {
+display: none;
+position: absolute;
+z-index: 20;
+bottom: calc(100% + 7px);
+left: 50%;
+transform: translateX(-50%);
+min-width: 145px;
+padding: 8px 9px;
+color: #dff8ff;
+border: 1px solid rgba(32,217,255,.24);
+border-radius: 8px;
+background: #03111f;
+box-shadow: 0 12px 25px rgba(0,0,0,.45);
+font-size: 9px;
+line-height: 1.55;
+text-align: left;
+pointer-events: none;
+}
+
+.ka-bar-item:hover .ka-tooltip {
+display: block;
+}
+
+
+/* =========================================================
+SCROLL HORIZONTAL
+========================================================= */
+
+.ka-scroll {
+overflow-x: auto;
+overflow-y: hidden;
+padding-bottom: 8px;
+scrollbar-width: thin;
+scrollbar-color: #0d6688 #03101d;
+}
+
+.ka-scroll::-webkit-scrollbar {
+height: 8px;
+}
+
+.ka-scroll::-webkit-scrollbar-track {
+background: #03101d;
+border-radius: 20px;
+}
+
+.ka-scroll::-webkit-scrollbar-thumb {
+background: linear-gradient( 90deg, #0c6687, #20d9ff );
+border-radius: 20px;
+}
+
+.ka-daily-track {
+height: 145px;
+display: flex;
+align-items: flex-end;
+gap: 7px;
+padding: 9px 8px 23px;
+background: repeating-linear-gradient( to bottom, transparent 0, transparent 28px, rgba(80,155,200,.08) 29px );
+}
+
+.ka-daily-track .ka-bar-item {
+flex: 0 0 20px;
+min-width: 20px;
+}
+
+.ka-ops .ka-bar {
+background: linear-gradient( 90deg, #a36d00, #ffc62e 45%, #fff09b );
+box-shadow: 0 0 11px rgba(255,198,46,.3);
+    }
+    /* =========================================================
+           METODOLOGÍA
+           ========================================================= */
+
+    .ka-methods {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .ka-method {
+        position: relative;
+        overflow: hidden;
+        min-height: 92px;
+        padding: 11px 12px;
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 15px;
+        background: linear-gradient( 145deg, #0a2946, #05192c );
+        box-shadow: 0 13px 28px rgba(0,0,0,.22), inset 0 1px rgba(255,255,255,.045);
+    }
+
+        .ka-method::after {
+            content: "";
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            right: -25px;
+            bottom: -30px;
+            border-radius: 50%;
+            background: radial-gradient( circle, rgba(32,217,255,.09), transparent 70% );
+        }
+
+    .ka-method-number {
+        width: 31px;
+        height: 31px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 7px;
+        color: var(--gold);
+        border: 1px solid rgba(255,198,46,.22);
+        border-radius: 9px;
+        background: rgba(255,198,46,.055);
+        font-size: 9px;
+        font-weight: 950;
+    }
+
+    .ka-method strong {
+        display: block;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 950;
+    }
+
+    .ka-method p {
+        margin: 5px 0 0;
+        color: #8ca9bc;
+        font-size: 9px;
+        line-height: 1.45;
+    }
+
+
+    /* =========================================================
+           TABLA
+           ========================================================= */
+
+    .ka-table-wrap {
+        overflow-x: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #0d6688 #03101d;
+    }
+
+        .ka-table-wrap::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .ka-table-wrap::-webkit-scrollbar-track {
+            background: #03101d;
+        }
+
+        .ka-table-wrap::-webkit-scrollbar-thumb {
+            background: linear-gradient( 90deg, #0c6687, #20d9ff );
+            border-radius: 20px;
+        }
+
+    .ka-table {
+        width: 100%;
+        min-width: 980px;
+        border-collapse: collapse;
+    }
+
+        .ka-table thead {
+            background: rgba(0,0,0,.18);
+        }
+
+        .ka-table th {
+            padding: 9px 12px;
+            color: #7290a5;
+            border-bottom: 1px solid rgba(255,255,255,.065);
+            font-size: 9px;
+            font-weight: 950;
+            letter-spacing: .45px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .ka-table td {
+            padding: 10px 12px;
+            color: #c9dce8;
+            border-bottom: 1px solid rgba(255,255,255,.045);
+            font-size: 10px;
+            vertical-align: middle;
+        }
+
+        .ka-table tbody tr {
+            transition: background .18s ease, transform .18s ease;
+        }
+
+            .ka-table tbody tr:hover {
+                background: rgba(32,217,255,.035);
+            }
+
+            .ka-table tbody tr:last-child td {
+                border-bottom: 0;
+            }
+
+    .ka-table-date {
+        color: #fff;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    .ka-table-money {
+        color: #fff;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    .ka-table-reference {
+        color: #9bb4c5;
+        white-space: nowrap;
+    }
+
+    .ka-signal {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 8px;
+        border: 1px solid rgba(255,79,105,.2);
+        border-radius: 999px;
+        color: #ff9bab;
+        background: rgba(255,79,105,.06);
+        font-size: 9px;
+        font-weight: 950;
+        white-space: nowrap;
+    }
+
+        .ka-signal.up {
+            color: #ffd56a;
+            border-color: rgba(255,198,46,.22);
+            background: rgba(255,198,46,.055);
+        }
+
+        .ka-signal.down {
+            color: #ff9bab;
+            border-color: rgba(255,79,105,.22);
+            background: rgba(255,79,105,.055);
+        }
+
+    .ka-z {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 52px;
+        padding: 5px 8px;
+        color: var(--cyan);
+        border: 1px solid rgba(32,217,255,.18);
+        border-radius: 8px;
+        background: rgba(32,217,255,.05);
+        font-size: 9px;
+        font-weight: 950;
+    }
+
+    .ka-confidence {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 8px;
+        color: var(--green);
+        border: 1px solid rgba(53,230,173,.18);
+        border-radius: 8px;
+        background: rgba(53,230,173,.05);
+        font-size: 9px;
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+        .ka-confidence::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 7px var(--green);
+        }
+
+    .ka-explanation {
+        min-width: 270px;
+        color: #8ba7ba !important;
+        font-size: 9px !important;
+        line-height: 1.45;
+    }
+
+
+    /* =========================================================
+           EMPTY STATE
+           ========================================================= */
+
+    .ka-empty {
+        padding: 24px 18px;
+        text-align: center;
+        color: #7895aa;
+    }
+
+    .ka-empty-icon {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 10px;
+        color: var(--green);
+        border: 1px solid rgba(53,230,173,.2);
+        border-radius: 50%;
+        background: rgba(53,230,173,.05);
+        box-shadow: 0 0 25px rgba(53,230,173,.08);
+    }
+
+    .ka-empty strong {
+        display: block;
+        color: #d9e8f2;
+        font-size: 13px;
+    }
+
+    .ka-empty p {
+        max-width: 650px;
+        margin: 7px auto 0;
+        font-size: 10px;
+        line-height: 1.55;
+    }
+
+
+    /* =========================================================
+           FOOTER
+           ========================================================= */
+
+    .ka-footer {
+        padding: 12px 5px 0;
+        color: #49677d;
+        font-size: 9px;
+        text-align: center;
+    }
+
+
+    /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+    @@media(max-width:1100px) {
+
+        .ka-kpis {
+            grid-template-columns: repeat(3,1fr);
+        }
+
+        .ka-methods {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+
+    @@media(max-width:900px) {
+
+        .ka-hero {
+            grid-template-columns: 1fr;
+            padding: 22px;
+        }
+
+        .ka-orb {
+            display: none;
+        }
+
+        .ka-form {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .ka-analyze {
+            grid-column: 1 / -1;
+            width: 100%;
+        }
+
+        .ka-grid2 {
+            grid-template-columns: 1fr;
+        }
+
+        .ka-chart {
+            height: 145px;
+        }
+
+        .ka-kpis {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+
+    @@media(max-width:620px) {
+
+        .ka-container {
+            width: calc(100% - 18px);
+        }
+
+        .ka-hero h1 {
+            font-size: 34px;
+        }
+
+        .ka-form {
+            grid-template-columns: 1fr;
+        }
+
+        .ka-analyze {
+            grid-column: auto;
+        }
+
+        .ka-kpis {
+            grid-template-columns: 1fr;
+        }
+
+        .ka-methods {
+            grid-template-columns: 1fr;
+        }
+
+        .ka-console-head,
+        .ka-panel-head {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .ka-period {
+            flex-direction: column;
+            gap: 4px;
+        }
+    }
+
+</style>
+
+
+<div class="ka-page">
+
+    <main class="ka-container">
+
+
+        <!-- =====================================================
+             BREADCRUMB
+             ===================================================== -->
+
+        <nav class="ka-breadcrumb">
+
+            <a href="/">
+                Inicio
+            </a>
+
+            <span>/</span>
+
+            <a href="/IA/Index">
+                KerniX Intelligence
+            </a>
+
+            <span>/</span>
+
+            <strong>
+                Anomalías
+            </strong>
+
+        </nav>
+
+
+        <!-- =====================================================
+             HERO
+             ===================================================== -->
+
+        <section class="ka-hero">
+
+            <div>
+
+                <div class="ka-eyebrow">
+
+                    <span class="ka-dot"></span>
+
+                    KERNIX INTELLIGENCE · DETECCIÓN ESTADÍSTICA
+
+                </div>
+
+
+                <h1>
+
+                    Detección de
+
+                    <span>
+                        anomalías
+                    </span>
+
+                </h1>
+
+
+                <p>
+
+                    Analiza las ventas reales de KerniX ERP,
+                    identifica desviaciones relevantes y compara
+                    el comportamiento diario con una línea base
+                    estadística de 28 días.
+
+                </p>
+
+
+                <div class="ka-actions">
+
+                    <a href="/IA/Index"
+                       class="ka-btn">
+
+                        <span uk-icon="icon:grid;ratio:.8"></span>
+
+                        PANEL IA
+
+                    </a>
+
+
+                    <a href="/Ventas/PrincipalVentas"
+                       class="ka-btn">
+
+                        <span uk-icon="icon:cart;ratio:.8"></span>
+
+                        VENTAS
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="ka-orb"
+                 aria-hidden="true">
+
+                <div class="ka-core">
+
+                    <span uk-icon="icon:warning;ratio:1.45"></span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             MENSAJES
+             ===================================================== -->
         @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
         {
-            <div class="kai-alert"><span uk-icon="warning"></span> @Model.MensajeError</div>
+            <div class="ka-message ka-error">
+
+                <span uk-icon="warning"></span>
+
+                @Model.MensajeError
+
+            </div>
         }
+
+
         @if (!string.IsNullOrWhiteSpace(Model.Analisis.Aviso))
         {
-            <div class="kai-info"><span uk-icon="info"></span> @Model.Analisis.Aviso</div>
+            <div class="ka-message ka-info">
+
+                <span uk-icon="info"></span>
+
+                @Model.Analisis.Aviso
+
+            </div>
         }
-        <section class="kai-kpis kai-kpis-3">
-            <article class="kai-kpi kai-gold"><div><span>Ventanas evaluadas</span><i uk-icon="history"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.DiasAnalizados.ToString() : "—")</strong><small>Días calendario considerados</small></article>
-            <article class="kai-kpi kai-cyan"><div><span>Días con movimiento</span><i uk-icon="database"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.DiasConVentas.ToString() : "—")</strong><small>Ventas por empresa en SQL</small></article>
-            <article class="kai-kpi kai-red"><div><span>Señales detectadas</span><i uk-icon="warning"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.TotalAlertas.ToString() : "—")</strong><small>Hasta cinco desviaciones recientes</small></article>
+
+
+        <!-- =====================================================
+             CONSOLA DE ANÁLISIS
+             ===================================================== -->
+
+        <section class="ka-console">
+
+            <div class="ka-console-head">
+
+                <div class="ka-title-row">
+
+                    <div class="ka-title-icon">
+
+                        <span uk-icon="icon:calendar;ratio:1"></span>
+
+                    </div>
+
+                    <div>
+
+                        <span class="ka-kicker">
+                            PERÍODO DE ANÁLISIS
+                        </span>
+
+                        <h2>
+                            Selecciona el rango comercial
+                        </h2>
+
+                        <p>
+                            El motor analizará únicamente el período seleccionado.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <span class="ka-live">
+                    MOTOR ACTIVO
+                </span>
+
+            </div>
+
+
+            <form method="get"
+                  action="/IA/Anomalias">
+
+
+                <div class="ka-form">
+
+
+                    <!-- FECHA DESDE -->
+
+                    <div class="ka-field">
+
+                        <label for="FechaDesde">
+                            FECHA INICIAL
+                        </label>
+
+                        <input id="FechaDesde"
+                               name="FechaDesde"
+                               type="date"
+                               class="ka-date"
+                               value="@(Model.FechaDesde?.ToString("yyyy-MM-dd"))" />
+
+                    </div>
+
+
+                    <!-- FECHA HASTA -->
+
+                    <div class="ka-field">
+
+                        <label for="FechaHasta">
+                            FECHA FINAL
+                        </label>
+
+                        <input id="FechaHasta"
+                               name="FechaHasta"
+                               type="date"
+                               class="ka-date"
+                               value="@(Model.FechaHasta?.ToString("yyyy-MM-dd"))" />
+
+                    </div>
+
+
+                    <!-- BOTÓN -->
+
+                    <button type="submit"
+                            class="ka-analyze">
+
+                        <span uk-icon="icon:search;ratio:.9"></span>
+
+                        ANALIZAR PERÍODO
+
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <!-- =================================================
+                 ATAJOS
+                 ================================================= -->
+
+            <div class="ka-presets">
+
+                <span class="ka-kicker">
+                    ACCESO RÁPIDO:
+                </span>
+
+
+                <a href="/IA/Anomalias?FechaDesde=@DateTime.Today.ToString("yyyy-MM-dd")&FechaHasta=@DateTime.Today.ToString("yyyy-MM-dd")"
+                   class="ka-chip">
+
+                    HOY
+
+                </a>
+
+
+                <a href="/IA/Anomalias?FechaDesde=@DateTime.Today.AddDays(-6).ToString("yyyy-MM-dd")&FechaHasta=@DateTime.Today.ToString("yyyy-MM-dd")"
+                   class="ka-chip">
+
+                    7 DÍAS
+
+                </a>
+
+
+                <a href="/IA/Anomalias?FechaDesde=@DateTime.Today.AddDays(-29).ToString("yyyy-MM-dd")&FechaHasta=@DateTime.Today.ToString("yyyy-MM-dd")"
+                   class="ka-chip">
+
+                    30 DÍAS
+
+                </a>
+
+
+                <a href="/IA/Anomalias?FechaDesde=@(new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).ToString("yyyy-MM-dd"))&FechaHasta=@DateTime.Today.ToString("yyyy-MM-dd")"
+                   class="ka-chip">
+
+                    ESTE MES
+
+                </a>
+
+            </div>
+
+
+            <!-- =================================================
+                 PERÍODO ACTUAL
+                 ================================================= -->
+
+            <div class="ka-period">
+
+                <span>
+
+                    Período:
+
+                    <strong>
+                        @desdeTexto — @hastaTexto
+                    </strong>
+
+                </span>
+
+
+                <span>
+
+                    Duración:
+
+                    <strong>
+                        @Model.DiasPeriodo días
+                    </strong>
+
+                </span>
+
+            </div>
+
         </section>
-        <div class="kai-two-cols">
-            <section class="kai-panel">
-                <div class="kai-panel-head"><div><span class="kai-kicker">VENTAS</span><h2>Serie comercial · 21 días</h2><p>Valores reales por día y empresa autenticada.</p></div><span class="kai-status kai-status-live">Consulta bajo demanda</span></div>
-                @if (Model.Analisis.DatosDisponibles && Model.Analisis.Serie.Count > 0)
+
+
+        <!-- =====================================================
+             KPIs
+             ===================================================== -->
+
+        <section class="ka-kpis">
+
+
+            <!-- ANOMALÍAS -->
+
+            <article class="ka-kpi ka-red">
+
+                <div class="ka-kpi-top">
+
+                    <span class="ka-kpi-label">
+                        Anomalías detectadas
+                    </span>
+
+                    <span class="ka-kpi-icon"
+                          uk-icon="warning">
+                    </span>
+
+                </div>
+
+
+                <strong>
+                    @Model.Analisis.TotalAlertas
+                </strong>
+
+
+                <small>
+                    Señales que requieren revisión
+                </small>
+
+            </article>
+
+
+            <!-- DÍAS -->
+
+            <article class="ka-kpi ka-gold">
+
+                <div class="ka-kpi-top">
+
+                    <span class="ka-kpi-label">
+                        Días analizados
+                    </span>
+
+                    <span class="ka-kpi-icon"
+                          uk-icon="calendar">
+                    </span>
+
+                </div>
+
+
+                <strong>
+                    @Model.DiasPeriodo
+                </strong>
+
+
+                <small>
+                    Duración del período seleccionado
+                </small>
+
+            </article>
+
+
+            <!-- ACTIVIDAD -->
+
+            <article class="ka-kpi ka-cyan">
+
+                <div class="ka-kpi-top">
+
+                    <span class="ka-kpi-label">
+                        Días con ventas
+                    </span>
+
+                    <span class="ka-kpi-icon"
+                          uk-icon="cart">
+                    </span>
+
+                </div>
+
+
+                <strong>
+                    @Model.Analisis.DiasConVentas
+                </strong>
+
+
+                <small>
+                    Fechas con actividad comercial
+                </small>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+             DOS GRÁFICOS PRINCIPALES
+             ===================================================== -->
+
+        <div class="ka-grid2">
+
+
+            <!-- =================================================
+                 GRÁFICO 1 - IMPORTE
+                 ================================================= -->
+
+            <section class="ka-panel">
+
+                <div class="ka-panel-head">
+
+                    <div>
+
+                        <span class="ka-kicker">
+                            IMPORTE
+                        </span>
+
+                        <h2>
+                            Ventas recientes
+                        </h2>
+
+                        <p>
+                            Evolución del importe diario.
+                        </p>
+
+                    </div>
+
+
+                    <span class="ka-badge">
+                        @recientes.Count DÍAS
+                    </span>
+
+                </div>
+
+
+                @if (recientes.Count > 0)
                 {
-                    <div class="kai-bars kai-bars-tall">
-                        @foreach (var d in Model.Analisis.Serie)
-                        {
-                            <div class="kai-bar-slot" title="@d.Fecha.ToString("dd/MM/yyyy") · S/ @d.Total.ToString("N2") · @d.Operaciones ventas">
-                                <div class="kai-bar" style="height: @(Math.Max(3M, d.Intensidad).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div><span>@d.Fecha.ToString("dd")</span>
-                            </div>
-                        }
+                    <div class="ka-chart-pad">
+
+                        <div class="ka-chart">
+
+                            @foreach (var dia in recientes)
+                            {
+                                decimal altura =
+                                    Math.Max(
+                                        3M,
+                                        dia.Total / maxReciente * 100M
+                                    );
+
+                                bool anomalia =
+                                    fechasAnomalias.Contains(
+                                        dia.Fecha.Date
+                                    );
+
+
+                                <div class="ka-bar-item @(anomalia ? "anomaly" : "")">
+
+
+                                    <div class="ka-tooltip">
+
+                                        <strong>
+                                            @dia.Fecha.ToString("dd/MM/yyyy")
+                                        </strong>
+
+                                        <br />
+
+                                        Importe:
+                                        S/ @dia.Total.ToString("N2")
+
+                                        <br />
+
+                                        Operaciones:
+                                        @dia.Operaciones
+
+                                        @if (anomalia)
+                                        {
+                                            <br />
+
+                                            <strong style="color:#ff7b8e;">
+                                                ANOMALÍA DETECTADA
+                                            </strong>
+                                        }
+
+                                    </div>
+
+
+                                    <div class="ka-bar"
+                                         style="height:@altura.ToString("0.##", CultureInfo.InvariantCulture)%">
+                                    </div>
+
+
+                                    <span class="ka-label">
+                                        @dia.Fecha.ToString("dd/MM")
+                                    </span>
+
+                                </div>
+                            }
+
+                        </div>
+
                     </div>
                 }
                 else
                 {
+                    <div class="ka-empty">
 
-                    <div class="kai-empty">Sin serie disponible para graficar.</div>
+                        <strong>
+                            Sin datos comerciales
+                        </strong>
+
+                        <p>
+                            No existen ventas suficientes para representar este gráfico.
+                        </p>
+
+                    </div>
                 }
-                <div class="kai-chart-foot"><span>Importe de venta diaria (S/)</span><span>Lectura sin modificar stock ni ventas</span></div>
+
             </section>
-            <section class="kai-panel">
-                <div class="kai-panel-head"><div><span class="kai-kicker">METODOLOGÍA</span><h2>Modelo de incertidumbre</h2><p>Reglas analíticas visibles, sin falsos porcentajes de confianza.</p></div></div>
-                <div class="kai-logic-grid">
-                    <div><span class="kai-n">01</span><strong>Base móvil</strong><p>28 días previos a cada observación.</p></div>
-                    <div><span class="kai-n">02</span><strong>Dispersión robusta</strong><p>Mediana y desviación absoluta mediana (MAD), con ajuste para series variables.</p></div>
-                    <div><span class="kai-n">03</span><strong>Umbral de alerta</strong><p>Desviación ≥ 3,2 unidades de escala y variación relativa ≥ 35 %.</p></div>
-                    <div><span class="kai-n">04</span><strong>Control de evidencia</strong><p>Al menos 7 días con ventas de 28 días; incertidumbre explícita.</p></div>
+
+
+            <!-- =================================================
+                 GRÁFICO 2 - RESUMEN MENSUAL
+                 ================================================= -->
+
+            <section class="ka-panel">
+
+                <div class="ka-panel-head">
+
+                    <div>
+
+                        <span class="ka-kicker">
+                            RESUMEN
+                        </span>
+
+                        <h2>
+                            Importe por mes
+                        </h2>
+
+                        <p>
+                            Comparación mensual del período.
+                        </p>
+
+                    </div>
+
+
+                    <span class="ka-badge">
+                        @meses.Count MESES
+                    </span>
+
                 </div>
-                <div class="kai-info kai-info-inner"><span uk-icon="warning"></span> Una señal no prueba fraude, desabastecimiento ni error humano: solo justifica investigar.</div>
-            </section>
-        </div>
-        <section class="kai-panel kai-fullpanel">
-            <div class="kai-panel-head"><div><span class="kai-kicker">SEÑALES DETECTADAS</span><h2>Observaciones que requieren revisión</h2><p>Señales del periodo reciente; ordenadas por desviación.</p></div></div>
-            @if (Model.Analisis.Anomalias.Count > 0)
-            {
-                <div class="kai-table-scroll">
-                    <table class="kai-table">
-                        <thead><tr><th>Fecha</th><th>Señal</th><th>Venta observada</th><th>Promedio histórico</th><th>Desviación</th><th>Fiabilidad</th></tr></thead>
-                        <tbody>
-                            @foreach (var a in Model.Analisis.Anomalias)
+
+
+                @if (meses.Count > 0)
+                {
+                    <div class="ka-chart-pad">
+
+                        <div class="ka-chart">
+
+                            @foreach (var mes in meses)
                             {
-                                <tr><td>@a.Fecha.ToString("dd/MM/yyyy")</td><td><span class="kai-tag @(a.Tipo.StartsWith("Alza") ? "kai-tag-gold" : "kai-tag-red")">@a.Tipo</span></td><td>S/ @a.TotalObservado.ToString("N2")</td><td>S/ @a.MediaHistorica.ToString("N2")</td><td>@a.DesviacionesRobustas.ToString("+0.00;-0.00;0.00")</td><td>@a.Certidumbre</td></tr>
-                                <tr class="kai-explain"><td colspan="6"><span uk-icon="info"></span> @a.Explicacion · Actividad histórica: @a.DiasConActividad días.</td></tr>
+                                decimal altura =
+                                    Math.Max(
+                                        3M,
+                                        mes.Total / maxMes * 100M
+                                    );
+
+
+                                <div class="ka-bar-item">
+
+
+                                    <div class="ka-tooltip">
+
+                                        <strong>
+                                            @mes.Fecha.ToString("MMMM yyyy")
+                                        </strong>
+
+                                        <br />
+
+                                        Importe:
+                                        S/ @mes.Total.ToString("N2")
+
+                                        <br />
+
+                                        Operaciones:
+                                        @mes.Operaciones
+
+                                    </div>
+
+
+                                    <div class="ka-bar"
+                                         style="height:@altura.ToString("0.##", CultureInfo.InvariantCulture)%">
+                                    </div>
+
+
+                                    <span class="ka-label">
+                                        @mes.Fecha.ToString("MM/yy")
+                                    </span>
+
+                                </div>
                             }
-                        </tbody>
-                    </table>
+
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="ka-empty">
+
+                        <strong>
+                            Sin información mensual
+                        </strong>
+
+                    </div>
+                }
+
+            </section>
+
+        </div>
+        <!-- =====================================================
+             DETALLE CRONOLÓGICO - IMPORTE DIARIO
+             ===================================================== -->
+
+        <section class="ka-panel">
+
+            <div class="ka-panel-head">
+
+                <div>
+
+                    <span class="ka-kicker">
+                        DETALLE CRONOLÓGICO
+                    </span>
+
+                    <h2>
+                        Importe diario · período completo
+                    </h2>
+
+                    <p>
+                        Desplázate horizontalmente para revisar cada fecha.
+                        Las barras rojas representan anomalías detectadas.
+                    </p>
+
+                </div>
+
+
+                <span class="ka-badge">
+                    @serie.Count DÍAS
+                </span>
+
+            </div>
+
+
+            @if (serie.Count > 0)
+            {
+                <div class="ka-chart-pad">
+
+                    <div class="ka-scroll">
+
+                        <div class="ka-daily-track"
+                             style="width:@Math.Max(760, serie.Count * 26)px">
+
+
+                            @foreach (var dia in serie)
+                            {
+                                decimal altura =
+                                    Math.Max(
+                                        3M,
+                                        dia.Intensidad
+                                    );
+
+                                bool anomalia =
+                                    fechasAnomalias.Contains(
+                                        dia.Fecha.Date
+                                    );
+
+
+                                <div class="ka-bar-item @(anomalia ? "anomaly" : "")">
+
+
+                                    <!-- TOOLTIP -->
+
+                                    <div class="ka-tooltip">
+
+                                        <strong>
+                                            @dia.Fecha.ToString("dd/MM/yyyy")
+                                        </strong>
+
+                                        <br />
+
+                                        Importe:
+                                        S/ @dia.Total.ToString("N2")
+
+                                        <br />
+
+                                        Operaciones:
+                                        @dia.Operaciones
+
+                                        @if (anomalia)
+                                        {
+                                            <br />
+
+                                            <strong style="color:#ff7b8e;">
+                                                ANOMALÍA DETECTADA
+                                            </strong>
+                                        }
+
+                                    </div>
+
+
+                                    <!-- BARRA -->
+
+                                    <div class="ka-bar"
+                                         style="height:@altura.ToString("0.##", CultureInfo.InvariantCulture)%">
+                                    </div>
+
+
+                                    <!-- FECHA -->
+
+                                    <span class="ka-label">
+                                        @dia.Fecha.ToString("dd/MM")
+                                    </span>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
                 </div>
             }
             else
             {
-                <div class="kai-empty"><span uk-icon="icon: check; ratio: 1.8"></span><strong>Sin señales que superen el umbral</strong><p>Esto no implica ausencia total de riesgo. Con un historial escaso, el resultado puede ser inconcluyente.</p></div>
+                <div class="ka-empty">
+
+                    <div class="ka-empty-icon">
+
+                        <span uk-icon="icon:database;ratio:1.2"></span>
+
+                    </div>
+
+                    <strong>
+                        Sin datos para mostrar
+                    </strong>
+
+                    <p>
+                        El período seleccionado no contiene
+                        información suficiente para generar
+                        el gráfico cronológico.
+                    </p>
+
+                </div>
             }
+
         </section>
-        <footer class="kai-footer"><span>KerniX · Análisis de anomalías</span> · Sin SQL Jobs · Sin escrituras SQL</footer>
+
+
+        <!-- =====================================================
+             OPERACIONES POR DÍA
+             ===================================================== -->
+
+        <section class="ka-panel">
+
+            <div class="ka-panel-head">
+
+                <div>
+
+                    <span class="ka-kicker">
+                        VOLUMEN COMERCIAL
+                    </span>
+
+                    <h2>
+                        Operaciones por día
+                    </h2>
+
+                    <p>
+                        Cantidad de ventas registradas por fecha,
+                        separada del importe monetario.
+                    </p>
+
+                </div>
+
+
+                <span class="ka-badge">
+                    @serie.Count DÍAS
+                </span>
+
+            </div>
+
+
+            @if (serie.Count > 0)
+            {
+                <div class="ka-chart-pad">
+
+                    <div class="ka-scroll">
+
+                        <div class="ka-daily-track ka-ops"
+                             style="width:@Math.Max(760, serie.Count * 26)px">
+
+
+                            @foreach (var dia in serie)
+                            {
+                                decimal altura =
+                                    Math.Max(
+                                        3M,
+                                        ((decimal)dia.Operaciones / maxOps) * 100M
+                                    );
+
+
+                                <div class="ka-bar-item">
+
+
+                                    <!-- TOOLTIP -->
+
+                                    <div class="ka-tooltip">
+
+                                        <strong>
+                                            @dia.Fecha.ToString("dd/MM/yyyy")
+                                        </strong>
+
+                                        <br />
+
+                                        Operaciones:
+                                        @dia.Operaciones
+
+                                        <br />
+
+                                        Importe:
+                                        S/ @dia.Total.ToString("N2")
+
+                                    </div>
+
+
+                                    <!-- BARRA -->
+
+                                    <div class="ka-bar"
+                                         style="height:@altura.ToString("0.##", CultureInfo.InvariantCulture)%">
+                                    </div>
+
+
+                                    <!-- FECHA -->
+
+                                    <span class="ka-label">
+                                        @dia.Fecha.ToString("dd/MM")
+                                    </span>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="ka-empty">
+
+                    <div class="ka-empty-icon">
+
+                        <span uk-icon="icon:cart;ratio:1.2"></span>
+
+                    </div>
+
+                    <strong>
+                        Sin operaciones
+                    </strong>
+
+                    <p>
+                        No existen operaciones comerciales
+                        disponibles en el período seleccionado.
+                    </p>
+
+                </div>
+            }
+
+        </section>
+
+
+        <!-- =====================================================
+             METODOLOGÍA
+             ===================================================== -->
+
+        <section class="ka-panel">
+
+            <div class="ka-panel-head">
+
+                <div>
+
+                    <span class="ka-kicker">
+                        MOTOR ESTADÍSTICO
+                    </span>
+
+                    <h2>
+                        Metodología de detección
+                    </h2>
+
+                    <p>
+                        Cómo KerniX identifica comportamientos
+                        comerciales fuera del patrón histórico.
+                    </p>
+
+                </div>
+
+
+                <span class="ka-badge">
+                    MODELO EXPLICABLE
+                </span>
+
+            </div>
+
+
+            <div class="ka-methods">
+
+
+                <!-- 01 -->
+
+                <article class="ka-method">
+
+                    <span class="ka-method-number">
+                        01
+                    </span>
+
+                    <strong>
+                        Historial
+                    </strong>
+
+                    <p>
+                        Cada fecha se compara con los
+                        28 días anteriores disponibles
+                        para construir una referencia.
+                    </p>
+
+                </article>
+
+
+                <!-- 02 -->
+
+                <article class="ka-method">
+
+                    <span class="ka-method-number">
+                        02
+                    </span>
+
+                    <strong>
+                        Mediana y MAD
+                    </strong>
+
+                    <p>
+                        Se utiliza dispersión robusta para
+                        reducir el impacto que pueden producir
+                        valores extremos en la referencia.
+                    </p>
+
+                </article>
+
+
+                <!-- 03 -->
+
+                <article class="ka-method">
+
+                    <span class="ka-method-number">
+                        03
+                    </span>
+
+                    <strong>
+                        Umbral
+                    </strong>
+
+                    <p>
+                        La desviación debe superar los
+                        criterios estadísticos configurados
+                        antes de convertirse en una señal.
+                    </p>
+
+                </article>
+
+
+                <!-- 04 -->
+
+                <article class="ka-method">
+
+                    <span class="ka-method-number">
+                        04
+                    </span>
+
+                    <strong>
+                        Revisión humana
+                    </strong>
+
+                    <p>
+                        Una anomalía señala un comportamiento
+                        que merece investigación. No confirma
+                        automáticamente fraude ni error.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             RESULTADOS
+             ===================================================== -->
+
+        <section class="ka-panel"
+                 id="resultados">
+
+            <div class="ka-panel-head">
+
+                <div>
+
+                    <span class="ka-kicker">
+                        RESULTADOS DEL MOTOR
+                    </span>
+
+                    <h2>
+                        Anomalías que requieren revisión
+                    </h2>
+
+                    <p>
+                        Señales estadísticas encontradas dentro
+                        del período comercial analizado.
+                    </p>
+
+                </div>
+
+
+                <span class="ka-badge">
+
+                    @Model.Analisis.Anomalias.Count
+                    RESULTADO(S)
+
+                </span>
+
+            </div>
+
+
+            @if (Model.Analisis.Anomalias.Count > 0)
+            {
+                <div class="ka-table-wrap">
+
+                    <table class="ka-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    FECHA
+                                </th>
+
+                                <th>
+                                    SEÑAL
+                                </th>
+
+                                <th>
+                                    VENTA OBSERVADA
+                                </th>
+
+                                <th>
+                                    REFERENCIA HISTÓRICA
+                                </th>
+
+                                <th>
+                                    DESVIACIÓN
+                                </th>
+
+                                <th>
+                                    FIABILIDAD
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var a in Model.Analisis.Anomalias)
+                            {
+                                bool esAlza =
+                                    a.Tipo.StartsWith(
+                                        "Alza",
+                                        StringComparison.OrdinalIgnoreCase
+                                    );
+
+
+                                <!-- FILA PRINCIPAL -->
+
+                                <tr>
+
+                                    <td class="ka-table-date">
+
+                                        @a.Fecha.ToString("dd/MM/yyyy")
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="ka-signal @(esAlza ? "up" : "down")">
+
+                                            @if (esAlza)
+                                            {
+                                                <span>
+                                                    ▲
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span>
+                                                    ▼
+                                                </span>
+                                            }
+
+                                            @a.Tipo
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td class="ka-table-money">
+
+                                        S/
+                                        @a.TotalObservado.ToString("N2")
+
+                                    </td>
+
+
+                                    <td class="ka-table-reference">
+
+                                        S/
+                                        @a.MediaHistorica.ToString("N2")
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="ka-z">
+
+                                            @a.DesviacionesRobustas
+                                            .ToString(
+                                            "+0.00;-0.00;0.00"
+                                            )
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="ka-confidence">
+
+                                            @a.Certidumbre
+
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <!-- EXPLICACIÓN -->
+
+                                <tr>
+
+                                    <td colspan="6"
+                                        class="ka-explanation">
+
+                                        <strong style="color:#ffc62e;">
+                                            ANÁLISIS:
+                                        </strong>
+
+                                        @a.Explicacion
+
+                                        <span style="color:#4f7087;">
+                                            ·
+                                        </span>
+
+                                        <strong style="color:#a9c2d2;">
+                                            Actividad histórica:
+                                        </strong>
+
+                                        @a.DiasConActividad días
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="ka-empty">
+
+                    <div class="ka-empty-icon">
+
+                        <span uk-icon="icon:check;ratio:1.35"></span>
+
+                    </div>
+
+
+                    <strong>
+                        Sin anomalías relevantes
+                    </strong>
+
+
+                    <p>
+
+                        No se encontraron desviaciones que
+                        superen los criterios estadísticos
+                        actuales dentro del período analizado.
+
+                    </p>
+
+                </div>
+            }
+
+        </section>
+
+
+        <!-- =====================================================
+             INFORMACIÓN FINAL
+             ===================================================== -->
+
+        <section class="ka-panel">
+
+            <div class="ka-panel-head">
+
+                <div>
+
+                    <span class="ka-kicker">
+                        KERNIX INTELLIGENCE
+                    </span>
+
+                    <h2>
+                        Interpretación gerencial
+                    </h2>
+
+                    <p>
+                        Las señales deben utilizarse como apoyo
+                        para investigar el comportamiento comercial.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div style="
+                display:grid;
+                grid-template-columns:repeat(3,1fr);
+                gap:10px;
+                padding:11px 12px;
+                " class="ka-final-grid">
+
+
+                <!-- DATOS -->
+
+                <div style="
+                    padding:12px;
+                    border:1px solid rgba(32,217,255,.12);
+                    border-radius:12px;
+                    background:rgba(32,217,255,.035);
+                    ">
+
+                    <strong style="
+                        display:block;
+                        color:#20d9ff;
+                        font-size:11px;
+                        margin-bottom:5px;
+                        ">
+                        DATOS
+                    </strong>
+
+                    <span style="
+                        color:#8ca9bc;
+                        font-size:9px;
+                        line-height:1.5;
+                        ">
+
+                        El análisis utiliza registros comerciales
+                        reales asociados a la empresa autenticada.
+
+                    </span>
+
+                </div>
+
+
+                <!-- ESTADÍSTICA -->
+
+                <div style="
+                    padding:12px;
+                    border:1px solid rgba(255,198,46,.12);
+                    border-radius:12px;
+                    background:rgba(255,198,46,.035);
+                    ">
+
+                    <strong style="
+                        display:block;
+                        color:#ffc62e;
+                        font-size:11px;
+                        margin-bottom:5px;
+                        ">
+                        ESTADÍSTICA
+                    </strong>
+
+                    <span style="
+                        color:#8ca9bc;
+                        font-size:9px;
+                        line-height:1.5;
+                        ">
+
+                        Las desviaciones se calculan respecto
+                        del comportamiento histórico disponible.
+
+                    </span>
+
+                </div>
+
+
+                <!-- DECISIÓN -->
+
+                <div style="
+                    padding:12px;
+                    border:1px solid rgba(53,230,173,.12);
+                    border-radius:12px;
+                    background:rgba(53,230,173,.035);
+                    ">
+
+                    <strong style="
+                        display:block;
+                        color:#35e6ad;
+                        font-size:11px;
+                        margin-bottom:5px;
+                        ">
+                        DECISIÓN
+                    </strong>
+
+                    <span style="
+                        color:#8ca9bc;
+                        font-size:9px;
+                        line-height:1.5;
+                        ">
+
+                        KerniX presenta evidencia para revisión;
+                        la decisión empresarial continúa bajo
+                        responsabilidad humana.
+
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FOOTER
+             ===================================================== -->
+
+        <footer class="ka-footer">
+
+            KerniX ERP · KerniX Intelligence ·
+            Detección estadística de anomalías ·
+            Análisis comercial de solo lectura
+
+        </footer>
+
+
     </main>
+
 </div>
+
+
+<!-- =========================================================
+     RESPONSIVE ADICIONAL
+     ========================================================= -->
+
+<style>
+
+    @@media(max-width:700px) {
+
+        .ka-final-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+
+</style>
+
+
+<!-- =========================================================
+     UIKIT
+     ========================================================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
+
+
+<!-- =========================================================
+     KERNIX - UX DEL ANÁLISIS
+     ========================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            const form =
+                document.querySelector(
+                    '.ka-console form'
+                );
+
+            const button =
+                document.querySelector(
+                    '.ka-analyze'
+                );
+
+            if (!form || !button) {
+                return;
+            }
+
+
+            form.addEventListener(
+                "submit",
+                function() {
+
+                    button.disabled = true;
+
+                    button.style.opacity = ".78";
+
+                    button.style.cursor =
+                        "wait";
+
+                    button.innerHTML =
+                        `
+                            <span
+                                uk-spinner="ratio:.55">
+                            </span>
+
+                            ANALIZANDO...
+                            `;
+
+                }
+            );
+
+        }
+    );
+
+</script>

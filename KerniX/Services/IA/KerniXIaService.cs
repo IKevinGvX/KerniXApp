@@ -9,171 +9,651 @@ using Microsoft.Data.SqlClient;
 namespace KerniX.Services.IA;
 
 /// <summary>
-/// Solo lectura y cálculo estadístico bajo demanda. NO ejecuta IA generativa,
-/// NO escribe a la base, NO usa SQL Jobs. Los cambios de negocio corresponden
-/// a servicios autorizados y requieren integración posterior.
+/// Servicio analítico de KerniX.
+///
+/// - Solo lectura.
+/// - No modifica ventas.
+/// - No ejecuta procesos automáticos.
+/// - No utiliza IA generativa.
+/// - Detecta comportamientos atípicos mediante análisis estadístico.
 /// </summary>
 public sealed class KerniXIaService : IKerniXIaService
 {
     private readonly string _connectionString;
     private readonly ILogger<KerniXIaService> _logger;
 
-    public KerniXIaService(IConfiguration configuration, ILogger<KerniXIaService> logger)
+    private const int DiasHistoricos = 28;
+    private const int MinimoDiasActivos = 7;
+
+    public KerniXIaService(
+        IConfiguration configuration,
+        ILogger<KerniXIaService> logger)
     {
-        _connectionString = configuration.GetConnectionString("KerniXDb")
-            ?? throw new InvalidOperationException("Falta ConnectionStrings:KerniXDb.");
+        _connectionString =
+            configuration.GetConnectionString("KerniXDb")
+            ?? throw new InvalidOperationException(
+                "Falta ConnectionStrings:KerniXDb.");
+
         _logger = logger;
     }
 
-    public async Task<IaContexto?> ObtenerContextoAsync(int idUsuario, CancellationToken ct = default)
+
+    // =========================================================
+    // CONTEXTO DEL USUARIO
+    // =========================================================
+
+    public async Task<IaContexto?> ObtenerContextoAsync(
+        int idUsuario,
+        CancellationToken ct = default)
     {
-        if (idUsuario <= 0) return null;
+        if (idUsuario <= 0)
+            return null;
+
         const string sql = """
-            SELECT TOP (1) u.id_usuario, e.id_empresa, u.nombre_usuario
+            SELECT TOP (1)
+                u.id_usuario,
+                e.id_empresa,
+                u.nombre_usuario
             FROM seg.usuario AS u
-            INNER JOIN org.empleado AS e ON e.id_empleado = u.id_empleado
-            WHERE u.id_usuario = @id_usuario AND e.id_empresa > 0 AND u.estado = 1;
+            INNER JOIN org.empleado AS e
+                ON e.id_empleado = u.id_empleado
+            WHERE u.id_usuario = @id_usuario
+              AND e.id_empresa > 0
+              AND u.estado = 1;
             """;
-        await using var db = new SqlConnection(_connectionString);
+
+        await using var db =
+            new SqlConnection(_connectionString);
+
         await db.OpenAsync(ct);
-        await using var cmd = new SqlCommand(sql, db);
-        cmd.Parameters.Add("@id_usuario", SqlDbType.Int).Value = idUsuario;
-        await using var reader = await cmd.ExecuteReaderAsync(ct);
-        if (!await reader.ReadAsync(ct)) return null;
+
+        await using var cmd =
+            new SqlCommand(sql, db);
+
+        cmd.Parameters
+            .Add("@id_usuario", SqlDbType.Int)
+            .Value = idUsuario;
+
+        await using var reader =
+            await cmd.ExecuteReaderAsync(ct);
+
+        if (!await reader.ReadAsync(ct))
+            return null;
+
         return new IaContexto
         {
             IdUsuario = reader.GetInt32(0),
-            IdEmpresa = Convert.ToInt32(reader.GetValue(1), CultureInfo.InvariantCulture),
-            Usuario = reader.IsDBNull(2) ? "" : Convert.ToString(reader.GetValue(2), CultureInfo.InvariantCulture) ?? ""
+
+            IdEmpresa = Convert.ToInt32(
+                reader.GetValue(1),
+                CultureInfo.InvariantCulture),
+
+            Usuario = reader.IsDBNull(2)
+                ? ""
+                : Convert.ToString(
+                    reader.GetValue(2),
+                    CultureInfo.InvariantCulture) ?? ""
         };
     }
 
-    private static string Q(string s) => "[" + s.Replace("]", "]]", StringComparison.Ordinal) + "]";
 
-    public async Task<IaAnalisisVentas> AnalizarVentasAsync(int idEmpresa, CancellationToken ct = default)
+    // =========================================================
+    // ANÁLISIS PREDETERMINADO
+    // =========================================================
+    // Mantiene compatibilidad con IA/Index.
+    // Por defecto analiza los últimos 30 días.
+    // =========================================================
+
+    public Task<IaAnalisisVentas> AnalizarVentasAsync(
+        int idEmpresa,
+        CancellationToken ct = default)
+    {
+        DateTime hasta = DateTime.Today;
+        DateTime desde = hasta.AddDays(-29);
+
+        return AnalizarVentasAsync(
+            idEmpresa,
+            desde,
+            hasta,
+            ct);
+    }
+
+
+    // =========================================================
+    // ANÁLISIS POR RANGO
+    // =========================================================
+
+    public async Task<IaAnalisisVentas> AnalizarVentasAsync(
+        int idEmpresa,
+        DateTime fechaDesde,
+        DateTime fechaHasta,
+        CancellationToken ct = default)
     {
         var result = new IaAnalisisVentas();
-        if (idEmpresa <= 0) { result.Aviso = "No se identificó una empresa válida."; return result; }
 
-        await using var db = new SqlConnection(_connectionString);
-        await db.OpenAsync(ct);
-        var columnas = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        await using (var meta = new SqlCommand("SELECT name FROM sys.columns WHERE object_id = OBJECT_ID(N'ven.venta', N'U');", db))
-        await using (var rd = await meta.ExecuteReaderAsync(ct))
-        {
-            while (await rd.ReadAsync(ct)) columnas.Add(rd.GetString(0));
-        }
+        // -----------------------------------------------------
+        // VALIDACIONES
+        // -----------------------------------------------------
 
-        string? fecha = new[] { "fecha_venta", "fecha_emision", "fecha_registro", "fecha" }.FirstOrDefault(columnas.Contains);
-        string? total = new[] { "total", "monto_total", "importe_total" }.FirstOrDefault(columnas.Contains);
-        if (!columnas.Contains("id_empresa") || fecha is null || total is null)
+        if (idEmpresa <= 0)
         {
-            result.Aviso = "ven.venta no contiene las columnas necesarias (id_empresa, fecha y total). Revisa el esquema sin modificar la tabla.";
+            result.Aviso =
+                "No se identificó una empresa válida.";
+
             return result;
         }
-        // Los nombres de columnas solo provienen de metadatos SQL y de listas blancas fijas.
-        string condiciones = columnas.Contains("estado")
-            ? "AND (v.[estado] IS NULL OR LOWER(CONVERT(NVARCHAR(50),v.[estado])) NOT IN (N'anulada',N'anulado',N'cancelada',N'cancelado'))"
-            : "";
-        string sql = $"""
-            SELECT CAST(v.{Q(fecha)} AS date) AS Dia,
-                   COUNT_BIG(*) AS NumeroVentas,
-                   COALESCE(SUM(TRY_CONVERT(decimal(18,4),v.{Q(total)})),0) AS Total
+
+        fechaDesde = fechaDesde.Date;
+        fechaHasta = fechaHasta.Date;
+
+        if (fechaDesde > fechaHasta)
+        {
+            result.Aviso =
+                "La fecha inicial no puede ser mayor que la fecha final.";
+
+            return result;
+        }
+
+        int cantidadDias =
+            (fechaHasta - fechaDesde).Days + 1;
+
+        if (cantidadDias > 366)
+        {
+            result.Aviso =
+                "El período máximo permitido es de 366 días.";
+
+            return result;
+        }
+
+
+        // =====================================================
+        // RANGO SQL
+        // =====================================================
+        //
+        // Ejemplo:
+        //
+        // Usuario:
+        // 01/10/2026 -> 25/10/2026
+        //
+        // SQL:
+        // 03/09/2026 -> 26/10/2026
+        //
+        // Los 28 días anteriores sirven como referencia.
+        // =====================================================
+
+        DateTime inicioHistorico =
+            fechaDesde.AddDays(-DiasHistoricos);
+
+        DateTime finConsulta =
+            fechaHasta.AddDays(1);
+
+
+        const string sql = """
+            SELECT
+                CAST(v.fecha_venta AS date) AS Dia,
+                COUNT_BIG(*) AS NumeroVentas,
+                COALESCE(
+                    SUM(
+                        TRY_CONVERT(decimal(18,4), v.total)
+                    ),
+                    0
+                ) AS Total
             FROM ven.venta AS v
             WHERE v.id_empresa = @id_empresa
-              AND v.{Q(fecha)} >= @desde
-              AND v.{Q(fecha)} < @hasta
-              {condiciones}
-            GROUP BY CAST(v.{Q(fecha)} AS date)
-            ORDER BY Dia;
+              AND v.fecha_venta >= @desde
+              AND v.fecha_venta < @hasta
+              AND
+              (
+                    v.estado IS NULL
+                    OR LOWER(
+                        CONVERT(NVARCHAR(50), v.estado)
+                    ) NOT IN
+                    (
+                        N'anulada',
+                        N'anulado',
+                        N'cancelada',
+                        N'cancelado'
+                    )
+              )
+            GROUP BY
+                CAST(v.fecha_venta AS date)
+            ORDER BY
+                Dia;
             """;
-        var hoy = DateTime.Today;
-        var desde = hoy.AddDays(-69);
-        var hasta = hoy.AddDays(1);
-        var capturados = new Dictionary<DateTime, (int n, decimal total)>();
-        await using (var cmd = new SqlCommand(sql, db))
+
+
+        // =====================================================
+        // CONSULTA SQL
+        // =====================================================
+
+        var capturados =
+            new Dictionary<DateTime, (int operaciones, decimal total)>();
+
+        await using var db =
+            new SqlConnection(_connectionString);
+
+        await db.OpenAsync(ct);
+
+        await using (var cmd =
+            new SqlCommand(sql, db))
         {
             cmd.CommandTimeout = 30;
-            cmd.Parameters.Add("@id_empresa", SqlDbType.Int).Value = idEmpresa;
-            cmd.Parameters.Add("@desde", SqlDbType.DateTime2).Value = desde;
-            cmd.Parameters.Add("@hasta", SqlDbType.DateTime2).Value = hasta;
-            await using var reader = await cmd.ExecuteReaderAsync(ct);
+
+            cmd.Parameters
+                .Add("@id_empresa", SqlDbType.Int)
+                .Value = idEmpresa;
+
+            cmd.Parameters
+                .Add("@desde", SqlDbType.DateTime2)
+                .Value = inicioHistorico;
+
+            cmd.Parameters
+                .Add("@hasta", SqlDbType.DateTime2)
+                .Value = finConsulta;
+
+            await using var reader =
+                await cmd.ExecuteReaderAsync(ct);
+
             while (await reader.ReadAsync(ct))
             {
-                if (reader.IsDBNull(0)) continue;
-                var dia = reader.GetDateTime(0).Date;
-                long n = reader.IsDBNull(1) ? 0 : reader.GetInt64(1);
-                decimal value = reader.IsDBNull(2) ? 0M : reader.GetDecimal(2);
-                capturados[dia] = ((int)Math.Min(n, int.MaxValue), value);
+                if (reader.IsDBNull(0))
+                    continue;
+
+                DateTime dia =
+                    reader.GetDateTime(0).Date;
+
+                long numeroVentas =
+                    reader.IsDBNull(1)
+                        ? 0
+                        : reader.GetInt64(1);
+
+                decimal total =
+                    reader.IsDBNull(2)
+                        ? 0M
+                        : reader.GetDecimal(2);
+
+                capturados[dia] =
+                (
+                    (int)Math.Min(
+                        numeroVentas,
+                        int.MaxValue),
+
+                    total
+                );
             }
         }
-        var dias = Enumerable.Range(0, 70).Select(i =>
-        {
-            var fechaDia = desde.AddDays(i);
-            var valores = capturados.GetValueOrDefault(fechaDia);
-            return new IaDiaVenta { Fecha = fechaDia, Operaciones = valores.n, Total = valores.total };
-        }).ToList();
+
+
+        // =====================================================
+        // CONSTRUIR CALENDARIO COMPLETO
+        // =====================================================
+        //
+        // Incluimos también los días sin ventas.
+        //
+        // Histórico:
+        // fechaDesde - 28 días
+        //
+        // hasta:
+        // fechaHasta
+        // =====================================================
+
+        int totalDiasConsulta =
+            (fechaHasta - inicioHistorico).Days + 1;
+
+        var todosLosDias =
+            Enumerable
+                .Range(0, totalDiasConsulta)
+                .Select(i =>
+                {
+                    DateTime dia =
+                        inicioHistorico.AddDays(i);
+
+                    var valores =
+                        capturados.GetValueOrDefault(dia);
+
+                    return new IaDiaVenta
+                    {
+                        Fecha = dia,
+                        Operaciones =
+                            valores.operaciones,
+
+                        Total =
+                            valores.total
+                    };
+                })
+                .ToList();
+
+
+        // =====================================================
+        // PERÍODO SOLICITADO POR EL USUARIO
+        // =====================================================
+
+        var periodo =
+            todosLosDias
+                .Where(x =>
+                    x.Fecha >= fechaDesde &&
+                    x.Fecha <= fechaHasta)
+                .ToList();
+
+
         result.DatosDisponibles = true;
-        result.DiasAnalizados = dias.Count;
-        result.DiasConVentas = dias.Count(d => d.Operaciones > 0);
-        result.ImporteUltimos7Dias = dias.TakeLast(7).Sum(d => d.Total);
-        result.VentasUltimos7Dias = dias.TakeLast(7).Sum(d => d.Operaciones);
-        decimal max = Math.Max(1M, dias.TakeLast(21).Max(d => d.Total));
-        foreach (var dia in dias.TakeLast(21))
+
+        result.DiasAnalizados =
+            periodo.Count;
+
+        result.DiasConVentas =
+            periodo.Count(
+                x => x.Operaciones > 0);
+
+
+        // =====================================================
+        // INDICADORES ÚLTIMOS 7 DÍAS DEL PERÍODO
+        // =====================================================
+
+        var ultimos7 =
+            periodo
+                .TakeLast(7)
+                .ToList();
+
+        result.ImporteUltimos7Dias =
+            ultimos7.Sum(x => x.Total);
+
+        result.VentasUltimos7Dias =
+            ultimos7.Sum(x => x.Operaciones);
+
+
+        // =====================================================
+        // SERIE PARA EL GRÁFICO
+        // =====================================================
+        // Ahora muestra exactamente el período solicitado.
+        // =====================================================
+
+        decimal maximo =
+            periodo.Count > 0
+                ? Math.Max(
+                    1M,
+                    periodo.Max(x => x.Total))
+                : 1M;
+
+        foreach (var dia in periodo)
         {
-            dia.Intensidad = Math.Clamp(dia.Total / max * 100M, 0M, 100M);
+            dia.Intensidad =
+                Math.Clamp(
+                    dia.Total / maximo * 100M,
+                    0M,
+                    100M);
+
             result.Serie.Add(dia);
         }
+
+
+        // =====================================================
+        // SIN VENTAS
+        // =====================================================
+
         if (result.DiasConVentas == 0)
         {
-            result.Aviso = "Sin ventas en los últimos 70 días. No es posible entrenar una línea base estadística.";
+            result.Aviso =
+                "No existen ventas registradas en el período seleccionado.";
+
             return result;
         }
 
-        // Ventana móvil previa de 28 días, desviación absoluta mediana (MAD).
-        // La señal se calcula sobre ingresos de ventas; no atribuye causalidad.
-        for (int i = 56; i < dias.Count; i++)
+
+        // =====================================================
+        // DETECCIÓN DE ANOMALÍAS
+        // =====================================================
+        //
+        // Cada día solicitado se compara exclusivamente
+        // contra sus 28 días anteriores.
+        //
+        // No utilizamos información futura.
+        // =====================================================
+
+        foreach (var diaActual in periodo)
         {
-            var historial = dias.Skip(i - 28).Take(28).ToList();
-            int diasActivos = historial.Count(x => x.Operaciones > 0);
-            if (diasActivos < 7) continue;
-            var values = historial.Select(x => (double)x.Total).OrderBy(x => x).ToList();
-            double median = Median(values);
-            double mad = Median(values.Select(x => Math.Abs(x - median)).OrderBy(x => x).ToList());
-            double media = values.Average();
-            double sd = Math.Sqrt(values.Sum(x => (x - media) * (x - media)) / values.Count);
-            double escala = Math.Max(Math.Max(1.4826 * mad, sd * 0.50), Math.Max(Math.Abs(median) * 0.15, 1.0));
-            double observado = (double)dias[i].Total;
-            double z = (observado - median) / escala;
-            double delta = Math.Abs(observado - median) / Math.Max(Math.Abs(median), 1.0);
-            if (Math.Abs(z) < 3.2 || delta < 0.35) continue;
-            string tipo = z > 0 ? "Alza inusual" : "Caída inusual";
-            result.Anomalias.Add(new IaAnomalia
+            DateTime inicioVentana =
+                diaActual.Fecha.AddDays(-DiasHistoricos);
+
+            DateTime finVentana =
+                diaActual.Fecha.AddDays(-1);
+
+
+            var historial =
+                todosLosDias
+                    .Where(x =>
+                        x.Fecha >= inicioVentana &&
+                        x.Fecha <= finVentana)
+                    .ToList();
+
+
+            // Deben existir 28 días calendario.
+            if (historial.Count < DiasHistoricos)
+                continue;
+
+
+            int diasActivos =
+                historial.Count(
+                    x => x.Operaciones > 0);
+
+
+            // Evita emitir señales con evidencia insuficiente.
+            if (diasActivos < MinimoDiasActivos)
+                continue;
+
+
+            var valores =
+                historial
+                    .Select(x => (double)x.Total)
+                    .OrderBy(x => x)
+                    .ToList();
+
+
+            // -------------------------------------------------
+            // MEDIANA
+            // -------------------------------------------------
+
+            double mediana =
+                Median(valores);
+
+
+            // -------------------------------------------------
+            // MAD
+            // Median Absolute Deviation
+            // -------------------------------------------------
+
+            var desviaciones =
+                valores
+                    .Select(x =>
+                        Math.Abs(x - mediana))
+                    .OrderBy(x => x)
+                    .ToList();
+
+            double mad =
+                Median(desviaciones);
+
+
+            // -------------------------------------------------
+            // MEDIA
+            // Solo se utiliza como referencia informativa.
+            // -------------------------------------------------
+
+            double media =
+                valores.Average();
+
+
+            // -------------------------------------------------
+            // DESVIACIÓN ESTÁNDAR
+            // -------------------------------------------------
+
+            double sd =
+                Math.Sqrt(
+                    valores.Sum(
+                        x =>
+                            (x - media) *
+                            (x - media))
+                    / valores.Count);
+
+
+            // -------------------------------------------------
+            // ESCALA ROBUSTA
+            // -------------------------------------------------
+
+            double escala =
+                Math.Max(
+                    Math.Max(
+                        1.4826 * mad,
+                        sd * 0.50),
+
+                    Math.Max(
+                        Math.Abs(mediana) * 0.15,
+                        1.0));
+
+
+            double observado =
+                (double)diaActual.Total;
+
+
+            double z =
+                (observado - mediana)
+                / escala;
+
+
+            double variacion =
+                Math.Abs(
+                    observado - mediana)
+                /
+                Math.Max(
+                    Math.Abs(mediana),
+                    1.0);
+
+
+            // =================================================
+            // UMBRAL
+            // =================================================
+            //
+            // Debe cumplir ambas condiciones:
+            //
+            // 1. Desviación robusta >= 3.2
+            // 2. Diferencia >= 35 %
+            // =================================================
+
+            if (Math.Abs(z) < 3.2 ||
+                variacion < 0.35)
             {
-                Fecha = dias[i].Fecha,
-                Tipo = tipo,
-                TotalObservado = dias[i].Total,
-                MediaHistorica = (decimal)media,
-                DesviacionesRobustas = Math.Round(z, 2),
-                DiasConActividad = diasActivos,
-                Certidumbre = diasActivos >= 18 ? "Evidencia moderada" : "Evidencia limitada",
-                Explicacion = "Se detectó una desviación respecto de los 28 días anteriores. Revisar promociones, pedidos, anulaciones o eventos comerciales antes de actuar."
-            });
+                continue;
+            }
+
+
+            string tipo =
+                z > 0
+                    ? "Alza inusual"
+                    : "Caída inusual";
+
+
+            string certidumbre =
+                diasActivos >= 18
+                    ? "Evidencia moderada"
+                    : "Evidencia limitada";
+
+
+            result.Anomalias.Add(
+                new IaAnomalia
+                {
+                    Fecha =
+                        diaActual.Fecha,
+
+                    Tipo =
+                        tipo,
+
+                    TotalObservado =
+                        diaActual.Total,
+
+                    MediaHistorica =
+                        (decimal)media,
+
+                    DesviacionesRobustas =
+                        Math.Round(z, 2),
+
+                    DiasConActividad =
+                        diasActivos,
+
+                    Certidumbre =
+                        certidumbre,
+
+                    Explicacion =
+                        "El importe registrado presenta una desviación relevante respecto de los 28 días anteriores. " +
+                        "La señal requiere revisión de promociones, pedidos, anulaciones, devoluciones u otros eventos comerciales."
+                });
         }
-        result.Anomalias = result.Anomalias
-            .OrderByDescending(x => Math.Abs(x.DesviacionesRobustas))
-            .Take(5).ToList();
-        if (result.DiasConVentas < 14)
-            result.Aviso = "El historial es escaso; interpreta las señales como exploratorias, no como predicciones validadas.";
-        _logger.LogInformation("[KERNIX IA] Empresa={Empresa} Ventas7d={Ventas} Senales={Senales}",
-            idEmpresa, result.VentasUltimos7Dias, result.Anomalias.Count);
+
+
+        // =====================================================
+        // ORDENAR RESULTADOS
+        // =====================================================
+
+        result.Anomalias =
+            result.Anomalias
+                .OrderByDescending(
+                    x =>
+                        Math.Abs(
+                            x.DesviacionesRobustas))
+                .Take(20)
+                .ToList();
+
+
+        // =====================================================
+        // AVISO POR POCO HISTORIAL
+        // =====================================================
+
+        if (result.DiasConVentas < 7)
+        {
+            result.Aviso =
+                "El período seleccionado contiene poca actividad comercial. " +
+                "Las señales deben interpretarse como exploratorias.";
+        }
+
+
+        // =====================================================
+        // LOG
+        // =====================================================
+
+        _logger.LogInformation(
+            "[KERNIX IA] Empresa={Empresa} Desde={Desde} Hasta={Hasta} Dias={Dias} DiasVenta={DiasVenta} Senales={Senales}",
+            idEmpresa,
+            fechaDesde,
+            fechaHasta,
+            result.DiasAnalizados,
+            result.DiasConVentas,
+            result.Anomalias.Count);
+
+
         return result;
     }
 
-    private static double Median(IReadOnlyList<double> ordered)
+
+    // =========================================================
+    // MEDIANA
+    // =========================================================
+
+    private static double Median(
+        IReadOnlyList<double> ordered)
     {
-        if (ordered.Count == 0) return 0;
-        int mid = ordered.Count / 2;
-        return ordered.Count % 2 == 0 ? (ordered[mid - 1] + ordered[mid]) / 2 : ordered[mid];
+        if (ordered.Count == 0)
+            return 0;
+
+        int mitad =
+            ordered.Count / 2;
+
+        if (ordered.Count % 2 == 0)
+        {
+            return
+                (
+                    ordered[mitad - 1] +
+                    ordered[mitad]
+                ) / 2;
+        }
+
+        return ordered[mitad];
     }
 }

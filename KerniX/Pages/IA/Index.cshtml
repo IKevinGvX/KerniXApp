@@ -1,84 +1,1327 @@
 ﻿@page "/IA/Index"
 @model KerniX.Pages.IA.IndexModel
+@using System.Globalization
+@using System.Linq
+
 @{
-    ViewData["Title"] = "Centro de Inteligencia Artificial | KerniX";
+    ViewData["Title"] = "KerniX Intelligence";
+
+    var serie = Model.Analisis.Serie
+        ?? new List<KerniX.Models.IA.IaDiaVenta>();
+
+    var recientes = serie
+        .TakeLast(Math.Min(14, serie.Count))
+        .ToList();
+
+    decimal maxReciente = recientes.Count > 0
+        ? Math.Max(1M, recientes.Max(x => x.Total))
+        : 1M;
+
+    int diasConMovimiento = serie.Count(x => x.Operaciones > 0);
 }
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
-<link rel="stylesheet" href="~/css/IA/kernix-ia.css" asp-append-version="true" />
-<div class="kx-ai-page">
-    <main class="kai-wrap">
-        <nav class="kai-breadcrumb"><a href="/Inicio/Index">Inicio</a><span>/</span><b>Inteligencia Artificial</b></nav>
-        <header class="kai-hero">
-            <div class="kai-hero-copy">
-                <div class="kai-eyebrow"><span class="kai-dot"></span> KERNIX · CENTRO DE INTELIGENCIA ARTIFICIAL</div>
-                <h1>Control <em>inteligente</em> de operaciones</h1>
-                <p>Supervisión de ventas, señales estadísticas y preparación del agente comercial desde un solo entorno.</p>
-                <div class="kai-actions">
-                    <a class="kai-btn kai-btn-gold" href="/IA/AgenteVentas"><span uk-icon="commenting"></span> Abrir agente comercial</a>
-                    <a class="kai-btn kai-btn-blue" href="/IA/Anomalias"><span uk-icon="warning"></span> Analizar anomalías</a>
-                    <a class="kai-btn" href="/Inicio/Index"><span uk-icon="arrow-left"></span> Volver al inicio</a>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/css/uikit.min.css" />
+
+<style>
+
+    .ki-page,
+    .ki-page * {
+        box-sizing: border-box;
+    }
+
+    .ki-page {
+        --bg: #020812;
+        --panel: #06192b;
+        --panel2: #09253e;
+        --gold: #ffc62e;
+        --cyan: #20d9ff;
+        --red: #ff4f69;
+        --green: #35e6ad;
+        --text: #f5faff;
+        --muted: #7895aa;
+        min-height: 100vh;
+        padding: 18px 0 45px;
+        color: var(--text);
+        font-family: Inter, "Segoe UI", Arial, sans-serif;
+        background: radial-gradient( circle at 8% 0%, rgba(32,217,255,.08), transparent 24% ), radial-gradient( circle at 92% 4%, rgba(255,198,46,.07), transparent 22% ), linear-gradient( 145deg, #010711, #04111f 50%, #020812 );
+    }
+
+    .ki-container {
+        width: min(1480px, calc(100% - 30px));
+        margin: auto;
+    }
+
+    /* =====================================================
+           BREADCRUMB
+           ===================================================== */
+
+    .ki-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        color: #58768d;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+        .ki-breadcrumb a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
+
+        .ki-breadcrumb strong {
+            color: #dcebf5;
+        }
+
+    /* =====================================================
+           HERO
+           ===================================================== */
+
+    .ki-hero {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 230px;
+        align-items: center;
+        min-height: 225px;
+        padding: 30px 36px;
+        border: 1px solid rgba(255,198,46,.25);
+        border-radius: 24px;
+        background: radial-gradient( circle at 84% 50%, rgba(32,217,255,.12), transparent 22% ), linear-gradient( 135deg, #08243e, #051729 55%, #020b15 );
+        box-shadow: 0 28px 65px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.07);
+    }
+
+        .ki-hero::after {
+            content: "";
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            bottom: 0;
+            height: 2px;
+            background: linear-gradient( 90deg, transparent, var(--gold), var(--cyan), transparent );
+            box-shadow: 0 0 20px rgba(32,217,255,.5);
+        }
+
+    .ki-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 10px;
+        color: var(--cyan);
+        font-size: 8px;
+        font-weight: 950;
+        letter-spacing: 1.3px;
+    }
+
+    .ki-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 12px var(--green);
+    }
+
+    .ki-hero h1 {
+        margin: 0;
+        max-width: 850px;
+        font-size: clamp(38px, 4vw, 58px);
+        line-height: .98;
+        font-weight: 950;
+        letter-spacing: -2.5px;
+    }
+
+        .ki-hero h1 span {
+            color: var(--gold);
+        }
+
+    .ki-hero p {
+        max-width: 760px;
+        margin: 14px 0 0;
+        color: #88a5b9;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    /* =====================================================
+           BOTONES
+           ===================================================== */
+
+    .ki-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-top: 19px;
+    }
+
+    .ki-btn {
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 0 15px;
+        border: 1px solid rgba(104,179,223,.22);
+        border-radius: 11px;
+        color: #dcebf5 !important;
+        background: linear-gradient( 180deg, rgba(255,255,255,.06), rgba(255,255,255,.015) );
+        box-shadow: 0 10px 22px rgba(0,0,0,.23), inset 0 1px rgba(255,255,255,.07);
+        text-decoration: none !important;
+        font-size: 9px;
+        font-weight: 950;
+        cursor: pointer;
+        transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .ki-btn:hover {
+            transform: translateY(-3px);
+            border-color: rgba(32,217,255,.5);
+            color: #fff !important;
+        }
+
+    .ki-btn-gold {
+        color: #07121d !important;
+        border-color: #ffed99;
+        background: linear-gradient( 135deg, #fff09b, #ffc62e 52%, #e89b00 );
+        box-shadow: 0 13px 30px rgba(255,180,0,.2), inset 0 1px rgba(255,255,255,.9);
+    }
+
+        .ki-btn-gold:hover {
+            color: #07121d !important;
+            box-shadow: 0 17px 34px rgba(255,180,0,.3), inset 0 1px rgba(255,255,255,.9);
+        }
+
+    /* =====================================================
+           ORBE 3D
+           ===================================================== */
+
+    .ki-orb {
+        position: relative;
+        width: 190px;
+        height: 160px;
+        display: grid;
+        place-items: center;
+        justify-self: end;
+        perspective: 900px;
+    }
+
+        .ki-orb::before,
+        .ki-orb::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .ki-orb::before {
+            width: 175px;
+            height: 62px;
+            border: 1px solid rgba(255,198,46,.58);
+            transform: rotateX(68deg) rotateZ(-9deg);
+            box-shadow: 0 0 22px rgba(255,198,46,.18);
+        }
+
+        .ki-orb::after {
+            width: 145px;
+            height: 145px;
+            border: 1px solid rgba(32,217,255,.32);
+            transform: rotateY(68deg) rotateZ(10deg);
+            box-shadow: 0 0 28px rgba(32,217,255,.12);
+        }
+
+    .ki-core {
+        z-index: 2;
+        width: 88px;
+        height: 88px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255,198,46,.7);
+        border-radius: 50%;
+        color: var(--gold);
+        background: radial-gradient( circle at 35% 25%, #2a647d, #0b304a 30%, #061d31 62%, #020c16 );
+        box-shadow: 0 0 28px rgba(255,198,46,.18), 0 0 55px rgba(32,217,255,.13), inset 6px 6px 14px rgba(255,255,255,.08), inset -14px -14px 24px rgba(0,0,0,.55);
+        animation: kiFloat 4s ease-in-out infinite;
+    }
+
+    @@keyframes kiFloat {
+        50% {
+            transform: translateY(-9px) rotateY(8deg);
+        }
+    }
+
+    /* =====================================================
+           MENSAJES
+           ===================================================== */
+
+    .ki-message {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-top: 12px;
+        padding: 11px 14px;
+        border-radius: 11px;
+        font-size: 9px;
+    }
+
+    .ki-error {
+        color: #ffb5c0;
+        border: 1px solid rgba(255,79,105,.25);
+        background: rgba(255,79,105,.07);
+    }
+
+    .ki-info {
+        color: #a5efff;
+        border: 1px solid rgba(32,217,255,.22);
+        background: rgba(32,217,255,.055);
+    }
+
+    /* =====================================================
+           KPI
+           ===================================================== */
+
+    .ki-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .ki-kpi {
+        position: relative;
+        overflow: hidden;
+        min-height: 118px;
+        padding: 17px;
+        border: 1px solid rgba(74,151,204,.2);
+        border-radius: 17px;
+        background: radial-gradient( circle at 100% 100%, rgba(32,217,255,.055), transparent 45% ), linear-gradient( 145deg, #0a2844, #05182a );
+        box-shadow: 0 17px 34px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.055), inset 0 -2px rgba(0,0,0,.45);
+        transition: .22s;
+    }
+
+        .ki-kpi:hover {
+            transform: translateY(-5px);
+        }
+
+    .ki-kpi-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .ki-kpi-label {
+        color: #86a3b7;
+        font-size: 8px;
+        font-weight: 850;
+    }
+
+    .ki-kpi-icon {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(32,217,255,.16);
+        border-radius: 10px;
+        color: var(--cyan);
+        background: rgba(32,217,255,.06);
+    }
+
+    .ki-kpi strong {
+        display: block;
+        margin-top: 12px;
+        font-size: 27px;
+        line-height: 1;
+        font-weight: 950;
+    }
+
+    .ki-kpi small {
+        display: block;
+        margin-top: 7px;
+        color: #607f96;
+        font-size: 7px;
+        line-height: 1.45;
+    }
+
+    .ki-kpi.gold .ki-kpi-icon {
+        color: var(--gold);
+        border-color: rgba(255,198,46,.2);
+        background: rgba(255,198,46,.06);
+    }
+
+    .ki-kpi.red .ki-kpi-icon {
+        color: var(--red);
+        border-color: rgba(255,79,105,.2);
+        background: rgba(255,79,105,.06);
+    }
+
+    .ki-kpi.green .ki-kpi-icon {
+        color: var(--green);
+        border-color: rgba(53,230,173,.2);
+        background: rgba(53,230,173,.06);
+    }
+
+    /* =====================================================
+           GRID
+           ===================================================== */
+
+    .ki-main-grid {
+        display: grid;
+        grid-template-columns: 1.35fr .65fr;
+        gap: 14px;
+        margin-top: 14px;
+    }
+
+    .ki-panel {
+        overflow: hidden;
+        border: 1px solid rgba(70,149,204,.2);
+        border-radius: 19px;
+        background: linear-gradient( 145deg, #071e34, #041422 );
+        box-shadow: 0 20px 45px rgba(0,0,0,.3), inset 0 1px rgba(255,255,255,.045);
+    }
+
+    .ki-panel-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255,255,255,.055);
+    }
+
+    .ki-kicker {
+        color: var(--gold);
+        font-size: 8px;
+        font-weight: 950;
+        letter-spacing: 1.3px;
+    }
+
+    .ki-panel h2 {
+        margin: 2px 0;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 950;
+    }
+
+    .ki-panel-head p {
+        margin: 0;
+        color: #6e8ca2;
+        font-size: 8px;
+    }
+
+    .ki-live {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 10px;
+        color: var(--green);
+        border: 1px solid rgba(53,230,173,.2);
+        border-radius: 999px;
+        background: rgba(53,230,173,.05);
+        font-size: 7px;
+        font-weight: 950;
+    }
+
+        .ki-live::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 10px var(--green);
+        }
+
+    /* =====================================================
+           GRÁFICO
+           ===================================================== */
+
+    .ki-chart {
+        height: 260px;
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        padding: 22px 18px 32px;
+        background: repeating-linear-gradient( to bottom, transparent 0, transparent 49px, rgba(80,155,200,.08) 50px );
+    }
+
+    .ki-bar-item {
+        position: relative;
+        height: 100%;
+        flex: 1;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+    }
+
+    .ki-bar {
+        position: relative;
+        width: min(29px, 72%);
+        min-height: 4px;
+        border-radius: 6px 6px 2px 2px;
+        background: linear-gradient( 90deg, #08789f, #20d9ff 40%, #8df1ff 65%, #078eb9 );
+        box-shadow: 0 0 12px rgba(32,217,255,.3), 3px 0 rgba(0,64,92,.3);
+        transition: .2s;
+    }
+
+        .ki-bar::before {
+            content: "";
+            position: absolute;
+            left: 2px;
+            right: 2px;
+            top: -2px;
+            height: 4px;
+            border-radius: 50%;
+            background: #91f3ff;
+            box-shadow: 0 0 7px rgba(32,217,255,.7);
+        }
+
+    .ki-bar-item:hover .ki-bar {
+        transform: translateY(-5px);
+        filter: brightness(1.25);
+    }
+
+    .ki-label {
+        position: absolute;
+        bottom: -19px;
+        color: #58768c;
+        font-size: 6px;
+        white-space: nowrap;
+    }
+
+    .ki-tooltip {
+        display: none;
+        position: absolute;
+        z-index: 20;
+        bottom: calc(100% + 7px);
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 150px;
+        padding: 8px 9px;
+        color: #dff8ff;
+        border: 1px solid rgba(32,217,255,.24);
+        border-radius: 8px;
+        background: #03111f;
+        box-shadow: 0 12px 25px rgba(0,0,0,.45);
+        font-size: 7px;
+        line-height: 1.55;
+        pointer-events: none;
+    }
+
+    .ki-bar-item:hover .ki-tooltip {
+        display: block;
+    }
+
+    /* =====================================================
+           MOTOR
+           ===================================================== */
+
+    .ki-engine {
+        padding: 7px 17px 14px;
+    }
+
+    .ki-step {
+        display: grid;
+        grid-template-columns: 36px 1fr;
+        gap: 11px;
+        padding: 13px 0;
+        border-bottom: 1px solid rgba(255,255,255,.055);
+    }
+
+        .ki-step:last-child {
+            border-bottom: 0;
+        }
+
+    .ki-step-number {
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        color: var(--gold);
+        border: 1px solid rgba(255,198,46,.2);
+        border-radius: 10px;
+        background: rgba(255,198,46,.06);
+        font-size: 8px;
+        font-weight: 950;
+    }
+
+    .ki-step strong {
+        display: block;
+        color: #fff;
+        font-size: 10px;
+    }
+
+    .ki-step span {
+        display: block;
+        margin-top: 4px;
+        color: #6e8ca2;
+        font-size: 7px;
+        line-height: 1.5;
+    }
+
+    /* =====================================================
+           ACCESO ANÁLISIS
+           ===================================================== */
+
+    .ki-analysis {
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: center;
+        margin-top: 14px;
+        padding: 20px 22px;
+        border: 1px solid rgba(255,198,46,.22);
+        border-radius: 19px;
+        background: radial-gradient( circle at 85% 50%, rgba(255,198,46,.07), transparent 25% ), linear-gradient( 135deg, rgba(255,198,46,.04), rgba(32,217,255,.035) ), #06192b;
+        box-shadow: 0 18px 40px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.05);
+    }
+
+        .ki-analysis h2 {
+            margin: 3px 0 6px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 950;
+        }
+
+        .ki-analysis p {
+            max-width: 760px;
+            margin: 0;
+            color: #718fa5;
+            font-size: 8px;
+            line-height: 1.65;
+        }
+
+    /* =====================================================
+           ESTADO
+           ===================================================== */
+
+    .ki-status {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .ki-status-card {
+        padding: 15px;
+        border: 1px solid rgba(255,255,255,.07);
+        border-radius: 14px;
+        background: linear-gradient( 145deg, #0a2946, #05192c );
+        box-shadow: 0 13px 28px rgba(0,0,0,.22);
+    }
+
+    .ki-status-icon {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 10px;
+        color: var(--cyan);
+        border: 1px solid rgba(32,217,255,.2);
+        border-radius: 10px;
+        background: rgba(32,217,255,.06);
+    }
+
+    .ki-status-card strong {
+        display: block;
+        color: #fff;
+        font-size: 10px;
+    }
+
+    .ki-status-card p {
+        margin: 6px 0 0;
+        color: #6f8da2;
+        font-size: 7px;
+        line-height: 1.55;
+    }
+
+    .ki-empty {
+        padding: 50px 20px;
+        color: #6e8ca2;
+        text-align: center;
+        font-size: 9px;
+    }
+
+    .ki-footer {
+        padding: 20px 5px 0;
+        color: #49677d;
+        font-size: 7px;
+        text-align: center;
+    }
+
+    /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+    @@media(max-width:1050px) {
+
+        .ki-kpis {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media(max-width:900px) {
+
+        .ki-hero {
+            grid-template-columns: 1fr;
+            padding: 25px;
+        }
+
+        .ki-orb {
+            display: none;
+        }
+
+        .ki-main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .ki-status {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media(max-width:620px) {
+
+        .ki-container {
+            width: calc(100% - 18px);
+        }
+
+        .ki-kpis,
+        .ki-status {
+            grid-template-columns: 1fr;
+        }
+
+        .ki-analysis {
+            grid-template-columns: 1fr;
+        }
+
+        .ki-panel-head {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .ki-hero h1 {
+            font-size: 35px;
+        }
+    }
+
+</style>
+
+
+<div class="ki-page">
+
+    <main class="ki-container">
+
+
+        <!-- =====================================================
+         NAVEGACIÓN
+         ===================================================== -->
+
+        <nav class="ki-breadcrumb">
+
+            <a href="/">
+                Inicio
+            </a>
+
+            <span>/</span>
+
+            <strong>
+                KerniX Intelligence
+            </strong>
+
+        </nav>
+
+
+        <!-- =====================================================
+         HERO
+         ===================================================== -->
+
+        <section class="ki-hero">
+
+            <div>
+
+                <div class="ki-eyebrow">
+
+                    <span class="ki-dot"></span>
+
+                    KERNIX INTELLIGENCE · MOTOR ANALÍTICO
+
                 </div>
+
+
+                <h1>
+
+                    Inteligencia que
+
+                    <span>
+                        detecta
+                    </span>
+
+                    lo inusual
+
+                </h1>
+
+
+                <p>
+
+                    KerniX analiza el comportamiento real de las ventas,
+                    construye una línea base estadística y transforma
+                    desviaciones comerciales en señales comprensibles
+                    para supervisión gerencial.
+
+                </p>
+
+
+                <div class="ki-actions">
+
+                    <!-- ANOMALÍAS -->
+
+                    <a href="/IA/Anomalias"
+                       class="ki-btn ki-btn-gold">
+
+                        <span uk-icon="icon:warning;ratio:.8"></span>
+
+                        ANALIZAR ANOMALÍAS
+
+                    </a>
+
+
+                    <!-- VENTAS -->
+
+                    <a href="/Ventas/PrincipalVentas"
+                       class="ki-btn">
+
+                        <span uk-icon="icon:cart;ratio:.8"></span>
+
+                        VENTAS
+
+                    </a>
+
+
+                    <!-- INICIO -->
+
+                    <a href="/"
+                       class="ki-btn">
+
+                        <span uk-icon="icon:home;ratio:.8"></span>
+
+                        INICIO
+
+                    </a>
+
+                </div>
+
             </div>
-            <div class="kai-orb-scene" aria-hidden="true">
-                <div class="kai-orb-ring kai-orb-ring-a"></div><div class="kai-orb-ring kai-orb-ring-b"></div>
-                <div class="kai-orb-core"><span uk-icon="icon: bolt; ratio: 2.4"></span></div>
-                <div class="kai-orb-platform"></div>
-                <span class="kai-orb-mark">KERNIX · IA</span>
+
+
+            <div class="ki-orb"
+                 aria-hidden="true">
+
+                <div class="ki-core">
+
+                    <span uk-icon="icon:bolt;ratio:1.55"></span>
+
+                </div>
+
             </div>
-        </header>
+
+        </section>
+
+
+        <!-- =====================================================
+         MENSAJES
+         ===================================================== -->
         @if (!string.IsNullOrWhiteSpace(Model.MensajeError))
         {
-            <div class="kai-alert" role="alert"><span uk-icon="warning"></span> @Model.MensajeError</div>
+            <div class="ki-message ki-error">
+
+                <span uk-icon="warning"></span>
+
+                @Model.MensajeError
+
+            </div>
         }
-        <section class="kai-kpis" aria-label="Indicadores IA">
-            <article class="kai-kpi kai-gold"><div><span>Ventas últimos 7 días</span><i uk-icon="cart"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.VentasUltimos7Dias.ToString("N0") : "—")</strong><small>Operaciones comerciales reales</small><div class="kai-spark spark-a"></div></article>
-            <article class="kai-kpi kai-cyan"><div><span>Ingresos últimos 7 días</span><i uk-icon="credit-card"></i></div><strong>@(Model.Analisis.DatosDisponibles ? "S/ " + Model.Analisis.ImporteUltimos7Dias.ToString("N2") : "—")</strong><small>Ventas registradas en SQL Server</small><div class="kai-spark spark-b"></div></article>
-            <article class="kai-kpi kai-red"><div><span>Señales de anomalía</span><i uk-icon="warning"></i></div><strong>@(Model.Analisis.DatosDisponibles ? Model.Analisis.TotalAlertas.ToString() : "—")</strong><small>Ventana reciente · análisis bajo demanda</small><div class="kai-spark spark-c"></div></article>
-            <article class="kai-kpi kai-violet"><div><span>Intervenciones del agente</span><i uk-icon="user"></i></div><strong>—</strong><small>Disponible al conectar el orquestador</small><div class="kai-spark spark-d"></div></article>
-        </section>
+
+
         @if (!string.IsNullOrWhiteSpace(Model.Analisis.Aviso))
         {
-            <div class="kai-info"><span uk-icon="info"></span> @Model.Analisis.Aviso</div>
+            <div class="ki-message ki-info">
+
+                <span uk-icon="info"></span>
+
+                @Model.Analisis.Aviso
+
+            </div>
         }
-        <div class="kai-two-cols">
-            <section class="kai-panel">
-                <div class="kai-panel-head"><div><span class="kai-kicker">MODELOS</span><h2>Capacidades del sistema</h2><p>Dos flujos independientes, integrados al negocio.</p></div></div>
-                <div class="kai-models">
-                    <a class="kai-model" href="/IA/AgenteVentas"><div class="kai-model-icon kai-glow-gold"><span uk-icon="icon: commenting; ratio: 1.5"></span></div><div><strong>Agente comercial autónomo</strong><p>Prepara solicitudes, pedidos y cotizaciones. Las transacciones requieren validación y conexión con la API.</p><span class="kai-status kai-status-pending">Interfaz preparada · motor pendiente</span></div><span uk-icon="arrow-right"></span></a>
-                    <a class="kai-model" href="/IA/Anomalias"><div class="kai-model-icon kai-glow-blue"><span uk-icon="icon: bolt; ratio: 1.5"></span></div><div><strong>Detección de anomalías</strong><p>Analiza variaciones en ventas con línea base de 28 días y señales explicables.</p><span class="kai-status kai-status-live">Análisis estadístico sobre datos reales</span></div><span uk-icon="arrow-right"></span></a>
+
+
+        <!-- =====================================================
+         KPIS
+         ===================================================== -->
+
+        <section class="ki-kpis">
+
+
+            <article class="ki-kpi red">
+
+                <div class="ki-kpi-top">
+
+                    <span class="ki-kpi-label">
+                        Señales detectadas
+                    </span>
+
+                    <span class="ki-kpi-icon"
+                          uk-icon="warning">
+                    </span>
+
                 </div>
-            </section>
-            <section class="kai-panel">
-                <div class="kai-panel-head"><div><span class="kai-kicker">TENDENCIA</span><h2>Actividad comercial reciente</h2><p>Importe diario de ventas · últimos 21 días.</p></div><a href="/IA/Anomalias" class="kai-mini-link">Ver análisis <span uk-icon="arrow-right"></span></a></div>
-                @if (Model.Analisis.DatosDisponibles && Model.Analisis.Serie.Count > 0)
+
+                <strong>
+                    @Model.Analisis.TotalAlertas
+                </strong>
+
+                <small>
+                    Anomalías estadísticas que requieren revisión
+                </small>
+
+            </article>
+
+
+            <article class="ki-kpi gold">
+
+                <div class="ki-kpi-top">
+
+                    <span class="ki-kpi-label">
+                        Operaciones recientes
+                    </span>
+
+                    <span class="ki-kpi-icon"
+                          uk-icon="cart">
+                    </span>
+
+                </div>
+
+                <strong>
+                    @Model.Analisis.VentasUltimos7Dias
+                </strong>
+
+                <small>
+                    Ventas registradas en los últimos 7 días
+                </small>
+
+            </article>
+
+
+            <article class="ki-kpi">
+
+                <div class="ki-kpi-top">
+
+                    <span class="ki-kpi-label">
+                        Movimiento comercial
+                    </span>
+
+                    <span class="ki-kpi-icon"
+                          uk-icon="database">
+                    </span>
+
+                </div>
+
+                <strong>
+                    S/ @Model.Analisis.ImporteUltimos7Dias.ToString("N2")
+                </strong>
+
+                <small>
+                    Importe acumulado de los últimos 7 días
+                </small>
+
+            </article>
+
+
+            <article class="ki-kpi green">
+
+                <div class="ki-kpi-top">
+
+                    <span class="ki-kpi-label">
+                        Días con actividad
+                    </span>
+
+                    <span class="ki-kpi-icon"
+                          uk-icon="calendar">
+                    </span>
+
+                </div>
+
+                <strong>
+                    @diasConMovimiento
+                </strong>
+
+                <small>
+                    Fechas con movimiento en la serie disponible
+                </small>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+         GRÁFICO + MOTOR
+         ===================================================== -->
+
+        <div class="ki-main-grid">
+
+
+            <!-- ACTIVIDAD -->
+
+            <section class="ki-panel">
+
+                <div class="ki-panel-head">
+
+                    <div>
+
+                        <span class="ki-kicker">
+                            COMPORTAMIENTO RECIENTE
+                        </span>
+
+                        <h2>
+                            Actividad comercial
+                        </h2>
+
+                        <p>
+                            Últimos @recientes.Count días disponibles en el análisis.
+                        </p>
+
+                    </div>
+
+
+                    <span class="ki-live">
+                        DATOS REALES
+                    </span>
+
+                </div>
+
+
+                @if (recientes.Count > 0)
                 {
-                    <div class="kai-bars" aria-label="Gráfico de ventas por día">
-                        @foreach (var d in Model.Analisis.Serie)
+                    <div class="ki-chart">
+
+                        @for (int i = 0; i < recientes.Count; i++)
                         {
-                            <div class="kai-bar-slot" title="@d.Fecha.ToString("dd/MM/yyyy"): S/ @d.Total.ToString("N2")">
-                                <div class="kai-bar" style="height: @(Math.Max(3M, d.Intensidad).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div>
-                                <span>@d.Fecha.ToString("dd")</span>
+                            var d = recientes[i];
+
+                            var altura = Math.Max(
+                                3M,
+                                d.Total / maxReciente * 100M
+                            );
+
+
+                            <div class="ki-bar-item">
+
+                                <div class="ki-tooltip">
+
+                                    <strong>
+                                        @d.Fecha.ToString("dd/MM/yyyy")
+                                    </strong>
+
+                                    <br />
+
+                                    Importe:
+                                    S/ @d.Total.ToString("N2")
+
+                                    <br />
+
+                                    Ventas:
+                                    @d.Operaciones
+
+                                </div>
+
+
+                                <div class="ki-bar"
+                                     style="height:@altura.ToString("0.##", CultureInfo.InvariantCulture)%">
+                                </div>
+
+
+                                <span class="ki-label">
+                                    @d.Fecha.ToString("dd/MM")
+                                </span>
+
                             </div>
                         }
+
                     </div>
                 }
                 else
                 {
+                    <div class="ki-empty">
 
-                    <div class="kai-empty"><span uk-icon="database"></span> Datos pendientes de cargar</div>
+                        No existen datos suficientes para representar
+                        la actividad comercial.
+
+                    </div>
                 }
-                <div class="kai-chart-foot"><span><b class="kai-dot"></b> Importe diario</span><small>No es un pronóstico: son ventas registradas</small></div>
+
             </section>
+
+
+            <!-- MOTOR -->
+
+            <section class="ki-panel">
+
+                <div class="ki-panel-head">
+
+                    <div>
+
+                        <span class="ki-kicker">
+                            MOTOR ANALÍTICO
+                        </span>
+
+                        <h2>
+                            Proceso de detección
+                        </h2>
+
+                        <p>
+                            Cómo KerniX transforma ventas en señales.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ki-engine">
+
+
+                    <div class="ki-step">
+
+                        <div class="ki-step-number">
+                            01
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Datos comerciales
+                            </strong>
+
+                            <span>
+                                Se consultan las ventas correspondientes
+                                a la empresa autenticada.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ki-step">
+
+                        <div class="ki-step-number">
+                            02
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Línea base
+                            </strong>
+
+                            <span>
+                                El comportamiento reciente se compara
+                                con el historial disponible.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ki-step">
+
+                        <div class="ki-step-number">
+                            03
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Desviaciones
+                            </strong>
+
+                            <span>
+                                Se buscan variaciones superiores
+                                a los umbrales estadísticos.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ki-step">
+
+                        <div class="ki-step-number">
+                            04
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Revisión gerencial
+                            </strong>
+
+                            <span>
+                                Las señales se presentan para investigación
+                                y toma de decisiones.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
         </div>
-        <section class="kai-panel kai-fullpanel">
-            <div class="kai-panel-head"><div><span class="kai-kicker">CONTROL Y SEGURIDAD</span><h2>Supervisión responsable</h2><p>Ningún modelo modifica ventas, inventarios ni pagos sin reglas autorizadas.</p></div></div>
-            <div class="kai-steps"><div><span uk-icon="database"></span><strong>Datos de origen</strong><small>Empresa validada en sesión y SQL</small></div><div><span uk-icon="settings"></span><strong>Análisis / Orquestación</strong><small>Motor estadístico o modelo externo</small></div><div><span uk-icon="shield"></span><strong>Validación humana</strong><small>Confirmación y permisos antes de ejecutar</small></div><div><span uk-icon="history"></span><strong>Auditoría</strong><small>Se integra con la trazabilidad existente</small></div></div>
+
+
+        <!-- =====================================================
+         ABRIR ANÁLISIS
+         ===================================================== -->
+
+        <section class="ki-analysis">
+
+            <div>
+
+                <span class="ki-kicker">
+                    ANÁLISIS POR PERÍODO
+                </span>
+
+                <h2>
+                    Investiga un rango específico
+                </h2>
+
+                <p>
+                    Abre el módulo avanzado para seleccionar fecha inicial
+                    y final, visualizar importes, revisar operaciones diarias
+                    y consultar las anomalías detectadas mediante la ventana
+                    histórica de 28 días.
+                </p>
+
+            </div>
+
+
+            <!-- RUTA DIRECTA -->
+
+            <a href="/IA/Anomalias"
+               class="ki-btn ki-btn-gold">
+
+                <span uk-icon="icon:search;ratio:.85"></span>
+
+                ABRIR DETECCIÓN
+
+            </a>
+
         </section>
-        <footer class="kai-footer">KerniX ERP · Centro IA · @if (Model.Contexto != null) {
-            <span>Empresa @Model.Contexto.IdEmpresa · Usuario @Model.Contexto.Usuario</span>
-        }
-    </footer>
-</main>
+
+
+        <!-- =====================================================
+         ESTADO
+         ===================================================== -->
+
+        <section class="ki-status">
+
+
+            <article class="ki-status-card">
+
+                <div class="ki-status-icon"
+                     uk-icon="database">
+                </div>
+
+                <strong>
+                    Datos comerciales
+                </strong>
+
+                <p>
+                    El análisis trabaja con registros reales
+                    almacenados en KerniX ERP.
+                </p>
+
+            </article>
+
+
+            <article class="ki-status-card">
+
+                <div class="ki-status-icon"
+                     uk-icon="settings">
+                </div>
+
+                <strong>
+                    Motor estadístico
+                </strong>
+
+                <p>
+                    Se utilizan medidas robustas para detectar
+                    comportamientos fuera de la línea base.
+                </p>
+
+            </article>
+
+
+            <article class="ki-status-card">
+
+                <div class="ki-status-icon"
+                     uk-icon="lock">
+                </div>
+
+                <strong>
+                    Solo lectura
+                </strong>
+
+                <p>
+                    El módulo analiza información. No modifica ventas
+                    ni ejecuta decisiones automáticamente.
+                </p>
+
+            </article>
+
+
+            <article class="ki-status-card">
+
+                <div class="ki-status-icon"
+                     uk-icon="users">
+                </div>
+
+                <strong>
+                    Supervisión humana
+                </strong>
+
+                <p>
+                    Las anomalías son señales para revisión;
+                    no representan una conclusión automática.
+                </p>
+
+            </article>
+
+        </section>
+
+
+        <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+        <footer class="ki-footer">
+
+            KerniX ERP · KerniX Intelligence ·
+            Análisis comercial · Motor de anomalías
+
+        </footer>
+
+
+    </main>
+
 </div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.21.16/dist/js/uikit-icons.min.js"></script>
