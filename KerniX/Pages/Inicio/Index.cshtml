@@ -10,7 +10,6 @@
 <html lang="es">
 
 <head>
-
     <meta charset="utf-8" />
 
     <meta name="viewport"
@@ -22,22 +21,1390 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
-    <!-- KERNIX -->
-    <link rel="stylesheet"
-          href="~/css/inicio.css"
-          asp-append-version="true" />
+    <style>
+
+        /* =========================================================
+           VARIABLES
+        ========================================================= */
+
+        :root {
+            --kx-bg: #020812;
+            --kx-panel: rgba(5, 17, 31, .86);
+            --kx-panel-2: rgba(8, 23, 41, .92);
+
+            --kx-gold: #ffb817;
+            --kx-gold-light: #ffe28a;
+
+            --kx-purple: #b34cff;
+            --kx-blue: #2ca7ff;
+            --kx-pink: #ef4ddd;
+            --kx-green: #19df8f;
+            --kx-orange: #ff8b22;
+            --kx-cyan: #23d8f2;
+
+            --kx-white: #ffffff;
+            --kx-muted: #b8c3d1;
+
+            --kx-border: rgba(109, 146, 184, .30);
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            margin: 0;
+
+            width: 100%;
+            min-height: 100%;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #020812;
+
+            color: white;
+        }
+
+
+        body {
+            min-height: 100vh;
+        }
+
+
+        a {
+            text-decoration: none !important;
+        }
+
+
+        button {
+            font-family: inherit;
+        }
+
+
+        /* =========================================================
+           PÁGINA GENERAL
+        ========================================================= */
+
+        .kernix-page {
+            width: 100%;
+            min-height: 100vh;
+
+            position: relative;
+            isolation: isolate;
+
+            overflow-x: hidden;
+
+            background-color: #020812;
+
+            background-image:
+                linear-gradient(
+                    180deg,
+                    rgba(1, 8, 20, .22) 0%,
+                    rgba(1, 8, 20, .30) 45%,
+                    rgba(1, 7, 17, .37) 100%
+                ),
+                url("/images/login/kernix-login-bg.png");
+
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+
+        .kernix-page::before {
+            content: "";
+
+            position: fixed;
+            inset: 0;
+
+            z-index: -1;
+
+            pointer-events: none;
+
+            background:
+                radial-gradient(
+                    circle at 50% 35%,
+                    rgba(2, 15, 30, .12),
+                    rgba(0, 5, 14, .22) 60%,
+                    rgba(0, 4, 12, .35) 100%
+                );
+        }
+
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .kernix-header {
+            width: 100%;
+            height: 86px;
+
+            position: relative;
+            z-index: 50;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding:
+                0 clamp(30px, 5vw, 85px);
+
+            border-bottom:
+                1px solid rgba(255, 184, 23, .22);
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(2, 10, 20, .95),
+                    rgba(3, 21, 39, .90),
+                    rgba(2, 12, 24, .95)
+                );
+
+            box-shadow:
+                0 10px 40px rgba(0, 0, 0, .22);
+
+            backdrop-filter: blur(16px);
+        }
+
+
+        /* =========================================================
+           MARCA
+        ========================================================= */
+
+        .kernix-brand {
+            display: flex;
+            align-items: center;
+
+            gap: 13px;
+
+            color: white !important;
+        }
+
+
+        .kernix-logo {
+            width: 56px;
+            height: 56px;
+
+            object-fit: cover;
+
+            border-radius: 10px;
+
+            filter:
+                drop-shadow(
+                    0 0 10px
+                    rgba(255, 184, 23, .30)
+                );
+        }
+
+
+        .kernix-name {
+            font-size: 28px;
+            font-weight: 800;
+
+            line-height: 1;
+        }
+
+
+        .kernix-name span {
+            color: var(--kx-gold);
+        }
+
+
+        .kernix-brand small {
+            display: block;
+
+            margin-top: 5px;
+
+            color: #aeb9c6;
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================================
+           ACCIONES HEADER
+        ========================================================= */
+
+        .kernix-header-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 14px;
+        }
+
+
+        .header-button {
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            position: relative;
+
+            padding: 0;
+
+            border: 0;
+
+            background: transparent;
+
+            color: var(--kx-gold);
+
+            cursor: pointer;
+
+            transition:
+                transform .2s ease,
+                color .2s ease;
+        }
+
+
+        .header-button:hover {
+            color: var(--kx-gold-light);
+
+            transform:
+                translateY(-2px);
+        }
+
+
+        .notification-badge {
+            min-width: 18px;
+            height: 18px;
+
+            position: absolute;
+
+            top: 1px;
+            right: 1px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 0 4px;
+
+            border-radius: 20px;
+
+            background: #ff2e35;
+
+            color: white;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            box-shadow:
+                0 0 10px
+                rgba(255, 46, 53, .45);
+        }
+
+
+        /* =========================================================
+           USUARIO
+        ========================================================= */
+
+        .user-menu {
+            position: relative;
+        }
+
+
+        .user-trigger {
+            display: flex;
+            align-items: center;
+
+            gap: 11px;
+
+            border: 0;
+
+            padding: 4px 7px;
+
+            background: transparent;
+
+            color: white;
+
+            cursor: pointer;
+        }
+
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex: 0 0 48px;
+
+            border-radius: 50%;
+
+            color: #101010;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #ffe291,
+                    #ffb817
+                );
+
+            box-shadow:
+                0 0 22px
+                rgba(255, 184, 23, .40);
+        }
+
+
+        .user-data {
+            min-width: 150px;
+
+            text-align: left;
+        }
+
+
+        .user-data strong {
+            display: block;
+
+            color: white;
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+
+        .user-data small {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #b9c3cf;
+
+            font-size: 10px;
+        }
+
+
+        /* =========================================================
+           DROPDOWN
+        ========================================================= */
+
+        .kernix-dropdown {
+            width: 300px;
+
+            padding: 12px;
+
+            border:
+                1px solid
+                rgba(255, 184, 23, .25);
+
+            border-radius: 14px;
+
+            background:
+                rgba(3, 13, 25, .98);
+
+            box-shadow:
+                0 20px 60px
+                rgba(0, 0, 0, .45);
+        }
+
+
+        .dropdown-user {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 10px;
+
+            margin-bottom: 8px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,.08);
+        }
+
+
+        .dropdown-avatar {
+            width: 43px;
+            height: 43px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            color: #111;
+
+            background: var(--kx-gold);
+        }
+
+
+        .dropdown-user strong,
+        .dropdown-user span,
+        .dropdown-user small {
+            display: block;
+        }
+
+
+        .dropdown-user strong {
+            color: white;
+
+            font-size: 12px;
+        }
+
+
+        .dropdown-user span {
+            color: var(--kx-gold);
+
+            font-size: 10px;
+        }
+
+
+        .dropdown-user small {
+            margin-top: 3px;
+
+            color: #8e9aa8;
+
+            font-size: 9px;
+        }
+
+
+        .dropdown-option,
+        .logout-button {
+            width: 100%;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            padding: 10px;
+
+            border: 0;
+            border-radius: 9px;
+
+            background: transparent;
+
+            color: white !important;
+
+            text-align: left;
+
+            cursor: pointer;
+        }
+
+
+        .dropdown-option:hover,
+        .logout-button:hover {
+            background:
+                rgba(255, 184, 23, .08);
+        }
+
+
+        .dropdown-option strong,
+        .logout-button strong {
+            display: block;
+
+            font-size: 11px;
+        }
+
+
+        .dropdown-option small,
+        .logout-button small {
+            display: block;
+
+            margin-top: 2px;
+
+            color: #8995a5;
+
+            font-size: 9px;
+        }
+
+
+        .logout-form {
+            margin: 0;
+        }
+
+
+        /* =========================================================
+           MAIN
+        ========================================================= */
+
+        .kernix-main {
+            width: 100%;
+
+            position: relative;
+            z-index: 5;
+
+            padding:
+                32px clamp(30px, 5vw, 90px)
+                25px;
+        }
+
+
+        /* =========================================================
+           HERO CENTRADO
+        ========================================================= */
+
+        .hero {
+            width: 100%;
+            max-width: 1250px;
+
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+
+        .hero-content {
+            width: 100%;
+            max-width: 900px;
+
+            margin: 0 auto;
+        }
+
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 9px;
+
+            margin-bottom: 18px;
+
+            padding:
+                9px 20px;
+
+            border:
+                1px solid
+                rgba(255, 184, 23, .55);
+
+            border-radius: 40px;
+
+            background:
+                rgba(4, 15, 28, .68);
+
+            color: var(--kx-gold);
+
+            font-size: 15px;
+            font-weight: 700;
+
+            box-shadow:
+                0 0 18px
+                rgba(255, 184, 23, .12);
+
+            backdrop-filter: blur(10px);
+        }
+
+
+        .hero-label::before {
+            content: "🚀";
+
+            font-size: 17px;
+        }
+
+
+        .hero h1 {
+            margin: 0;
+
+            color: white;
+
+            font-size:
+                clamp(38px, 4vw, 58px);
+
+            font-weight: 800;
+
+            line-height: 1.05;
+
+            text-shadow:
+                0 4px 20px
+                rgba(0, 0, 0, .55);
+        }
+
+
+        .hero h1 span {
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffb817,
+                    #ffe290
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+
+            color: transparent;
+        }
+
+
+        .hero-main-text {
+            margin:
+                18px 0 0;
+
+            color: #e4e9ef;
+
+            font-size: 17px;
+        }
+
+
+        .hero-secondary {
+            max-width: 700px;
+
+            margin:
+                8px auto 0;
+
+            color: #c1cbd6;
+
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           PROGRESO
+        ========================================================= */
+
+        .progress-container {
+            width: min(700px, 90%);
+
+            margin:
+                24px auto 0;
+
+            text-align: left;
+        }
+
+
+        .progress-row {
+            display: flex;
+            align-items: center;
+
+            gap: 15px;
+        }
+
+
+        .progress-track {
+            height: 15px;
+
+            flex: 1;
+
+            position: relative;
+
+            overflow: hidden;
+
+            padding: 2px;
+
+            border:
+                1px solid
+                rgba(255, 184, 23, .80);
+
+            border-radius: 30px;
+
+            background:
+                rgba(0, 0, 0, .65);
+
+            box-shadow:
+                0 0 12px
+                rgba(255, 184, 23, .15),
+                inset 0 0 10px
+                rgba(0, 0, 0, .70);
+        }
+
+
+        .progress-value {
+            width: 0%;
+            height: 100%;
+
+            border-radius: inherit;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #fff0a8 0%,
+                    #ffc940 38%,
+                    #ffad00 100%
+                );
+
+            box-shadow:
+                0 0 10px
+                rgba(255, 184, 23, .75);
+
+            transition:
+                width .20s ease;
+        }
+
+
+        #welcomePercentage {
+            min-width: 47px;
+
+            color: white;
+
+            font-size: 15px;
+        }
+
+
+        #welcomeStatus {
+            display: block;
+
+            margin-top: 8px;
+
+            color: #d1d8e1;
+
+            font-size: 12px;
+        }
+
+
+        /* =========================================================
+           TÍTULO DE MÓDULOS
+        ========================================================= */
+
+        .section-heading {
+            width: 100%;
+            max-width: 1500px;
+
+            margin:
+                30px auto 20px;
+
+            display: grid;
+
+            grid-template-columns:
+                1fr auto 1fr;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+
+        .section-heading span {
+            height: 1px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 184, 23, .65),
+                    rgba(60, 132, 205, .28)
+                );
+        }
+
+
+        .section-heading span:last-child {
+            transform:
+                scaleX(-1);
+        }
+
+
+        .section-heading h2 {
+            margin: 0;
+
+            color: white;
+
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+
+        /* =========================================================
+           GRID 10 MÓDULOS - 5 x 2
+        ========================================================= */
+
+        .modules-grid {
+            width: 100%;
+            max-width: 1500px;
+
+            margin: 0 auto;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, minmax(0, 1fr));
+
+            gap: 18px;
+        }
+
+
+        /* =========================================================
+           TARJETAS
+        ========================================================= */
+
+        .module-card {
+            min-width: 0;
+            min-height: 132px;
+
+            position: relative;
+
+            display: grid;
+
+            grid-template-columns:
+                78px minmax(0, 1fr) 30px;
+
+            align-items: center;
+
+            gap: 13px;
+
+            padding:
+                16px 14px;
+
+            overflow: hidden;
+
+            border:
+                1px solid
+                var(--kx-border);
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(5, 18, 33, .91),
+                    rgba(4, 14, 27, .82)
+                );
+
+            color: white !important;
+
+            box-shadow:
+                inset 0 1px 0
+                rgba(255,255,255,.025),
+                0 10px 30px
+                rgba(0,0,0,.20);
+
+            backdrop-filter:
+                blur(10px);
+
+            transition:
+                transform .25s ease,
+                border-color .25s ease,
+                box-shadow .25s ease;
+        }
+
+
+        .module-card::before {
+            content: "";
+
+            width: 150px;
+            height: 150px;
+
+            position: absolute;
+
+            left: -60px;
+            bottom: -85px;
+
+            border-radius: 50%;
+
+            opacity: .10;
+
+            filter: blur(25px);
+
+            background: currentColor;
+
+            pointer-events: none;
+        }
+
+
+        .module-card:hover {
+            transform:
+                translateY(-5px);
+
+            border-color:
+                rgba(255, 184, 23, .55);
+
+            box-shadow:
+                0 18px 40px
+                rgba(0,0,0,.30),
+                0 0 20px
+                rgba(255,184,23,.07);
+        }
+
+
+        /* =========================================================
+           ICONOS
+        ========================================================= */
+
+        .module-icon {
+            width: 72px;
+            height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            position: relative;
+            z-index: 2;
+
+            border:
+                2px solid currentColor;
+
+            border-radius: 20px;
+
+            color: var(--kx-gold);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(22, 29, 32, .96),
+                    rgba(8, 12, 17, .98)
+                );
+
+            box-shadow:
+                0 0 12px currentColor,
+                inset 0 0 18px
+                rgba(255,255,255,.025);
+        }
+
+
+        .module-content {
+            min-width: 0;
+
+            position: relative;
+            z-index: 2;
+        }
+
+
+        .module-content h3 {
+            margin: 0;
+
+            color: white;
+
+            font-size: 15px;
+            font-weight: 700;
+
+            line-height: 1.2;
+        }
+
+
+        .module-content p {
+            margin:
+                7px 0 0;
+
+            color: #d0d7e0;
+
+            font-size: 11px;
+            line-height: 1.45;
+        }
+
+
+        .module-arrow {
+            width: 29px;
+            height: 29px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            position: relative;
+            z-index: 2;
+
+            border:
+                1px solid
+                var(--kx-gold);
+
+            border-radius: 50%;
+
+            color: var(--kx-gold);
+
+            transition:
+                background .2s ease,
+                color .2s ease,
+                transform .2s ease;
+        }
+
+
+        .module-card:hover
+        .module-arrow {
+            background:
+                var(--kx-gold);
+
+            color: #06101c;
+
+            transform:
+                translateX(2px);
+        }
+
+
+        /* =========================================================
+           COLORES INDIVIDUALES
+        ========================================================= */
+
+        .module-card.sales
+        .module-icon {
+            color: #ffd02c;
+        }
+
+
+        .module-card.orders
+        .module-icon {
+            color: #bc55ff;
+        }
+
+
+        .module-card.clients
+        .module-icon {
+            color: #49b7ff;
+        }
+
+
+        .module-card.products
+        .module-icon {
+            color: #ef58dc;
+        }
+
+
+        .module-card.stock
+        .module-icon {
+            color: #18e598;
+        }
+
+
+        .module-card.movements
+        .module-icon {
+            color: #ff932f;
+        }
+
+
+        .module-card.kardex
+        .module-icon {
+            color: #2adcf5;
+        }
+
+
+        .module-card.quotes
+        .module-icon {
+            color: #ffbf32;
+        }
+
+
+        .module-card.ai
+        .module-icon {
+            color: #9b6cff;
+        }
+
+
+        .module-card.config
+        .module-icon {
+            color: #c7d1dc;
+        }
+
+
+        .ai-icon {
+            font-size: 26px;
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           FEATURE BAR
+        ========================================================= */
+
+        .feature-bar {
+            width: 100%;
+            max-width: 1250px;
+
+            margin:
+                30px auto 0;
+
+            padding:
+                18px 0;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            border-top:
+                1px solid
+                rgba(255, 184, 23, .28);
+
+            border-bottom:
+                1px solid
+                rgba(255, 184, 23, .14);
+        }
+
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 11px;
+        }
+
+
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border:
+                1px solid
+                rgba(255, 184, 23, .60);
+
+            border-radius: 50%;
+
+            color: var(--kx-gold);
+
+            background:
+                rgba(4, 14, 25, .70);
+
+            box-shadow:
+                0 0 12px
+                rgba(255, 184, 23, .12);
+        }
+
+
+        .feature-item strong {
+            display: block;
+
+            color: white;
+
+            font-size: 11px;
+        }
+
+
+        .feature-item span {
+            display: block;
+
+            margin-top: 3px;
+
+            color: #929eac;
+
+            font-size: 9px;
+        }
+
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .kernix-footer {
+            padding:
+                20px 0 5px;
+
+            text-align: center;
+
+            color: #758191;
+
+            font-size: 10px;
+        }
+
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @@media (max-width: 1450px) {
+
+            .kernix-main {
+                padding-left: 45px;
+                padding-right: 45px;
+            }
+
+            .module-card {
+                grid-template-columns:
+                    62px minmax(0,1fr) 25px;
+
+                gap: 10px;
+
+                padding:
+                    14px 11px;
+            }
+
+            .module-icon {
+                width: 58px;
+                height: 58px;
+
+                border-radius: 16px;
+            }
+
+            .module-content h3 {
+                font-size: 13px;
+            }
+
+            .module-content p {
+                font-size: 9px;
+            }
+
+            .module-arrow {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+
+        @@media (max-width: 1100px) {
+
+            .modules-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0,1fr));
+            }
+
+            .module-card {
+                grid-template-columns:
+                    72px minmax(0,1fr) 30px;
+            }
+
+            .module-icon {
+                width: 68px;
+                height: 68px;
+            }
+
+            .module-content h3 {
+                font-size: 15px;
+            }
+
+            .module-content p {
+                font-size: 11px;
+            }
+
+            .feature-bar {
+                grid-template-columns:
+                    repeat(2,1fr);
+
+                gap: 20px;
+            }
+        }
+
+
+        @@media (max-width: 760px) {
+
+            .kernix-header {
+                height: 72px;
+
+                padding:
+                    0 18px;
+            }
+
+            .kernix-logo {
+                width: 45px;
+                height: 45px;
+            }
+
+            .kernix-name {
+                font-size: 22px;
+            }
+
+            .kernix-brand small {
+                display: none;
+            }
+
+            .header-button {
+                display: none;
+            }
+
+            .user-data {
+                display: none;
+            }
+
+            .user-avatar {
+                width: 42px;
+                height: 42px;
+
+                flex-basis: 42px;
+            }
+
+            .kernix-main {
+                padding:
+                    27px 16px 20px;
+            }
+
+            .hero-label {
+                margin-bottom: 15px;
+
+                font-size: 12px;
+            }
+
+            .hero h1 {
+                font-size: 35px;
+            }
+
+            .hero-main-text {
+                font-size: 14px;
+            }
+
+            .hero-secondary {
+                font-size: 12px;
+            }
+
+            .progress-container {
+                width: 100%;
+            }
+
+            .section-heading {
+                margin-top: 25px;
+
+                gap: 12px;
+            }
+
+            .section-heading h2 {
+                font-size: 18px;
+
+                white-space: nowrap;
+            }
+
+            .modules-grid {
+                grid-template-columns: 1fr;
+
+                gap: 12px;
+            }
+
+            .module-card {
+                min-height: 115px;
+
+                grid-template-columns:
+                    65px minmax(0,1fr) 30px;
+
+                padding: 14px;
+            }
+
+            .module-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .feature-bar {
+                grid-template-columns: 1fr;
+
+                gap: 16px;
+            }
+
+            .feature-item {
+                width: 230px;
+
+                max-width: 100%;
+
+                margin: auto;
+
+                justify-content: flex-start;
+            }
+        }
+
+    </style>
 
 </head>
+
 
 <body>
 
 <div class="kernix-page">
+
 
     <!-- =========================================================
          HEADER
     ========================================================== -->
 
     <header class="kernix-header">
+
+
+        <!-- MARCA -->
 
         <a asp-page="/Inicio/Index"
            class="kernix-brand">
@@ -48,6 +1415,7 @@
                  class="kernix-logo" />
 
             <div>
+
                 <div class="kernix-name">
                     Kerni<span>X</span>
                 </div>
@@ -55,12 +1423,16 @@
                 <small>
                     Gestión inteligente de ventas e inventario
                 </small>
+
             </div>
 
         </a>
 
 
+        <!-- ACCIONES -->
+
         <div class="kernix-header-actions">
+
 
             <button class="header-button"
                     type="button"
@@ -103,8 +1475,12 @@
                         type="button">
 
                     <div class="user-avatar">
-                        <span uk-icon="icon: user; ratio: 1.25"></span>
+
+                        <span uk-icon="icon: user; ratio: 1.25">
+                        </span>
+
                     </div>
+
 
                     <div class="user-data">
 
@@ -118,19 +1494,28 @@
 
                     </div>
 
-                    <span uk-icon="icon: chevron-down"></span>
+
+                    <span uk-icon="icon: chevron-down">
+                    </span>
 
                 </button>
 
 
+                <!-- DROPDOWN -->
+
                 <div uk-dropdown="mode: click; pos: bottom-right"
                      class="kernix-dropdown">
+
 
                     <div class="dropdown-user">
 
                         <div class="dropdown-avatar">
-                            <span uk-icon="icon: user; ratio: 1.4"></span>
+
+                            <span uk-icon="icon: user; ratio: 1.4">
+                            </span>
+
                         </div>
+
 
                         <div>
 
@@ -153,50 +1538,73 @@
 
                     </div>
 
-<a href="/Perfil/Index"
-   class="dropdown-option">
 
-    <span uk-icon="icon: user"></span>
+                    <a href="/Perfil/Index"
+                       class="dropdown-option">
 
-    <div>
-        <strong>Mi perfil</strong>
-        <small>Información de tu cuenta</small>
-    </div>
+                        <span uk-icon="icon: user"></span>
 
-</a>
+                        <div>
 
-<a href="/Configuracion/Index1"
-   class="dropdown-option">
+                            <strong>
+                                Mi perfil
+                            </strong>
 
-    <span uk-icon="icon: cog"></span>
+                            <small>
+                                Información de tu cuenta
+                            </small>
 
-    <div>
-        <strong>Configuración</strong>
-        <small>Preferencias del sistema</small>
-    </div>
+                        </div>
 
-</a>
+                    </a>
 
 
-                <form method="post"
-      action="/Account/Logout"
-      class="logout-form">
+                    <a href="/Configuracion/Index1"
+                       class="dropdown-option">
 
-    @Html.AntiForgeryToken()
+                        <span uk-icon="icon: cog"></span>
 
-    <button type="submit"
-            class="logout-button">
+                        <div>
 
-        <span uk-icon="icon: sign-out"></span>
+                            <strong>
+                                Configuración
+                            </strong>
 
-        <div>
-            <strong>Cerrar sesión</strong>
-            <small>Salir de KerniX</small>
-        </div>
+                            <small>
+                                Preferencias del sistema
+                            </small>
 
-    </button>
+                        </div>
 
-</form>
+                    </a>
+
+
+                    <form method="post"
+                          action="/Account/Logout"
+                          class="logout-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="logout-button">
+
+                            <span uk-icon="icon: sign-out"></span>
+
+                            <div>
+
+                                <strong>
+                                    Cerrar sesión
+                                </strong>
+
+                                <small>
+                                    Salir de KerniX
+                                </small>
+
+                            </div>
+
+                        </button>
+
+                    </form>
 
                 </div>
 
@@ -208,16 +1616,20 @@
 
 
     <!-- =========================================================
-         HERO
+         MAIN
     ========================================================== -->
 
     <main class="kernix-main">
 
+
+        <!-- =====================================================
+             BIENVENIDA
+        ====================================================== -->
+
         <section class="hero">
 
-            <!-- IZQUIERDA -->
-
             <div class="hero-content">
+
 
                 <span class="hero-label">
                     ¡Bienvenido de nuevo!
@@ -225,23 +1637,32 @@
 
 
                 <h1>
+
                     Hola,
+
                     <span>
                         @Model.NombreCompleto
                     </span>
+
                 </h1>
 
 
                 <p class="hero-main-text">
+
                     KerniX está cargando tu espacio de trabajo...
+
                 </p>
 
 
                 <p class="hero-secondary">
+
                     Preparamos todo para que gestiones tus ventas,
                     inventario y operaciones de forma inteligente.
+
                 </p>
 
+
+                <!-- PROGRESO -->
 
                 <div class="progress-container">
 
@@ -254,6 +1675,7 @@
                             </div>
 
                         </div>
+
 
                         <strong id="welcomePercentage">
                             0%
@@ -270,26 +1692,12 @@
 
             </div>
 
-
-            <!-- DERECHA -->
-
-            <div class="hero-image-container">
-
-                <div class="hero-light"></div>
-
-                <img src="~/images/inicio/bienvenida.png"
-                     asp-append-version="true"
-                     alt="KerniX"
-                     class="hero-image" />
-
-            </div>
-
         </section>
 
 
-        <!-- =========================================================
-             TITULO
-        ========================================================== -->
+        <!-- =====================================================
+             TÍTULO
+        ====================================================== -->
 
         <div class="section-heading">
 
@@ -304,338 +1712,398 @@
         </div>
 
 
-        <!-- =========================================================
-             MODULOS
-        ========================================================== -->
+        <!-- =====================================================
+             10 MÓDULOS
+        ====================================================== -->
 
-       <section class="modules-grid">
+        <section class="modules-grid">
 
-    <!-- ===================================================== -->
-    <!-- VENTAS -->
-    <!-- ===================================================== -->
 
-    <a href="/Ventas/PrincipalVentas"
-       class="module-card sales">
+            <!-- =================================================
+                 1 - VENTAS
+            ================================================== -->
 
-        <div class="module-icon">
-            <span uk-icon="icon: cart; ratio: 1.65"></span>
-        </div>
+            <a href="/Ventas/PrincipalVentas"
+               class="module-card sales">
 
-        <div class="module-content">
+                <div class="module-icon">
 
-            <h3>
-                Ventas
-            </h3>
+                    <span uk-icon="icon: cart; ratio: 1.65">
+                    </span>
 
-            <p>
-                Registra y administra
-                operaciones de venta.
-            </p>
+                </div>
 
-        </div>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+                <div class="module-content">
 
-    </a>
+                    <h3>
+                        Ventas
+                    </h3>
 
+                    <p>
+                        Registra y administra
+                        operaciones de venta.
+                    </p>
 
-    <!-- ===================================================== -->
-    <!-- PEDIDOS -->
-    <!-- ===================================================== -->
+                </div>
 
-    <a href="/Pedidos/Index"
-       class="module-card orders">
 
-        <div class="module-icon">
-            <span uk-icon="icon: list; ratio: 1.65"></span>
-        </div>
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
 
-        <div class="module-content">
+            </a>
 
-            <h3>
-                Pedidos
-            </h3>
 
-            <p>
-                Gestiona pedidos,
-                estados y seguimiento.
-            </p>
+            <!-- =================================================
+                 2 - PEDIDO DE VENTA
+            ================================================== -->
 
-        </div>
+            <a href="/Pedidos/Index"
+               class="module-card orders">
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+                <div class="module-icon">
 
-    </a>
+                    <span uk-icon="icon: list; ratio: 1.65">
+                    </span>
 
+                </div>
 
-    <!-- ===================================================== -->
-    <!-- CLIENTES -->
-    <!-- ===================================================== -->
 
-    <a href="/Cliente/Index"
-       class="module-card clients">
+                <div class="module-content">
 
-        <div class="module-icon">
-            <span uk-icon="icon: users; ratio: 1.65"></span>
-        </div>
+                    <h3>
+                        Pedido de Venta
+                    </h3>
 
-        <div class="module-content">
+                    <p>
+                        Registra pedidos de clientes,
+                        estados y seguimiento.
+                    </p>
 
-            <h3>
-                Clientes
-            </h3>
+                </div>
 
-            <p>
-                Información,
-                historial y actividad.
-            </p>
 
-        </div>
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+            </a>
 
-    </a>
 
+            <!-- =================================================
+                 3 - CLIENTES
+            ================================================== -->
 
-    <!-- ===================================================== -->
-    <!-- PRODUCTOS -->
-    <!-- ===================================================== -->
+            <a href="/Cliente/Index"
+               class="module-card clients">
 
-    <a href="/Inventario/Productos/Index"
-       class="module-card products">
+                <div class="module-icon">
 
-        <div class="module-icon">
-            <span uk-icon="icon: thumbnails; ratio: 1.65"></span>
-        </div>
+                    <span uk-icon="icon: users; ratio: 1.65">
+                    </span>
 
-        <div class="module-content">
+                </div>
 
-            <h3>
-                Productos
-            </h3>
 
-            <p>
-                Catálogo, categorías,
-                precios y productos.
-            </p>
+                <div class="module-content">
 
-        </div>
+                    <h3>
+                        Clientes
+                    </h3>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+                    <p>
+                        Información, historial
+                        y actividad.
+                    </p>
 
-    </a>
+                </div>
 
 
-    <!-- ===================================================== -->
-    <!-- INVENTARIO -->
-    <!-- ===================================================== -->
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
 
-    <a href="/Inventario/Index"
-       class="module-card stock">
+            </a>
 
-        <div class="module-icon">
-            <span uk-icon="icon: database; ratio: 1.65"></span>
-        </div>
 
-        <div class="module-content">
+            <!-- =================================================
+                 4 - PRODUCTOS
+            ================================================== -->
 
-            <h3>
-                Inventario
-            </h3>
+            <a href="/Inventario/Productos/Index"
+               class="module-card products">
 
-            <p>
-                Control de stock,
-                disponibilidad y mínimos.
-            </p>
+                <div class="module-icon">
 
-        </div>
+                    <span uk-icon="icon: thumbnails; ratio: 1.65">
+                    </span>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+                </div>
 
-    </a>
 
+                <div class="module-content">
 
-    <!-- ===================================================== -->
-    <!-- MOVIMIENTOS -->
-    <!-- ===================================================== -->
+                    <h3>
+                        Productos
+                    </h3>
 
-    <a href="/Inventario/Proveedores"
-       class="module-card movements">
+                    <p>
+                        Catálogo, categorías,
+                        precios y productos.
+                    </p>
 
-        <div class="module-icon">
-            <span uk-icon="icon: refresh; ratio: 1.65"></span>
-        </div>
+                </div>
 
-        <div class="module-content">
 
-            <h3>
-                 Proveedores
-            </h3>
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
 
-            <p>
-                Gestion Proveedores Para Localizacion De Impulsos Compras
-            </p>
+            </a>
 
-        </div>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+            <!-- =================================================
+                 5 - INVENTARIO
+            ================================================== -->
 
-    </a>
+            <a href="/Inventario/Index"
+               class="module-card stock">
 
+                <div class="module-icon">
 
-    <!-- ===================================================== -->
-    <!-- KARDEX -->
-    <!-- ===================================================== -->
+                    <span uk-icon="icon: database; ratio: 1.65">
+                    </span>
 
-    <a href="/Inventario/Kardex"
-       class="module-card kardex">
+                </div>
 
-        <div class="module-icon">
-            <span uk-icon="icon: table; ratio: 1.65"></span>
-        </div>
 
-        <div class="module-content">
+                <div class="module-content">
 
-            <h3>
-                Kardex
-            </h3>
+                    <h3>
+                        Inventario
+                    </h3>
 
-            <p>
-                Historial y movimientos
-                por producto.
-            </p>
+                    <p>
+                        Control de stock,
+                        disponibilidad y mínimos.
+                    </p>
 
-        </div>
+                </div>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
 
-    </a>
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
 
+            </a>
 
-    <!-- ===================================================== -->
-    <!-- COTIZACIONES -->
-    <!-- ===================================================== -->
 
-    <a href="/Pedidos/Index"
-       class="module-card quotes">
+            <!-- =================================================
+                 6 - PROVEEDORES
+            ================================================== -->
 
-        <div class="module-icon">
-            <span uk-icon="icon: file-text; ratio: 1.65"></span>
-        </div>
+            <a href="/Inventario/Proveedores"
+               class="module-card movements">
 
-        <div class="module-content">
+                <div class="module-icon">
 
-            <h3>
-                Pedidos
-            </h3>
+                    <span uk-icon="icon: truck; ratio: 1.65">
+                    </span>
 
-            <p>
-                Crea y convierte
-                cotizaciones en ventas.
-            </p>
+                </div>
 
-        </div>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+                <div class="module-content">
 
-    </a>
+                    <h3>
+                        Proveedores
+                    </h3>
 
+                    <p>
+                        Gestiona proveedores
+                        para compras.
+                    </p>
 
-    <!-- ===================================================== -->
-    <!-- IA -->
-    <!-- ===================================================== -->
+                </div>
 
-    <a href="/IA/Index"
-       class="module-card ai">
 
-        <div class="module-icon ai-icon">
-            AI
-        </div>
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
 
-        <div class="module-content">
+            </a>
 
-            <h3>
-                KerniX AI
-            </h3>
 
-            <p>
-                Consulta, reposición
-                y pronóstico de ventas.
-            </p>
+            <!-- =================================================
+                 7 - KARDEX
+            ================================================== -->
 
-        </div>
+            <a href="/Inventario/Kardex"
+               class="module-card kardex">
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+                <div class="module-icon">
 
-    </a>
+                    <span uk-icon="icon: file-text; ratio: 1.65">
+                    </span>
 
+                </div>
 
-    <!-- ===================================================== -->
-    <!-- CONFIGURACION -->
-    <!-- ===================================================== -->
 
-    <a href="/Configuracion/Index1"
-       class="module-card config">
+                <div class="module-content">
 
-        <div class="module-icon">
-            <span uk-icon="icon: cog; ratio: 1.65"></span>
-        </div>
+                    <h3>
+                        Kardex
+                    </h3>
 
-        <div class="module-content">
+                    <p>
+                        Historial y movimientos
+                        por producto.
+                    </p>
 
-            <h3>
-                Configuración
-            </h3>
+                </div>
 
-            <p>
-                Parámetros,
-                usuarios y seguridad.
-            </p>
 
-        </div>
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
 
-        <span class="module-arrow"
-              uk-icon="icon: chevron-right">
-        </span>
+            </a>
 
-    </a>
 
-</section>
+            <!-- =================================================
+                 8 - ORDEN DE VENTA
+            ================================================== -->
 
+            <a href="/Pedidos/Index"
+               class="module-card quotes">
 
-        <!-- =========================================================
-             BARRA INFERIOR
-        ========================================================== -->
+                <div class="module-icon">
+
+                    <span uk-icon="icon: file-edit; ratio: 1.65">
+                    </span>
+
+                </div>
+
+
+                <div class="module-content">
+
+                    <h3>
+                        Orden de Venta
+                    </h3>
+
+                    <p>
+                        Formaliza pedidos y prepara
+                        la operación de venta.
+                    </p>
+
+                </div>
+
+
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
+
+            </a>
+
+
+            <!-- =================================================
+                 9 - KERNIX AI
+            ================================================== -->
+
+            <a href="/IA/Index"
+               class="module-card ai">
+
+                <div class="module-icon ai-icon">
+                    AI
+                </div>
+
+
+                <div class="module-content">
+
+                    <h3>
+                        KerniX AI
+                    </h3>
+
+                    <p>
+                        Consulta, reposición
+                        y pronóstico de ventas.
+                    </p>
+
+                </div>
+
+
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
+
+            </a>
+
+
+            <!-- =================================================
+                 10 - CONFIGURACIÓN
+            ================================================== -->
+
+            <a href="/Configuracion/Index1"
+               class="module-card config">
+
+                <div class="module-icon">
+
+                    <span uk-icon="icon: cog; ratio: 1.65">
+                    </span>
+
+                </div>
+
+
+                <div class="module-content">
+
+                    <h3>
+                        Configuración
+                    </h3>
+
+                    <p>
+                        Parámetros, usuarios
+                        y seguridad.
+                    </p>
+
+                </div>
+
+
+                <span class="module-arrow"
+                      uk-icon="icon: chevron-right">
+                </span>
+
+            </a>
+
+        </section>
+
+
+        <!-- =====================================================
+             CARACTERÍSTICAS
+        ====================================================== -->
 
         <section class="feature-bar">
 
+
             <div class="feature-item">
 
                 <div class="feature-icon">
-                    <span uk-icon="icon: lock; ratio: 1.55"></span>
+
+                    <span uk-icon="icon: lock">
+                    </span>
+
                 </div>
 
                 <div>
-                    <strong>Seguro</strong>
-                    <span>Protección de tus datos.</span>
+
+                    <strong>
+                        Seguro
+                    </strong>
+
+                    <span>
+                        Protección de tus datos.
+                    </span>
+
                 </div>
 
             </div>
@@ -644,12 +2112,22 @@
             <div class="feature-item">
 
                 <div class="feature-icon">
-                    <span uk-icon="icon: cloud-upload; ratio: 1.55"></span>
+
+                    <span uk-icon="icon: cloud-upload">
+                    </span>
+
                 </div>
 
                 <div>
-                    <strong>Disponible 24/7</strong>
-                    <span>Accede desde cualquier dispositivo.</span>
+
+                    <strong>
+                        Disponible 24/7
+                    </strong>
+
+                    <span>
+                        Acceso desde cualquier lugar.
+                    </span>
+
                 </div>
 
             </div>
@@ -658,12 +2136,22 @@
             <div class="feature-item">
 
                 <div class="feature-icon">
-                    <span uk-icon="icon: bolt; ratio: 1.55"></span>
+
+                    <span uk-icon="icon: bolt">
+                    </span>
+
                 </div>
 
                 <div>
-                    <strong>Inteligente</strong>
-                    <span>Decisiones basadas en datos.</span>
+
+                    <strong>
+                        Inteligente
+                    </strong>
+
+                    <span>
+                        Decisiones basadas en datos.
+                    </span>
+
                 </div>
 
             </div>
@@ -672,12 +2160,22 @@
             <div class="feature-item">
 
                 <div class="feature-icon">
-                    <span uk-icon="icon: future; ratio: 1.55"></span>
+
+                    <span uk-icon="icon: future">
+                    </span>
+
                 </div>
 
                 <div>
-                    <strong>Tiempo real</strong>
-                    <span>Información siempre actualizada.</span>
+
+                    <strong>
+                        Tiempo real
+                    </strong>
+
+                    <span>
+                        Información siempre actualizada.
+                    </span>
+
                 </div>
 
             </div>
@@ -685,8 +2183,15 @@
         </section>
 
 
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
+
         <footer class="kernix-footer">
-            KerniX © @DateTime.Now.Year · Todos los derechos reservados
+
+            KerniX © @DateTime.Now.Year ·
+            Todos los derechos reservados
+
         </footer>
 
     </main>
@@ -694,13 +2199,130 @@
 </div>
 
 
+<!-- =============================================================
+     UIKIT
+============================================================= -->
+
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
 
-<script src="~/js/inicio.js"
-        asp-append-version="true"></script>
+
+<!-- =============================================================
+     PROGRESO
+============================================================= -->
+
+<script>
+
+    (() => {
+
+        const bar =
+            document.getElementById(
+                "welcomeProgress"
+            );
+
+        const percentage =
+            document.getElementById(
+                "welcomePercentage"
+            );
+
+        const status =
+            document.getElementById(
+                "welcomeStatus"
+            );
+
+
+        if (!bar ||
+            !percentage ||
+            !status) {
+
+            return;
+        }
+
+
+        let progress = 0;
+
+
+        function updateProgress() {
+
+            progress +=
+                Math.random() * 8 + 3;
+
+
+            if (progress >= 100) {
+
+                progress = 100;
+
+                bar.style.width =
+                    "100%";
+
+                percentage.textContent =
+                    "100%";
+
+                status.textContent =
+                    "Espacio de trabajo preparado.";
+
+                return;
+            }
+
+
+            const value =
+                Math.floor(progress);
+
+
+            bar.style.width =
+                value + "%";
+
+
+            percentage.textContent =
+                value + "%";
+
+
+            if (value < 30) {
+
+                status.textContent =
+                    "Cargando módulos del sistema...";
+
+            }
+
+            else if (value < 60) {
+
+                status.textContent =
+                    "Preparando ventas e inventario...";
+
+            }
+
+            else if (value < 85) {
+
+                status.textContent =
+                    "Sincronizando información...";
+
+            }
+
+            else {
+
+                status.textContent =
+                    "Finalizando espacio de trabajo...";
+
+            }
+
+
+            setTimeout(
+                updateProgress,
+                100
+            );
+
+        }
+
+
+        setTimeout(
+            updateProgress,
+            250
+        );
+
+    })();
+
+</script>
 
 </body>
-
 </html>

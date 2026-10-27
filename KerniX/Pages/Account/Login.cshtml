@@ -1,4 +1,5 @@
-﻿@page "/Account/Login"
+﻿
+@page "/Account/Login"
 @model KerniX.Pages.Account.LoginModel
 
 @{
@@ -10,7 +11,6 @@
 <html lang="es">
 
 <head>
-
     <meta charset="utf-8" />
 
     <meta name="viewport"
@@ -22,563 +22,279 @@
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
-    <!-- KERNIX -->
+    <!-- KERNIX LOGIN -->
     <link rel="stylesheet"
           href="~/css/login.css"
           asp-append-version="true" />
-
 </head>
 
 <body>
 
     <div class="kx-page">
 
-        <main class="kx-login-shell">
+        <!-- DECORACIONES DEL FONDO -->
+        <div class="kx-background-effects" aria-hidden="true">
+            <span class="kx-orb kx-orb-blue"></span>
+            <span class="kx-orb kx-orb-gold"></span>
+            <span class="kx-line kx-line-one"></span>
+            <span class="kx-line kx-line-two"></span>
+        </div>
 
-            <!-- ==================================================
-             DECORACIÓN
-        =================================================== -->
+        <!-- LOGIN -->
+        <main class="kx-login-card">
 
-            <div class="kx-frame-inner"
-                 aria-hidden="true">
-            </div>
+            <div class="kx-card-inner">
 
-            <span class="kx-corner kx-corner-tl"
-                  aria-hidden="true">
-            </span>
+                <!-- MARCA -->
+                <header class="kx-brand">
 
-            <span class="kx-corner kx-corner-tr"
-                  aria-hidden="true">
-            </span>
-
-            <span class="kx-corner kx-corner-bl"
-                  aria-hidden="true">
-            </span>
-
-            <span class="kx-corner kx-corner-br"
-                  aria-hidden="true">
-            </span>
-
-            <div class="kx-center-divider"
-                 aria-hidden="true">
-
-                <span class="kx-divider-diamond">
-                </span>
-
-            </div>
-
-            <!-- ==================================================
-             CONTENIDO
-        =================================================== -->
-
-            <div class="kx-main">
-
-                <!-- ==================================================
-                 IZQUIERDA
-            =================================================== -->
-
-                <section class="kx-left">
-
-                    <!-- MARCA -->
-
-                    <header class="kx-brand">
-
+                    <div class="kx-logo-box">
                         <img src="~/images/login/kernix-logo.png"
                              asp-append-version="true"
                              class="kx-brand-logo"
                              alt="KerniX ERP" />
+                    </div>
 
-                        <div class="kx-brand-copy">
+                    <div class="kx-brand-copy">
 
-                            <div class="kx-brand-name">
+                        <div class="kx-brand-name">
+                            <span>KerniX</span>
+                            <strong>ERP</strong>
+                        </div>
 
-                                <span>
-                                    KerniX
-                                </span>
+                        <div class="kx-brand-subtitle">
+                            Sistema Inteligente de Gestión Empresarial
+                        </div>
 
-                                <strong>
-                                    ERP
-                                </strong>
+                    </div>
 
-                            </div>
+                </header>
 
-                            <div class="kx-brand-subtitle">
-                                Sistema Inteligente de Gestión Empresarial
-                            </div>
+                <!-- BIENVENIDA -->
+                <section class="kx-welcome">
+
+                    <span class="kx-eyebrow">
+                        Bienvenido de nuevo
+                    </span>
+
+                    <h1>
+                        Accede a <span>KerniX</span>
+                    </h1>
+
+                    <p>
+                        Inicia sesión para continuar
+                    </p>
+
+                </section>
+
+                <!-- FORMULARIO -->
+                <form method="post"
+                      id="loginForm"
+                      class="kx-form"
+                      autocomplete="on">
+
+                    @Html.AntiForgeryToken()
+
+                    <!-- USUARIO -->
+                    <div class="kx-field"
+                         id="usuarioField">
+
+                        <label for="usuarioInput">
+                            Usuario o correo electrónico
+                        </label>
+
+                        <div class="kx-input-wrapper">
+
+                            <span class="kx-input-icon"
+                                  uk-icon="icon: user; ratio: 1.1">
+                            </span>
+
+                            <input id="usuarioInput"
+                                   name="Input.Usuario"
+                                   value="@Model.Input.Usuario"
+                                   type="text"
+                                   autocomplete="username"
+                                   maxlength="100"
+                                   spellcheck="false"
+                                   placeholder="Usuario o correo electrónico" />
 
                         </div>
 
-                    </header>
+                        <div id="usuarioClientError"
+                             class="kx-field-error"
+                             hidden>
+                        </div>
 
-                    <!-- BIENVENIDA -->
+                    </div>
 
-                    <section class="kx-welcome">
+                    <!-- CONTRASEÑA -->
+                    <div class="kx-field"
+                         id="passwordField">
 
-                        <span class="kx-eyebrow">
-                            Bienvenido de nuevo
+                        <label for="kxPassword">
+                            Contraseña
+                        </label>
+
+                        <div class="kx-input-wrapper">
+
+                            <span class="kx-input-icon"
+                                  uk-icon="icon: lock; ratio: 1.05">
+                            </span>
+
+                            <input id="kxPassword"
+                                   name="Input.Password"
+                                   type="password"
+                                   autocomplete="current-password"
+                                   placeholder="Contraseña" />
+
+                            <button type="button"
+                                    id="kxTogglePassword"
+                                    class="kx-eye"
+                                    aria-label="Mostrar contraseña">
+
+                                <span id="kxEyeIcon"
+                                      uk-icon="icon: eye; ratio: 1">
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                        <div id="passwordClientError"
+                             class="kx-field-error"
+                             hidden>
+                        </div>
+
+                    </div>
+
+                    <!-- RECORDAR / RECUPERAR -->
+                    <div class="kx-options">
+
+                        <label class="kx-remember">
+
+                            <input id="recordarmeInput"
+                                   name="Input.Recordarme"
+                                   class="kx-checkbox"
+                                   type="checkbox"
+                                   value="true"
+                                   @(Model.Input.Recordarme ? "checked" : "") />
+
+                            <span>Recordarme</span>
+
+                        </label>
+
+                        <a href="/Account/ForgotPassword"
+                           class="kx-forgot">
+                            ¿Olvidaste tu contraseña?
+                        </a>
+
+                    </div>
+
+                    <!-- BOTÓN LOGIN -->
+                    <button type="submit"
+                            id="loginButton"
+                            class="kx-login-button">
+
+                        <span id="loginButtonText">
+                            Iniciar sesión
                         </span>
 
-                        <h1>
-                            Accede a
-                            <span>KerniX</span>
-                        </h1>
+                        <span id="loginSpinner"
+                              class="kx-login-spinner"
+                              uk-spinner="ratio: .65"
+                              hidden>
+                        </span>
 
-                        <p>
-                            Inicia sesión para continuar
-                        </p>
+                        <span id="loginArrow"
+                              class="kx-button-arrow">
+                            →
+                        </span>
 
-                    </section>
+                    </button>
 
-                    <!-- ==================================================
-                     FORMULARIO
-                =================================================== -->
+                    <!-- SEPARADOR -->
+                    <div class="kx-or">
 
-                    <form method="post"
-                          id="loginForm"
-                          class="kx-form"
-                          autocomplete="on">
+                        <span></span>
 
-                        @Html.AntiForgeryToken()
+                        <p>o continúa con</p>
 
-                        <!-- ==================================================
-                         USUARIO
-                    =================================================== -->
+                        <span></span>
 
-                        <div class="kx-field"
-                             id="usuarioField">
+                    </div>
 
-                            <label for="usuarioInput">
-                                Usuario o correo electrónico
-                            </label>
+                    <!-- ACCESOS EXTERNOS -->
+                    <div class="kx-social">
 
-                            <div class="kx-input-wrapper">
+                        <button type="button"
+                                class="kx-social-button"
+                                data-provider="Microsoft"
+                                aria-label="Continuar con Microsoft">
 
-                                <span class="kx-input-icon"
-                                      uk-icon="icon: user">
-                                </span>
-
-                                <input id="usuarioInput"
-                                       name="Input.Usuario"
-                                       value="@Model.Input.Usuario"
-                                       type="text"
-                                       autocomplete="username"
-                                       maxlength="100"
-                                       spellcheck="false"
-                                       placeholder="Usuario o correo electrónico" />
-
-                            </div>
-
-                            <div id="usuarioClientError"
-                                 class="kx-field-error"
-                                 hidden>
-                            </div>
-
-                        </div>
-
-                        <!-- ==================================================
-                         CONTRASEÑA
-                    =================================================== -->
-
-                        <div class="kx-field"
-                             id="passwordField">
-
-                            <label for="kxPassword">
-                                Contraseña
-                            </label>
-
-                            <div class="kx-input-wrapper">
-
-                                <span class="kx-input-icon"
-                                      uk-icon="icon: lock; ratio: .95">
-                                </span>
-
-                                <input id="kxPassword"
-                                       name="Input.Password"
-                                       type="password"
-                                       autocomplete="current-password"
-                                       placeholder="Contraseña" />
-
-                                <button type="button"
-                                        id="kxTogglePassword"
-                                        class="kx-eye"
-                                        aria-label="Mostrar contraseña">
-
-                                    <span id="kxEyeIcon"
-                                          uk-icon="icon: eye; ratio: .9">
-                                    </span>
-
-                                </button>
-
-                            </div>
-
-                            <div id="passwordClientError"
-                                 class="kx-field-error"
-                                 hidden>
-                            </div>
-
-                        </div>
-
-                        <!-- ==================================================
-                         OPCIONES
-                    =================================================== -->
-
-                        <div class="kx-options">
-
-                            <label class="kx-remember">
-
-                                <input id="recordarmeInput"
-                                       name="Input.Recordarme"
-                                       class="kx-checkbox"
-                                       type="checkbox"
-                                       value="true"
-                                @(Model.Input.Recordarme ? "checked" : "") />
-
-                                <span>
-                                    Recordarme
-                                </span>
-
-                            </label>
-
-                            <a href="/Account/ForgotPassword"
-                               class="kx-forgot">
-
-                                ¿Olvidaste tu contraseña?
-
-                            </a>
-
-                        </div>
-
-                        <!-- ==================================================
-                         LOGIN
-                    =================================================== -->
-
-                        <button type="submit"
-                                id="loginButton"
-                                class="kx-login-button">
-
-                            <span id="loginButtonText">
-                                Iniciar sesión
-                            </span>
-
-                            <span id="loginSpinner"
-                                  class="kx-login-spinner"
-                                  uk-spinner="ratio: .65"
-                                  hidden>
-                            </span>
-
-                            <span id="loginArrow"
-                                  class="kx-button-arrow">
-                                →
+                            <span class="kx-microsoft">
+                                <i></i>
+                                <i></i>
+                                <i></i>
+                                <i></i>
                             </span>
 
                         </button>
 
-                        <!-- ==================================================
-                         SEPARADOR
-                    =================================================== -->
+                        <button type="button"
+                                class="kx-social-button kx-google"
+                                data-provider="Google"
+                                aria-label="Continuar con Google">
 
-                        <div class="kx-or">
+                            <span class="kx-google-g">G</span>
 
-                            <span></span>
+                        </button>
+
+                        <button type="button"
+                                class="kx-social-button"
+                                data-provider="SSO"
+                                aria-label="Acceso empresarial">
+
+                            <span uk-icon="icon: lock; ratio: 1.15">
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                    <!-- SEGURIDAD -->
+                    <div class="kx-security">
+
+                        <div class="kx-security-shield">
+
+                            <span uk-icon="icon: lock; ratio: 1.15">
+                            </span>
+
+                        </div>
+
+                        <div class="kx-security-copy">
+
+                            <strong>
+                                Seguridad y confianza
+                            </strong>
 
                             <p>
-                                o continúa con
+                                Protección avanzada de tus datos con
+                                autenticación segura y control de permisos.
                             </p>
 
-                            <span></span>
-
                         </div>
-
-                        <!-- ==================================================
-                         LOGIN EXTERNO
-                    =================================================== -->
-
-                        <div class="kx-social">
-
-                            <button type="button"
-                                    class="kx-social-button"
-                                    data-provider="Microsoft"
-                                    aria-label="Continuar con Microsoft">
-
-                                <span class="kx-microsoft">
-                                    <i></i>
-                                    <i></i>
-                                    <i></i>
-                                    <i></i>
-                                </span>
-
-                            </button>
-
-                            <button type="button"
-                                    class="kx-social-button kx-google"
-                                    data-provider="Google"
-                                    aria-label="Continuar con Google">
-
-                                G
-
-                            </button>
-
-                            <button type="button"
-                                    class="kx-social-button"
-                                    data-provider="SSO"
-                                    aria-label="Acceso empresarial">
-
-                                <span uk-icon="icon: lock; ratio: 1.05">
-                                </span>
-
-                            </button>
-
-                        </div>
-
-                        <!-- ==================================================
-                         SEGURIDAD
-                    =================================================== -->
-
-                        <div class="kx-security">
-
-                            <div class="kx-security-shield">
-
-                                <span uk-icon="icon: lock; ratio: 1.15">
-                                </span>
-
-                            </div>
-
-                            <div>
-
-                                <strong>
-                                    Seguridad y confianza
-                                </strong>
-
-                                <p>
-                                    Protección avanzada de tus datos con
-                                    autenticación segura y control de permisos.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </form>
-
-                </section>
-
-                <!-- ==================================================
-                 DERECHA
-            =================================================== -->
-
-                <aside class="kx-right">
-
-                    <div class="kx-portal">
-
-                        <div class="kx-portal-glow">
-                        </div>
-
-                        <img src="~/images/login/kernix-portal.png"
-                             asp-append-version="true"
-                             class="kx-portal-image"
-                             alt="Portal KerniX ERP" />
 
                     </div>
 
-                    <div class="kx-right-heading">
-
-                        <h2>
-                            Tu centro de operaciones
-
-                            <span>
-                                inteligente
-                            </span>
-                        </h2>
-
-                        <p>
-                            Ventas, inventario y decisiones basadas
-                            en información real de tu negocio.
-                        </p>
-
-                    </div>
-
-                    <div class="kx-features">
-
-                        <article class="kx-feature kx-feature-gold">
-
-                            <div class="kx-feature-icon">
-                                <span uk-icon="icon: database; ratio: 1.05">
-                                </span>
-                            </div>
-
-                            <div class="kx-feature-content">
-
-                                <strong>
-                                    Gestión Integral
-                                </strong>
-
-                                <span>
-                                    Administra ventas, inventarios
-                                    y operaciones desde un solo lugar.
-                                </span>
-
-                            </div>
-
-                            <div class="kx-feature-arrow">
-                                →
-                            </div>
-
-                        </article>
-
-                        <article class="kx-feature kx-feature-purple">
-
-                            <div class="kx-feature-icon kx-ai-icon">
-                                AI
-                            </div>
-
-                            <div class="kx-feature-content">
-
-                                <strong>
-                                    Inteligencia Artificial
-                                </strong>
-
-                                <span>
-                                    Pronósticos, reposición,
-                                    anomalías y análisis inteligente.
-                                </span>
-
-                            </div>
-
-                            <div class="kx-feature-arrow">
-                                →
-                            </div>
-
-                        </article>
-
-                        <article class="kx-feature kx-feature-blue">
-
-                            <div class="kx-feature-icon">
-
-                                <span uk-icon="icon: settings; ratio: 1.05">
-                                </span>
-
-                            </div>
-
-                            <div class="kx-feature-content">
-
-                                <strong>
-                                    Control Total
-                                </strong>
-
-                                <span>
-                                    Monitorea stock, Kardex
-                                    y movimientos en tiempo real.
-                                </span>
-
-                            </div>
-
-                            <div class="kx-feature-arrow">
-                                →
-                            </div>
-
-                        </article>
-
-                        <article class="kx-feature kx-feature-cyan">
-
-                            <div class="kx-feature-icon">
-
-                                <span uk-icon="icon: cloud-upload; ratio: 1.05">
-                                </span>
-
-                            </div>
-
-                            <div class="kx-feature-content">
-
-                                <strong>
-                                    En la Nube
-                                </strong>
-
-                                <span>
-                                    Accede desde cualquier lugar
-                                    de forma segura y rápida.
-                                </span>
-
-                            </div>
-
-                            <div class="kx-feature-arrow">
-                                →
-                            </div>
-
-                        </article>
-
-                    </div>
-
-                </aside>
+                </form>
 
             </div>
-
-            <!-- ==================================================
-             FOOTER
-        =================================================== -->
-
-            <footer class="kx-footer">
-
-                <div class="kx-footer-item">
-
-                    <div class="kx-footer-icon kx-footer-gold">
-                        <span uk-icon="icon: lock"></span>
-                    </div>
-
-                    <div>
-                        <strong>Seguro</strong>
-                        <span>Encriptación avanzada</span>
-                    </div>
-
-                </div>
-
-                <div class="kx-footer-item">
-
-                    <div class="kx-footer-icon kx-footer-purple">
-                        <span uk-icon="icon: cloud"></span>
-                    </div>
-
-                    <div>
-                        <strong>Disponible</strong>
-                        <span>Acceso 24/7 en la nube</span>
-                    </div>
-
-                </div>
-
-                <div class="kx-footer-item">
-
-                    <div class="kx-footer-icon kx-footer-gold">
-                        <span uk-icon="icon: bolt"></span>
-                    </div>
-
-                    <div>
-                        <strong>Inteligente</strong>
-                        <span>Reportes e insights</span>
-                    </div>
-
-                </div>
-
-                <div class="kx-footer-item">
-
-                    <div class="kx-footer-icon kx-footer-blue">
-                        <span uk-icon="icon: receiver"></span>
-                    </div>
-
-                    <div>
-                        <strong>Soporte 24/7</strong>
-                        <span>Asistencia especializada</span>
-                    </div>
-
-                </div>
-
-            </footer>
 
         </main>
 
     </div>
 
-    <!-- ==========================================================
-     RESPUESTA DEL SERVIDOR
-=========================================================== -->
+    <!-- ERROR DEVUELTO POR BACKEND -->
     @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
     {
         <div id="serverError"
@@ -587,21 +303,16 @@
         </div>
     }
 
-    <!-- ==========================================================
-     UIKIT
-=========================================================== -->
+    <!-- UIKIT -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
-    </script>
-
-    <!-- KERNIX LOGIN -->
-
+    <!-- NO CAMBIAMOS TU JS -->
     <script src="~/js/login.js"
             asp-append-version="true">
     </script>
 
 </body>
 </html>
+```
