@@ -28,7 +28,6 @@ body {
 button, input {
     font: inherit
 }
-
 .kx-page {
     position: relative;
     width: 100%;
@@ -36,12 +35,15 @@ button, input {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 34px 20px !important;
-    overflow: hidden;
+    padding: 28px 20px !important;
+    overflow-x: hidden;
     isolation: isolate;
-    background: linear-gradient(rgba(0,6,16,.10),rgba(0,6,16,.20)),url('/images/login/kernix-login-bg.png') center/cover no-repeat fixed !important
+    background-color: #010712 !important;
+    background-image: linear-gradient( rgba(0, 6, 16, 0.08), rgba(0, 6, 16, 0.16) ), url("/images/login/kernix-login-bg.png") !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
 }
-
     .kx-page:before {
         content: "";
         position: absolute;
@@ -520,7 +522,6 @@ button, input {
         transform: none
     }
 }
-
 @media(max-height:820px) and (min-width:761px) {
     .kx-page {
         align-items: flex-start !important;
@@ -545,7 +546,8 @@ button, input {
         min-width: 86px !important
     }
 
-    .kx-brand-name span, .kx-brand-name strong {
+    .kx-brand-name span,
+    .kx-brand-name strong {
         font-size: 33px !important
     }
 
@@ -591,7 +593,6 @@ button, input {
         height: 49px !important
     }
 }
-
 @media(max-width:760px) {
     .kx-page {
         align-items: flex-start !important;
