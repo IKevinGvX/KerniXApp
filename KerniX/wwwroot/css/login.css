@@ -1,12 +1,13 @@
 ﻿/* ============================================================
    KERNIX ERP - LOGIN
-   SOLO FRONTEND / NO AFECTA BACKEND
+   DISEÑO COMPLETO
+   SOLO FRONTEND
 ============================================================ */
 
 :root {
     --kx-bg: #010712;
-    --kx-navy: #031326;
-    --kx-navy-2: #061b31;
+    --kx-panel: #041426;
+    --kx-panel-2: #020c18;
     --kx-gold: #ffc21a;
     --kx-gold-light: #ffe783;
     --kx-blue: #149cff;
@@ -27,21 +28,24 @@
     box-sizing: border-box;
 }
 
-html {
+html,
+body {
     width: 100%;
+    min-width: 100%;
     min-height: 100%;
-    margin: 0;
-    padding: 0;
-    background: #010712;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: var(--kx-bg) !important;
+}
+
+html {
+    overflow-x: hidden;
 }
 
 body {
-    width: 100%;
     min-height: 100vh;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow-x: hidden;
-    background: #010712 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
     color: var(--kx-text);
     font-family: "Segoe UI", Arial, Helvetica, sans-serif;
 }
@@ -54,36 +58,62 @@ input {
 
 /* ============================================================
    PÁGINA
-   PNG DE FONDO DIRECTAMENTE DESDE CSS
 ============================================================ */
 
 .kx-page {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 28px 20px 45px;
-    overflow-x: hidden;
-    background-color: #010712;
-    background-image: linear-gradient( rgba(1, 7, 18, .10), rgba(1, 7, 18, .18) ), url("/images/login/kernix-login-bg.png");
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    background-attachment: fixed;
+    position: relative !important;
+    z-index: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 28px 20px 45px !important;
+    overflow: hidden !important;
+    background: #010712 !important;
     isolation: isolate;
 }
 
 
 /* ============================================================
-   EFECTOS DE FONDO
+   FONDO
+============================================================ */
+
+.kx-background-image {
+    position: fixed !important;
+    z-index: -10 !important;
+    top: 0 !important;
+    left: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100vw !important;
+    min-height: 100vh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+    transform: none !important;
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
+
+/* ============================================================
+   EFECTOS
 ============================================================ */
 
 .kx-background-effects {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
+    position: fixed !important;
+    z-index: -5 !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
     overflow: hidden;
     pointer-events: none;
 }
@@ -92,24 +122,24 @@ input {
     position: absolute;
     display: block;
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(110px);
     pointer-events: none;
 }
 
 .kx-orb-blue {
-    width: 450px;
-    height: 450px;
-    top: -260px;
-    left: -220px;
+    top: -250px;
+    left: -230px;
+    width: 470px;
+    height: 470px;
     background: #008cff;
-    opacity: .08;
+    opacity: .06;
 }
 
 .kx-orb-gold {
-    width: 430px;
-    height: 430px;
     right: -220px;
     bottom: -240px;
+    width: 450px;
+    height: 450px;
     background: #ffb000;
     opacity: .07;
 }
@@ -118,49 +148,76 @@ input {
     position: absolute;
     display: block;
     height: 1px;
-    background: linear-gradient( 90deg, transparent, rgba(255, 194, 26, .15), transparent );
     pointer-events: none;
+    background: linear-gradient( 90deg, transparent, rgba(255, 194, 26, .16), transparent );
 }
 
 .kx-line-one {
-    width: 600px;
-    top: 20%;
+    top: 22%;
     left: -180px;
+    width: 600px;
     transform: rotate(-18deg);
 }
 
 .kx-line-two {
+    right: -190px;
+    bottom: 20%;
     width: 650px;
-    right: -200px;
-    bottom: 18%;
     transform: rotate(20deg);
 }
 
 
 /* ============================================================
-   TARJETA PRINCIPAL
+   TARJETA LOGIN
+
+   SIN:
+   absolute
+   fixed
+   right
+   left
+   translateX
+   float
+
+   El FLEX del padre la centra.
 ============================================================ */
 
 .kx-login-card {
-    position: relative;
-    z-index: 20;
-    width: 570px;
-    max-width: calc(100vw - 40px);
-    margin: 0 auto;
-    padding: 3px;
-    border-radius: 28px;
-    background: linear-gradient( 135deg, #fff1a2 0%, #ffc21a 25%, #168fff 52%, #ffc21a 79%, #fff0a0 100% );
-    box-shadow: 0 0 5px rgba(255, 238, 170, .90), 0 0 20px rgba(255, 190, 0, .58), 0 0 42px rgba(20, 156, 255, .15), 0 30px 80px rgba(0, 0, 0, .75);
-    animation: kxCardEntrada .55s ease both;
+    position: relative !important;
+    z-index: 10 !important;
+    display: block !important;
+    flex: 0 0 auto !important;
+    align-self: center !important;
+    width: 570px !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 10px) !important;
+    margin: 0 auto !important;
+    padding: 3px !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    inset: auto !important;
+    float: none !important;
+    translate: none !important;
+    transform: none !important;
+    border-radius: 29px !important;
+    background: linear-gradient( 135deg, #fff1a2 0%, #ffc21a 24%, #168fff 52%, #ffc21a 80%, #fff0a0 100% ) !important;
+    box-shadow: 0 0 5px rgba(255, 238, 170, .95), 0 0 20px rgba(255, 190, 0, .60), 0 0 45px rgba(20, 156, 255, .17), 0 30px 80px rgba(0, 0, 0, .78) !important;
+    animation: kxLoginEntrada .5s ease both;
 }
+
+
+    /* ============================================================
+   BRILLO DE BORDE
+============================================================ */
 
     .kx-login-card::after {
         content: "";
         position: absolute;
+        top: 24%;
         right: -2px;
-        top: 23%;
         width: 4px;
-        height: 32%;
+        height: 30%;
         border-radius: 999px;
         background: linear-gradient( transparent, #168eff, #ffffff, #168eff, transparent );
         box-shadow: 0 0 18px #168eff;
@@ -173,11 +230,15 @@ input {
 ============================================================ */
 
 .kx-card-inner {
-    position: relative;
-    width: 100%;
-    padding: 30px 39px 29px;
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 30px 39px 29px !important;
     overflow: hidden;
-    border-radius: 25px;
+    transform: none !important;
+    border-radius: 26px;
     background: radial-gradient( circle at 5% 7%, rgba(255, 181, 0, .11), transparent 28% ), radial-gradient( circle at 100% 45%, rgba(0, 139, 255, .11), transparent 35% ), linear-gradient( 145deg, rgba(5, 21, 40, .99), rgba(2, 12, 25, .995) 53%, rgba(3, 17, 33, .99) );
     box-shadow: inset 0 0 0 1px rgba(255, 220, 110, .20), inset 0 0 55px rgba(0, 0, 0, .35);
 }
@@ -201,14 +262,15 @@ input {
     z-index: 2;
     display: flex;
     align-items: center;
+    width: 100%;
     gap: 17px;
     margin: 0 0 18px;
 }
 
 .kx-logo-box {
+    flex: 0 0 74px;
     width: 74px;
     height: 74px;
-    min-width: 74px;
     padding: 2px;
     overflow: hidden;
     border-radius: 18px;
@@ -217,15 +279,16 @@ input {
 }
 
 .kx-brand-logo {
-    display: block;
-    width: 100%;
-    height: 100%;
-    max-width: none;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
     object-fit: cover;
     border-radius: 15px;
 }
 
 .kx-brand-copy {
+    flex: 1;
     min-width: 0;
 }
 
@@ -266,6 +329,7 @@ input {
 .kx-welcome {
     position: relative;
     z-index: 2;
+    width: 100%;
     margin: 0 0 18px;
 }
 
@@ -311,6 +375,7 @@ input {
 }
 
 .kx-field {
+    display: block;
     width: 100%;
 }
 
@@ -324,7 +389,7 @@ input {
 
 
 /* ============================================================
-   INPUT
+   INPUTS
 ============================================================ */
 
 .kx-input-wrapper {
@@ -337,7 +402,7 @@ input {
     border: 1.4px solid rgba(255, 194, 26, .92);
     border-radius: 11px;
     background: linear-gradient( 90deg, rgba(5, 24, 44, .99), rgba(3, 17, 33, .99) );
-    transition: border-color .20s ease, box-shadow .20s ease, transform .20s ease;
+    transition: border-color .2s ease, box-shadow .2s ease;
 }
 
     .kx-input-wrapper:hover {
@@ -350,6 +415,7 @@ input {
     }
 
     .kx-input-wrapper input {
+        display: block !important;
         width: 100% !important;
         height: 100% !important;
         margin: 0 !important;
@@ -369,9 +435,9 @@ input {
 
 .kx-input-icon {
     position: absolute;
-    left: 16px;
-    top: 50%;
     z-index: 3;
+    top: 50%;
+    left: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -387,9 +453,9 @@ input {
 
 .kx-eye {
     position: absolute;
-    right: 7px;
-    top: 50%;
     z-index: 4;
+    top: 50%;
+    right: 7px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -403,7 +469,6 @@ input {
     background: transparent;
     color: #8d9aab;
     cursor: pointer;
-    transition: color .2s ease, background .2s ease;
 }
 
     .kx-eye:hover {
@@ -413,15 +478,13 @@ input {
 
 
 /* ============================================================
-   ERRORES DE INPUT
-   COMPATIBLE CON TU login.js ACTUAL
+   VALIDACIONES
 ============================================================ */
 
 .kx-field-error {
     display: flex;
     align-items: center;
     gap: 5px;
-    min-height: 0;
     margin-top: 5px;
     color: #ff697b;
     font-size: 10px;
@@ -434,22 +497,22 @@ input {
     }
 
     .kx-field-error span:first-child {
-        color: #ff5267;
+        color: var(--kx-danger);
         font-size: 11px;
     }
 
 .kx-wrapper-error {
-    border-color: #ff5267 !important;
+    border-color: var(--kx-danger) !important;
     box-shadow: 0 0 0 1px rgba(255, 82, 103, .12), 0 0 17px rgba(255, 82, 103, .17) !important;
 }
 
     .kx-wrapper-error .kx-input-icon {
-        color: #ff5267 !important;
+        color: var(--kx-danger) !important;
     }
 
 
 /* ============================================================
-   RECORDAR / RECUPERAR
+   OPCIONES
 ============================================================ */
 
 .kx-options {
@@ -472,9 +535,9 @@ input {
 
 .kx-checkbox {
     position: relative;
+    flex: 0 0 17px;
     width: 17px !important;
     height: 17px !important;
-    min-width: 17px;
     margin: 0 !important;
     appearance: none;
     -webkit-appearance: none;
@@ -533,38 +596,31 @@ input {
     text-transform: none !important;
     cursor: pointer;
     box-shadow: inset 0 1px #ffffff, 0 0 15px rgba(255, 201, 45, .75), 0 0 30px rgba(255, 168, 0, .20) !important;
-    transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+    transition: transform .2s ease, filter .2s ease;
 }
 
     .kx-login-button:hover {
         transform: translateY(-1px);
         filter: brightness(1.05);
-        box-shadow: inset 0 1px #ffffff, 0 0 20px rgba(255, 201, 45, .90), 0 0 35px rgba(255, 168, 0, .24) !important;
     }
 
 .kx-button-arrow {
     position: absolute;
-    right: 20px;
     top: 50%;
+    right: 20px;
     transform: translateY(-50%);
     font-size: 23px;
 }
 
 
 /* ============================================================
-   ESTADO CARGANDO
-   TU JS USA .is-loading
+   LOADING
 ============================================================ */
 
 .kx-login-button.is-loading {
     cursor: wait;
     opacity: .92;
 }
-
-    .kx-login-button.is-loading
-    .kx-button-arrow {
-        display: none !important;
-    }
 
 .kx-login-spinner[hidden] {
     display: none !important;
@@ -573,6 +629,10 @@ input {
 .kx-login-spinner:not([hidden]) {
     display: inline-flex !important;
     margin-left: 10px;
+}
+
+.kx-login-button.is-loading .kx-button-arrow {
+    display: none !important;
 }
 
 
@@ -584,6 +644,7 @@ input {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
+    width: 100%;
     gap: 10px;
 }
 
@@ -604,12 +665,13 @@ input {
 
 
 /* ============================================================
-   BOTONES EXTERNOS
+   SOCIAL
 ============================================================ */
 
 .kx-social {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
     gap: 9px;
 }
 
@@ -626,17 +688,18 @@ input {
     background: linear-gradient( 145deg, rgba(7, 27, 48, .99), rgba(4, 16, 30, .99) ) !important;
     color: #e6ebf3 !important;
     cursor: pointer;
-    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    transition: transform .2s ease, border-color .2s ease;
 }
 
     .kx-social-button:hover {
         transform: translateY(-2px);
         border-color: rgba(255, 194, 26, .90) !important;
-        box-shadow: 0 7px 20px rgba(0, 0, 0, .25);
     }
 
 
-/* MICROSOFT */
+/* ============================================================
+   MICROSOFT
+============================================================ */
 
 .kx-microsoft {
     display: grid;
@@ -668,7 +731,9 @@ input {
         }
 
 
-/* GOOGLE */
+/* ============================================================
+   GOOGLE
+============================================================ */
 
 .kx-google-g {
     color: #ffffff;
@@ -684,12 +749,13 @@ input {
 
 .kx-security {
     display: grid;
-    grid-template-columns: 46px 1fr;
+    grid-template-columns: 46px minmax(0, 1fr);
     align-items: center;
+    width: 100%;
     gap: 12px;
     min-height: 69px;
     padding: 10px 14px;
-    border: 1px solid rgba(81, 148, 211, .60);
+    border: 1px solid rgba(91, 147, 201, .65);
     border-radius: 11px;
     background: radial-gradient( circle at 8% 50%, rgba(255, 177, 0, .07), transparent 30% ), linear-gradient( 100deg, rgba(7, 31, 55, .97), rgba(4, 18, 34, .98) );
 }
@@ -703,46 +769,40 @@ input {
     border: 1.5px solid var(--kx-gold);
     border-radius: 50%;
     color: var(--kx-gold);
-    box-shadow: 0 0 14px rgba(255, 194, 26, .08);
 }
 
-.kx-security-copy strong {
-    display: block;
-    margin-bottom: 3px;
-    color: #ffd33f;
-    font-size: 11px;
+.kx-security-copy {
+    min-width: 0;
 }
 
-.kx-security-copy p {
-    margin: 0 !important;
-    color: #c4ccd8;
-    font-size: 8px;
-    line-height: 1.45;
-}
+    .kx-security-copy strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #ffd33f;
+        font-size: 11px;
+    }
+
+    .kx-security-copy p {
+        margin: 0 !important;
+        color: #c4ccd8;
+        font-size: 8px;
+        line-height: 1.45;
+    }
 
 
 /* ============================================================
-   MODAL DE ALERTAS
-   IMPORTANTE: COMPATIBLE CON TU login.js ACTUAL
-
-   Tu JS crea:
-   .kx-alert-overlay
-   .kx-alert-modal
-   .kx-alert-glow
-   .kx-alert-icon
-   .kx-alert-title
-   .kx-alert-message
-   .kx-alert-button
-   .kx-alert-close
+   MODAL
 ============================================================ */
 
 .kx-alert-overlay {
     position: fixed !important;
-    inset: 0 !important;
     z-index: 999999 !important;
+    inset: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    width: 100vw !important;
+    height: 100vh !important;
     padding: 20px !important;
     background: rgba(0, 5, 13, .72) !important;
     backdrop-filter: blur(8px);
@@ -752,50 +812,37 @@ input {
     transition: opacity .18s ease, visibility .18s ease;
 }
 
-
-    /* JS AGREGA ESTA CLASE */
-
     .kx-alert-overlay.kx-alert-visible {
         opacity: 1;
         visibility: visible;
     }
 
-
-/* ============================================================
-   CAJA DEL MODAL
-============================================================ */
-
 .kx-alert-modal {
-    position: relative;
-    width: 420px;
-    max-width: 100%;
+    position: relative !important;
+    width: 420px !important;
+    max-width: calc(100vw - 40px) !important;
+    margin: 0 auto !important;
+    padding: 31px 31px 27px !important;
     overflow: hidden;
-    padding: 31px 31px 27px;
     border: 1px solid rgba(255, 194, 26, .50);
     border-radius: 20px;
     background: radial-gradient( circle at 50% 0%, rgba(255, 194, 26, .08), transparent 42% ), linear-gradient( 145deg, rgba(7, 25, 45, .995), rgba(2, 11, 23, .995) );
     box-shadow: 0 0 0 1px rgba(255, 255, 255, .025), 0 25px 80px rgba(0, 0, 0, .70);
     text-align: center;
     transform: translateY(14px) scale(.96);
-    transition: transform .20s ease;
+    transition: transform .2s ease;
 }
 
-.kx-alert-visible
-.kx-alert-modal {
+.kx-alert-visible .kx-alert-modal {
     transform: translateY(0) scale(1);
 }
 
-
-/* ============================================================
-   BRILLO MODAL
-============================================================ */
-
 .kx-alert-glow {
     position: absolute;
-    width: 180px;
-    height: 180px;
     top: -120px;
     left: 50%;
+    width: 180px;
+    height: 180px;
     transform: translateX(-50%);
     border-radius: 50%;
     background: var(--kx-gold);
@@ -804,13 +851,7 @@ input {
     pointer-events: none;
 }
 
-
-/* ============================================================
-   ICONO MODAL
-============================================================ */
-
-.kx-alert-modal
-.kx-alert-icon {
+.kx-alert-modal .kx-alert-icon {
     position: relative;
     display: flex;
     align-items: center;
@@ -824,40 +865,29 @@ input {
     background: rgba(255, 194, 26, .06);
     font-size: 24px;
     font-weight: 900;
-    box-shadow: 0 0 22px rgba(255, 194, 26, .15);
 }
 
-
-/* ============================================================
-   TITULO / MENSAJE MODAL
-============================================================ */
-
-.kx-alert-modal
-.kx-alert-title {
+.kx-alert-modal .kx-alert-title {
+    display: block;
     margin: 0 0 8px;
     color: #ffffff;
     font-size: 19px;
     font-weight: 800;
-    line-height: 1.25;
 }
 
-.kx-alert-modal
-.kx-alert-message {
-    margin: 0 auto 21px;
+.kx-alert-modal .kx-alert-message {
+    display: block;
     max-width: 330px;
+    margin: 0 auto 21px;
     color: #bfc9d6;
     font-size: 12px;
     line-height: 1.55;
 }
 
-
-/* ============================================================
-   BOTÓN ENTENDIDO
-============================================================ */
-
 .kx-alert-button {
     width: 100%;
     height: 45px;
+    margin: 0;
     border: 1px solid #ffe176;
     border-radius: 10px;
     background: linear-gradient( 180deg, #ffe477, #ffc21a, #e9a000 );
@@ -865,22 +895,9 @@ input {
     font-size: 12px;
     font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 0 17px rgba(255, 194, 26, .25);
-    transition: transform .2s ease, filter .2s ease;
 }
 
-    .kx-alert-button:hover {
-        transform: translateY(-1px);
-        filter: brightness(1.06);
-    }
-
-
-/* ============================================================
-   CERRAR MODAL
-============================================================ */
-
-.kx-alert-modal
-.kx-alert-close {
+.kx-alert-modal .kx-alert-close {
     position: absolute;
     top: 11px;
     right: 11px;
@@ -896,65 +913,27 @@ input {
     background: transparent;
     color: #8493a5;
     font-size: 21px;
-    line-height: 1;
     cursor: pointer;
-    transition: background .2s ease, color .2s ease;
-}
-
-    .kx-alert-modal
-    .kx-alert-close:hover {
-        color: #ffffff;
-        background: rgba(255, 255, 255, .06);
-    }
-
-
-/* ============================================================
-   MODAL WARNING
-============================================================ */
-
-.kx-alert-warning
-.kx-alert-modal {
-    border-color: rgba(255, 194, 26, .55);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, .70), 0 0 32px rgba(255, 194, 26, .10);
-}
-
-.kx-alert-warning
-.kx-alert-icon {
-    border-color: #ffc21a;
-    color: #ffc21a;
-    background: rgba(255, 194, 26, .07);
 }
 
 
 /* ============================================================
-   MODAL DANGER
+   MODAL ERROR
 ============================================================ */
 
-.kx-alert-danger
-.kx-alert-modal {
+.kx-alert-danger .kx-alert-modal {
     border-color: rgba(255, 82, 103, .58);
     box-shadow: 0 25px 80px rgba(0, 0, 0, .70), 0 0 34px rgba(255, 82, 103, .13);
 }
 
-.kx-alert-danger
-.kx-alert-glow {
+.kx-alert-danger .kx-alert-glow {
     background: #ff5267;
 }
 
-.kx-alert-danger
-.kx-alert-icon {
+.kx-alert-danger .kx-alert-icon {
     border-color: #ff5267;
     color: #ff5267;
     background: rgba(255, 82, 103, .07);
-    box-shadow: 0 0 22px rgba(255, 82, 103, .16);
-}
-
-.kx-alert-danger
-.kx-alert-button {
-    border-color: #ff7b8b;
-    background: linear-gradient( 180deg, #ff7889, #ff5267, #d92e45 );
-    color: #ffffff;
-    box-shadow: 0 0 17px rgba(255, 82, 103, .22);
 }
 
 
@@ -962,107 +941,35 @@ input {
    MODAL INFO
 ============================================================ */
 
-.kx-alert-info
-.kx-alert-modal {
+.kx-alert-info .kx-alert-modal {
     border-color: rgba(41, 170, 255, .55);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, .70), 0 0 34px rgba(41, 170, 255, .12);
 }
 
-.kx-alert-info
-.kx-alert-glow {
+.kx-alert-info .kx-alert-glow {
     background: #29aaff;
 }
 
-.kx-alert-info
-.kx-alert-icon {
+.kx-alert-info .kx-alert-icon {
     border-color: #29aaff;
     color: #29aaff;
     background: rgba(41, 170, 255, .07);
 }
 
-.kx-alert-info
-.kx-alert-button {
-    border-color: #67c3ff;
-    background: linear-gradient( 180deg, #57bcff, #159cff, #0877ce );
-    color: #ffffff;
-    box-shadow: 0 0 17px rgba(41, 170, 255, .20);
-}
-
 
 /* ============================================================
-   ANIMACIÓN TARJETA
+   ANIMACIÓN
 ============================================================ */
 
-@keyframes kxCardEntrada {
+@keyframes kxLoginEntrada {
 
     from {
         opacity: 0;
-        transform: translateY(17px) scale(.985);
+        transform: translateY(15px) scale(.985);
     }
 
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
-    }
-}
-
-
-/* ============================================================
-   LAPTOP PEQUEÑA
-============================================================ */
-
-@media (max-height: 850px) and (min-width: 701px) {
-
-    .kx-page {
-        padding: 18px 20px 35px;
-    }
-
-    .kx-login-card {
-        width: 535px;
-    }
-
-    .kx-card-inner {
-        padding: 24px 34px 25px;
-    }
-
-    .kx-logo-box {
-        width: 65px;
-        height: 65px;
-        min-width: 65px;
-    }
-
-    .kx-brand {
-        margin-bottom: 13px;
-    }
-
-    .kx-brand-name span,
-    .kx-brand-name strong {
-        font-size: 27px;
-    }
-
-    .kx-welcome {
-        margin-bottom: 13px;
-    }
-
-        .kx-welcome h1 {
-            font-size: 32px !important;
-        }
-
-    .kx-input-wrapper {
-        height: 45px;
-    }
-
-    .kx-login-button {
-        height: 48px !important;
-    }
-
-    .kx-social-button {
-        height: 42px !important;
-    }
-
-    .kx-security {
-        min-height: 62px;
-        padding: 8px 12px;
     }
 }
 
@@ -1074,22 +981,18 @@ input {
 @media (max-width: 700px) {
 
     .kx-page {
-        min-height: 100svh;
-        padding: 18px 13px 35px;
-        background-attachment: scroll;
+        padding: 18px 13px 35px !important;
     }
 
     .kx-login-card {
-        width: min(540px, 100%);
-        max-width: 100%;
+        width: 540px !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        align-self: center !important;
     }
 
     .kx-card-inner {
-        padding: 27px 28px;
-    }
-
-    .kx-brand-subtitle {
-        white-space: normal;
+        padding: 27px 28px !important;
     }
 }
 
@@ -1101,15 +1004,19 @@ input {
 @media (max-width: 500px) {
 
     .kx-page {
-        padding: 10px 8px 25px;
+        padding: 10px 8px 25px !important;
     }
 
     .kx-login-card {
-        border-radius: 22px;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
+        align-self: center !important;
+        border-radius: 22px !important;
     }
 
     .kx-card-inner {
-        padding: 23px 19px 22px;
+        padding: 23px 19px 22px !important;
         border-radius: 19px;
     }
 
@@ -1124,9 +1031,9 @@ input {
     }
 
     .kx-logo-box {
+        flex: 0 0 59px;
         width: 59px;
         height: 59px;
-        min-width: 59px;
         border-radius: 14px;
     }
 
@@ -1179,7 +1086,7 @@ input {
     }
 
     .kx-security {
-        grid-template-columns: 41px 1fr;
+        grid-template-columns: 41px minmax(0, 1fr);
         gap: 9px;
         padding: 9px 10px;
     }
@@ -1202,17 +1109,8 @@ input {
     }
 
     .kx-alert-modal {
-        padding: 28px 21px 22px;
-        border-radius: 17px;
+        width: 100% !important;
+        max-width: 400px !important;
+        padding: 28px 21px 22px !important;
     }
-
-        .kx-alert-modal
-        .kx-alert-title {
-            font-size: 17px;
-        }
-
-        .kx-alert-modal
-        .kx-alert-message {
-            font-size: 11px;
-        }
 }

@@ -10,6 +10,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="utf-8" />
 
     <meta name="viewport"
@@ -17,96 +18,205 @@
 
     <title>@ViewData["Title"]</title>
 
-    <!-- UIKIT -->
+
+    <!-- =====================================================
+         UIKIT
+    ====================================================== -->
+
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
-    <!-- KERNIX LOGIN -->
+
+    <!-- =====================================================
+         KERNIX LOGIN
+    ====================================================== -->
+
     <link rel="stylesheet"
           href="~/css/login.css"
           asp-append-version="true" />
+
 </head>
+
 
 <body>
 
+
+    <!-- =========================================================
+         KERNIX LOGIN
+    ========================================================== -->
+
     <div class="kx-page">
 
-        <!-- DECORACIONES DEL FONDO -->
-        <div class="kx-background-effects" aria-hidden="true">
-            <span class="kx-orb kx-orb-blue"></span>
-            <span class="kx-orb kx-orb-gold"></span>
-            <span class="kx-line kx-line-one"></span>
-            <span class="kx-line kx-line-two"></span>
+
+        <!-- =====================================================
+             FONDO PRINCIPAL
+
+             SOLO VISUAL.
+             NO INTERFIERE CON EL BACKEND.
+        ====================================================== -->
+
+        <img src="~/images/login/kernix-login-bg.png"
+             asp-append-version="true"
+             class="kx-background-image"
+             alt=""
+             aria-hidden="true" />
+
+
+        <!-- =====================================================
+             DECORACIONES DEL FONDO
+        ====================================================== -->
+
+        <div class="kx-background-effects"
+             aria-hidden="true">
+
+            <span class="kx-orb kx-orb-blue">
+            </span>
+
+            <span class="kx-orb kx-orb-gold">
+            </span>
+
+            <span class="kx-line kx-line-one">
+            </span>
+
+            <span class="kx-line kx-line-two">
+            </span>
+
         </div>
 
-        <!-- LOGIN -->
+
+        <!-- =====================================================
+             TARJETA LOGIN
+        ====================================================== -->
+
         <main class="kx-login-card">
+
 
             <div class="kx-card-inner">
 
-                <!-- MARCA -->
+
+                <!-- =================================================
+                     MARCA KERNIX
+                ================================================== -->
+
                 <header class="kx-brand">
 
+
                     <div class="kx-logo-box">
+
                         <img src="~/images/login/kernix-logo.png"
                              asp-append-version="true"
                              class="kx-brand-logo"
                              alt="KerniX ERP" />
+
                     </div>
+
 
                     <div class="kx-brand-copy">
 
+
                         <div class="kx-brand-name">
-                            <span>KerniX</span>
-                            <strong>ERP</strong>
+
+                            <span>
+                                KerniX
+                            </span>
+
+                            <strong>
+                                ERP
+                            </strong>
+
                         </div>
 
+
                         <div class="kx-brand-subtitle">
+
                             Sistema Inteligente de Gestión Empresarial
+
                         </div>
+
 
                     </div>
 
+
                 </header>
 
-                <!-- BIENVENIDA -->
+
+
+                <!-- =================================================
+                     BIENVENIDA
+                ================================================== -->
+
                 <section class="kx-welcome">
 
+
                     <span class="kx-eyebrow">
+
                         Bienvenido de nuevo
+
                     </span>
 
+
                     <h1>
-                        Accede a <span>KerniX</span>
+
+                        Accede a
+
+                        <span>
+                            KerniX
+                        </span>
+
                     </h1>
 
+
                     <p>
+
                         Inicia sesión para continuar
+
                     </p>
+
 
                 </section>
 
-                <!-- FORMULARIO -->
+
+
+                <!-- =================================================
+                     FORMULARIO
+
+                     IMPORTANTE:
+                     NO CAMBIAR LOS name="Input..."
+                     PORQUE ESTÁN VINCULADOS AL LoginModel.
+                ================================================== -->
+
                 <form method="post"
                       id="loginForm"
                       class="kx-form"
                       autocomplete="on">
 
+
                     @Html.AntiForgeryToken()
 
-                    <!-- USUARIO -->
+
+
+                    <!-- =============================================
+                         USUARIO
+                    ============================================== -->
+
                     <div class="kx-field"
                          id="usuarioField">
 
+
                         <label for="usuarioInput">
+
                             Usuario o correo electrónico
+
                         </label>
 
+
                         <div class="kx-input-wrapper">
+
 
                             <span class="kx-input-icon"
                                   uk-icon="icon: user; ratio: 1.1">
                             </span>
+
 
                             <input id="usuarioInput"
                                    name="Input.Usuario"
@@ -117,28 +227,42 @@
                                    spellcheck="false"
                                    placeholder="Usuario o correo electrónico" />
 
+
                         </div>
+
 
                         <div id="usuarioClientError"
                              class="kx-field-error"
                              hidden>
                         </div>
 
+
                     </div>
 
-                    <!-- CONTRASEÑA -->
+
+
+                    <!-- =============================================
+                         CONTRASEÑA
+                    ============================================== -->
+
                     <div class="kx-field"
                          id="passwordField">
 
+
                         <label for="kxPassword">
+
                             Contraseña
+
                         </label>
 
+
                         <div class="kx-input-wrapper">
+
 
                             <span class="kx-input-icon"
                                   uk-icon="icon: lock; ratio: 1.05">
                             </span>
+
 
                             <input id="kxPassword"
                                    name="Input.Password"
@@ -146,57 +270,87 @@
                                    autocomplete="current-password"
                                    placeholder="Contraseña" />
 
+
                             <button type="button"
                                     id="kxTogglePassword"
                                     class="kx-eye"
                                     aria-label="Mostrar contraseña">
 
+
                                 <span id="kxEyeIcon"
                                       uk-icon="icon: eye; ratio: 1">
                                 </span>
 
+
                             </button>
 
+
                         </div>
+
 
                         <div id="passwordClientError"
                              class="kx-field-error"
                              hidden>
                         </div>
 
+
                     </div>
 
-                    <!-- RECORDAR / RECUPERAR -->
+
+
+                    <!-- =============================================
+                         RECORDAR / RECUPERAR
+                    ============================================== -->
+
                     <div class="kx-options">
 
+
                         <label class="kx-remember">
+
 
                             <input id="recordarmeInput"
                                    name="Input.Recordarme"
                                    class="kx-checkbox"
                                    type="checkbox"
                                    value="true"
-                            @(Model.Input.Recordarme ? "checked" : "") />
+                                   @(Model.Input.Recordarme ? "checked" : "") />
 
-                            <span>Recordarme</span>
+
+                            <span>
+                                Recordarme
+                            </span>
+
 
                         </label>
 
+
                         <a href="/Account/ForgotPassword"
                            class="kx-forgot">
+
                             ¿Olvidaste tu contraseña?
+
                         </a>
+
 
                     </div>
 
-                    <!-- BOTÓN LOGIN -->
+
+
+                    <!-- =============================================
+                         BOTÓN LOGIN
+                    ============================================== -->
+
                     <button type="submit"
                             id="loginButton"
                             class="kx-login-button">
 
+
                         <span id="loginButtonText">
+
                             Iniciar sesión
+
                         </span>
+
 
                         <span id="loginSpinner"
                               class="kx-login-spinner"
@@ -204,113 +358,209 @@
                               hidden>
                         </span>
 
+
                         <span id="loginArrow"
                               class="kx-button-arrow">
+
                             →
+
                         </span>
+
 
                     </button>
 
-                    <!-- SEPARADOR -->
+
+
+                    <!-- =============================================
+                         SEPARADOR
+                    ============================================== -->
+
                     <div class="kx-or">
 
-                        <span></span>
 
-                        <p>o continúa con</p>
+                        <span>
+                        </span>
 
-                        <span></span>
+
+                        <p>
+                            o continúa con
+                        </p>
+
+
+                        <span>
+                        </span>
+
 
                     </div>
 
-                    <!-- ACCESOS EXTERNOS -->
+
+
+                    <!-- =============================================
+                         ACCESOS EXTERNOS
+                    ============================================== -->
+
                     <div class="kx-social">
+
+
+
+                        <!-- MICROSOFT -->
 
                         <button type="button"
                                 class="kx-social-button"
                                 data-provider="Microsoft"
                                 aria-label="Continuar con Microsoft">
 
+
                             <span class="kx-microsoft">
+
                                 <i></i>
+
                                 <i></i>
+
                                 <i></i>
+
                                 <i></i>
+
                             </span>
 
+
                         </button>
+
+
+
+                        <!-- GOOGLE -->
 
                         <button type="button"
                                 class="kx-social-button kx-google"
                                 data-provider="Google"
                                 aria-label="Continuar con Google">
 
-                            <span class="kx-google-g">G</span>
+
+                            <span class="kx-google-g">
+
+                                G
+
+                            </span>
+
 
                         </button>
+
+
+
+                        <!-- SSO -->
 
                         <button type="button"
                                 class="kx-social-button"
                                 data-provider="SSO"
                                 aria-label="Acceso empresarial">
 
+
                             <span uk-icon="icon: lock; ratio: 1.15">
                             </span>
+
 
                         </button>
 
+
                     </div>
 
-                    <!-- SEGURIDAD -->
+
+
+                    <!-- =============================================
+                         SEGURIDAD
+                    ============================================== -->
+
                     <div class="kx-security">
 
+
                         <div class="kx-security-shield">
+
 
                             <span uk-icon="icon: lock; ratio: 1.15">
                             </span>
 
+
                         </div>
+
 
                         <div class="kx-security-copy">
 
+
                             <strong>
+
                                 Seguridad y confianza
+
                             </strong>
 
+
                             <p>
+
                                 Protección avanzada de tus datos con
                                 autenticación segura y control de permisos.
+
                             </p>
+
 
                         </div>
 
+
                     </div>
+
 
                 </form>
 
+
             </div>
+
 
         </main>
 
+
     </div>
 
-    <!-- ERROR DEVUELTO POR BACKEND -->
+
+
+    <!-- =========================================================
+         ERROR DEVUELTO POR EL BACKEND
+
+         NO MODIFICAMOS ESTA LÓGICA.
+    ========================================================== -->
+
     @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
     {
+
         <div id="serverError"
              data-message="@Model.ErrorMessage"
              hidden>
         </div>
+
     }
 
-    <!-- UIKIT -->
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js"></script>
 
-    <!-- NO CAMBIAMOS TU JS -->
+    <!-- =========================================================
+         UIKIT
+    ========================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
+    </script>
+
+
+
+    <!-- =========================================================
+         TU LOGIN.JS ACTUAL
+         NO CAMBIAMOS SU LÓGICA
+    ========================================================== -->
+
     <script src="~/js/login.js"
             asp-append-version="true">
     </script>
 
+
 </body>
+
 </html>
