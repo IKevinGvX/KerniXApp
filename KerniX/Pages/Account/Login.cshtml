@@ -10,7 +10,6 @@
 <html lang="es">
 
 <head>
-
     <meta charset="utf-8" />
 
     <meta name="viewport"
@@ -18,41 +17,1691 @@
 
     <title>@ViewData["Title"]</title>
 
-
-    <!-- =====================================================
-         UIKIT
-    ====================================================== -->
-
+    <!-- UIKIT -->
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/css/uikit.min.css" />
 
+    <!-- =========================================================
+         KERNIX LOGIN - DISEÑO INTEGRADO
+         YA NO USAMOS login.css
+    ========================================================== -->
+    <style>
 
-    <!-- =====================================================
-         KERNIX LOGIN
-    ====================================================== -->
+            /* =====================================================
+               VARIABLES
+            ====================================================== */
 
-    <link rel="stylesheet"
-          href="~/css/login.css"
-          asp-append-version="true" />
+            :root {
+                --kx-bg: #010712;
+                --kx-card: #041426;
+                --kx-card-dark: #020c18;
+
+                --kx-gold: #ffc21a;
+                --kx-gold-light: #ffe783;
+
+                --kx-blue: #149cff;
+
+                --kx-white: #ffffff;
+                --kx-text: #edf3fb;
+                --kx-muted: #aeb9c9;
+
+                --kx-danger: #ff5267;
+            }
+
+
+            /* =====================================================
+               RESET
+            ====================================================== */
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+            }
+
+            html,
+            body {
+                width: 100%;
+                min-width: 100%;
+                min-height: 100%;
+
+                margin: 0 !important;
+                padding: 0 !important;
+
+                background: var(--kx-bg) !important;
+            }
+
+            html {
+                overflow-x: hidden !important;
+            }
+
+            body {
+                min-height: 100vh;
+
+                overflow-x: hidden !important;
+                overflow-y: auto !important;
+
+                color: var(--kx-text);
+
+                font-family:
+                    "Segoe UI",
+                    Arial,
+                    Helvetica,
+                    sans-serif;
+            }
+
+            button,
+            input {
+                font: inherit;
+            }
+
+
+            /* =====================================================
+               PÁGINA
+            ====================================================== */
+
+            .kx-page {
+                position: relative !important;
+
+                z-index: 0;
+
+                display: flex !important;
+
+                flex-direction: column !important;
+
+                align-items: center !important;
+                justify-content: flex-start !important;
+
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+
+                min-height: 100vh !important;
+
+                margin: 0 !important;
+
+                padding: 28px 20px 45px !important;
+
+                overflow-x: hidden !important;
+
+                background: #010712 !important;
+
+                isolation: isolate;
+            }
+
+
+            /* =====================================================
+               FONDO
+            ====================================================== */
+
+            .kx-background-image {
+                position: fixed !important;
+
+                z-index: -10 !important;
+
+                inset: 0 !important;
+
+                display: block !important;
+
+                width: 100vw !important;
+                height: 100vh !important;
+
+                min-width: 100vw !important;
+                min-height: 100vh !important;
+
+                max-width: none !important;
+
+                margin: 0 !important;
+                padding: 0 !important;
+
+                object-fit: cover !important;
+                object-position: center center !important;
+
+                transform: none !important;
+
+                pointer-events: none !important;
+                user-select: none !important;
+            }
+
+
+            /* =====================================================
+               EFECTOS FONDO
+            ====================================================== */
+
+            .kx-background-effects {
+                position: fixed !important;
+
+                z-index: -5 !important;
+
+                inset: 0 !important;
+
+                width: 100vw !important;
+                height: 100vh !important;
+
+                overflow: hidden;
+
+                pointer-events: none;
+            }
+
+            .kx-orb {
+                position: absolute;
+
+                display: block;
+
+                border-radius: 50%;
+
+                filter: blur(110px);
+
+                pointer-events: none;
+            }
+
+            .kx-orb-blue {
+                top: -250px;
+                left: -230px;
+
+                width: 470px;
+                height: 470px;
+
+                background: #008cff;
+
+                opacity: .06;
+            }
+
+            .kx-orb-gold {
+                right: -220px;
+                bottom: -240px;
+
+                width: 450px;
+                height: 450px;
+
+                background: #ffb000;
+
+                opacity: .07;
+            }
+
+            .kx-line {
+                position: absolute;
+
+                display: block;
+
+                height: 1px;
+
+                pointer-events: none;
+
+                background:
+                    linear-gradient(
+                        90deg,
+                        transparent,
+                        rgba(255, 194, 26, .16),
+                        transparent
+                    );
+            }
+
+            .kx-line-one {
+                top: 22%;
+                left: -180px;
+
+                width: 600px;
+
+                transform: rotate(-18deg);
+            }
+
+            .kx-line-two {
+                right: -190px;
+                bottom: 20%;
+
+                width: 650px;
+
+                transform: rotate(20deg);
+            }
+
+
+            /* =====================================================
+               LOGIN CARD
+            ====================================================== */
+
+            .kx-login-card {
+                position: relative !important;
+
+                z-index: 20 !important;
+
+                display: block !important;
+
+                flex: 0 0 auto !important;
+
+                align-self: center !important;
+
+                width: 570px !important;
+
+                min-width: 0 !important;
+
+                max-width: calc(100vw - 40px) !important;
+
+                margin: 0 auto !important;
+
+                padding: 3px !important;
+
+                top: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                left: auto !important;
+
+                float: none !important;
+
+                transform: none !important;
+
+                border-radius: 29px !important;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        #fff1a2 0%,
+                        #ffc21a 24%,
+                        #168fff 52%,
+                        #ffc21a 80%,
+                        #fff0a0 100%
+                    ) !important;
+
+                box-shadow:
+                    0 0 5px rgba(255, 238, 170, .95),
+                    0 0 20px rgba(255, 190, 0, .60),
+                    0 0 45px rgba(20, 156, 255, .17),
+                    0 30px 80px rgba(0, 0, 0, .78) !important;
+
+                animation: kxLoginEntrada .5s ease both;
+            }
+
+
+            .kx-login-card::after {
+                content: "";
+
+                position: absolute;
+
+                top: 24%;
+                right: -2px;
+
+                width: 4px;
+                height: 30%;
+
+                border-radius: 999px;
+
+                background:
+                    linear-gradient(
+                        transparent,
+                        #168eff,
+                        #ffffff,
+                        #168eff,
+                        transparent
+                    );
+
+                box-shadow:
+                    0 0 18px #168eff;
+
+                pointer-events: none;
+            }
+
+
+            /* =====================================================
+               INTERIOR
+            ====================================================== */
+
+            .kx-card-inner {
+                position: relative !important;
+
+                display: block !important;
+
+                width: 100% !important;
+                max-width: 100% !important;
+
+                margin: 0 !important;
+
+                padding: 30px 39px 29px !important;
+
+                overflow: hidden;
+
+                border-radius: 26px;
+
+                background:
+                    radial-gradient(
+                        circle at 5% 7%,
+                        rgba(255, 181, 0, .11),
+                        transparent 28%
+                    ),
+                    radial-gradient(
+                        circle at 100% 45%,
+                        rgba(0, 139, 255, .11),
+                        transparent 35%
+                    ),
+                    linear-gradient(
+                        145deg,
+                        rgba(5, 21, 40, .99),
+                        rgba(2, 12, 25, .995) 53%,
+                        rgba(3, 17, 33, .99)
+                    );
+
+                box-shadow:
+                    inset 0 0 0 1px rgba(255, 220, 110, .20),
+                    inset 0 0 55px rgba(0, 0, 0, .35);
+            }
+
+            .kx-card-inner::before {
+                content: "";
+
+                position: absolute;
+
+                inset: 11px;
+
+                border:
+                    1px solid rgba(48, 137, 216, .38);
+
+                border-radius: 19px;
+
+                pointer-events: none;
+            }
+
+
+            /* =====================================================
+               MARCA
+            ====================================================== */
+
+            .kx-brand {
+                position: relative;
+
+                z-index: 2;
+
+                display: flex;
+
+                align-items: center;
+
+                width: 100%;
+
+                gap: 17px;
+
+                margin: 0 0 18px;
+            }
+
+            .kx-logo-box {
+                flex: 0 0 74px;
+
+                width: 74px;
+                height: 74px;
+
+                padding: 2px;
+
+                overflow: hidden;
+
+                border-radius: 18px;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        #fff0a0,
+                        #ffc21a,
+                        #118fff
+                    );
+
+                box-shadow:
+                    0 0 18px rgba(255, 188, 0, .25);
+            }
+
+            .kx-brand-logo {
+                display: block !important;
+
+                width: 100% !important;
+                height: 100% !important;
+
+                max-width: none !important;
+
+                object-fit: cover;
+
+                border-radius: 15px;
+            }
+
+            .kx-brand-copy {
+                flex: 1;
+
+                min-width: 0;
+            }
+
+            .kx-brand-name {
+                display: flex;
+
+                align-items: baseline;
+
+                gap: 7px;
+
+                line-height: 1;
+            }
+
+            .kx-brand-name span,
+            .kx-brand-name strong {
+                font-size: 30px;
+
+                font-weight: 850;
+
+                line-height: 1;
+            }
+
+            .kx-brand-name span {
+                color: #ffffff;
+            }
+
+            .kx-brand-name strong {
+                color: var(--kx-gold);
+            }
+
+            .kx-brand-subtitle {
+                margin-top: 7px;
+
+                color: #c5cfdb;
+
+                font-size: 10px;
+
+                line-height: 1.35;
+            }
+
+
+            /* =====================================================
+               BIENVENIDA
+            ====================================================== */
+
+            .kx-welcome {
+                position: relative;
+
+                z-index: 2;
+
+                width: 100%;
+
+                margin: 0 0 18px;
+            }
+
+            .kx-eyebrow {
+                display: block;
+
+                margin-bottom: 5px;
+
+                color: var(--kx-gold);
+
+                font-size: 12px;
+
+                font-weight: 700;
+            }
+
+            .kx-welcome h1 {
+                margin: 0 !important;
+
+                color: #ffffff !important;
+
+                font-size: 36px !important;
+
+                font-weight: 850 !important;
+
+                line-height: 1.05 !important;
+
+                letter-spacing: -.8px;
+            }
+
+            .kx-welcome h1 span {
+                color: var(--kx-gold);
+            }
+
+            .kx-welcome p {
+                margin: 7px 0 0 !important;
+
+                color: #c5cfda;
+
+                font-size: 12px;
+            }
+
+
+            /* =====================================================
+               FORMULARIO
+            ====================================================== */
+
+            .kx-form {
+                position: relative;
+
+                z-index: 2;
+
+                display: flex;
+
+                flex-direction: column;
+
+                width: 100%;
+
+                gap: 11px;
+            }
+
+            .kx-field {
+                display: block;
+
+                width: 100%;
+            }
+
+            .kx-field label {
+                display: block;
+
+                margin: 0 0 5px;
+
+                color: #ffffff;
+
+                font-size: 11px;
+
+                font-weight: 700;
+            }
+
+
+            /* =====================================================
+               INPUT
+            ====================================================== */
+
+            .kx-input-wrapper {
+                position: relative;
+
+                display: flex;
+
+                align-items: center;
+
+                width: 100%;
+                height: 49px;
+
+                overflow: hidden;
+
+                border:
+                    1.4px solid rgba(255, 194, 26, .92);
+
+                border-radius: 11px;
+
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(5, 24, 44, .99),
+                        rgba(3, 17, 33, .99)
+                    );
+
+                transition:
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .kx-input-wrapper:hover {
+                border-color: #ffd64d;
+            }
+
+            .kx-input-wrapper:focus-within {
+                border-color: #ffe77f;
+
+                box-shadow:
+                    0 0 0 1px rgba(255, 213, 74, .10),
+                    0 0 17px rgba(255, 181, 0, .17);
+            }
+
+            .kx-input-wrapper input {
+                display: block !important;
+
+                width: 100% !important;
+                height: 100% !important;
+
+                margin: 0 !important;
+
+                padding: 0 50px 0 47px !important;
+
+                border: 0 !important;
+
+                outline: 0 !important;
+
+                background: transparent !important;
+
+                color: #ffffff !important;
+
+                font-size: 12px !important;
+
+                box-shadow: none !important;
+            }
+
+            .kx-input-wrapper input::placeholder {
+                color: #7d899b !important;
+
+                opacity: 1;
+            }
+
+            .kx-input-icon {
+                position: absolute;
+
+                z-index: 3;
+
+                top: 50%;
+                left: 16px;
+
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                transform: translateY(-50%);
+
+                color: var(--kx-gold);
+
+                pointer-events: none;
+            }
+
+
+            /* =====================================================
+               OJO PASSWORD
+            ====================================================== */
+
+            .kx-eye {
+                position: absolute;
+
+                z-index: 4;
+
+                top: 50%;
+                right: 7px;
+
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                width: 39px;
+                height: 39px;
+
+                margin: 0;
+                padding: 0;
+
+                transform: translateY(-50%);
+
+                border: 0;
+
+                border-radius: 8px;
+
+                background: transparent;
+
+                color: #8d9aab;
+
+                cursor: pointer;
+            }
+
+            .kx-eye:hover {
+                color: #ffffff;
+
+                background:
+                    rgba(255, 255, 255, .04);
+            }
+
+
+            /* =====================================================
+               ERRORES DE CAMPOS
+            ====================================================== */
+
+            .kx-field-error {
+                display: flex;
+
+                align-items: center;
+
+                gap: 5px;
+
+                margin-top: 5px;
+
+                color: #ff697b;
+
+                font-size: 10px;
+
+                font-weight: 600;
+            }
+
+            .kx-field-error[hidden] {
+                display: none !important;
+            }
+
+            .kx-wrapper-error {
+                border-color:
+                    var(--kx-danger) !important;
+
+                box-shadow:
+                    0 0 0 1px rgba(255, 82, 103, .12),
+                    0 0 17px rgba(255, 82, 103, .17) !important;
+            }
+
+
+            /* =====================================================
+               OPCIONES
+            ====================================================== */
+
+            .kx-options {
+                display: flex;
+
+                align-items: center;
+                justify-content: space-between;
+
+                width: 100%;
+
+                gap: 12px;
+            }
+
+            .kx-remember {
+                display: inline-flex;
+
+                align-items: center;
+
+                gap: 7px;
+
+                margin: 0;
+
+                color: #f4f6fa;
+
+                font-size: 10px;
+
+                cursor: pointer;
+            }
+
+            .kx-checkbox {
+                position: relative;
+
+                flex: 0 0 17px;
+
+                width: 17px !important;
+                height: 17px !important;
+
+                margin: 0 !important;
+
+                appearance: none;
+                -webkit-appearance: none;
+
+                border:
+                    1.3px solid #e9b72c !important;
+
+                border-radius: 4px;
+
+                background:
+                    #05101d !important;
+
+                cursor: pointer;
+            }
+
+            .kx-checkbox:checked {
+                background:
+                    linear-gradient(
+                        135deg,
+                        #ffe06a,
+                        #eba000
+                    ) !important;
+            }
+
+            .kx-checkbox:checked::after {
+                content: "✓";
+
+                position: absolute;
+
+                inset: 0;
+
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                color: #181000;
+
+                font-size: 11px;
+
+                font-weight: 900;
+            }
+
+            .kx-forgot {
+                color:
+                    var(--kx-gold) !important;
+
+                font-size: 10px;
+
+                text-decoration:
+                    none !important;
+            }
+
+            .kx-forgot:hover {
+                color:
+                    #ffe46d !important;
+            }
+
+
+            /* =====================================================
+               LOGIN BUTTON
+            ====================================================== */
+
+            .kx-login-button {
+                position: relative;
+
+                display: flex !important;
+
+                align-items: center;
+                justify-content: center;
+
+                width: 100% !important;
+                height: 52px !important;
+
+                margin: 0 !important;
+
+                padding: 0 58px !important;
+
+                border:
+                    2px solid #ffe580 !important;
+
+                border-radius:
+                    11px !important;
+
+                background:
+                    linear-gradient(
+                        180deg,
+                        #ffe97b,
+                        #ffd34b 22%,
+                        #ffbe1f 56%,
+                        #eea000
+                    ) !important;
+
+                color:
+                    #100a00 !important;
+
+                font-size:
+                    14px !important;
+
+                font-weight:
+                    850 !important;
+
+                text-transform:
+                    none !important;
+
+                cursor:
+                    pointer;
+
+                box-shadow:
+                    inset 0 1px #ffffff,
+                    0 0 15px rgba(255, 201, 45, .75),
+                    0 0 30px rgba(255, 168, 0, .20) !important;
+
+                transition:
+                    transform .2s ease,
+                    filter .2s ease;
+            }
+
+            .kx-login-button:hover {
+                transform:
+                    translateY(-1px);
+
+                filter:
+                    brightness(1.05);
+            }
+
+            .kx-button-arrow {
+                position: absolute;
+
+                top: 50%;
+                right: 20px;
+
+                transform:
+                    translateY(-50%);
+
+                font-size:
+                    23px;
+            }
+
+            .kx-login-button.is-loading {
+                cursor: wait;
+
+                opacity: .92;
+            }
+
+            .kx-login-spinner[hidden] {
+                display:
+                    none !important;
+            }
+
+            .kx-login-spinner:not([hidden]) {
+                display:
+                    inline-flex !important;
+
+                margin-left: 10px;
+            }
+
+
+            /* =====================================================
+               SEPARADOR
+            ====================================================== */
+
+            .kx-or {
+                display: grid;
+
+                grid-template-columns:
+                    1fr auto 1fr;
+
+                align-items: center;
+
+                width: 100%;
+
+                gap: 10px;
+            }
+
+            .kx-or span {
+                height: 1px;
+
+                background:
+                    linear-gradient(
+                        90deg,
+                        transparent,
+                        rgba(255, 194, 26, .68)
+                    );
+            }
+
+            .kx-or span:last-child {
+                background:
+                    linear-gradient(
+                        90deg,
+                        rgba(255, 194, 26, .68),
+                        transparent
+                    );
+            }
+
+            .kx-or p {
+                margin: 0 !important;
+
+                color: #c7cfda;
+
+                font-size: 9px;
+            }
+
+
+            /* =====================================================
+               SOCIAL
+            ====================================================== */
+
+            .kx-social {
+                display: grid;
+
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+
+                width: 100%;
+
+                gap: 9px;
+            }
+
+            .kx-social-button {
+                display: flex !important;
+
+                align-items: center;
+                justify-content: center;
+
+                width: 100% !important;
+                height: 46px !important;
+
+                margin: 0 !important;
+                padding: 0 !important;
+
+                border:
+                    1px solid rgba(91, 147, 201, .65) !important;
+
+                border-radius:
+                    9px !important;
+
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(7, 27, 48, .99),
+                        rgba(4, 16, 30, .99)
+                    ) !important;
+
+                color:
+                    #e6ebf3 !important;
+
+                cursor: pointer;
+
+                transition:
+                    transform .2s ease,
+                    border-color .2s ease;
+            }
+
+            .kx-social-button:hover {
+                transform:
+                    translateY(-2px);
+
+                border-color:
+                    rgba(255, 194, 26, .90) !important;
+            }
+
+
+            /* =====================================================
+               MICROSOFT
+            ====================================================== */
+
+            .kx-microsoft {
+                display: grid;
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                grid-template-rows:
+                    1fr 1fr;
+
+                width: 20px;
+                height: 20px;
+
+                gap: 2px;
+            }
+
+            .kx-microsoft i {
+                display: block;
+            }
+
+            .kx-microsoft i:nth-child(1) {
+                background: #f35325;
+            }
+
+            .kx-microsoft i:nth-child(2) {
+                background: #81bc06;
+            }
+
+            .kx-microsoft i:nth-child(3) {
+                background: #05a6f0;
+            }
+
+            .kx-microsoft i:nth-child(4) {
+                background: #ffba08;
+            }
+
+
+            /* =====================================================
+               GOOGLE
+            ====================================================== */
+
+            .kx-google-g {
+                color: #ffffff;
+
+                font-family:
+                    Arial,
+                    sans-serif;
+
+                font-size: 18px;
+
+                font-weight: 900;
+            }
+
+
+            /* =====================================================
+               SEGURIDAD
+            ====================================================== */
+
+            .kx-security {
+                display: grid;
+
+                grid-template-columns:
+                    46px minmax(0, 1fr);
+
+                align-items: center;
+
+                width: 100%;
+
+                gap: 12px;
+
+                min-height: 69px;
+
+                padding:
+                    10px 14px;
+
+                border:
+                    1px solid rgba(91, 147, 201, .65);
+
+                border-radius:
+                    11px;
+
+                background:
+                    radial-gradient(
+                        circle at 8% 50%,
+                        rgba(255, 177, 0, .07),
+                        transparent 30%
+                    ),
+                    linear-gradient(
+                        100deg,
+                        rgba(7, 31, 55, .97),
+                        rgba(4, 18, 34, .98)
+                    );
+            }
+
+            .kx-security-shield {
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                width: 44px;
+                height: 44px;
+
+                border:
+                    1.5px solid var(--kx-gold);
+
+                border-radius: 50%;
+
+                color:
+                    var(--kx-gold);
+            }
+
+            .kx-security-copy {
+                min-width: 0;
+            }
+
+            .kx-security-copy strong {
+                display: block;
+
+                margin-bottom: 3px;
+
+                color: #ffd33f;
+
+                font-size: 11px;
+            }
+
+            .kx-security-copy p {
+                margin: 0 !important;
+
+                color: #c4ccd8;
+
+                font-size: 8px;
+
+                line-height: 1.45;
+            }
+
+
+            /* =====================================================
+               MODAL login.js
+            ====================================================== */
+
+            .kx-alert-overlay {
+                position: fixed !important;
+
+                z-index: 999999 !important;
+
+                inset: 0 !important;
+
+                display: flex !important;
+
+                align-items: center !important;
+                justify-content: center !important;
+
+                width: 100vw !important;
+                height: 100vh !important;
+
+                padding: 20px !important;
+
+                background:
+                    rgba(0, 5, 13, .76) !important;
+
+                backdrop-filter: blur(8px);
+
+                -webkit-backdrop-filter:
+                    blur(8px);
+
+                opacity: 0;
+
+                visibility: hidden;
+
+                transition:
+                    opacity .18s ease,
+                    visibility .18s ease;
+            }
+
+            .kx-alert-overlay.kx-alert-visible {
+                opacity: 1;
+
+                visibility: visible;
+            }
+
+            .kx-alert-modal {
+                position: relative !important;
+
+                width: 420px !important;
+
+                max-width:
+                    calc(100vw - 40px) !important;
+
+                margin:
+                    0 auto !important;
+
+                padding:
+                    31px 31px 27px !important;
+
+                overflow: hidden;
+
+                border:
+                    1px solid rgba(255, 194, 26, .50);
+
+                border-radius:
+                    20px;
+
+                background:
+                    radial-gradient(
+                        circle at 50% 0%,
+                        rgba(255, 194, 26, .08),
+                        transparent 42%
+                    ),
+                    linear-gradient(
+                        145deg,
+                        rgba(7, 25, 45, .995),
+                        rgba(2, 11, 23, .995)
+                    );
+
+                box-shadow:
+                    0 0 0 1px rgba(255, 255, 255, .025),
+                    0 25px 80px rgba(0, 0, 0, .70);
+
+                text-align: center;
+
+                transform:
+                    translateY(14px)
+                    scale(.96);
+
+                transition:
+                    transform .2s ease;
+            }
+
+            .kx-alert-visible
+            .kx-alert-modal {
+                transform:
+                    translateY(0)
+                    scale(1);
+            }
+
+            .kx-alert-glow {
+                position: absolute;
+
+                top: -120px;
+                left: 50%;
+
+                width: 180px;
+                height: 180px;
+
+                transform:
+                    translateX(-50%);
+
+                border-radius: 50%;
+
+                background:
+                    var(--kx-gold);
+
+                opacity: .11;
+
+                filter:
+                    blur(50px);
+
+                pointer-events: none;
+            }
+
+            .kx-alert-modal
+            .kx-alert-icon {
+                position: relative;
+
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                width: 58px;
+                height: 58px;
+
+                margin:
+                    0 auto 15px;
+
+                border:
+                    1.5px solid var(--kx-gold);
+
+                border-radius: 50%;
+
+                color:
+                    var(--kx-gold);
+
+                background:
+                    rgba(255, 194, 26, .06);
+
+                font-size: 24px;
+
+                font-weight: 900;
+            }
+
+            .kx-alert-modal
+            .kx-alert-title {
+                display: block;
+
+                margin:
+                    0 0 8px;
+
+                color: #ffffff;
+
+                font-size: 19px;
+
+                font-weight: 800;
+            }
+
+            .kx-alert-modal
+            .kx-alert-message {
+                display: block;
+
+                max-width: 330px;
+
+                margin:
+                    0 auto 21px;
+
+                color: #bfc9d6;
+
+                font-size: 12px;
+
+                line-height: 1.55;
+            }
+
+            .kx-alert-button {
+                width: 100%;
+                height: 45px;
+
+                margin: 0;
+
+                border:
+                    1px solid #ffe176;
+
+                border-radius: 10px;
+
+                background:
+                    linear-gradient(
+                        180deg,
+                        #ffe477,
+                        #ffc21a,
+                        #e9a000
+                    );
+
+                color: #120c00;
+
+                font-size: 12px;
+
+                font-weight: 800;
+
+                cursor: pointer;
+            }
+
+            .kx-alert-modal
+            .kx-alert-close {
+                position: absolute;
+
+                top: 11px;
+                right: 11px;
+
+                display: flex;
+
+                align-items: center;
+                justify-content: center;
+
+                width: 31px;
+                height: 31px;
+
+                margin: 0;
+                padding: 0;
+
+                border: 0;
+
+                border-radius: 8px;
+
+                background: transparent;
+
+                color: #8493a5;
+
+                font-size: 21px;
+
+                cursor: pointer;
+            }
+
+
+            /* ERROR */
+
+            .kx-alert-danger
+            .kx-alert-modal {
+                border-color:
+                    rgba(255, 82, 103, .58);
+            }
+
+            .kx-alert-danger
+            .kx-alert-glow {
+                background: #ff5267;
+            }
+
+            .kx-alert-danger
+            .kx-alert-icon {
+                border-color: #ff5267;
+
+                color: #ff5267;
+
+                background:
+                    rgba(255, 82, 103, .07);
+            }
+
+
+            /* INFO */
+
+            .kx-alert-info
+            .kx-alert-modal {
+                border-color:
+                    rgba(41, 170, 255, .55);
+            }
+
+            .kx-alert-info
+            .kx-alert-glow {
+                background: #29aaff;
+            }
+
+            .kx-alert-info
+            .kx-alert-icon {
+                border-color: #29aaff;
+
+                color: #29aaff;
+            }
+
+
+            /* =====================================================
+               ANIMACIÓN
+            ====================================================== */
+
+            @@keyframes kxLoginEntrada {
+
+                from {
+                    opacity: 0;
+
+                    transform:
+                        translateY(15px)
+                        scale(.985);
+                }
+
+                to {
+                    opacity: 1;
+
+                    transform:
+                        translateY(0)
+                        scale(1);
+                }
+            }
+
+
+            /* =====================================================
+               TABLET
+            ====================================================== */
+
+            @@media (max-width: 700px) {
+
+                .kx-page {
+                    padding:
+                        18px 13px 35px !important;
+                }
+
+                .kx-login-card {
+                    width:
+                        540px !important;
+
+                    max-width:
+                        100% !important;
+                }
+
+                .kx-card-inner {
+                    padding:
+                        27px 28px !important;
+                }
+            }
+
+
+            /* =====================================================
+               MÓVIL
+            ====================================================== */
+
+            @@media (max-width: 500px) {
+
+                .kx-page {
+                    padding:
+                        10px 8px 25px !important;
+                }
+
+                .kx-login-card {
+                    width:
+                        100% !important;
+
+                    max-width:
+                        100% !important;
+
+                    border-radius:
+                        22px !important;
+                }
+
+                .kx-card-inner {
+                    padding:
+                        23px 19px 22px !important;
+
+                    border-radius:
+                        19px;
+                }
+
+                .kx-card-inner::before {
+                    inset: 8px;
+
+                    border-radius: 14px;
+                }
+
+                .kx-brand {
+                    gap: 11px;
+
+                    margin-bottom: 15px;
+                }
+
+                .kx-logo-box {
+                    flex: 0 0 59px;
+
+                    width: 59px;
+                    height: 59px;
+
+                    border-radius: 14px;
+                }
+
+                .kx-brand-logo {
+                    border-radius: 11px;
+                }
+
+                .kx-brand-name {
+                    gap: 5px;
+                }
+
+                .kx-brand-name span,
+                .kx-brand-name strong {
+                    font-size: 22px;
+                }
+
+                .kx-brand-subtitle {
+                    margin-top: 5px;
+
+                    font-size: 8px;
+                }
+
+                .kx-welcome h1 {
+                    font-size:
+                        29px !important;
+                }
+
+                .kx-welcome p {
+                    font-size: 11px;
+                }
+
+                .kx-input-wrapper {
+                    height: 47px;
+                }
+
+                .kx-options {
+                    gap: 6px;
+                }
+
+                .kx-remember,
+                .kx-forgot {
+                    font-size: 9px;
+                }
+
+                .kx-login-button {
+                    height:
+                        49px !important;
+
+                    font-size:
+                        13px !important;
+                }
+
+                .kx-social-button {
+                    height:
+                        43px !important;
+                }
+
+                .kx-security {
+                    grid-template-columns:
+                        41px minmax(0, 1fr);
+
+                    gap: 9px;
+
+                    padding:
+                        9px 10px;
+                }
+
+                .kx-security-shield {
+                    width: 39px;
+                    height: 39px;
+                }
+
+                .kx-security-copy strong {
+                    font-size: 10px;
+                }
+
+                .kx-security-copy p {
+                    font-size: 7.5px;
+                }
+
+                .kx-alert-overlay {
+                    padding:
+                        13px !important;
+                }
+
+                .kx-alert-modal {
+                    width:
+                        100% !important;
+
+                    max-width:
+                        400px !important;
+
+                    padding:
+                        28px 21px 22px !important;
+                }
+            }
+
+    </style>
 
 </head>
 
-
 <body>
-
-
-    <!-- =========================================================
-         KERNIX LOGIN
-    ========================================================== -->
 
     <div class="kx-page">
 
-
         <!-- =====================================================
-             FONDO PRINCIPAL
-
-             SOLO VISUAL.
-             NO INTERFIERE CON EL BACKEND.
+             FONDO
         ====================================================== -->
 
         <img src="~/images/login/kernix-login-bg.png"
@@ -63,43 +1712,33 @@
 
 
         <!-- =====================================================
-             DECORACIONES DEL FONDO
+             EFECTOS
         ====================================================== -->
 
         <div class="kx-background-effects"
              aria-hidden="true">
 
-            <span class="kx-orb kx-orb-blue">
-            </span>
+            <span class="kx-orb kx-orb-blue"></span>
+            <span class="kx-orb kx-orb-gold"></span>
 
-            <span class="kx-orb kx-orb-gold">
-            </span>
-
-            <span class="kx-line kx-line-one">
-            </span>
-
-            <span class="kx-line kx-line-two">
-            </span>
+            <span class="kx-line kx-line-one"></span>
+            <span class="kx-line kx-line-two"></span>
 
         </div>
 
 
         <!-- =====================================================
-             TARJETA LOGIN
+             LOGIN
         ====================================================== -->
 
         <main class="kx-login-card">
 
-
             <div class="kx-card-inner">
 
 
-                <!-- =================================================
-                     MARCA KERNIX
-                ================================================== -->
+                <!-- MARCA -->
 
                 <header class="kx-brand">
-
 
                     <div class="kx-logo-box">
 
@@ -113,16 +1752,11 @@
 
                     <div class="kx-brand-copy">
 
-
                         <div class="kx-brand-name">
 
-                            <span>
-                                KerniX
-                            </span>
+                            <span>KerniX</span>
 
-                            <strong>
-                                ERP
-                            </strong>
+                            <strong>ERP</strong>
 
                         </div>
 
@@ -133,56 +1767,33 @@
 
                         </div>
 
-
                     </div>
-
 
                 </header>
 
 
-
-                <!-- =================================================
-                     BIENVENIDA
-                ================================================== -->
+                <!-- BIENVENIDA -->
 
                 <section class="kx-welcome">
 
-
                     <span class="kx-eyebrow">
-
                         Bienvenido de nuevo
-
                     </span>
 
-
                     <h1>
-
-                        Accede a
-
-                        <span>
-                            KerniX
-                        </span>
-
+                        Accede a <span>KerniX</span>
                     </h1>
 
-
                     <p>
-
                         Inicia sesión para continuar
-
                     </p>
-
 
                 </section>
 
 
-
                 <!-- =================================================
                      FORMULARIO
-
-                     IMPORTANTE:
-                     NO CAMBIAR LOS name="Input..."
-                     PORQUE ESTÁN VINCULADOS AL LoginModel.
+                     BACKEND INTACTO
                 ================================================== -->
 
                 <form method="post"
@@ -190,33 +1801,23 @@
                       class="kx-form"
                       autocomplete="on">
 
-
                     @Html.AntiForgeryToken()
 
 
-
-                    <!-- =============================================
-                         USUARIO
-                    ============================================== -->
+                    <!-- USUARIO -->
 
                     <div class="kx-field"
                          id="usuarioField">
 
-
                         <label for="usuarioInput">
-
                             Usuario o correo electrónico
-
                         </label>
 
-
                         <div class="kx-input-wrapper">
-
 
                             <span class="kx-input-icon"
                                   uk-icon="icon: user; ratio: 1.1">
                             </span>
-
 
                             <input id="usuarioInput"
                                    name="Input.Usuario"
@@ -227,42 +1828,30 @@
                                    spellcheck="false"
                                    placeholder="Usuario o correo electrónico" />
 
-
                         </div>
-
 
                         <div id="usuarioClientError"
                              class="kx-field-error"
                              hidden>
                         </div>
 
-
                     </div>
 
 
-
-                    <!-- =============================================
-                         CONTRASEÑA
-                    ============================================== -->
+                    <!-- CONTRASEÑA -->
 
                     <div class="kx-field"
                          id="passwordField">
 
-
                         <label for="kxPassword">
-
                             Contraseña
-
                         </label>
 
-
                         <div class="kx-input-wrapper">
-
 
                             <span class="kx-input-icon"
                                   uk-icon="icon: lock; ratio: 1.05">
                             </span>
-
 
                             <input id="kxPassword"
                                    name="Input.Password"
@@ -270,56 +1859,43 @@
                                    autocomplete="current-password"
                                    placeholder="Contraseña" />
 
-
                             <button type="button"
                                     id="kxTogglePassword"
                                     class="kx-eye"
                                     aria-label="Mostrar contraseña">
 
-
                                 <span id="kxEyeIcon"
                                       uk-icon="icon: eye; ratio: 1">
                                 </span>
 
-
                             </button>
 
-
                         </div>
-
 
                         <div id="passwordClientError"
                              class="kx-field-error"
                              hidden>
                         </div>
 
-
                     </div>
 
 
-
-                    <!-- =============================================
-                         RECORDAR / RECUPERAR
-                    ============================================== -->
+                    <!-- RECORDAR -->
 
                     <div class="kx-options">
 
-
                         <label class="kx-remember">
-
 
                             <input id="recordarmeInput"
                                    name="Input.Recordarme"
                                    class="kx-checkbox"
                                    type="checkbox"
                                    value="true"
-                                   @(Model.Input.Recordarme ? "checked" : "") />
-
+                            @(Model.Input.Recordarme ? "checked" : "") />
 
                             <span>
                                 Recordarme
                             </span>
-
 
                         </label>
 
@@ -331,26 +1907,18 @@
 
                         </a>
 
-
                     </div>
 
 
-
-                    <!-- =============================================
-                         BOTÓN LOGIN
-                    ============================================== -->
+                    <!-- LOGIN -->
 
                     <button type="submit"
                             id="loginButton"
                             class="kx-login-button">
 
-
                         <span id="loginButtonText">
-
                             Iniciar sesión
-
                         </span>
-
 
                         <span id="loginSpinner"
                               class="kx-login-spinner"
@@ -358,208 +1926,136 @@
                               hidden>
                         </span>
 
-
                         <span id="loginArrow"
                               class="kx-button-arrow">
-
                             →
-
                         </span>
-
 
                     </button>
 
 
-
-                    <!-- =============================================
-                         SEPARADOR
-                    ============================================== -->
+                    <!-- SEPARADOR -->
 
                     <div class="kx-or">
 
-
-                        <span>
-                        </span>
-
+                        <span></span>
 
                         <p>
                             o continúa con
                         </p>
 
-
-                        <span>
-                        </span>
-
+                        <span></span>
 
                     </div>
 
 
-
-                    <!-- =============================================
-                         ACCESOS EXTERNOS
-                    ============================================== -->
+                    <!-- SOCIAL -->
 
                     <div class="kx-social">
-
-
-
-                        <!-- MICROSOFT -->
 
                         <button type="button"
                                 class="kx-social-button"
                                 data-provider="Microsoft"
                                 aria-label="Continuar con Microsoft">
 
-
                             <span class="kx-microsoft">
-
                                 <i></i>
-
                                 <i></i>
-
                                 <i></i>
-
                                 <i></i>
-
                             </span>
-
 
                         </button>
 
-
-
-                        <!-- GOOGLE -->
 
                         <button type="button"
                                 class="kx-social-button kx-google"
                                 data-provider="Google"
                                 aria-label="Continuar con Google">
 
-
                             <span class="kx-google-g">
-
                                 G
-
                             </span>
-
 
                         </button>
 
-
-
-                        <!-- SSO -->
 
                         <button type="button"
                                 class="kx-social-button"
                                 data-provider="SSO"
                                 aria-label="Acceso empresarial">
 
-
                             <span uk-icon="icon: lock; ratio: 1.15">
                             </span>
 
-
                         </button>
-
 
                     </div>
 
 
-
-                    <!-- =============================================
-                         SEGURIDAD
-                    ============================================== -->
+                    <!-- SEGURIDAD -->
 
                     <div class="kx-security">
 
-
                         <div class="kx-security-shield">
-
 
                             <span uk-icon="icon: lock; ratio: 1.15">
                             </span>
-
 
                         </div>
 
 
                         <div class="kx-security-copy">
 
-
                             <strong>
-
                                 Seguridad y confianza
-
                             </strong>
 
-
                             <p>
-
                                 Protección avanzada de tus datos con
                                 autenticación segura y control de permisos.
-
                             </p>
-
 
                         </div>
 
-
                     </div>
-
 
                 </form>
 
-
             </div>
 
-
         </main>
-
 
     </div>
 
 
-
     <!-- =========================================================
-         ERROR DEVUELTO POR EL BACKEND
-
-         NO MODIFICAMOS ESTA LÓGICA.
+         ERROR DEL BACKEND
+         SE CONSERVA
     ========================================================== -->
-
     @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
     {
-
         <div id="serverError"
              data-message="@Model.ErrorMessage"
              hidden>
         </div>
-
     }
 
 
-
-    <!-- =========================================================
-         UIKIT
-    ========================================================== -->
+    <!-- UIKIT -->
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit.min.js">
     </script>
-
 
     <script src="https://cdn.jsdelivr.net/npm/uikit@3.23.12/dist/js/uikit-icons.min.js">
     </script>
 
 
-
-    <!-- =========================================================
-         TU LOGIN.JS ACTUAL
-         NO CAMBIAMOS SU LÓGICA
-    ========================================================== -->
+    <!-- LOGIN JS ORIGINAL -->
 
     <script src="~/js/login.js"
             asp-append-version="true">
     </script>
-
 
 </body>
 
