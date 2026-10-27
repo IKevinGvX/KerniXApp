@@ -1,718 +1,740 @@
-﻿/* KerniX ERP Login - Frontend only */
+﻿/* ============================================================
+   KERNIX ERP - LOGIN
+   SOLO FRONTEND / NO AFECTA BACKEND
+============================================================ */
+
 :root {
-    --bg: #010712;
-    --gold: #ffc21a;
-    --blue: #149cff;
-    --text: #edf3fb;
-    --muted: #aeb9c9
+    --kx-bg: #010712;
+    --kx-navy: #031326;
+    --kx-navy-2: #061b31;
+    --kx-gold: #ffc21a;
+    --kx-gold-light: #ffe783;
+    --kx-blue: #149cff;
+    --kx-white: #ffffff;
+    --kx-text: #edf3fb;
+    --kx-muted: #aeb9c9;
+    --kx-danger: #ff5267;
 }
 
-* {
-    box-sizing: border-box
+
+/* ============================================================
+   RESET
+============================================================ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-html, body {
+html {
     width: 100%;
     min-height: 100%;
-    margin: 0
+    margin: 0;
+    padding: 0;
+    background: #010712;
 }
 
 body {
+    width: 100%;
     min-height: 100vh;
+    margin: 0 !important;
+    padding: 0 !important;
     overflow-x: hidden;
-    background: var(--bg);
-    color: var(--text);
-    font-family: "Segoe UI",Arial,sans-serif
+    background: #010712 !important;
+    color: var(--kx-text);
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
-button, input {
-    font: inherit
+button,
+input {
+    font: inherit;
 }
+
+
+/* ============================================================
+   PÁGINA
+   PNG DE FONDO DIRECTAMENTE DESDE CSS
+============================================================ */
+
 .kx-page {
     position: relative;
     width: 100%;
     min-height: 100vh;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 28px 20px !important;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 28px 20px 45px;
     overflow-x: hidden;
+    background-color: #010712;
+    background-image: linear-gradient( rgba(1, 7, 18, .10), rgba(1, 7, 18, .18) ), url("/images/login/kernix-login-bg.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
     isolation: isolate;
-    background-color: #010712 !important;
-    background-image: linear-gradient( rgba(0, 6, 16, 0.08), rgba(0, 6, 16, 0.16) ), url("/images/login/kernix-login-bg.png") !important;
-    background-size: cover !important;
-    background-position: center center !important;
-    background-repeat: no-repeat !important;
 }
-    .kx-page:before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background: radial-gradient(circle at center,transparent 30%,rgba(0,3,10,.48) 100%)
-    }
+
+
+/* ============================================================
+   EFECTOS DE FONDO
+============================================================ */
 
 .kx-background-effects {
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: -1;
+    overflow: hidden;
     pointer-events: none;
-    overflow: hidden
 }
 
 .kx-orb {
     position: absolute;
+    display: block;
     border-radius: 50%;
-    filter: blur(100px)
+    filter: blur(100px);
+    pointer-events: none;
 }
 
 .kx-orb-blue {
     width: 450px;
     height: 450px;
-    top: -220px;
-    left: -150px;
-    background: #007bff;
-    opacity: .18
+    top: -260px;
+    left: -220px;
+    background: #008cff;
+    opacity: .08;
 }
 
 .kx-orb-gold {
-    width: 400px;
-    height: 400px;
-    right: -180px;
-    bottom: -180px;
-    background: #ffad00;
-    opacity: .12
+    width: 430px;
+    height: 430px;
+    right: -220px;
+    bottom: -240px;
+    background: #ffb000;
+    opacity: .07;
 }
+
+.kx-line {
+    position: absolute;
+    display: block;
+    height: 1px;
+    background: linear-gradient( 90deg, transparent, rgba(255, 194, 26, .15), transparent );
+    pointer-events: none;
+}
+
+.kx-line-one {
+    width: 600px;
+    top: 20%;
+    left: -180px;
+    transform: rotate(-18deg);
+}
+
+.kx-line-two {
+    width: 650px;
+    right: -200px;
+    bottom: 18%;
+    transform: rotate(20deg);
+}
+
+
+/* ============================================================
+   TARJETA PRINCIPAL
+============================================================ */
 
 .kx-login-card {
-    position: relative !important;
-    z-index: 10 !important;
-    display: block !important;
-    width: 690px !important;
-    max-width: calc(100vw - 40px) !important;
-    margin: 0 auto !important;
-    padding: 3px !important;
-    border-radius: 32px !important;
-    background: linear-gradient(135deg,#ffe788,#ffc21a 25%,#168eff 56%,#ffc21a 82%,#ffe78b) !important;
-    box-shadow: 0 0 6px rgba(255,232,151,.95),0 0 22px rgba(255,188,0,.65),0 35px 90px rgba(0,0,0,.8) !important;
-    animation: kxEnter .55s ease both
+    position: relative;
+    z-index: 20;
+    width: 570px;
+    max-width: calc(100vw - 40px);
+    margin: 0 auto;
+    padding: 3px;
+    border-radius: 28px;
+    background: linear-gradient( 135deg, #fff1a2 0%, #ffc21a 25%, #168fff 52%, #ffc21a 79%, #fff0a0 100% );
+    box-shadow: 0 0 5px rgba(255, 238, 170, .90), 0 0 20px rgba(255, 190, 0, .58), 0 0 42px rgba(20, 156, 255, .15), 0 30px 80px rgba(0, 0, 0, .75);
+    animation: kxCardEntrada .55s ease both;
 }
 
-    .kx-login-card:after {
+    .kx-login-card::after {
         content: "";
         position: absolute;
         right: -2px;
-        top: 24%;
+        top: 23%;
         width: 4px;
-        height: 30%;
+        height: 32%;
         border-radius: 999px;
-        background: linear-gradient(transparent,#168eff,#fff,#168eff,transparent);
+        background: linear-gradient( transparent, #168eff, #ffffff, #168eff, transparent );
         box-shadow: 0 0 18px #168eff;
-        pointer-events: none
+        pointer-events: none;
     }
+
+
+/* ============================================================
+   INTERIOR
+============================================================ */
 
 .kx-card-inner {
-    position: relative !important;
-    width: 100% !important;
-    padding: 44px 58px 42px !important;
+    position: relative;
+    width: 100%;
+    padding: 30px 39px 29px;
     overflow: hidden;
-    border-radius: 29px !important;
-    background: radial-gradient(circle at 5% 8%,rgba(255,181,0,.13),transparent 26%),radial-gradient(circle at 100% 43%,rgba(0,139,255,.12),transparent 33%),linear-gradient(145deg,rgba(5,21,40,.99),rgba(2,12,25,.995) 52%,rgba(3,17,33,.99)) !important;
-    box-shadow: inset 0 0 0 1px rgba(255,220,110,.22),inset 0 0 60px rgba(0,0,0,.42) !important
+    border-radius: 25px;
+    background: radial-gradient( circle at 5% 7%, rgba(255, 181, 0, .11), transparent 28% ), radial-gradient( circle at 100% 45%, rgba(0, 139, 255, .11), transparent 35% ), linear-gradient( 145deg, rgba(5, 21, 40, .99), rgba(2, 12, 25, .995) 53%, rgba(3, 17, 33, .99) );
+    box-shadow: inset 0 0 0 1px rgba(255, 220, 110, .20), inset 0 0 55px rgba(0, 0, 0, .35);
 }
 
-    .kx-card-inner:before {
+    .kx-card-inner::before {
         content: "";
         position: absolute;
-        inset: 15px;
-        border: 1px solid rgba(48,137,216,.42);
-        border-radius: 21px;
-        pointer-events: none
+        inset: 11px;
+        border: 1px solid rgba(48, 137, 216, .38);
+        border-radius: 19px;
+        pointer-events: none;
     }
+
+
+/* ============================================================
+   MARCA
+============================================================ */
 
 .kx-brand {
     position: relative;
     z-index: 2;
-    display: flex !important;
-    align-items: center !important;
-    gap: 24px !important;
-    margin: 0 0 27px !important
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    margin: 0 0 18px;
 }
 
 .kx-logo-box {
-    width: 112px !important;
-    height: 112px !important;
-    min-width: 112px !important;
-    overflow: hidden;
-    border-radius: 23px;
+    width: 74px;
+    height: 74px;
+    min-width: 74px;
     padding: 2px;
-    background: linear-gradient(135deg,#fff0a0,#ffc21a,#118fff);
-    box-shadow: 0 0 20px rgba(255,188,0,.3)
+    overflow: hidden;
+    border-radius: 18px;
+    background: linear-gradient( 135deg, #fff0a0, #ffc21a, #118fff );
+    box-shadow: 0 0 18px rgba(255, 188, 0, .25);
 }
 
 .kx-brand-logo {
     display: block;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    border-radius: 20px
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.kx-brand-copy {
+    min-width: 0;
 }
 
 .kx-brand-name {
     display: flex;
-    gap: 8px;
     align-items: baseline;
-    line-height: 1
+    gap: 7px;
+    line-height: 1;
 }
 
-    .kx-brand-name span, .kx-brand-name strong {
-        font-size: 39px !important;
-        font-weight: 850 !important;
-        line-height: 1
+    .kx-brand-name span,
+    .kx-brand-name strong {
+        font-size: 30px;
+        font-weight: 850;
+        line-height: 1;
     }
 
     .kx-brand-name span {
-        color: #fff
+        color: #ffffff;
     }
 
     .kx-brand-name strong {
-        color: var(--gold)
+        color: var(--kx-gold);
     }
 
 .kx-brand-subtitle {
-    margin-top: 9px;
-    color: #c4cdda;
-    font-size: 14px !important;
-    white-space: nowrap
+    margin-top: 7px;
+    color: #c5cfdb;
+    font-size: 10px;
+    line-height: 1.35;
 }
+
+
+/* ============================================================
+   BIENVENIDA
+============================================================ */
 
 .kx-welcome {
     position: relative;
     z-index: 2;
-    margin: 0 0 27px !important
+    margin: 0 0 18px;
 }
 
 .kx-eyebrow {
     display: block;
-    margin-bottom: 8px;
-    color: var(--gold);
-    font-size: 16px !important;
-    font-weight: 700 !important
+    margin-bottom: 5px;
+    color: var(--kx-gold);
+    font-size: 12px;
+    font-weight: 700;
 }
 
 .kx-welcome h1 {
     margin: 0 !important;
-    color: #fff !important;
-    font-size: 47px !important;
+    color: #ffffff !important;
+    font-size: 36px !important;
     font-weight: 850 !important;
     line-height: 1.05 !important;
-    letter-spacing: -1.4px
+    letter-spacing: -.8px;
 }
 
     .kx-welcome h1 span {
-        color: var(--gold) !important
+        color: var(--kx-gold);
     }
 
 .kx-welcome p {
-    margin: 10px 0 0 !important;
-    color: #c7d0dd !important;
-    font-size: 17px !important
+    margin: 7px 0 0 !important;
+    color: #c5cfda;
+    font-size: 12px;
 }
+
+
+/* ============================================================
+   FORMULARIO
+============================================================ */
 
 .kx-form {
     position: relative;
     z-index: 2;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 17px !important;
-    width: 100% !important
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 11px;
 }
 
 .kx-field {
-    width: 100%
+    width: 100%;
 }
 
     .kx-field label {
-        display: block !important;
-        margin: 0 0 7px !important;
-        color: #fff !important;
-        font-size: 14px !important;
-        font-weight: 700 !important
+        display: block;
+        margin: 0 0 5px;
+        color: #ffffff;
+        font-size: 11px;
+        font-weight: 700;
     }
 
+
+/* ============================================================
+   INPUT
+============================================================ */
+
 .kx-input-wrapper {
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    width: 100% !important;
-    height: 64px !important;
-    border: 1.5px solid rgba(255,192,20,.92) !important;
-    border-radius: 14px !important;
-    background: linear-gradient(90deg,rgba(5,24,44,.99),rgba(3,17,33,.99)) !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 49px;
     overflow: hidden;
-    transition: .2s
+    border: 1.4px solid rgba(255, 194, 26, .92);
+    border-radius: 11px;
+    background: linear-gradient( 90deg, rgba(5, 24, 44, .99), rgba(3, 17, 33, .99) );
+    transition: border-color .20s ease, box-shadow .20s ease, transform .20s ease;
 }
 
+    .kx-input-wrapper:hover {
+        border-color: #ffd64d;
+    }
+
     .kx-input-wrapper:focus-within {
-        border-color: #ffe378 !important;
-        box-shadow: 0 0 20px rgba(255,181,0,.2) !important
+        border-color: #ffe77f;
+        box-shadow: 0 0 0 1px rgba(255, 213, 74, .10), 0 0 17px rgba(255, 181, 0, .17);
     }
 
     .kx-input-wrapper input {
         width: 100% !important;
         height: 100% !important;
-        padding: 0 58px 0 62px !important;
+        margin: 0 !important;
+        padding: 0 50px 0 47px !important;
         border: 0 !important;
         outline: 0 !important;
         background: transparent !important;
-        color: #fff !important;
-        font-size: 16px !important
+        color: #ffffff !important;
+        font-size: 12px !important;
+        box-shadow: none !important;
     }
 
         .kx-input-wrapper input::placeholder {
-            color: #7d899b
+            color: #7d899b !important;
+            opacity: 1;
         }
 
 .kx-input-icon {
-    position: absolute !important;
-    left: 20px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    color: var(--gold) !important
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(-50%);
+    color: var(--kx-gold);
+    pointer-events: none;
 }
 
+
+/* ============================================================
+   MOSTRAR CONTRASEÑA
+============================================================ */
+
 .kx-eye {
-    position: absolute !important;
-    right: 8px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    width: 44px !important;
-    height: 44px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 0 !important;
-    background: transparent !important;
-    color: #8c99ab !important;
-    cursor: pointer
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 39px;
+    height: 39px;
+    margin: 0;
+    padding: 0;
+    transform: translateY(-50%);
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #8d9aab;
+    cursor: pointer;
+    transition: color .2s ease, background .2s ease;
 }
 
     .kx-eye:hover {
-        color: #fff !important
+        color: #ffffff;
+        background: rgba(255, 255, 255, .04);
     }
 
+
+/* ============================================================
+   ERRORES DE INPUT
+   COMPATIBLE CON TU login.js ACTUAL
+============================================================ */
+
+.kx-field-error {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 0;
+    margin-top: 5px;
+    color: #ff697b;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+    .kx-field-error[hidden] {
+        display: none !important;
+    }
+
+    .kx-field-error span:first-child {
+        color: #ff5267;
+        font-size: 11px;
+    }
+
+.kx-wrapper-error {
+    border-color: #ff5267 !important;
+    box-shadow: 0 0 0 1px rgba(255, 82, 103, .12), 0 0 17px rgba(255, 82, 103, .17) !important;
+}
+
+    .kx-wrapper-error .kx-input-icon {
+        color: #ff5267 !important;
+    }
+
+
+/* ============================================================
+   RECORDAR / RECUPERAR
+============================================================ */
+
 .kx-options {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
-    margin: -2px 0 0 !important
+    gap: 12px;
 }
 
 .kx-remember {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px;
-    color: #f4f6fa !important;
-    font-size: 14px !important;
-    cursor: pointer
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    color: #f4f6fa;
+    font-size: 10px;
+    cursor: pointer;
 }
 
 .kx-checkbox {
     position: relative;
-    width: 21px !important;
-    height: 21px !important;
-    min-width: 21px;
+    width: 17px !important;
+    height: 17px !important;
+    min-width: 17px;
+    margin: 0 !important;
     appearance: none;
     -webkit-appearance: none;
-    border: 1.5px solid #e9b72c !important;
+    border: 1.3px solid #e9b72c !important;
     border-radius: 4px;
-    background: #05101d;
-    cursor: pointer
+    background: #05101d !important;
+    cursor: pointer;
 }
 
     .kx-checkbox:checked {
-        background: linear-gradient(135deg,#ffe06a,#eba000) !important
+        background: linear-gradient( 135deg, #ffe06a, #eba000 ) !important;
     }
 
-        .kx-checkbox:checked:after {
-            content: '✓';
+        .kx-checkbox:checked::after {
+            content: "✓";
             position: absolute;
             inset: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #1a1000;
-            font-size: 14px;
-            font-weight: 900
+            color: #181000;
+            font-size: 11px;
+            font-weight: 900;
         }
 
 .kx-forgot {
-    color: var(--gold) !important;
-    font-size: 14px !important;
-    text-decoration: none !important
+    color: var(--kx-gold) !important;
+    font-size: 10px;
+    text-decoration: none !important;
 }
 
+    .kx-forgot:hover {
+        color: #ffe46d !important;
+    }
+
+
+/* ============================================================
+   BOTÓN LOGIN
+============================================================ */
+
 .kx-login-button {
-    position: relative !important;
+    position: relative;
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    align-items: center;
+    justify-content: center;
     width: 100% !important;
-    height: 68px !important;
-    padding: 0 64px !important;
+    height: 52px !important;
+    margin: 0 !important;
+    padding: 0 58px !important;
     border: 2px solid #ffe580 !important;
-    border-radius: 14px !important;
+    border-radius: 11px !important;
+    background: linear-gradient( 180deg, #ffe97b, #ffd34b 22%, #ffbe1f 56%, #eea000 ) !important;
     color: #100a00 !important;
-    background: linear-gradient(180deg,#ffe97b,#ffd34b 22%,#ffbe1f 56%,#eea000) !important;
-    font-size: 19px !important;
+    font-size: 14px !important;
     font-weight: 850 !important;
+    text-transform: none !important;
     cursor: pointer;
-    box-shadow: inset 0 1px #fff,0 0 16px rgba(255,201,45,.85),0 0 32px rgba(255,168,0,.25) !important;
-    transition: .18s
+    box-shadow: inset 0 1px #ffffff, 0 0 15px rgba(255, 201, 45, .75), 0 0 30px rgba(255, 168, 0, .20) !important;
+    transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
 }
 
     .kx-login-button:hover {
-        transform: translateY(-2px);
-        filter: brightness(1.05)
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+        box-shadow: inset 0 1px #ffffff, 0 0 20px rgba(255, 201, 45, .90), 0 0 35px rgba(255, 168, 0, .24) !important;
     }
 
 .kx-button-arrow {
-    position: absolute !important;
-    right: 24px !important;
+    position: absolute;
+    right: 20px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 31px !important
+    font-size: 23px;
 }
 
+
+/* ============================================================
+   ESTADO CARGANDO
+   TU JS USA .is-loading
+============================================================ */
+
+.kx-login-button.is-loading {
+    cursor: wait;
+    opacity: .92;
+}
+
+    .kx-login-button.is-loading
+    .kx-button-arrow {
+        display: none !important;
+    }
+
+.kx-login-spinner[hidden] {
+    display: none !important;
+}
+
+.kx-login-spinner:not([hidden]) {
+    display: inline-flex !important;
+    margin-left: 10px;
+}
+
+
+/* ============================================================
+   SEPARADOR
+============================================================ */
+
 .kx-or {
-    display: grid !important;
-    grid-template-columns: 1fr auto 1fr !important;
-    align-items: center !important;
-    gap: 13px !important
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
 }
 
     .kx-or span {
         height: 1px;
-        background: linear-gradient(90deg,transparent,rgba(255,194,26,.72))
+        background: linear-gradient( 90deg, transparent, rgba(255, 194, 26, .68) );
     }
 
         .kx-or span:last-child {
-            background: linear-gradient(90deg,rgba(255,194,26,.72),transparent)
+            background: linear-gradient( 90deg, rgba(255, 194, 26, .68), transparent );
         }
 
     .kx-or p {
         margin: 0 !important;
-        color: #c7cfda !important;
-        font-size: 14px !important;
-        white-space: nowrap
+        color: #c7cfda;
+        font-size: 9px;
     }
 
+
+/* ============================================================
+   BOTONES EXTERNOS
+============================================================ */
+
 .kx-social {
-    display: grid !important;
-    grid-template-columns: repeat(3,1fr) !important;
-    gap: 12px !important
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
 }
 
 .kx-social-button {
     display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: 64px !important;
-    border: 1px solid rgba(91,147,201,.68) !important;
-    border-radius: 12px !important;
-    background: linear-gradient(145deg,rgba(7,27,48,.99),rgba(4,16,30,.99)) !important;
+    align-items: center;
+    justify-content: center;
+    width: 100% !important;
+    height: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 1px solid rgba(91, 147, 201, .65) !important;
+    border-radius: 9px !important;
+    background: linear-gradient( 145deg, rgba(7, 27, 48, .99), rgba(4, 16, 30, .99) ) !important;
     color: #e6ebf3 !important;
-    cursor: pointer
+    cursor: pointer;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
     .kx-social-button:hover {
-        border-color: rgba(255,194,26,.9) !important;
-        transform: translateY(-2px)
+        transform: translateY(-2px);
+        border-color: rgba(255, 194, 26, .90) !important;
+        box-shadow: 0 7px 20px rgba(0, 0, 0, .25);
     }
+
+
+/* MICROSOFT */
 
 .kx-microsoft {
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
+    width: 20px;
+    height: 20px;
     gap: 2px;
-    width: 25px;
-    height: 25px
 }
 
-    .kx-microsoft i:nth-child(1) {
-        background: #f35325
+    .kx-microsoft i {
+        display: block;
     }
 
-    .kx-microsoft i:nth-child(2) {
-        background: #81bc06
-    }
+        .kx-microsoft i:nth-child(1) {
+            background: #f35325;
+        }
 
-    .kx-microsoft i:nth-child(3) {
-        background: #05a6f0
-    }
+        .kx-microsoft i:nth-child(2) {
+            background: #81bc06;
+        }
 
-    .kx-microsoft i:nth-child(4) {
-        background: #ffba08
-    }
+        .kx-microsoft i:nth-child(3) {
+            background: #05a6f0;
+        }
+
+        .kx-microsoft i:nth-child(4) {
+            background: #ffba08;
+        }
+
+
+/* GOOGLE */
 
 .kx-google-g {
-    font-family: Arial,sans-serif;
-    color: #fff;
-    font-size: 23px !important;
-    font-weight: 900
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: 900;
 }
 
+
+/* ============================================================
+   SEGURIDAD
+============================================================ */
+
 .kx-security {
-    display: grid !important;
-    grid-template-columns: 62px 1fr !important;
-    align-items: center !important;
-    gap: 17px !important;
-    min-height: 98px;
-    padding: 16px 19px !important;
-    border: 1px solid rgba(81,148,211,.62) !important;
-    border-radius: 14px !important;
-    background: radial-gradient(circle at 8% 50%,rgba(255,177,0,.08),transparent 28%),linear-gradient(100deg,rgba(7,31,55,.97),rgba(4,18,34,.98)) !important
+    display: grid;
+    grid-template-columns: 46px 1fr;
+    align-items: center;
+    gap: 12px;
+    min-height: 69px;
+    padding: 10px 14px;
+    border: 1px solid rgba(81, 148, 211, .60);
+    border-radius: 11px;
+    background: radial-gradient( circle at 8% 50%, rgba(255, 177, 0, .07), transparent 30% ), linear-gradient( 100deg, rgba(7, 31, 55, .97), rgba(4, 18, 34, .98) );
 }
 
 .kx-security-shield {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 59px !important;
-    height: 59px !important;
-    border: 2px solid var(--gold) !important;
-    border-radius: 50% !important;
-    color: var(--gold) !important
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid var(--kx-gold);
+    border-radius: 50%;
+    color: var(--kx-gold);
+    box-shadow: 0 0 14px rgba(255, 194, 26, .08);
 }
 
 .kx-security-copy strong {
     display: block;
-    margin-bottom: 5px;
-    color: #ffd33f !important;
-    font-size: 15px !important
+    margin-bottom: 3px;
+    color: #ffd33f;
+    font-size: 11px;
 }
 
 .kx-security-copy p {
     margin: 0 !important;
-    color: #c4ccd8 !important;
-    font-size: 13px !important;
-    line-height: 1.5 !important
+    color: #c4ccd8;
+    font-size: 8px;
+    line-height: 1.45;
 }
 
-.kx-field-error {
-    margin-top: 6px;
-    color: #ff7885;
-    font-size: 12px
-}
 
-.kx-wrapper-error {
-    border-color: #ff5666 !important
-}
+/* ============================================================
+   MODAL DE ALERTAS
+   IMPORTANTE: COMPATIBLE CON TU login.js ACTUAL
 
-@keyframes kxEnter {
-    from {
-        opacity: 0;
-        transform: translateY(22px) scale(.98)
-    }
-
-    to {
-        opacity: 1;
-        transform: none
-    }
-}
-@media(max-height:820px) and (min-width:761px) {
-    .kx-page {
-        align-items: flex-start !important;
-        padding: 22px 20px 32px !important
-    }
-
-    .kx-login-card {
-        width: 620px !important
-    }
-
-    .kx-card-inner {
-        padding: 32px 46px 31px !important
-    }
-
-    .kx-brand {
-        margin-bottom: 19px !important
-    }
-
-    .kx-logo-box {
-        width: 86px !important;
-        height: 86px !important;
-        min-width: 86px !important
-    }
-
-    .kx-brand-name span,
-    .kx-brand-name strong {
-        font-size: 33px !important
-    }
-
-    .kx-brand-subtitle {
-        font-size: 12px !important
-    }
-
-    .kx-welcome {
-        margin-bottom: 20px !important
-    }
-
-        .kx-welcome h1 {
-            font-size: 40px !important
-        }
-
-        .kx-welcome p {
-            font-size: 15px !important
-        }
-
-    .kx-form {
-        gap: 13px !important
-    }
-
-    .kx-input-wrapper {
-        height: 56px !important
-    }
-
-    .kx-login-button {
-        height: 59px !important
-    }
-
-    .kx-social-button {
-        height: 54px !important
-    }
-
-    .kx-security {
-        min-height: 80px;
-        padding: 11px 16px !important
-    }
-
-    .kx-security-shield {
-        width: 49px !important;
-        height: 49px !important
-    }
-}
-@media(max-width:760px) {
-    .kx-page {
-        align-items: flex-start !important;
-        padding: 22px 14px !important;
-        background-attachment: scroll !important
-    }
-
-    .kx-login-card {
-        width: min(620px,100%) !important;
-        max-width: 100% !important
-    }
-
-    .kx-card-inner {
-        padding: 38px 34px 35px !important
-    }
-
-    .kx-logo-box {
-        width: 88px !important;
-        height: 88px !important;
-        min-width: 88px !important
-    }
-
-    .kx-brand-name span, .kx-brand-name strong {
-        font-size: 30px !important
-    }
-
-    .kx-brand-subtitle {
-        font-size: 11px !important
-    }
-
-    .kx-welcome h1 {
-        font-size: 38px !important
-    }
-}
-
-@media(max-width:520px) {
-    .kx-page {
-        padding: 12px 9px 24px !important
-    }
-
-    .kx-card-inner {
-        padding: 29px 20px 27px !important
-    }
-
-        .kx-card-inner:before {
-            inset: 9px
-        }
-
-    .kx-brand {
-        gap: 12px !important;
-        margin-bottom: 22px !important
-    }
-
-    .kx-logo-box {
-        width: 70px !important;
-        height: 70px !important;
-        min-width: 70px !important
-    }
-
-    .kx-brand-name span, .kx-brand-name strong {
-        font-size: 23px !important
-    }
-
-    .kx-brand-subtitle {
-        font-size: 9px !important;
-        white-space: normal
-    }
-
-    .kx-welcome h1 {
-        font-size: 32px !important
-    }
-
-    .kx-welcome p {
-        font-size: 14px !important
-    }
-
-    .kx-input-wrapper {
-        height: 56px !important
-    }
-
-    .kx-options {
-        gap: 8px
-    }
-
-    .kx-remember, .kx-forgot {
-        font-size: 11px !important
-    }
-
-    .kx-login-button {
-        height: 60px !important;
-        font-size: 17px !important
-    }
-
-    .kx-social-button {
-        height: 56px !important
-    }
-
-    .kx-security {
-        grid-template-columns: 50px 1fr !important;
-        gap: 11px !important;
-        min-height: 88px;
-        padding: 12px !important
-    }
-
-    .kx-security-shield {
-        width: 48px !important;
-        height: 48px !important
-    }
-
-    .kx-security-copy strong {
-        font-size: 13px !important
-    }
-
-    .kx-security-copy p {
-        font-size: 11px !important
-    }
-}
-/* =========================================================
-   KERNIX - MODALES LOGIN
-========================================================= */
+   Tu JS crea:
+   .kx-alert-overlay
+   .kx-alert-modal
+   .kx-alert-glow
+   .kx-alert-icon
+   .kx-alert-title
+   .kx-alert-message
+   .kx-alert-button
+   .kx-alert-close
+============================================================ */
 
 .kx-alert-overlay {
     position: fixed !important;
@@ -721,237 +743,476 @@ button, input {
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 24px !important;
-    background: rgba(0, 5, 15, 0.78) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    padding: 20px !important;
+    background: rgba(0, 5, 13, .72) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     opacity: 0;
     visibility: hidden;
-    transition: opacity .22s ease, visibility .22s ease;
+    transition: opacity .18s ease, visibility .18s ease;
 }
 
+
+    /* JS AGREGA ESTA CLASE */
+
     .kx-alert-overlay.kx-alert-visible {
-        opacity: 1 !important;
-        visibility: visible !important;
+        opacity: 1;
+        visibility: visible;
     }
 
 
-/* =========================================================
-   VENTANA
-========================================================= */
+/* ============================================================
+   CAJA DEL MODAL
+============================================================ */
 
 .kx-alert-modal {
-    position: relative !important;
-    width: min(430px, 92vw) !important;
-    padding: 42px 36px 32px !important;
-    overflow: hidden !important;
-    border: 1px solid rgba(255, 194, 26, .85) !important;
-    border-radius: 22px !important;
-    background: radial-gradient( circle at 50% 0%, rgba(255, 183, 0, .12), transparent 35% ), linear-gradient( 145deg, #08182a, #030b17 ) !important;
-    color: #ffffff !important;
-    text-align: center !important;
-    box-shadow: 0 0 0 1px rgba(20, 156, 255, .12), 0 0 35px rgba(255, 183, 0, .18), 0 35px 90px rgba(0, 0, 0, .85) !important;
-    transform: translateY(15px) scale(.96);
-    transition: transform .22s ease;
+    position: relative;
+    width: 420px;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 31px 31px 27px;
+    border: 1px solid rgba(255, 194, 26, .50);
+    border-radius: 20px;
+    background: radial-gradient( circle at 50% 0%, rgba(255, 194, 26, .08), transparent 42% ), linear-gradient( 145deg, rgba(7, 25, 45, .995), rgba(2, 11, 23, .995) );
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .025), 0 25px 80px rgba(0, 0, 0, .70);
+    text-align: center;
+    transform: translateY(14px) scale(.96);
+    transition: transform .20s ease;
 }
 
-.kx-alert-visible .kx-alert-modal {
+.kx-alert-visible
+.kx-alert-modal {
     transform: translateY(0) scale(1);
 }
 
 
-/* =========================================================
-   BRILLO
-========================================================= */
+/* ============================================================
+   BRILLO MODAL
+============================================================ */
 
 .kx-alert-glow {
-    position: absolute !important;
-    top: -100px !important;
-    left: 50% !important;
-    width: 260px !important;
-    height: 160px !important;
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    top: -120px;
+    left: 50%;
     transform: translateX(-50%);
     border-radius: 50%;
-    background: #ffb300;
-    filter: blur(90px);
-    opacity: .20;
+    background: var(--kx-gold);
+    opacity: .11;
+    filter: blur(50px);
     pointer-events: none;
 }
 
 
-/* =========================================================
-   CERRAR
-========================================================= */
+/* ============================================================
+   ICONO MODAL
+============================================================ */
 
-.kx-alert-close {
-    position: absolute !important;
-    top: 14px !important;
-    right: 16px !important;
-    z-index: 5;
-    width: 36px !important;
-    height: 36px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background: transparent !important;
-    color: #77869a !important;
-    font-size: 27px !important;
-    line-height: 1 !important;
-    cursor: pointer;
-    transition: .2s;
-}
-
-    .kx-alert-close:hover {
-        color: #ffffff !important;
-        transform: rotate(90deg);
-    }
-
-
-/* =========================================================
-   ICONO
-========================================================= */
-
+.kx-alert-modal
 .kx-alert-icon {
-    position: relative !important;
-    width: 70px !important;
-    height: 70px !important;
-    margin: 0 auto 22px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 2px solid #ffc21a !important;
-    border-radius: 50% !important;
-    background: rgba(255, 194, 26, .08) !important;
-    color: #ffc21a !important;
-    font-size: 30px !important;
-    font-weight: 900 !important;
-    box-shadow: 0 0 20px rgba(255, 194, 26, .16);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 15px;
+    border: 1.5px solid var(--kx-gold);
+    border-radius: 50%;
+    color: var(--kx-gold);
+    background: rgba(255, 194, 26, .06);
+    font-size: 24px;
+    font-weight: 900;
+    box-shadow: 0 0 22px rgba(255, 194, 26, .15);
 }
 
 
-/* =========================================================
-   TITULO
-========================================================= */
+/* ============================================================
+   TITULO / MENSAJE MODAL
+============================================================ */
 
+.kx-alert-modal
 .kx-alert-title {
-    position: relative !important;
-    margin: 0 0 10px !important;
-    color: #ffffff !important;
-    font-size: 24px !important;
-    font-weight: 800 !important;
-    line-height: 1.2 !important;
+    margin: 0 0 8px;
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.25;
 }
 
-
-/* =========================================================
-   MENSAJE
-========================================================= */
-
+.kx-alert-modal
 .kx-alert-message {
-    position: relative !important;
-    max-width: 340px !important;
-    margin: 0 auto 27px !important;
-    color: #aeb9c9 !important;
-    font-size: 14px !important;
-    line-height: 1.65 !important;
+    margin: 0 auto 21px;
+    max-width: 330px;
+    color: #bfc9d6;
+    font-size: 12px;
+    line-height: 1.55;
 }
 
 
-/* =========================================================
-   BOTON
-========================================================= */
+/* ============================================================
+   BOTÓN ENTENDIDO
+============================================================ */
 
 .kx-alert-button {
-    position: relative !important;
-    width: 100% !important;
-    height: 52px !important;
-    border: 1px solid #ffe078 !important;
-    border-radius: 11px !important;
-    background: linear-gradient( 180deg, #ffe16a, #ffc21a 55%, #e99a00 ) !important;
-    color: #140d00 !important;
-    font-size: 15px !important;
-    font-weight: 800 !important;
+    width: 100%;
+    height: 45px;
+    border: 1px solid #ffe176;
+    border-radius: 10px;
+    background: linear-gradient( 180deg, #ffe477, #ffc21a, #e9a000 );
+    color: #120c00;
+    font-size: 12px;
+    font-weight: 800;
     cursor: pointer;
-    box-shadow: inset 0 1px rgba(255,255,255,.75), 0 0 18px rgba(255, 183, 0, .25);
-    transition: .2s;
+    box-shadow: 0 0 17px rgba(255, 194, 26, .25);
+    transition: transform .2s ease, filter .2s ease;
 }
 
     .kx-alert-button:hover {
-        transform: translateY(-2px);
+        transform: translateY(-1px);
         filter: brightness(1.06);
     }
 
 
-/* =========================================================
-   ERROR / DANGER
-========================================================= */
+/* ============================================================
+   CERRAR MODAL
+============================================================ */
 
-.kx-alert-danger .kx-alert-modal {
-    border-color: rgba(255, 79, 96, .75) !important;
-    box-shadow: 0 0 0 1px rgba(255, 79, 96, .10), 0 0 35px rgba(255, 79, 96, .15), 0 35px 90px rgba(0,0,0,.85) !important;
+.kx-alert-modal
+.kx-alert-close {
+    position: absolute;
+    top: 11px;
+    right: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 31px;
+    height: 31px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #8493a5;
+    font-size: 21px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
 }
 
-.kx-alert-danger .kx-alert-icon {
-    border-color: #ff5262 !important;
-    color: #ff6674 !important;
-    background: rgba(255, 82, 98, .08) !important;
-    box-shadow: 0 0 25px rgba(255, 82, 98, .18);
+    .kx-alert-modal
+    .kx-alert-close:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, .06);
+    }
+
+
+/* ============================================================
+   MODAL WARNING
+============================================================ */
+
+.kx-alert-warning
+.kx-alert-modal {
+    border-color: rgba(255, 194, 26, .55);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .70), 0 0 32px rgba(255, 194, 26, .10);
+}
+
+.kx-alert-warning
+.kx-alert-icon {
+    border-color: #ffc21a;
+    color: #ffc21a;
+    background: rgba(255, 194, 26, .07);
 }
 
 
-/* =========================================================
-   WARNING
-========================================================= */
+/* ============================================================
+   MODAL DANGER
+============================================================ */
 
-.kx-alert-warning .kx-alert-icon {
-    border-color: #ffc21a !important;
-    color: #ffc21a !important;
+.kx-alert-danger
+.kx-alert-modal {
+    border-color: rgba(255, 82, 103, .58);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .70), 0 0 34px rgba(255, 82, 103, .13);
+}
+
+.kx-alert-danger
+.kx-alert-glow {
+    background: #ff5267;
+}
+
+.kx-alert-danger
+.kx-alert-icon {
+    border-color: #ff5267;
+    color: #ff5267;
+    background: rgba(255, 82, 103, .07);
+    box-shadow: 0 0 22px rgba(255, 82, 103, .16);
+}
+
+.kx-alert-danger
+.kx-alert-button {
+    border-color: #ff7b8b;
+    background: linear-gradient( 180deg, #ff7889, #ff5267, #d92e45 );
+    color: #ffffff;
+    box-shadow: 0 0 17px rgba(255, 82, 103, .22);
 }
 
 
-/* =========================================================
-   INFO
-========================================================= */
+/* ============================================================
+   MODAL INFO
+============================================================ */
 
-.kx-alert-info .kx-alert-modal {
-    border-color: rgba(21, 156, 255, .70) !important;
+.kx-alert-info
+.kx-alert-modal {
+    border-color: rgba(41, 170, 255, .55);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .70), 0 0 34px rgba(41, 170, 255, .12);
 }
 
-.kx-alert-info .kx-alert-icon {
-    border-color: #159cff !important;
-    color: #159cff !important;
-    background: rgba(21, 156, 255, .08) !important;
+.kx-alert-info
+.kx-alert-glow {
+    background: #29aaff;
+}
+
+.kx-alert-info
+.kx-alert-icon {
+    border-color: #29aaff;
+    color: #29aaff;
+    background: rgba(41, 170, 255, .07);
+}
+
+.kx-alert-info
+.kx-alert-button {
+    border-color: #67c3ff;
+    background: linear-gradient( 180deg, #57bcff, #159cff, #0877ce );
+    color: #ffffff;
+    box-shadow: 0 0 17px rgba(41, 170, 255, .20);
 }
 
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+/* ============================================================
+   ANIMACIÓN TARJETA
+============================================================ */
 
-@media (max-width: 520px) {
+@keyframes kxCardEntrada {
+
+    from {
+        opacity: 0;
+        transform: translateY(17px) scale(.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ============================================================
+   LAPTOP PEQUEÑA
+============================================================ */
+
+@media (max-height: 850px) and (min-width: 701px) {
+
+    .kx-page {
+        padding: 18px 20px 35px;
+    }
+
+    .kx-login-card {
+        width: 535px;
+    }
+
+    .kx-card-inner {
+        padding: 24px 34px 25px;
+    }
+
+    .kx-logo-box {
+        width: 65px;
+        height: 65px;
+        min-width: 65px;
+    }
+
+    .kx-brand {
+        margin-bottom: 13px;
+    }
+
+    .kx-brand-name span,
+    .kx-brand-name strong {
+        font-size: 27px;
+    }
+
+    .kx-welcome {
+        margin-bottom: 13px;
+    }
+
+        .kx-welcome h1 {
+            font-size: 32px !important;
+        }
+
+    .kx-input-wrapper {
+        height: 45px;
+    }
+
+    .kx-login-button {
+        height: 48px !important;
+    }
+
+    .kx-social-button {
+        height: 42px !important;
+    }
+
+    .kx-security {
+        min-height: 62px;
+        padding: 8px 12px;
+    }
+}
+
+
+/* ============================================================
+   TABLET
+============================================================ */
+
+@media (max-width: 700px) {
+
+    .kx-page {
+        min-height: 100svh;
+        padding: 18px 13px 35px;
+        background-attachment: scroll;
+    }
+
+    .kx-login-card {
+        width: min(540px, 100%);
+        max-width: 100%;
+    }
+
+    .kx-card-inner {
+        padding: 27px 28px;
+    }
+
+    .kx-brand-subtitle {
+        white-space: normal;
+    }
+}
+
+
+/* ============================================================
+   MÓVIL
+============================================================ */
+
+@media (max-width: 500px) {
+
+    .kx-page {
+        padding: 10px 8px 25px;
+    }
+
+    .kx-login-card {
+        border-radius: 22px;
+    }
+
+    .kx-card-inner {
+        padding: 23px 19px 22px;
+        border-radius: 19px;
+    }
+
+        .kx-card-inner::before {
+            inset: 8px;
+            border-radius: 14px;
+        }
+
+    .kx-brand {
+        gap: 11px;
+        margin-bottom: 15px;
+    }
+
+    .kx-logo-box {
+        width: 59px;
+        height: 59px;
+        min-width: 59px;
+        border-radius: 14px;
+    }
+
+    .kx-brand-logo {
+        border-radius: 11px;
+    }
+
+    .kx-brand-name {
+        gap: 5px;
+    }
+
+        .kx-brand-name span,
+        .kx-brand-name strong {
+            font-size: 22px;
+        }
+
+    .kx-brand-subtitle {
+        margin-top: 5px;
+        font-size: 8px;
+    }
+
+    .kx-welcome h1 {
+        font-size: 29px !important;
+    }
+
+    .kx-welcome p {
+        font-size: 11px;
+    }
+
+    .kx-input-wrapper {
+        height: 47px;
+    }
+
+    .kx-options {
+        gap: 6px;
+    }
+
+    .kx-remember,
+    .kx-forgot {
+        font-size: 9px;
+    }
+
+    .kx-login-button {
+        height: 49px !important;
+        font-size: 13px !important;
+    }
+
+    .kx-social-button {
+        height: 43px !important;
+    }
+
+    .kx-security {
+        grid-template-columns: 41px 1fr;
+        gap: 9px;
+        padding: 9px 10px;
+    }
+
+    .kx-security-shield {
+        width: 39px;
+        height: 39px;
+    }
+
+    .kx-security-copy strong {
+        font-size: 10px;
+    }
+
+    .kx-security-copy p {
+        font-size: 7.5px;
+    }
 
     .kx-alert-overlay {
-        padding: 16px !important;
+        padding: 13px !important;
     }
 
     .kx-alert-modal {
-        width: 100% !important;
-        padding: 38px 24px 26px !important;
+        padding: 28px 21px 22px;
+        border-radius: 17px;
     }
 
-    .kx-alert-icon {
-        width: 62px !important;
-        height: 62px !important;
-        font-size: 26px !important;
-    }
+        .kx-alert-modal
+        .kx-alert-title {
+            font-size: 17px;
+        }
 
-    .kx-alert-title {
-        font-size: 21px !important;
-    }
-
-    .kx-alert-message {
-        font-size: 13px !important;
-    }
+        .kx-alert-modal
+        .kx-alert-message {
+            font-size: 11px;
+        }
 }
